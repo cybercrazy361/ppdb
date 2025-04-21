@@ -1,0 +1,235 @@
+/* assets/css/pendaftaran_dashboard_styles.css */
+
+/* Box Sizing Global */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Umum */
+body {
+    background: #f9f9f9;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.75rem;
+    /* Lebih kecil untuk menghemat ruang */
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #591198;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    /* Lebih kecil */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h4 {
+    margin: 0;
+    font-size: 1rem;
+    /* Lebih kecil */
+}
+
+header small {
+    font-size: 0.6rem;
+    /* Lebih kecil */
+}
+
+/* Tombol Logout */
+header .btn {
+    font-size: 0.7rem;
+    /* Menyesuaikan ukuran font tombol */
+    padding: 0.25rem 0.5rem;
+    /* Menyesuaikan padding tombol */
+    /* Mengatur tampilan tombol agar konsisten di semua browser */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+header .btn-light {
+    margin: 0;
+}
+
+/* Kartu */
+.card {
+    border: none;
+    border-radius: 6px;
+    /* Sedikit dikurangi */
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    padding: 0.5rem;
+    /* Lebih kecil */
+    height: 100%;
+    /* Pastikan kartu sama tinggi */
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    /* Lebih kecil */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    /* Lebih kecil */
+}
+
+.card i {
+    font-size: 1rem;
+    /* Lebih kecil */
+    margin-bottom: 0.3rem;
+    /* Lebih kecil */
+}
+
+.chart-container {
+    max-width: 200px;
+    /* Lebih kecil */
+    max-height: 200px;
+    margin: auto;
+}
+
+.btn {
+    border-radius: 6px;
+    /* Lebih kecil */
+    padding: 0.2rem 0.4rem;
+    /* Lebih kecil */
+    font-size: 0.65rem;
+    /* Lebih kecil */
+}
+
+.card-title {
+    font-size: 0.9rem;
+    /* Lebih kecil */
+    margin-bottom: 0.2rem;
+    /* Lebih kecil */
+}
+
+.card-count {
+    font-size: 0.9rem;
+    /* Lebih kecil */
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    /* Lebih kecil */
+}
+
+.modal-title {
+    font-weight: bold;
+    font-size: 0.9rem;
+    /* Lebih kecil */
+}
+
+.modal-body {
+    padding: 0.3rem 0.6rem;
+    /* Lebih kecil */
+}
+
+.table th,
+.table td {
+    padding: 0.2rem;
+    /* Lebih kecil */
+    font-size: 0.7rem;
+    /* Lebih kecil */
+}
+
+.alert {
+    border-radius: 6px;
+    /* Lebih kecil */
+    padding: 0.3rem 0.6rem;
+    /* Lebih kecil */
+    font-size: 0.75rem;
+    /* Lebih kecil */
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Flexbox untuk Statistik dan Navigasi */
+.statistik,
+.navigasi {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    /* Lebih kecil */
+}
+
+.statistik .card,
+.navigasi .card {
+    flex: 1 1 calc(33.333% - 0.3rem);
+    /* Membagi 3 kolom */
+    min-width: 120px;
+    /* Lebih kecil */
+}
+
+.navigasi .card {
+    flex: 1 1 calc(25% - 0.3rem);
+    /* Membagi 4 kolom */
+}
+
+@media (max-width: 1200px) {
+
+    .statistik .card,
+    .navigasi .card {
+        flex: 1 1 calc(50% - 0.3rem);
+        /* Menjadi 2 kolom */
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 0.65rem;
+        /* Lebih kecil */
+    }
+
+    header h4 {
+        font-size: 0.9rem;
+    }
+
+    header small {
+        font-size: 0.5rem;
+    }
+
+    .statistik .card,
+    .navigasi .card {
+        flex: 1 1 100%;
+        /* Menjadi 1 kolom */
+    }
+
+    .chart-container {
+        max-width: 150px;
+        max-height: 150px;
+    }
+
+    .card {
+        padding: 0.3rem;
+    }
+
+    .btn {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.6rem;
+    }
+
+    .card-title {
+        font-size: 0.8rem;
+    }
+
+    .card-count {
+        font-size: 0.6rem;
+    }
+
+    .modal-title {
+        font-size: 0.85rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.2rem;
+        font-size: 0.65rem;
+    }
+}

@@ -1,0 +1,167 @@
+body {
+    background: linear-gradient(to right, #ece9e6, #ffffff);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.table-container {
+    max-width: 90%;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h2 {
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: #ffffff;
+    text-align: center;
+    font-size: 14px;
+    padding: 12px;
+}
+
+.table td {
+    font-size: 14px;
+    padding: 12px;
+    text-align: center;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background: #f1f1f1;
+    transition: background 0.3s ease;
+}
+
+/* Status Pending */
+.status-pending {
+    background-color: #f8d7da;
+    /* Merah muda */
+    color: #721c24;
+    /* Merah tua */
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+/* Status Cicilan */
+.status-cicilan {
+    background-color: #fff3cd;
+    /* Kuning muda */
+    color: #856404;
+    /* Kuning tua */
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+/* Status Lunas */
+.status-lunas {
+    background-color: #d4edda;
+    /* Hijau muda */
+    color: #155724;
+    /* Hijau tua */
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+
+/* Pagination */
+.pagination .page-link {
+    color: #007bff;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination .active .page-link {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-kembali {
+    margin-top: 20px;
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, #6c757d, #adb5bd);
+    color: white;
+}
+
+.btn-edit {
+    background-color: #ffc107;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn-secondary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.5);
+}
+
+.btn-secondary:active {
+    background-color: #545b62;
+    transform: translateY(1px);
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary i {
+    margin-right: 8px;
+    font-size: 14px;
+}

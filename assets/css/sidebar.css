@@ -1,0 +1,233 @@
+/* ========================
+   Sidebar Container Styles
+   ======================== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100%;
+    background: linear-gradient(135deg, #4e73df 0%, #2e59d9 100%);
+    overflow-y: auto;
+    transition: width 0.3s ease, background 0.3s ease;
+    z-index: 1000;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Collapsed */
+.sidebar.collapsed {
+    width: 70px;
+    transition: width 0.3s ease;
+}
+
+/* Smooth Scroll */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+/* ========================
+   User Info Styles
+   ======================== */
+.sidebar .user-info {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.sidebar .user-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.sidebar .user-info p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.sidebar.collapsed .user-info h4,
+.sidebar.collapsed .user-info p {
+    display: none;
+}
+
+/* ========================
+   Navigation Menu Styles
+   ======================== */
+.sidebar .nav {
+    margin-top: 20px;
+    padding-left: 0;
+    list-style: none;
+}
+
+.sidebar .nav-item {
+    width: 100%;
+}
+
+.sidebar .nav-link {
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.sidebar .nav-link i {
+    margin-right: 15px;
+    font-size: 1.25rem;
+    min-width: 25px;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 15px 0;
+}
+
+.sidebar.collapsed .nav-link span {
+    display: none;
+}
+
+/* ========================
+   Hover and Active States
+   ======================== */
+.sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+}
+
+.sidebar .nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-left: 4px solid #1cc88a;
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* ========================
+   Submenu Styles
+   ======================== */
+.sidebar .collapse {
+    padding-left: 15px;
+    background: rgba(0, 0, 0, 0.1);
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.sidebar .btn-toggle-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar .btn-toggle-nav .nav-link {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    color: #d1d3e2;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.sidebar .btn-toggle-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.sidebar .btn-toggle-nav .nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-left: 4px solid #1cc88a;
+}
+
+/* ========================
+   Logout Link Styles
+   ======================== */
+.sidebar .logout-link {
+    margin-top: auto;
+    padding: 20px 0;
+}
+
+.sidebar .logout-link .nav-link {
+    color: #ff6b6b;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.sidebar .logout-link .nav-link:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 0.5rem;
+    color: #ff6b6b;
+}
+
+/* ========================
+   Sidebar Toggle Button
+   ======================== */
+#sidebarToggle {
+    font-size: 1.5rem;
+    color: #1cc88a;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    color: #17a673;
+}
+
+/* ========================
+   Responsive Design
+   ======================== */
+@media (max-width: 991.98px) {
+    .sidebar {
+        width: 70px;
+    }
+
+    .sidebar .user-info h4,
+    .sidebar .user-info p {
+        display: none;
+    }
+
+    .sidebar .nav-link {
+        justify-content: center;
+        padding: 15px 0;
+    }
+
+    .sidebar .nav-link span {
+        display: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar .user-info {
+        display: none;
+    }
+
+    .sidebar .nav-link {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .sidebar .nav-link span {
+        display: none;
+    }
+}
+
+/* ========================
+   Smooth Transition for Elements
+   ======================== */
+.sidebar,
+.sidebar .nav-link,
+.sidebar .btn-toggle-nav .nav-link {
+    transition: all 0.3s ease;
+}

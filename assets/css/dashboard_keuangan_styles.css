@@ -1,0 +1,158 @@
+/* dashboard_keuangan_styles.css */
+
+/* General Styles */
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f8f9fc;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: #5a5c69;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.card .card-body {
+    padding: 1.5rem;
+}
+
+.card .card-footer {
+    background-color: transparent;
+    border-top: none;
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #5a5c69;
+}
+
+.card-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #5a5c69;
+}
+
+.total-card .card-icon {
+    background-color: #4e73df;
+}
+
+.paid-card .card-icon {
+    background-color: #1cc88a;
+}
+
+.unpaid-card .card-icon {
+    background-color: #e74a3b;
+}
+
+/* Hover Effects */
+.card:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.card .card-icon i {
+    color: #fff;
+}
+
+/* Chart Styles */
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+.card .card-header {
+    background-color: #f8f9fc;
+    border-bottom: none;
+}
+
+.card .card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #5a5c69;
+}
+
+/* Footer Styles */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 220px);
+    /* Adjusted width to account for sidebar */
+    margin-left: 220px;
+    /* Adjusted margin to align with main content */
+    background-color: #fff;
+    border-top: 1px solid #e3e6f0;
+    z-index: 1000;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.footer.sidebar-collapsed {
+    width: calc(100% - 70px);
+    margin-left: 70px;
+}
+
+@media (max-width: 991.98px) {
+    .footer {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .footer {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* Main Content Adjustments */
+.main-content {
+    margin-left: 220px;
+    transition: margin-left 0.3s ease;
+}
+
+.main-content.sidebar-collapsed {
+    margin-left: 70px;
+}
+
+@media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 70px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Topbar Adjustments */
+.navbar {
+    height: 50px;
+    /* Reduced height */
+    min-height: 50px;
+    padding: 0 1rem;
+}
+
+.navbar .navbar-nav .nav-link {
+    height: 50px;
+    display: flex;
+    align-items: center;
+}

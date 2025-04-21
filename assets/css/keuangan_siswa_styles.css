@@ -1,0 +1,285 @@
+/* keuangan_siswa_styles.css */
+
+/* Import the same font as the dashboard */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+/* General Styles */
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f8f9fc;
+}
+
+.main-content {
+    margin-left: 220px;
+    transition: margin-left 0.3s ease;
+}
+
+.main-content.sidebar-collapsed {
+    margin-left: 70px;
+}
+
+@media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 70px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Page Title */
+h1.h3 {
+    color: #5a5c69;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, .15);
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #5a5c69;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    background-color: transparent;
+    border-top: none;
+}
+
+/* Search Form Styles */
+.card-body form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.card-body form .form-label {
+    font-weight: 600;
+    color: #5a5c69;
+}
+
+.card-body form .form-control {
+    border-radius: 0.5rem;
+    border: 1px solid #d1d3e2;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+.card-body form .btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
+}
+
+#siswaTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#siswaTable th,
+#siswaTable td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border: 1px solid #e3e6f0;
+}
+
+#siswaTable thead th {
+    background-color: #4e73df;
+    color: #ffffff;
+    font-weight: 700;
+    text-align: center;
+}
+
+#siswaTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#siswaTable tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+#siswaTable tbody td {
+    color: #5a5c69;
+    font-size: 0.95rem;
+}
+
+/* Pagination Styles */
+.pagination {
+    margin-top: 1.5rem;
+}
+
+.pagination .page-link {
+    color: #4e73df;
+    border: 1px solid #d1d3e2;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.25rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #4e73df;
+    color: #ffffff;
+    border-color: #4e73df;
+}
+
+.pagination .page-link:hover {
+    background-color: #d1d3e2;
+    color: #4e73df;
+}
+
+/* Footer Styles */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 220px);
+    margin-left: 220px;
+    background-color: #fff;
+    border-top: 1px solid #e3e6f0;
+    z-index: 1000;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.footer.sidebar-collapsed {
+    width: calc(100% - 70px);
+    margin-left: 70px;
+}
+
+@media (max-width: 991.98px),
+(max-width: 767.98px) {
+    .footer {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+}
+
+.btn-secondary {
+    background-color: #858796;
+    border-color: #858796;
+}
+
+.btn-secondary:hover {
+    background-color: #6e707e;
+    border-color: #5a5c69;
+}
+
+/* Additional Styles */
+.text-gray-800 {
+    color: #5a5c69 !important;
+}
+
+.text-gray-600 {
+    color: #858796 !important;
+}
+
+.small {
+    font-size: 0.875rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-body form .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .card-body form .d-flex {
+        justify-content: flex-start;
+    }
+}
+
+/* Custom Pagination Styles */
+.pagination .page-link {
+    color: #4e73df;
+    border-color: #d1d3e2;
+    border-radius: 0.5rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #4e73df;
+    border-color: #4e73df;
+    color: #ffffff;
+}
+
+.pagination .page-link:hover {
+    background-color: #d1d3e2;
+    color: #4e73df;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+/* Topbar Adjustments */
+.navbar {
+    height: 50px;
+    /* Reduced height */
+    min-height: 50px;
+    padding: 0 1rem;
+}
+
+.navbar .navbar-nav .nav-link {
+    height: 50px;
+    display: flex;
+    align-items: center;
+}

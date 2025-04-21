@@ -1,0 +1,135 @@
+/* ===== Global Styles ===== */
+body {
+    background: linear-gradient(to right, #ece9e6, #ffffff);
+    /* Warna gradasi lembut */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Font yang modern dan bersih */
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Navbar Styles ===== */
+.navbar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Bayangan untuk navbar */
+    z-index: 10;
+}
+
+/* ===== Table Styles ===== */
+.table {
+    border: 1px solid #ddd;
+    /* Border tabel */
+    border-radius: 8px;
+    /* Membuat sudut tabel lebih lembut */
+    overflow: hidden;
+    /* Mencegah elemen keluar dari tabel */
+    margin-bottom: 20px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+    /* Warna baris ganjil */
+}
+
+.table-striped tbody tr:hover {
+    background-color: #eef5ff;
+    /* Warna saat hover */
+}
+
+.table thead {
+    background-color: #004085;
+    /* Warna biru gelap untuk header tabel */
+    color: white;
+    font-weight: bold;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    /* Memastikan teks sejajar secara vertikal */
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+    /* Efek hover pada baris */
+}
+
+.table-primary {
+    background-color: #007bff;
+    /* Warna biru Bootstrap */
+    color: #fff;
+}
+
+/* ===== Button Styles ===== */
+.btn-warning {
+    background-color: #ffc107;
+    /* Warna kuning untuk tombol edit */
+    border: none;
+    color: #fff;
+    transition: background 0.3s, transform 0.2s ease-in-out;
+    /* Transisi untuk hover */
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    /* Warna hover */
+    transform: scale(1.05);
+    /* Efek zoom */
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    /* Warna merah untuk tombol delete */
+    border: none;
+    color: #fff;
+    transition: background 0.3s, transform 0.2s ease-in-out;
+    /* Transisi untuk hover */
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    /* Warna hover */
+    transform: scale(1.05);
+    /* Efek zoom */
+}
+
+/* ===== Pagination Styles ===== */
+.pagination .active .page-link {
+    background-color: #007bff;
+    /* Warna biru untuk halaman aktif */
+    border-color: #007bff;
+    color: #fff;
+}
+
+.pagination .page-link {
+    color: #007bff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: #eef5ff;
+    color: #004085;
+}
+
+/* ===== Responsive Table ===== */
+.table-responsive {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    /* Bayangan tabel */
+    border-radius: 8px;
+    /* Membuat tabel lebih elegan */
+    padding: 15px;
+    overflow-x: auto;
+    /* Menambahkan scroll horizontal jika diperlukan */
+}
+
+/* ===== Custom Hover Effects ===== */
+.table tbody tr td:first-child {
+    font-weight: bold;
+    /* Membuat kolom pertama (misal, nomor) lebih menonjol */
+}
+
+.table tbody tr td:hover {
+    color: #007bff;
+    /* Warna teks saat hover */
+    cursor: pointer;
+    /* Menambahkan efek pointer */
+}

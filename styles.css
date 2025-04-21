@@ -1,0 +1,256 @@
+/* Stylesheet untuk PPDB Online - Tampilan Modern dan Elegan */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Umum */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    /* Menghindari navbar fixed-top */
+    line-height: 1.6;
+}
+
+/* Navigasi */
+.navbar-brand {
+    color: #ffffff !important;
+    /* Mengubah warna logo navbar */
+    font-weight: 700;
+}
+
+.navbar {
+    background-color: #007bff !important;
+    /* Mengubah latar belakang navbar */
+    transition: background-color 0.3s;
+}
+
+.navbar-nav .nav-link {
+    color: #ffffff !important;
+    /* Mengubah warna teks navbar */
+    font-weight: 500;
+    transition: color 0.3s, background-color 0.3s;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #d4d4d4 !important;
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Menambahkan latar belakang saat hover dan active */
+}
+
+/* Jumbotron Header */
+header.jumbotron {
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(0, 198, 255, 0.8)),
+        url('banner.jpg') no-repeat center center;
+    background-size: cover;
+    color: #fff;
+    padding: 40px 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+    margin-bottom: 60px;
+}
+
+header.jumbotron::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 123, 255, 0.3);
+    z-index: 0;
+}
+
+header.jumbotron .container {
+    position: relative;
+    z-index: 1;
+}
+
+header.jumbotron h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+header.jumbotron p {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+/* Card Customization */
+.custom-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    min-height: 280px;
+}
+
+.custom-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.custom-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(0, 123, 255, 0.1), transparent);
+    z-index: 0;
+}
+
+.custom-card .card-body {
+    position: relative;
+    z-index: 1;
+}
+
+.custom-card .card-title {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.custom-card .btn-primary {
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    border: none;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.custom-card .btn-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #0096c7);
+    transform: scale(1.05);
+}
+
+.custom-card .card-icon {
+    font-size: 3rem;
+    color: #007bff;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.custom-card:hover .card-icon {
+    color: #00c6ff;
+    transform: scale(1.1);
+}
+
+/* Footer */
+footer {
+    background-color: #007bff;
+    color: #fff;
+    padding: 30px 20px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+footer a {
+    color: #fff;
+    transition: color 0.3s;
+}
+
+footer a:hover {
+    color: #d4d4d4;
+}
+
+/* Media Sosial Icons */
+.social-icon {
+    font-size: 1.5rem;
+    /* Ukuran default ikon */
+    transition: color 0.3s, transform 0.3s;
+}
+
+.social-icon:hover {
+    color: #d4d4d4;
+    transform: scale(1.2);
+    /* Membesarkan ikon saat hover */
+}
+
+/* Responsif */
+@media (max-width: 992px) {
+    header.jumbotron {
+        padding: 80px 20px;
+    }
+
+    header.jumbotron h1 {
+        font-size: 2.8rem;
+    }
+
+    header.jumbotron p {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    header.jumbotron {
+        padding: 60px 20px;
+    }
+
+    header.jumbotron h1 {
+        font-size: 2.2rem;
+    }
+
+    header.jumbotron p {
+        font-size: 1.1rem;
+    }
+
+    .custom-card .card-icon {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    header.jumbotron {
+        padding: 40px 20px;
+    }
+
+    header.jumbotron h1 {
+        font-size: 1.8rem;
+    }
+
+    header.jumbotron p {
+        font-size: 1rem;
+    }
+}
+
+/* Tambahan: Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar (Optional) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
