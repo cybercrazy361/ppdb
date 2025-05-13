@@ -142,6 +142,7 @@ body {
     padding: .25rem .75rem .25rem .5rem;
 }
 
+/* DataTables length menu (entries-per-page) */
 .dataTables_wrapper .dataTables_length {
     display: flex;
     align-items: center;
@@ -149,12 +150,20 @@ body {
 }
 
 .dataTables_wrapper .dataTables_length select {
+    /* pastikan ukurannya otomatis menyesuaikan label */
+    width: auto !important;
+    min-width: 4ch;
+    /* cukup untuk “10”, “100”, dst */
+    padding: .25rem .75rem;
+    /* ruang kiri/kanan standar */
+    padding-right: 2rem;
+    /* ekstra ruang kanan agar caret jelas */
     border-radius: 0.25rem;
     border: 1px solid #ddd;
-    padding: .25rem .75rem .25rem .5rem;
-    width: auto;
-    min-width: 3ch;
-    background-position: right .5rem center;
+    /* pastikan browser default caret muncul */
+    appearance: auto;
+    -webkit-appearance: auto;
+    background-position: calc(100% - .75rem) center;
     background-repeat: no-repeat;
 }
 
