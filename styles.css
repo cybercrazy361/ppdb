@@ -1,17 +1,18 @@
-/* 1. Variables */
+/* styles.css – Modern & Professional Refresh */
+
+/* 1. Theme Variables */
 :root {
-    --clr-primary: #0056b3;
-    --clr-secondary: #4a00e0;
-    --clr-tertiary: #8e2de2;
+    --clr-primary: #4a00e0;
+    --clr-secondary: #8e2de2;
+    --clr-accent: #00c6ff;
     --clr-bg: #f8f9fa;
     --clr-white: #ffffff;
     --clr-dark: #212529;
-    --shadow-light: rgba(0, 0, 0, 0.05);
-    --transition: 0.3s ease;
+    --shadow: rgba(0, 0, 0, 0.1);
     --font-base: 'Inter', sans-serif;
 }
 
-/* 2. Base */
+/* 2. Global Resets & Base */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -19,157 +20,159 @@
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
     font-family: var(--font-base);
     background: var(--clr-bg);
     color: var(--clr-dark);
     line-height: 1.6;
-}
-
-a {
-    text-decoration: none;
+    margin-top: 70px;
+    /* space for fixed navbar */
 }
 
 /* 3. Navbar */
 .navbar {
-    background: var(--clr-white);
-    padding: 1rem 0;
+    background: var(--clr-white) !important;
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
-.navbar-brand .logo {
-    height: 32px;
-    width: auto;
+.navbar-brand {
+    font-weight: 700;
+    color: var(--clr-primary) !important;
 }
 
-.nav-link {
+.navbar-nav .nav-link {
     color: var(--clr-dark) !important;
-    font-weight: 500;
-    margin-left: 0.5rem;
-    transition: color var(--transition), background var(--transition);
+    margin-left: .75rem;
+    transition: background .3s, color .3s;
 }
 
-.nav-link:hover,
-.nav-link.active {
-    background: var(--clr-secondary);
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    background: var(--clr-primary);
     color: var(--clr-white) !important;
-    border-radius: 0.25rem;
+    border-radius: 4px;
+    padding: .5rem .75rem;
 }
 
-/* 4. Hero */
-.hero {
+/* 4. Jumbotron / Hero */
+header.jumbotron {
     position: relative;
-    background: linear-gradient(135deg, var(--clr-secondary), var(--clr-tertiary));
-    padding: 6rem 0;
-    text-align: center;
+    background: linear-gradient(135deg, var(--clr-primary), var(--clr-secondary));
     color: var(--clr-white);
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    padding: 4rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px var(--shadow);
+    margin: 2rem 1rem;
     overflow: hidden;
 }
 
-.hero::before {
+header.jumbotron::before {
     content: '';
     position: absolute;
     inset: 0;
     background: url('banner.jpg') center/cover no-repeat;
-    opacity: 0.2;
+    opacity: .2;
+    border-radius: 12px;
 }
 
-.hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(33, 37, 41, 0.5);
-}
-
-.hero-content {
+header.jumbotron .container {
     position: relative;
     z-index: 1;
 }
 
-.hero h1 {
-    font-size: 2.75rem;
-    font-weight: 700;
+header.jumbotron h1 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
 }
 
-.hero p {
+header.jumbotron p {
     font-size: 1.25rem;
-    margin-top: 0.5rem;
 }
 
 /* 5. Cards */
-.card-clean {
+.custom-card {
     background: var(--clr-white);
     border: none;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 12px var(--shadow-light);
-    transition: transform var(--transition), box-shadow var(--transition);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: transform .3s, box-shadow .3s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.card-clean:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px var(--shadow-light);
+.custom-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--shadow);
 }
 
-.card-icon {
+.custom-card .card-icon {
     font-size: 2.5rem;
-    color: var(--clr-secondary);
-    transition: transform var(--transition);
+    color: var(--clr-primary);
+    margin-bottom: .75rem;
+    transition: transform .3s, color .3s;
 }
 
-.card-clean:hover .card-icon {
+.custom-card:hover .card-icon {
+    color: var(--clr-secondary);
     transform: scale(1.1);
 }
 
 /* 6. Buttons */
 .btn-primary {
-    background: var(--clr-primary);
+    background: linear-gradient(45deg, var(--clr-secondary), var(--clr-accent)) !important;
     border: none;
-    padding: 0.5rem 1.2rem;
-    transition: background var(--transition), transform var(--transition);
+    padding: .5rem 1.25rem;
+    transition: transform .3s, background .3s;
 }
 
 .btn-primary:hover {
-    background: var(--clr-secondary);
+    background: linear-gradient(45deg, var(--clr-accent), var(--clr-secondary)) !important;
     transform: scale(1.05);
+    color: var(--clr-white) !important;
 }
 
 /* 7. Footer */
-.footer {
+footer {
     background: var(--clr-dark);
     color: var(--clr-white);
-    margin-top: auto;
-    padding: 2rem 0;
     text-align: center;
+    padding: 2rem 1rem;
+    margin-top: auto;
 }
 
-.footer p {
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+footer p {
+    margin: .5rem 0;
 }
 
-.social-icon {
+footer .social-icon {
     color: var(--clr-white);
-    font-size: 1.2rem;
-    margin-right: 1rem;
-    transition: color var(--transition), transform var(--transition);
+    margin: 0 .5rem;
+    font-size: 1.25rem;
+    transition: transform .3s, color .3s;
 }
 
-.social-icon:hover {
-    color: var(--clr-secondary);
+footer .social-icon:hover {
+    color: var(--clr-accent);
     transform: scale(1.2);
 }
 
-/* 8. Responsive */
+/* 8. Responsive Tweaks */
 @media (max-width: 768px) {
-    .hero h1 {
+    header.jumbotron {
+        padding: 3rem 1rem;
+        margin: 1.5rem .5rem;
+    }
+
+    header.jumbotron h1 {
         font-size: 2rem;
     }
 
-    .hero p {
+    header.jumbotron p {
         font-size: 1rem;
     }
 
-    .card-icon {
+    .custom-card .card-icon {
         font-size: 2rem;
     }
 }
