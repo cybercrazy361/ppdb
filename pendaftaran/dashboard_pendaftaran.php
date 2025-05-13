@@ -10,56 +10,53 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 
 $unit = $_SESSION['unit']; // Misalnya 'SMA' atau 'SMK'
 
-// Hitung statistik pembayaran
+// Fungsi menghitung status pembayaran
 function getStatusPembayaranCounts($conn, $unit) {
-    // Total siswa
-    $sqlTotal   = "SELECT COUNT(*) AS total FROM siswa WHERE unit = ?";
-    $stmtTotal  = $conn->prepare($sqlTotal);
-    $stmtTotal->bind_param("s", $unit);
-    $stmtTotal->execute();
-    $total = $stmtTotal->get_result()->fetch_assoc()['total'];
-    $stmtTotal->close();
+    // Total Siswa
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $totalSiswa = $stmt->get_result()->fetch_assoc()['total'];
+    $stmt->close();
 
-    // Belum bayar
-    $sqlBelum   = "
+    // Belum Bayar
+    $stmt = $conn->prepare("
         SELECT COUNT(DISTINCT s.id) AS total
         FROM siswa s
         LEFT JOIN pembayaran p ON s.id = p.siswa_id
         LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
         WHERE s.unit = ? AND pd.id IS NULL
-    ";
-    $stmtBelum  = $conn->prepare($sqlBelum);
-    $stmtBelum->bind_param("s", $unit);
-    $stmtBelum->execute();
-    $belum = $stmtBelum->get_result()->fetch_assoc()['total'];
-    $stmtBelum->close();
+    ");
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $belumBayar = $stmt->get_result()->fetch_assoc()['total'];
+    $stmt->close();
 
-    // Sudah bayar tunai & angsuran
-    $sqlSudah   = "
+    // Sudah Bayar Lunas & Angsuran
+    $stmt = $conn->prepare("
         SELECT 
-          SUM(pd.status_pembayaran = 'Lunas')      AS lunas,
-          SUM(pd.status_pembayaran LIKE 'Angsuran%') AS angsuran
+            COUNT(DISTINCT CASE WHEN pd.status_pembayaran = 'Lunas' THEN s.id END) AS lunas,
+            COUNT(DISTINCT s.id) AS sudah_bayar
         FROM siswa s
         LEFT JOIN pembayaran p ON s.id = p.siswa_id
         LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-        WHERE s.unit = ?
-    ";
-    $stmtSudah  = $conn->prepare($sqlSudah);
-    $stmtSudah->bind_param("s", $unit);
-    $stmtSudah->execute();
-    $row = $stmtSudah->get_result()->fetch_assoc();
-    $stmtSudah->close();
+        WHERE s.unit = ? AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
+    ");
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $lunas = $row['lunas'];
+    $sudahBayar = $row['sudah_bayar'];
+    $stmt->close();
 
-    $lunas     = (int)$row['lunas'];
-    $angsuran  = (int)$row['angsuran'];
-    $sudah     = $lunas + $angsuran;
+    $angsuran = max(0, $sudahBayar - $lunas);
 
     return [
-        'total_siswa'       => $total,
-        'belum_bayar'       => $belum,
-        'sudah_bayar_lunas' => $lunas,
-        'sudah_bayar_angsuran' => $angsuran,
-        'total_sudah_bayar' => $sudah
+        'total'       => $totalSiswa,
+        'belum'       => $belumBayar,
+        'lunas'       => $lunas,
+        'angsuran'    => $angsuran,
+        'sudah_bayar' => $sudahBayar
     ];
 }
 
@@ -69,183 +66,182 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Dashboard <?= htmlspecialchars($unit) ?> - PPDB</title>
-  <!-- Google Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css">
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard <?= htmlspecialchars($unit) ?> - PPDB</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div>
-      <h4>Dashboard <?= htmlspecialchars($unit) ?></h4>
-      <small>Selamat datang, <?= htmlspecialchars($_SESSION['nama']) ?></small>
+<header>
+    <div class="container-fluid">
+        <div>
+            <h4>Dashboard <?= htmlspecialchars($unit) ?></h4>
+            <small>Selamat Datang, <?= htmlspecialchars($_SESSION['nama']) ?></small>
+        </div>
+        <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
     </div>
-    <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
-  </header>
+</header>
 
-  <!-- Main -->
-  <div class="container">
-    <div class="row g-4 mb-4">
-      <!-- Total Siswa -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-body">
-            <i class="fas fa-user-graduate text-primary"></i>
-            <h5 class="card-title">Total Siswa</h5>
-            <div class="card-count"><?= $stat['total_siswa'] ?></div>
-          </div>
-          <div class="card-footer"><small>Total yang mendaftar</small></div>
+<div class="container">
+    <!-- Statistik Utama -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card text-center p-4">
+                <div class="card-icon text-primary mx-auto"><i class="fas fa-user-graduate"></i></div>
+                <h5 class="card-title">Total Siswa</h5>
+                <div class="card-count"><?= $stat['total'] ?></div>
+                <div class="card-footer">Total pendaftar <?= htmlspecialchars($unit) ?></div>
+            </div>
         </div>
-      </div>
-      <!-- Sudah Bayar -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-body">
-            <i class="fas fa-money-bill-wave text-success"></i>
-            <h5 class="card-title">Sudah Membayar</h5>
-            <div class="card-count"><?= $stat['total_sudah_bayar'] ?></div>
-            <p>
-              <small><i class="fas fa-check-circle"></i> <?= $stat['sudah_bayar_lunas'] ?> Lunas</small><br>
-              <small><i class="fas fa-exclamation-circle"></i> <?= $stat['sudah_bayar_angsuran'] ?> Angsuran</small>
-            </p>
-          </div>
-          <div class="card-footer"><small>Detail pembayaran</small></div>
+        <div class="col-md-4">
+            <div class="card text-center p-4">
+                <div class="card-icon text-success mx-auto"><i class="fas fa-money-bill-wave"></i></div>
+                <h5 class="card-title">Sudah Membayar</h5>
+                <div class="card-count"><?= $stat['sudah_bayar'] ?></div>
+                <small><i class="fas fa-check-circle text-success"></i> <?= $stat['lunas'] ?> Lunas</small><br>
+                <small><i class="fas fa-wallet text-warning"></i> <?= $stat['angsuran'] ?> Angsuran</small>
+                <div class="card-footer">Pendaftar yang sudah melakukan pembayaran</div>
+            </div>
         </div>
-      </div>
-      <!-- Belum Bayar -->
-      <div class="col-md-4">
-        <div class="card cursor-pointer" onclick="showModal('belum')">
-          <div class="card-body">
-            <i class="fas fa-money-check-alt text-danger"></i>
-            <h5 class="card-title">Belum Bayar</h5>
-            <div class="card-count"><?= $stat['belum_bayar'] ?></div>
-          </div>
-          <div class="card-footer"><small>Menunggu pembayaran</small></div>
+        <div class="col-md-4">
+            <div class="card text-center p-4" onclick="showModal('belum')" style="cursor:pointer">
+                <div class="card-icon text-danger mx-auto"><i class="fas fa-exclamation-circle"></i></div>
+                <h5 class="card-title">Belum Bayar</h5>
+                <div class="card-count"><?= $stat['belum'] ?></div>
+                <div class="card-footer">Pendaftar yang belum membayar</div>
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- Chart -->
-    <div class="row mb-5">
-      <div class="col">
-        <div class="card p-4 text-center">
-          <h6>Diagram Pembayaran</h6>
-          <div class="chart-container">
+    <!-- Diagram Pembayaran -->
+    <div class="card chart-card mt-5">
+        <h6>Diagram Pembayaran</h6>
+        <div class="chart-container">
             <canvas id="grafikPembayaran"></canvas>
-          </div>
         </div>
-      </div>
     </div>
 
-    <!-- Navigasi -->
-    <div class="row g-3 text-center">
-      <?php 
-      $menu = [
-        ['icon'=>'user-plus','label'=>'Input Pendaftaran','link'=>'form_pendaftaran.php','btn'=>'Input','btnClass'=>'primary'],
-        ['icon'=>'users','label'=>'Daftar Siswa','link'=>'daftar_siswa.php','btn'=>'Lihat','btnClass'=>'info'],
-        ['icon'=>'file-alt','label'=>'Cetak Laporan','link'=>'cetak_laporan_pendaftaran.php','btn'=>'Cetak','btnClass'=>'warning'],
-        ['icon'=>'check-circle','label'=>'Review Calon Pendaftar','link'=>'review_calon_pendaftar.php','btn'=>'Review','btnClass'=>'success'],
-      ];
-      foreach($menu as $m): ?>
-      <div class="col-md-3">
-        <div class="card nav-card">
-          <i class="fas fa-<?= $m['icon'] ?>"></i>
-          <h6><?= $m['label'] ?></h6>
-          <a href="<?= $m['link'] ?>" class="btn btn-<?= $m['btnClass'] ?>"><?= $m['btn'] ?></a>
+    <!-- Menu Navigasi Cepat -->
+    <div class="nav-menu">
+        <div class="card">
+            <i class="fas fa-user-plus fa-2x text-primary mb-2"></i>
+            <h6>Input Pendaftaran</h6>
+            <a href="form_pendaftaran.php" class="btn btn-primary btn-sm">Input</a>
         </div>
+        <div class="card">
+            <i class="fas fa-users fa-2x text-info mb-2"></i>
+            <h6>Daftar Siswa</h6>
+            <a href="daftar_siswa.php" class="btn btn-info btn-sm">Lihat</a>
+        </div>
+        <div class="card">
+            <i class="fas fa-file-alt fa-2x text-warning mb-2"></i>
+            <h6>Cetak Laporan</h6>
+            <a href="cetak_laporan_pendaftaran.php" class="btn btn-warning btn-sm">Cetak</a>
+        </div>
+        <div class="card">
+            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+            <h6>Review Calon Pendaftar</h6>
+            <a href="review_calon_pendaftar.php" class="btn btn-success btn-sm">Review</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Daftar Siswa Belum/Sudah Bayar -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="statusModalLabel">Daftar Siswa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
       </div>
-      <?php endforeach; ?>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Status Pembayaran</th>
+            </tr>
+          </thead>
+          <tbody id="modalContent">
+            <!-- Diisi via JavaScript -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal Daftar Siswa -->
-  <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="statusModalLabel">Daftar Siswa</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-0">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>No</th><th>Nama</th><th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="modalContent">
-              <tr><td colspan="3" class="text-center py-4">Memuat data…</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+<!-- Bootstrap & Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
     function showModal(status) {
-      const label = status === 'belum' ? 'Belum Bayar' : 'Sudah Bayar';
-      document.getElementById('statusModalLabel').textContent = 'Daftar Siswa ' + label;
-      fetch(`fetch_siswa.php?status=${status}&unit=<?= urlencode($unit) ?>`)
-        .then(r => r.json())
-        .then(data => {
-          const tb = document.getElementById('modalContent');
-          tb.innerHTML = '';
-          if (data.length) {
-            data.forEach((s,i) => {
-              tb.innerHTML += `<tr>
-                <td>${i+1}</td>
-                <td>${s.nama}</td>
-                <td>${s.status_pembayaran}</td>
-              </tr>`;
+        const title = document.getElementById('statusModalLabel');
+        const body  = document.getElementById('modalContent');
+        title.textContent = status === 'belum' ? 'Daftar Belum Bayar' : 'Daftar Sudah Bayar';
+        body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
+
+        fetch(`fetch_siswa.php?status=${status}&unit=<?= urlencode($unit) ?>`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.length) {
+                    body.innerHTML = '<tr><td colspan="3" class="text-center">Tidak ada data.</td></tr>';
+                    return;
+                }
+                body.innerHTML = data.map((s, i) => `
+                    <tr>
+                        <td>${i+1}</td>
+                        <td>${s.nama}</td>
+                        <td>${s.status_pembayaran}</td>
+                    </tr>
+                `).join('');
+            })
+            .catch(() => {
+                body.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat data.</td></tr>';
             });
-          } else {
-            tb.innerHTML = '<tr><td colspan="3" class="text-center py-4">Tidak ada data.</td></tr>';
-          }
-        });
-      new bootstrap.Modal(document.getElementById('statusModal')).show();
+
+        new bootstrap.Modal(document.getElementById('statusModal')).show();
     }
 
-    // Chart.js
+    // Chart.js Doughnut
     const ctx = document.getElementById('grafikPembayaran').getContext('2d');
     new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Sudah Membayar','Belum Bayar'],
-        datasets: [{
-          data: [<?= $stat['total_sudah_bayar'] ?>, <?= $stat['belum_bayar'] ?>],
-          backgroundColor: [var(--success), var(--danger)],
-          borderColor: '#fff',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        plugins: {
-          legend: { position: 'bottom', labels: { boxWidth:12, font:{size:14} } },
-          tooltip: {
-            callbacks: {
-              label: ctx => {
-                let v = ctx.raw, t = ctx.dataset.data.reduce((a,b)=>a+b,0);
-                return `${ctx.label}: ${v} siswa (${(v/t*100).toFixed(1)}%)`;
-              }
-            }
-          }
+        type: 'doughnut',
+        data: {
+            labels: ['Sudah Membayar', 'Belum Bayar'],
+            datasets: [{
+                data: [<?= $stat['sudah_bayar'] ?>, <?= $stat['belum'] ?>],
+                backgroundColor: ['var(--color-success)', 'var(--color-danger)'],
+                hoverOffset: 10
+            }]
         },
-        maintainAspectRatio: false
-      }
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 20 } },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const val = ctx.raw;
+                            const tot = ctx.dataset.data.reduce((a,b)=>a+b,0);
+                            const pct = ((val/tot)*100).toFixed(1);
+                            return `${ctx.label}: ${val} (${pct}%)`;
+                        }
+                    }
+                }
+            }
+        }
     });
-  </script>
+</script>
 </body>
 </html>

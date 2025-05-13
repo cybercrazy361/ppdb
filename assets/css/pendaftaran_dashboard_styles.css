@@ -1,4 +1,24 @@
-/* Global Reset & Box Sizing */
+/* --------------------------------------------------
+   Theme Variables
+-------------------------------------------------- */
+:root {
+    --color-primary: #4e73df;
+    --color-secondary: #6c757d;
+    --color-success: #1cc88a;
+    --color-info: #36b9cc;
+    --color-warning: #f6c23e;
+    --color-danger: #e74a3b;
+    --color-light: #f8f9fc;
+    --color-dark: #5a5c69;
+
+    --font-base: 'Poppins', sans-serif;
+    --border-radius: .75rem;
+    --transition-speed: .3s;
+}
+
+/* --------------------------------------------------
+   Global Reset & Body
+-------------------------------------------------- */
 *,
 *::before,
 *::after {
@@ -7,35 +27,28 @@
     padding: 0;
 }
 
-/* Root Variables */
-:root {
-    --primary: #4e73df;
-    --secondary: #2e59d9;
-    --success: #1cc88a;
-    --danger: #e74a3b;
-    --light: #f8f9fc;
-    --dark: #5a5c69;
-    --font-base: 'Poppins', sans-serif;
-}
-
-/* Body */
 body {
+    background-color: var(--color-light);
     font-family: var(--font-base);
-    font-size: 0.875rem;
-    background-color: var(--light);
-    color: var(--dark);
-    line-height: 1.4;
+    font-size: .875rem;
+    color: var(--color-dark);
+    line-height: 1.5;
 }
 
-/* Header */
+/* --------------------------------------------------
+   Header
+-------------------------------------------------- */
 header {
-    background: var(--primary);
+    background: var(--color-primary);
     color: #fff;
     padding: 1rem 2rem;
+    box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.1);
+}
+
+header .container-fluid {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 header h4 {
@@ -44,90 +57,112 @@ header h4 {
 }
 
 header small {
-    font-size: 0.85rem;
-    opacity: 0.85;
+    font-size: .875rem;
+    opacity: .8;
 }
 
 header .btn-logout {
     background: #fff;
-    color: var(--primary);
-    border-radius: 0.25rem;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
+    color: var(--color-primary);
+    border: none;
+    padding: .5rem 1rem;
+    border-radius: var(--border-radius);
+    font-size: .875rem;
     font-weight: 500;
-    transition: background .2s;
+    transition: background var(--transition-speed), color var(--transition-speed);
 }
 
 header .btn-logout:hover {
     background: #e2e6ea;
 }
 
-/* Container Overrides */
+/* --------------------------------------------------
+   Container & Layout
+-------------------------------------------------- */
 .container {
     max-width: 1200px;
     margin: 2rem auto;
-    padding: 0 1rem;
 }
 
-/* Cards */
+/* --------------------------------------------------
+   Cards
+-------------------------------------------------- */
 .card {
     background: #fff;
     border: none;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    transition: transform .2s, box-shadow .2s;
+    border-radius: var(--border-radius);
+    box-shadow: 0 .125rem .375rem rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-.25rem);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-.card .card-body {
-    padding: 1.5rem;
-    text-align: center;
+.card .card-icon {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
 }
 
-.card i {
-    font-size: 2rem;
-    margin-bottom: 0.75rem;
+.card .text-primary {
+    color: var(--color-primary);
+}
+
+.card .text-success {
+    color: var(--color-success);
+}
+
+.card .text-info {
+    color: var(--color-info);
+}
+
+.card .text-warning {
+    color: var(--color-warning);
+}
+
+.card .text-danger {
+    color: var(--color-danger);
 }
 
 .card-title {
     font-size: 1rem;
-    margin-bottom: 0.5rem;
-    color: var(--dark);
+    font-weight: 600;
 }
 
 .card-count {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--dark);
+    margin: .5rem 0;
 }
 
 .card-footer {
     background: transparent;
     border-top: none;
+    font-size: .8rem;
+    color: var(--color-secondary);
+}
+
+/* --------------------------------------------------
+   Chart Container
+-------------------------------------------------- */
+.chart-card {
+    padding: 1.5rem;
     text-align: center;
-    padding: 0.75rem;
 }
 
-.card-footer small {
-    color: #6c757d;
+.chart-card h6 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
 }
 
-/* Grid Utilities */
-.row.g-4 {
-    row-gap: 1.5rem !important;
-    column-gap: 1.5rem !important;
-}
-
-.row.g-3 {
-    row-gap: 1rem !important;
-    column-gap: 1rem !important;
-}
-
-/* Chart Container */
 .chart-container {
     position: relative;
     width: 100%;
@@ -136,75 +171,50 @@ header .btn-logout:hover {
     margin: 0 auto;
 }
 
-/* Navigation Cards */
-.nav-card {
+/* --------------------------------------------------
+   Navigation Menu
+-------------------------------------------------- */
+.nav-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.nav-menu .card {
     padding: 2rem 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: background .2s;
+    text-align: center;
 }
 
-.nav-card i {
-    font-size: 2.25rem;
-    margin-bottom: 0.75rem;
-    color: var(--primary);
+.nav-menu .btn {
+    margin-top: .75rem;
 }
 
-.nav-card h6 {
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.nav-card .btn {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.9rem;
-}
-
-/* Modal Overrides */
-.modal-content {
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-.modal-header {
-    background: var(--secondary);
-    color: #fff;
-    padding: 1rem 1.5rem;
-}
-
-.modal-title {
-    font-size: 1rem;
-    font-weight: 600;
-}
-
+/* --------------------------------------------------
+   Modal Table
+-------------------------------------------------- */
 .modal-body {
-    padding: 1.25rem;
+    padding: 1rem;
 }
 
-.table th,
-.table td {
-    font-size: 0.85rem;
-    padding: 0.75rem;
+.modal-body .table {
+    font-size: .85rem;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 992px) {
-    .chart-container {
-        max-width: 250px;
-        height: 250px;
-    }
-}
-
+/* --------------------------------------------------
+   Responsive
+-------------------------------------------------- */
 @media (max-width: 768px) {
     header {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
+        padding: .75rem 1rem;
     }
 
-    header .btn-logout {
-        width: 100%;
+    .container {
+        margin: 1rem;
+    }
+
+    .chart-container {
+        max-width: 200px;
+        height: 200px;
     }
 }
