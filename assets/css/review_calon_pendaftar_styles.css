@@ -1,0 +1,99 @@
+/* File: assets/css/review_calon_pendaftar_styles.css */
+
+/* --------------------------------------------------
+   Theme & Reset
+-------------------------------------------------- */
+:root {
+    --color-primary: #2e59d9;
+    --color-secondary: #858796;
+    --color-success: #1cc88a;
+    --color-info: #36b9cc;
+    --color-warning: #f6c23e;
+    --color-danger: #e74a3b;
+    --font-base: 'Poppins', sans-serif;
+    --border-radius: 0.75rem;
+    --transition: 0.3s;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: linear-gradient(135deg, #f0f4ff, #ffffff);
+    font-family: var(--font-base);
+    color: var(--color-secondary);
+    padding: 2rem;
+}
+
+.container {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+h4 {
+    text-align: center;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+/* DataTables Overrides */
+.table-responsive {
+    margin-top: 1.5rem;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+    padding: .25rem .5rem;
+}
+
+/* Badges for Status */
+.badge {
+    font-size: .85em;
+    border-radius: var(--border-radius);
+    padding: .4em .65em;
+}
+
+.badge-pending {
+    background-color: var(--color-secondary);
+    color: #fff;
+}
+
+.badge-contacted {
+    background-color: var(--color-info);
+    color: #fff;
+}
+
+.badge-accepted {
+    background-color: var(--color-success);
+    color: #fff;
+}
+
+.badge-rejected {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+/* Kembali Button */
+.btn-back {
+    background-color: var(--color-secondary);
+    color: #fff;
+    border-radius: var(--border-radius);
+    padding: .5rem 1rem;
+    text-decoration: none;
+    transition: background var(--transition);
+}
+
+.btn-back:hover {
+    background-color: #6c757d;
+}

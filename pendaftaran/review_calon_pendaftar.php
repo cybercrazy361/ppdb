@@ -1,17 +1,17 @@
 <?php
+// File: review_calon_pendaftar.php
+
 session_start();
 include '../database_connection.php';
 
-// Pastikan pengguna sudah login
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
+// Validasi login petugas pendaftaran
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
     header('Location: login_pendaftaran.php');
     exit();
 }
 
-// Ambil username dari sesi
+// Ambil unit dari petugas
 $username = $_SESSION['username'];
-
-// Ambil unit dari petugas yang sedang login
 $stmt = $conn->prepare("SELECT unit FROM petugas WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -19,123 +19,105 @@ $stmt->bind_result($unit);
 $stmt->fetch();
 $stmt->close();
 
-// Tentukan kondisi filter berdasarkan unit
-if ($unit == 'Yayasan') {
-    // Yayasan dapat melihat semua calon pendaftar
-    $query = "SELECT * FROM calon_pendaftar ORDER BY id DESC";
-    $stmt = $conn->prepare($query);
+// Query calon pendaftar sesuai unit
+if ($unit === 'Yayasan') {
+    $stmt = $conn->prepare("SELECT * FROM calon_pendaftar ORDER BY id DESC");
 } else {
-    // Petugas SMA atau SMK hanya melihat pendaftar dengan pilihan yang sesuai
-    $query = "SELECT * FROM calon_pendaftar WHERE pilihan = ? ORDER BY id DESC";
-    $stmt = $conn->prepare($query);
+    $stmt = $conn->prepare("SELECT * FROM calon_pendaftar WHERE pilihan = ? ORDER BY id DESC");
     $stmt->bind_param("s", $unit);
 }
-
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 ?>
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review Calon Pendaftar</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #007bff, #6c757d);
-            color: white;
-            font-family: 'Poppins', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Review Calon Pendaftar</title>
 
-        .container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            color: #333;
-        }
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-        h4 {
-            text-align: center;
-            color: #007bff;
-            font-weight: bold;
-        }
+  <!-- Bootstrap & Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-        .table {
-            margin-top: 20px;
-        }
+  <!-- DataTables CSS -->
+  <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
-        .table th {
-            background-color: #007bff;
-            color: white;
-            text-align: center;
-        }
-
-        .table td {
-            text-align: center;
-        }
-
-        .btn-back {
-            background-color: #6c757d;
-            color: white;
-            border-radius: 8px;
-            padding: 10px 20px;
-            text-decoration: none;
-            transition: 0.3s ease;
-        }
-
-        .btn-back:hover {
-            background-color: #5a6268;
-        }
-    </style>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../assets/css/review_calon_pendaftar_styles.css">
 </head>
-
 <body>
-    <div class="container">
-        <h4>Review Calon Pendaftar</h4>
-        <a href="dashboard_pendaftaran.php" class="btn-back mb-3 d-inline-block">Kembali ke Dashboard</a>
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Asal Sekolah</th>
-                    <th>Email</th>
-                    <th>No HP</th>
-                    <th>Alamat</th>
-                    <th>Pilihan Sekolah</th>
-                    <th>Tanggal Daftar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if ($result->num_rows > 0): ?>
-                    <?php $no = 1; ?>
-                    <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($no++) ?></td>
-                            <td><?= htmlspecialchars($row['nama']) ?></td>
-                            <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-                            <td><?= htmlspecialchars($row['email']) ?></td>
-                            <td><?= htmlspecialchars($row['no_hp']) ?></td>
-                            <td><?= htmlspecialchars($row['alamat']) ?></td>
-                            <td><?= htmlspecialchars($row['pilihan']) ?></td>
-                            <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="8" class="text-center">Belum ada data calon pendaftar.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+
+  <div class="container">
+    <h4>Review Calon Pendaftar</h4>
+    <a href="pendaftaran_dashboard.php" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a>
+
+    <div class="table-responsive">
+      <table id="calonTable" class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Asal Sekolah</th>
+            <th>Email</th>
+            <th>No HP</th>
+            <th>Alamat</th>
+            <th>Pilihan</th>
+            <th>Tanggal Daftar</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php $no = 1; while ($row = $result->fetch_assoc()): 
+            // Pilih badge class berdasarkan status
+            switch ($row['status']) {
+              case 'Pending':   $badge = 'badge-pending';   break;
+              case 'Contacted': $badge = 'badge-contacted'; break;
+              case 'Accepted':  $badge = 'badge-accepted';  break;
+              case 'Rejected':  $badge = 'badge-rejected';  break;
+              default:          $badge = 'badge-secondary';
+            }
+          ?>
+          <tr>
+            <td><?= $no++ ?></td>
+            <td><?= htmlspecialchars($row['nama']) ?></td>
+            <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
+            <td><?= htmlspecialchars($row['email']) ?></td>
+            <td><?= htmlspecialchars($row['no_hp']) ?></td>
+            <td><?= htmlspecialchars($row['alamat']) ?></td>
+            <td><?= htmlspecialchars($row['pilihan']) ?></td>
+            <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
+            <td><span class="badge <?= $badge ?>"><?= htmlspecialchars($row['status']) ?></span></td>
+          </tr>
+          <?php endwhile; ?>
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- jQuery, Bootstrap & DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $('#calonTable').DataTable({
+        // Urutkan default berdasarkan Status (kolom ke-8, index dimulai 0)
+        order: [[8, 'asc']],
+        language: {
+          search:       "Cari:",
+          lengthMenu:   "_MENU_ entri per halaman",
+          info:         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+          paginate:     { previous: "Sebelumnya", next: "Berikutnya" }
+        }
+      });
+    });
+  </script>
 </body>
-
 </html>
