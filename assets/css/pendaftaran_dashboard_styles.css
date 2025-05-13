@@ -1,9 +1,9 @@
 /* --------------------------------------------------
-   Theme Variables
+   Variables
 -------------------------------------------------- */
 :root {
-    --color-primary: #4e73df;
-    --color-secondary: #6c757d;
+    --color-primary: #2e59d9;
+    --color-secondary: #858796;
     --color-success: #1cc88a;
     --color-info: #36b9cc;
     --color-warning: #f6c23e;
@@ -11,14 +11,16 @@
     --color-light: #f8f9fc;
     --color-dark: #5a5c69;
 
+    --sidebar-width: 240px;
+    --navbar-height: 56px;
+    --transition: 0.3s;
+    --border-radius: 0.75rem;
     --font-base: 'Poppins', sans-serif;
-    --border-radius: .75rem;
-    --transition-speed: .3s;
 }
 
 /* --------------------------------------------------
-   Global Reset & Body
--------------------------------------------------- */
+     Reset & Body
+  -------------------------------------------------- */
 *,
 *::before,
 *::after {
@@ -28,71 +30,129 @@
 }
 
 body {
-    background-color: var(--color-light);
     font-family: var(--font-base);
-    font-size: .875rem;
+    background: var(--color-light);
     color: var(--color-dark);
-    line-height: 1.5;
+    display: flex;
+    min-height: 100vh;
 }
 
 /* --------------------------------------------------
-   Header
--------------------------------------------------- */
-header {
+     Sidebar
+  -------------------------------------------------- */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100%;
     background: var(--color-primary);
-    color: #fff;
-    padding: 1rem 2rem;
-    box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.1);
+    padding-top: var(--navbar-height);
+    transition: width var(--transition);
+    overflow-y: auto;
 }
 
-header .container-fluid {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header h4 {
+.sidebar .brand {
+    display: block;
+    padding: 1.25rem;
     font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    padding: .75rem 1rem;
+    color: #fff;
+    text-decoration: none;
+    transition: background var(--transition);
+}
+
+.sidebar .nav-link i {
+    margin-right: .75rem;
+    font-size: 1.1rem;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --------------------------------------------------
+     Main Content
+  -------------------------------------------------- */
+.main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    height: var(--navbar-height);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.navbar .toggle-btn {
+    display: none;
+    font-size: 1.25rem;
+    color: var(--color-secondary);
+    background: none;
+    border: none;
+}
+
+.navbar .title {
+    flex: 1;
+    font-size: 1.125rem;
     font-weight: 600;
 }
 
-header small {
-    font-size: .875rem;
-    opacity: .8;
+.navbar .user-menu {
+    display: flex;
+    align-items: center;
 }
 
-header .btn-logout {
-    background: #fff;
-    color: var(--color-primary);
+.navbar .user-menu small {
+    margin-right: 1rem;
+    color: var(--color-secondary);
+}
+
+.navbar .btn-logout {
+    background: var(--color-danger);
+    color: #fff;
     border: none;
     padding: .5rem 1rem;
     border-radius: var(--border-radius);
-    font-size: .875rem;
-    font-weight: 500;
-    transition: background var(--transition-speed), color var(--transition-speed);
+    transition: background var(--transition);
 }
 
-header .btn-logout:hover {
-    background: #e2e6ea;
-}
-
-/* --------------------------------------------------
-   Container & Layout
--------------------------------------------------- */
-.container {
-    max-width: 1200px;
-    margin: 2rem auto;
+.navbar .btn-logout:hover {
+    background: darken(var(--color-danger), 5%);
 }
 
 /* --------------------------------------------------
-   Cards
--------------------------------------------------- */
+     Dashboard Cards
+  -------------------------------------------------- */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
 .card {
     background: #fff;
-    border: none;
     border-radius: var(--border-radius);
     box-shadow: 0 .125rem .375rem rgba(0, 0, 0, 0.1);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: transform var(--transition), box-shadow var(--transition);
+    text-align: center;
+    padding: 1.75rem 1rem;
 }
 
 .card:hover {
@@ -100,121 +160,116 @@ header .btn-logout:hover {
     box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-.card .card-icon {
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 1.5rem;
+.card .icon {
+    font-size: 2rem;
     margin-bottom: 1rem;
 }
 
-.card .text-primary {
+.card .icon.text-primary {
     color: var(--color-primary);
 }
 
-.card .text-success {
+.card .icon.text-success {
     color: var(--color-success);
 }
 
-.card .text-info {
+.card .icon.text-info {
     color: var(--color-info);
 }
 
-.card .text-warning {
+.card .icon.text-warning {
     color: var(--color-warning);
 }
 
-.card .text-danger {
+.card .icon.text-danger {
     color: var(--color-danger);
 }
 
-.card-title {
+.card .title {
     font-size: 1rem;
     font-weight: 600;
 }
 
-.card-count {
-    font-size: 1.75rem;
+.card .count {
+    font-size: 1.5rem;
     font-weight: 700;
     margin: .5rem 0;
 }
 
-.card-footer {
-    background: transparent;
-    border-top: none;
-    font-size: .8rem;
+.card .subtext {
+    font-size: .875rem;
     color: var(--color-secondary);
 }
 
 /* --------------------------------------------------
-   Chart Container
--------------------------------------------------- */
+     Chart Section
+  -------------------------------------------------- */
 .chart-card {
-    padding: 1.5rem;
-    text-align: center;
+    margin: 0 2rem 2rem;
+    background: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 .125rem .375rem rgba(0, 0, 0, 0.1);
+    padding: 2rem;
 }
 
 .chart-card h6 {
     font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 1rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
 }
 
 .chart-container {
-    position: relative;
     width: 100%;
-    max-width: 300px;
-    height: 300px;
+    max-width: 350px;
+    height: 350px;
     margin: 0 auto;
 }
 
 /* --------------------------------------------------
-   Navigation Menu
--------------------------------------------------- */
-.nav-menu {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
+     Modal Table
+  -------------------------------------------------- */
+.modal .modal-header {
+    background: var(--color-primary);
+    color: #fff;
 }
 
-.nav-menu .card {
-    padding: 2rem 1rem;
-    text-align: center;
-}
-
-.nav-menu .btn {
-    margin-top: .75rem;
+.modal .table {
+    font-size: .875rem;
 }
 
 /* --------------------------------------------------
-   Modal Table
--------------------------------------------------- */
-.modal-body {
-    padding: 1rem;
-}
-
-.modal-body .table {
-    font-size: .85rem;
-}
-
-/* --------------------------------------------------
-   Responsive
--------------------------------------------------- */
-@media (max-width: 768px) {
-    header {
-        padding: .75rem 1rem;
+     Responsive
+  -------------------------------------------------- */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 60px;
     }
 
-    .container {
-        margin: 1rem;
+    .sidebar .brand {
+        font-size: 1rem;
     }
 
-    .chart-container {
-        max-width: 200px;
-        height: 200px;
+    .sidebar .nav-link span {
+        display: none;
+    }
+
+    .main {
+        margin-left: 60px;
+        width: calc(100% - 60px);
+    }
+
+    .navbar .toggle-btn {
+        display: block;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar .title {
+        font-size: 1rem;
+    }
+
+    .dashboard-cards {
+        gap: 1rem;
     }
 }
