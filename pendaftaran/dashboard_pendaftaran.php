@@ -10,44 +10,53 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 
 $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 
+// Ambil statistik pembayaran
 function getStats($conn, $unit) {
-    // total pendaftar
+    // Total pendaftar
     $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
-    $stmt->bind_param("s", $unit); $stmt->execute();
-    $total = $stmt->get_result()->fetch_assoc()['total']; $stmt->close();
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $total = $stmt->get_result()->fetch_assoc()['total'];
+    $stmt->close();
 
-    // belum bayar
+    // Belum bayar
     $stmt = $conn->prepare("
         SELECT COUNT(DISTINCT s.id) AS belum
         FROM siswa s
-        LEFT JOIN pembayaran p ON s.id=p.siswa_id
-        LEFT JOIN pembayaran_detail pd ON p.id=pd.pembayaran_id
-        WHERE s.unit=? AND pd.id IS NULL
+        LEFT JOIN pembayaran p ON s.id = p.siswa_id
+        LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
+        WHERE s.unit = ? AND pd.id IS NULL
     ");
-    $stmt->bind_param("s",$unit); $stmt->execute();
-    $belum = $stmt->get_result()->fetch_assoc()['belum']; $stmt->close();
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $belum = $stmt->get_result()->fetch_assoc()['belum'];
+    $stmt->close();
 
-    // lunas & angsuran
+    // Lunas & Angsuran
     $stmt = $conn->prepare("
         SELECT
-          COUNT(DISTINCT CASE WHEN pd.status_pembayaran='Lunas' THEN s.id END) AS lunas,
+          COUNT(DISTINCT CASE WHEN pd.status_pembayaran = 'Lunas' THEN s.id END) AS lunas,
           COUNT(DISTINCT s.id) AS bayar
         FROM siswa s
-        LEFT JOIN pembayaran p ON s.id=p.siswa_id
-        LEFT JOIN pembayaran_detail pd ON p.id=pd.pembayaran_id
-        WHERE s.unit=? AND (pd.status_pembayaran='Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
+        LEFT JOIN pembayaran p ON s.id = p.siswa_id
+        LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
+        WHERE s.unit = ? AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
     ");
-    $stmt->bind_param("s",$unit); $stmt->execute();
-    $row = $stmt->get_result()->fetch_assoc(); $stmt->close();
-
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $row   = $stmt->get_result()->fetch_assoc();
     $lunas = (int)$row['lunas'];
     $bayar = (int)$row['bayar'];
+    $stmt->close();
+
     $angsuran = max(0, $bayar - $lunas);
 
     return [
-      'total'=>$total, 'belum'=>$belum,
-      'lunas'=>$lunas, 'angsuran'=>$angsuran,
-      'bayar'=>$bayar
+      'total'    => $total,
+      'belum'    => $belum,
+      'lunas'    => $lunas,
+      'angsuran' => $angsuran,
+      'bayar'    => $bayar
     ];
 }
 
@@ -80,7 +89,7 @@ $conn->close();
     <a href="review_calon_pendaftar.php" class="nav-link"><i class="fas fa-check-circle"></i><span> Review</span></a>
   </nav>
 
-  <!-- Main -->
+  <!-- Main Area -->
   <div class="main">
     <header class="navbar">
       <button class="toggle-btn"><i class="fas fa-bars"></i></button>
@@ -108,7 +117,7 @@ $conn->close();
           <i class="fas fa-wallet text-warning"></i> <?=$stat['angsuran']?> Angsuran
         </div>
       </div>
-      <div class="card" style="cursor:pointer" onclick="showModal('belum')">
+      <div class="card" onclick="showModal('belum')">
         <div class="icon text-danger"><i class="fas fa-exclamation-circle"></i></div>
         <div class="title">Belum Bayar</div>
         <div class="count"><?=$stat['belum']?></div>
@@ -116,7 +125,7 @@ $conn->close();
       </div>
     </section>
 
-    <!-- Chart -->
+    <!-- Chart Section -->
     <section class="chart-card">
       <h6>Persentase Pembayaran</h6>
       <div class="chart-container">
@@ -150,54 +159,54 @@ $conn->close();
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Sidebar toggle on small screens
+    // Sidebar toggle pada layar kecil
     document.querySelector('.toggle-btn').addEventListener('click', () => {
       document.querySelector('.sidebar').classList.toggle('collapsed');
     });
 
-    // Show modal and fetch data
+    // Tampilkan modal & fetch data
     function showModal(status) {
       const body = document.getElementById('modalBody');
       body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
       fetch(`fetch_siswa.php?status=${status}&unit=<?=urlencode($unit)?>`)
-        .then(r=>r.json())
-        .then(data=>{
-          if(!data.length) {
+        .then(r => r.json())
+        .then(data => {
+          if (!data.length) {
             body.innerHTML = '<tr><td colspan="3" class="text-center">Tidak ada data.</td></tr>';
             return;
           }
-          body.innerHTML = data.map((s,i)=>
+          body.innerHTML = data.map((s,i) =>
             `<tr><td>${i+1}</td><td>${s.nama}</td><td>${s.status_pembayaran}</td></tr>`
           ).join('');
         })
-        .catch(()=>{
+        .catch(() => {
           body.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat.</td></tr>';
         });
-      new bootstrap.Modal('#statusModal').show();
+      new bootstrap.Modal(document.getElementById('statusModal')).show();
     }
 
-    // Chart.js
+    // Chart.js Doughnut dengan hex colors
     const ctx = document.getElementById('chartBayar').getContext('2d');
     new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: ['Sudah Bayar','Belum Bayar'],
         datasets: [{
-          data: [<?=$stat['bayar']?>,<?=$stat['belum']?>],
-          backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--color-success'),
-                            getComputedStyle(document.documentElement).getPropertyValue('--color-danger')],
-          hoverOffset:20
+          data: [<?=$stat['bayar']?>, <?=$stat['belum']?>],
+          backgroundColor: ['#1cc88a','#e74a3b'],
+          hoverOffset: 20
         }]
       },
       options: {
-        responsive:true,
+        responsive: true,
         plugins: {
-          legend:{position:'bottom'},
-          tooltip:{
-            callbacks:{
-              label:ctx=>{
-                const v=ctx.raw, t=ctx.dataset.data.reduce((a,b)=>a+b,0),
-                      p=((v/t)*100).toFixed(1);
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const v = ctx.raw;
+                const t = ctx.dataset.data.reduce((a,b)=>a+b,0);
+                const p = ((v/t)*100).toFixed(1);
                 return `${ctx.label}: ${v} (${p}%)`;
               }
             }
