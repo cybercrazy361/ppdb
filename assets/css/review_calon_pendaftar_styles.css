@@ -92,21 +92,19 @@ h4 {
 
 /* Status Cell Layout */
 .status-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .5rem;
+    text-align: center;
 }
 
 .status-cell .status-badge {
-    white-space: nowrap;
+    display: block;
+    margin: 0 auto;
 }
 
-.status-cell .status-select {
-    width: auto;
-    padding: .25rem .5rem;
-    font-size: .875rem;
-    border-radius: var(--border-radius);
+.status-cell .status-desc {
+    margin-top: .25rem;
+    font-size: .75rem;
+    color: var(--color-secondary);
+    white-space: nowrap;
 }
 
 /* Kembali Button */

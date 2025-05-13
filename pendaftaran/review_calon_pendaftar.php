@@ -3,7 +3,6 @@
 
 session_start();
 include '../database_connection.php';
-header('Content-Type: text/html; charset=utf-8');
 
 // Validasi login petugas pendaftaran
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
@@ -30,6 +29,14 @@ if ($unit === 'Yayasan') {
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
+
+// Mapping keterangan status
+$status_desc = [
+    'Pending'   => 'Menunggu tindak lanjut',
+    'Contacted' => 'Sudah dihubungi',
+    'Accepted'  => 'Calon diterima',
+    'Rejected'  => 'Calon ditolak'
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -82,8 +89,9 @@ $stmt->close();
               'Rejected'  => 'badge-rejected',
               default     => 'badge-secondary'
             };
+            $desc = $status_desc[$row['status']] ?? '';
         ?>
-          <tr data-id="<?= $row['id'] ?>">
+          <tr>
             <td><?= $no++ ?></td>
             <td><?= htmlspecialchars($row['nama']) ?></td>
             <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
@@ -93,14 +101,10 @@ $stmt->close();
             <td><?= htmlspecialchars($row['pilihan']) ?></td>
             <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
             <td class="status-cell">
-              <span class="badge <?= $cls ?> status-badge"><?= htmlspecialchars($row['status']) ?></span>
-              <select class="form-select form-select-sm status-select">
-                <?php foreach (['Pending','Contacted','Accepted','Rejected'] as $st): ?>
-                  <option value="<?= $st ?>" <?= $st === $row['status'] ? 'selected' : '' ?>>
-                    <?= $st ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
+              <span class="badge <?= $cls ?>"><?= htmlspecialchars($row['status']) ?></span>
+              <?php if($desc): ?>
+              <div class="status-desc"><?= htmlspecialchars($desc) ?></div>
+              <?php endif; ?>
             </td>
           </tr>
         <?php endwhile; ?>
@@ -117,7 +121,6 @@ $stmt->close();
 
   <script>
   $(document).ready(function() {
-    // Inisialisasi DataTable
     $('#calonTable').DataTable({
       pageLength: 10,
       lengthMenu: [5, 10, 25, 50],
@@ -128,26 +131,6 @@ $stmt->close();
         info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
         paginate:   { previous: "Sebelumnya", next: "Berikutnya" }
       }
-    });
-
-    // Update status via AJAX
-    $('#calonTable').on('change', '.status-select', function() {
-      const $row   = $(this).closest('tr');
-      const id     = $row.data('id');
-      const status = $(this).val();
-      const $badge = $row.find('.status-badge');
-
-      $.post('update_status.php', { id, status }, function(resp) {
-        if (resp.success) {
-          $badge.text(status)
-                .removeClass('badge-pending badge-contacted badge-accepted badge-rejected')
-                .addClass('badge-' + status.toLowerCase());
-        } else {
-          alert('Gagal mengubah status: ' + (resp.msg || 'Unknown error'));
-        }
-      }, 'json').fail(() => {
-        alert('Request gagal. Coba lagi.');
-      });
     });
   });
   </script>
