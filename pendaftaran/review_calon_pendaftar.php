@@ -55,7 +55,7 @@ $status_list = array_keys($status_desc);
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
   <!-- Custom Responsive CSS -->
-  <link rel="stylesheet" href="../assets/css/review_calon_pendaftar_styles.css">
+  <link rel="stylesheet" href="../assets/css/review_calon_pendaftar_responsive.css">
 </head>
 <body>
 
@@ -72,9 +72,16 @@ $status_list = array_keys($status_desc);
         <table id="calonTable" class="table table-striped table-bordered align-middle">
           <thead>
             <tr>
-              <th>No</th><th>Nama</th><th>Asal Sekolah</th><th>Email</th>
-              <th>No HP</th><th>Alamat</th><th>Pilihan</th>
-              <th>Tanggal Daftar</th><th>Status</th><th>Keterangan</th>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Asal Sekolah</th>
+              <th>Email</th>
+              <th>No HP</th>
+              <th>Alamat</th>
+              <th>Pilihan</th>
+              <th>Tanggal Daftar</th>
+              <th>Status</th>
+              <th>Keterangan</th>
             </tr>
           </thead>
           <tbody>
@@ -96,7 +103,7 @@ $status_list = array_keys($status_desc);
               <td class="text-center">
                 <select class="status-select status-<?= strtolower($current) ?> form-select form-select-sm">
                   <?php foreach ($status_list as $st): ?>
-                  <option value="<?= $st ?>" <?= $st=== $current?'selected':'' ?>>
+                  <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>>
                     <?= $st ?>
                   </option>
                   <?php endforeach; ?>
@@ -127,7 +134,7 @@ $status_list = array_keys($status_desc);
   <script>
   $(function(){
     // Inisialisasi DataTable
-    $('#calonTable').DataTable({
+    const table = $('#calonTable').DataTable({
       pageLength: 10,
       lengthMenu: [5,10,25,50],
       order: [[0,'asc']],
@@ -139,6 +146,10 @@ $status_list = array_keys($status_desc);
       }
     });
 
+    // Styling entries-per-page & search box dengan Bootstrap
+    $('div.dataTables_length select').addClass('form-select form-select-sm');
+    $('div.dataTables_filter input').addClass('form-control form-control-sm');
+
     // Mapping kelas warna
     const classes = {
       'Pending':'status-pending',
@@ -147,34 +158,34 @@ $status_list = array_keys($status_desc);
       'Rejected':'status-rejected'
     };
 
-    // Update status
-    $('#calonTable').on('change','.status-select',function(){
+    // Update status ke server & update warna
+    $('#calonTable').on('change', '.status-select', function(){
       const $sel = $(this),
             $row = $sel.closest('tr'),
             id   = $row.data('id'),
             status = $sel.val();
-      $.post('update_status.php',{id,status},res=>{
+      $.post('update_status.php', {id, status}, function(res){
         if(res.success){
           $sel
             .removeClass('status-pending status-contacted status-accepted status-rejected')
             .addClass(classes[status]);
-        } else alert('Error menyimpan status');
-      },'json').fail(()=>alert('Request gagal'));
+        } else {
+          alert('Error menyimpan status');
+        }
+      }, 'json');
     });
 
-    // Update notes
-    $('#calonTable').on('blur','.desc-input',function(){
+    // Update notes ke server
+    $('#calonTable').on('blur', '.desc-input', function(){
       const $inp = $(this),
             $row = $inp.closest('tr'),
             id   = $row.data('id'),
             notes = $inp.val();
-      $.post('update_status.php',{id,notes},res=>{
+      $.post('update_status.php', {id, notes}, function(res){
         if(!res.success) alert('Error menyimpan keterangan');
-      },'json').fail(()=>alert('Request gagal'));
+      }, 'json');
     });
   });
   </script>
-  
-
 </body>
 </html>
