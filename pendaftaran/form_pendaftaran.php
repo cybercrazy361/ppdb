@@ -130,7 +130,7 @@ function display_errors() {
     </form>
 
     <div class="mt-4 text-center">
-        <a href="pendaftaran_dashboard.php" class="btn btn-outline-secondary">
+        <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
         </a>
     </div>
