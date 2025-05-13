@@ -135,35 +135,45 @@ body {
     border-color: var(--color-primary);
 }
 
-/* DataTables search input styling */
+/* --------------------------------------------
+   DataTables Search & Entries-per-page Styling
+   --------------------------------------------
+   Kita hanya tweak minimal agar hanya muncul
+   satu caret pada entries-per-page. */
+/* Search box */
 .dataTables_wrapper .dataTables_filter input {
     border-radius: 0.25rem;
     border: 1px solid #ddd;
     padding: .25rem .75rem .25rem .5rem;
 }
 
-/* DataTables length menu (entries-per-page) */
+/* Length menu wrapper */
 .dataTables_wrapper .dataTables_length {
     display: flex;
     align-items: center;
     gap: .5rem;
 }
 
-.dataTables_wrapper .dataTables_length select {
+/* Entries-per-page select:
+   kita restore default appearance dan
+   remove bootstrap background-image */
+.dataTables_wrapper .dataTables_length select.form-select {
     appearance: auto;
     -webkit-appearance: auto;
-    width: auto !important;
-    min-width: 4ch;
-    padding: .25rem .75rem .25rem .5rem;
+    -moz-appearance: auto;
+    /* Remove bootstrap’s arrow so only native appears */
+    background-image: none !important;
+    /* Padding standar */
+    padding: .25rem .75rem;
     padding-right: 2rem;
-    /* extra space for caret */
+    /* ruang untuk caret */
     border-radius: 0.25rem;
     border: 1px solid #ddd;
-    background-position: calc(100% - .75rem) center;
-    background-repeat: no-repeat;
+    width: auto !important;
+    min-width: 4ch;
 }
 
-/* DataTables pagination buttons */
+/* Pagination buttons */
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     border-radius: var(--border-radius);
 }
