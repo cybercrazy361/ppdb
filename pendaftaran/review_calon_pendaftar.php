@@ -55,7 +55,7 @@ $status_list = array_keys($status_desc);
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
   <!-- Custom Responsive CSS -->
-  <link rel="stylesheet" href="../assets/css/review_calon_pendaftar_responsive.css">
+  <link rel="stylesheet" href="../assets/css/review_calon_pendaftar.css">
 </head>
 <body>
 
