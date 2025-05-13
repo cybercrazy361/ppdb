@@ -1,85 +1,134 @@
+/* File: assets/css/form_pendaftaran_styles.css */
+
+/* --------------------------------------------------
+   Theme & Reset
+-------------------------------------------------- */
+:root {
+    --color-primary: #2e59d9;
+    --color-secondary: #858796;
+    --color-light: #f8f9fc;
+    --color-dark: #5a5c69;
+    --border-radius: 0.75rem;
+    --transition: 0.3s;
+    --font-base: 'Poppins', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background: linear-gradient(to right, #f0f4ff, #ffffff);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-base);
+    color: var(--color-dark);
+    line-height: 1.5;
 }
 
-/* Menata form payment dengan Flexbox */
-.form-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.form-row .col {
-    flex: 1;
-    padding: 0 10px;
-}
-
-#metode-pembayaran-container {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.form-check-input {
-    margin-right: 5px;
-}
-
+/* --------------------------------------------------
+     Container
+  -------------------------------------------------- */
 .form-container {
     max-width: 800px;
-    background: #ffffff;
-    border-radius: 15px;
-    padding: 30px;
-    margin: auto;
-    transition: transform 0.3s, box-shadow 0.3s;
+    margin: 3rem auto;
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .form-container:hover {
-    transform: scale(1.01);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* --------------------------------------------------
+     Header
+  -------------------------------------------------- */
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .form-header h2 {
-    font-weight: bold;
-    color: #007bff;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-primary);
 }
 
 .form-header p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
+    font-size: 1rem;
+    color: var(--color-secondary);
+}
+
+/* --------------------------------------------------
+     Form Elements
+  -------------------------------------------------- */
+.row.g-3>.col-md-6,
+.row.g-3>.col-12 {
+    margin-bottom: 1rem;
 }
 
 .input-group-text {
-    background: #007bff;
-    color: white;
-    border-radius: 5px 0 0 5px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 .input-group .form-control {
+    border: 1px solid #ddd;
     border-left: none;
-    border-radius: 0 5px 5px 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.form-select {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-control,
+textarea {
+    border-radius: 5px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 textarea {
     resize: none;
-    border-radius: 5px;
 }
 
+/* --------------------------------------------------
+     Buttons
+  -------------------------------------------------- */
 .btn-gradient {
-    background: linear-gradient(45deg, #007bff, #00c6ff);
+    background: linear-gradient(45deg, var(--color-primary), #00c6ff);
+    color: #fff;
     border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
+    padding: .6rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .btn-gradient:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
 }
 
-textarea,
-.form-control {
-    border-radius: 5px;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+.btn-outline-secondary {
+    border-radius: var(--border-radius);
+    padding: .5rem 1.25rem;
+}
+
+/* --------------------------------------------------
+     Misc
+  -------------------------------------------------- */
+.alert {
+    border-radius: var(--border-radius);
 }
