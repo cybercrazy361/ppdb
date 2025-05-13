@@ -3,14 +3,15 @@
 
 session_start();
 include '../database_connection.php';
+header('Content-Type: text/html; charset=utf-8');
 
-// Validasi login petugas pendaftaran
+// 1. Validasi login petugas pendaftaran
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
     header('Location: login_pendaftaran.php');
     exit();
 }
 
-// Ambil unit dari petugas
+// 2. Ambil unit dari petugas
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("SELECT unit FROM petugas WHERE username = ?");
 $stmt->bind_param("s", $username);
@@ -19,7 +20,7 @@ $stmt->bind_result($unit);
 $stmt->fetch();
 $stmt->close();
 
-// Query calon pendaftar sesuai unit
+// 3. Query calon pendaftar sesuai unit
 if ($unit === 'Yayasan') {
     $stmt = $conn->prepare("SELECT * FROM calon_pendaftar ORDER BY id DESC");
 } else {
@@ -30,13 +31,14 @@ $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
-// Mapping keterangan status
+// 4. Mapping keterangan status
 $status_desc = [
     'Pending'   => 'Menunggu tindak lanjut',
     'Contacted' => 'Sudah dihubungi',
     'Accepted'  => 'Calon diterima',
     'Rejected'  => 'Calon ditolak'
 ];
+$status_list = array_keys($status_desc);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -62,7 +64,9 @@ $status_desc = [
 
   <div class="container">
     <h4>Review Calon Pendaftar</h4>
-    <a href="pendaftaran_dashboard.php" class="btn-back mb-3"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a>
+    <a href="pendaftaran_dashboard.php" class="btn-back mb-3">
+      <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+    </a>
 
     <div class="table-responsive">
       <table id="calonTable" class="table table-striped table-bordered align-middle">
@@ -77,21 +81,15 @@ $status_desc = [
             <th>Pilihan</th>
             <th>Tanggal Daftar</th>
             <th>Status</th>
+            <th>Keterangan</th>
           </tr>
         </thead>
         <tbody>
         <?php $no = 1; while ($row = $result->fetch_assoc()):
-            // Pilih badge class
-            $cls = match($row['status']) {
-              'Pending'   => 'badge-pending',
-              'Contacted' => 'badge-contacted',
-              'Accepted'  => 'badge-accepted',
-              'Rejected'  => 'badge-rejected',
-              default     => 'badge-secondary'
-            };
-            $desc = $status_desc[$row['status']] ?? '';
+            $current = $row['status'];
+            $desc    = $status_desc[$current] ?? '';
         ?>
-          <tr>
+          <tr data-id="<?= $row['id'] ?>">
             <td><?= $no++ ?></td>
             <td><?= htmlspecialchars($row['nama']) ?></td>
             <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
@@ -100,12 +98,20 @@ $status_desc = [
             <td><?= htmlspecialchars($row['alamat']) ?></td>
             <td><?= htmlspecialchars($row['pilihan']) ?></td>
             <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
-            <td class="status-cell">
-              <span class="badge <?= $cls ?>"><?= htmlspecialchars($row['status']) ?></span>
-              <?php if($desc): ?>
-              <div class="status-desc"><?= htmlspecialchars($desc) ?></div>
-              <?php endif; ?>
+
+            <!-- Status (dropdown) -->
+            <td class="text-center">
+              <select class="status-select form-select form-select-sm">
+                <?php foreach ($status_list as $st): ?>
+                  <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>>
+                    <?= $st ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
             </td>
+
+            <!-- Keterangan -->
+            <td class="status-desc"><?= htmlspecialchars($desc) ?></td>
           </tr>
         <?php endwhile; ?>
         </tbody>
@@ -121,7 +127,8 @@ $status_desc = [
 
   <script>
   $(document).ready(function() {
-    $('#calonTable').DataTable({
+    // Inisialisasi DataTable
+    const table = $('#calonTable').DataTable({
       pageLength: 10,
       lengthMenu: [5, 10, 25, 50],
       order: [[0, 'asc']],
@@ -131,6 +138,33 @@ $status_desc = [
         info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
         paginate:   { previous: "Sebelumnya", next: "Berikutnya" }
       }
+    });
+
+    // Mapping deskripsi di front-end
+    const statusDesc = {
+      'Pending':   'Menunggu tindak lanjut',
+      'Contacted': 'Sudah dihubungi',
+      'Accepted':  'Calon diterima',
+      'Rejected':  'Calon ditolak'
+    };
+
+    // Update status via AJAX & keterangan
+    $('#calonTable').on('change', '.status-select', function() {
+      const $row   = $(this).closest('tr');
+      const id     = $row.data('id');
+      const status = $(this).val();
+      const $desc  = $row.find('.status-desc');
+
+      $.post('update_status.php', { id, status }, function(resp) {
+        if (resp.success) {
+          // Perbarui keterangan
+          $desc.text(statusDesc[status] || '');
+        } else {
+          alert('Gagal mengubah status: ' + (resp.msg || 'Unknown error'));
+        }
+      }, 'json').fail(() => {
+        alert('Request gagal. Silakan coba lagi.');
+      });
     });
   });
   </script>
