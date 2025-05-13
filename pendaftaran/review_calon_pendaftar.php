@@ -1,5 +1,6 @@
 <?php
 // File: review_calon_pendaftar.php
+
 session_start();
 include '../database_connection.php';
 
@@ -18,25 +19,19 @@ $stmt->bind_result($unit);
 $stmt->fetch();
 $stmt->close();
 
-// 3) Query calon pendaftar berdasarkan unit
+// 3) Query calon_pendaftar (termasuk kolom notes)
 if ($unit === 'Yayasan') {
-    $stmt = $conn->prepare("SELECT * FROM calon_pendaftar ORDER BY id DESC");
+    $stmt = $conn->prepare("SELECT id,nama,asal_sekolah,email,no_hp,alamat,pilihan,tanggal_daftar,status,notes FROM calon_pendaftar ORDER BY id DESC");
 } else {
-    $stmt = $conn->prepare("SELECT * FROM calon_pendaftar WHERE pilihan = ? ORDER BY id DESC");
+    $stmt = $conn->prepare("SELECT id,nama,asal_sekolah,email,no_hp,alamat,pilihan,tanggal_daftar,status,notes FROM calon_pendaftar WHERE pilihan = ? ORDER BY id DESC");
     $stmt->bind_param("s", $unit);
 }
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
-// 4) Mapping status → keterangan
-$status_desc = [
-    'Pending'   => 'Menunggu tindak lanjut',
-    'Contacted' => 'Sudah dihubungi',
-    'Accepted'  => 'Calon diterima',
-    'Rejected'  => 'Calon ditolak'
-];
-$status_list = array_keys($status_desc);
+// Daftar status yang diperbolehkan
+$status_list = ['Pending','Contacted','Accepted','Rejected'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -45,16 +40,11 @@ $status_list = array_keys($status_desc);
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Review Calon Pendaftar</title>
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts, Bootstrap, FontAwesome, DataTables CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Bootstrap & FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
-  <!-- DataTables CSS -->
   <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-
   <!-- Custom CSS -->
   <link rel="stylesheet" href="../assets/css/review_calon_pendaftar_styles.css">
 </head>
@@ -70,22 +60,16 @@ $status_list = array_keys($status_desc);
     <table id="calonTable" class="table table-striped table-bordered align-middle">
       <thead>
         <tr>
-          <th>No</th>
-          <th>Nama</th>
-          <th>Asal Sekolah</th>
-          <th>Email</th>
-          <th>No HP</th>
-          <th>Alamat</th>
-          <th>Pilihan</th>
-          <th>Tanggal Daftar</th>
-          <th>Status</th>
-          <th>Keterangan</th>
+          <th>No</th><th>Nama</th><th>Asal Sekolah</th><th>Email</th>
+          <th>No HP</th><th>Alamat</th><th>Pilihan</th>
+          <th>Tanggal Daftar</th><th>Status</th><th>Keterangan</th>
         </tr>
       </thead>
       <tbody>
       <?php $no = 1; while ($row = $result->fetch_assoc()):
+          // Ambil nilai awal dari DB
           $current = $row['status'];
-          $desc    = $status_desc[$current] ?? '';
+          $notes   = $row['notes'];
       ?>
         <tr data-id="<?= $row['id'] ?>">
           <td><?= $no++ ?></td>
@@ -97,7 +81,7 @@ $status_list = array_keys($status_desc);
           <td><?= htmlspecialchars($row['pilihan']) ?></td>
           <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
 
-          <!-- Status: dropdown berwarna -->
+          <!-- Dropdown Status -->
           <td class="text-center">
             <select class="status-select status-<?= strtolower($current) ?> form-select form-select-sm">
               <?php foreach ($status_list as $st): ?>
@@ -108,11 +92,11 @@ $status_list = array_keys($status_desc);
             </select>
           </td>
 
-          <!-- Keterangan: input inline -->
+          <!-- Input Keterangan/Notes -->
           <td>
             <input type="text"
                    class="desc-input"
-                   value="<?= htmlspecialchars($desc) ?>"
+                   value="<?= htmlspecialchars($notes) ?>"
                    placeholder="Keterangan..." />
           </td>
         </tr>
@@ -122,7 +106,7 @@ $status_list = array_keys($status_desc);
   </div>
 </div>
 
-<!-- jQuery, Bootstrap & DataTables JS -->
+<!-- JS Libraries -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -131,10 +115,10 @@ $status_list = array_keys($status_desc);
 <script>
 $(document).ready(function() {
   // Inisialisasi DataTable
-  const table = $('#calonTable').DataTable({
+  $('#calonTable').DataTable({
     pageLength: 10,
-    lengthMenu: [5, 10, 25, 50],
-    order: [[0, 'asc']],
+    lengthMenu: [5,10,25,50],
+    order: [[0,'asc']],
     language: {
       search:     "Cari:",
       lengthMenu: "_MENU_ entri per halaman",
@@ -143,49 +127,48 @@ $(document).ready(function() {
     }
   });
 
-  // Mapping client‐side keterangan
-  const statusDesc = {
-    'Pending':   'Menunggu tindak lanjut',
-    'Contacted': 'Sudah dihubungi',
-    'Accepted':  'Calon diterima',
-    'Rejected':  'Calon ditolak'
+  // Mapping warna untuk dropdown
+  const statusClasses = {
+    'Pending':   'status-pending',
+    'Contacted': 'status-contacted',
+    'Accepted':  'status-accepted',
+    'Rejected':  'status-rejected'
   };
 
-  // Update status + keterangan via AJAX
+  // Update status + notes via AJAX
   $('#calonTable').on('change', '.status-select', function() {
-    const $row   = $(this).closest('tr');
-    const id     = $row.data('id');
-    const status = $(this).val();
-    const $select = $(this);
+    const $sel = $(this);
+    const $row = $sel.closest('tr');
+    const id   = $row.data('id');
+    const status = $sel.val();
 
     $.post('update_status.php', { id, status }, function(resp) {
       if (resp.success) {
-        // set class warna dropdown
-        $select
+        // Update kelas warna
+        $sel
           .removeClass('status-pending status-contacted status-accepted status-rejected')
-          .addClass('status-' + status.toLowerCase());
-        // update keterangan input
-        $row.find('.desc-input').val(statusDesc[status] || '');
+          .addClass(statusClasses[status] || '');
       } else {
-        alert('Gagal mengubah status: ' + (resp.msg || 'Error'));
+        alert('Gagal menyimpan status: ' + (resp.msg||''));
       }
     }, 'json').fail(() => {
-      alert('Request gagal, periksa koneksi.');
+      alert('Request gagal.');
     });
   });
 
-  // Update keterangan via AJAX on blur
+  // Update notes via AJAX
   $('#calonTable').on('blur', '.desc-input', function() {
-    const $row = $(this).closest('tr');
+    const $inp = $(this);
+    const $row = $inp.closest('tr');
     const id   = $row.data('id');
-    const desc = $(this).val();
+    const notes = $inp.val();
 
-    $.post('update_status.php', { id, desc }, function(resp) {
+    $.post('update_status.php', { id, notes }, function(resp) {
       if (!resp.success) {
-        alert('Gagal memperbarui keterangan');
+        alert('Gagal menyimpan keterangan.');
       }
     }, 'json').fail(() => {
-      alert('Request gagal, periksa koneksi.');
+      alert('Request gagal.');
     });
   });
 });
