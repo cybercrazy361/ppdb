@@ -73,7 +73,7 @@ $conn->close();
   <!-- Sidebar -->
   <nav class="sidebar">
     <div class="brand">PPDB <?=htmlspecialchars($unit)?></div>
-    <a href="pendaftaran_dashboard.php" class="nav-link"><i class="fas fa-tachometer-alt"></i><span> Dashboard</span></a>
+    <a href="dashboard_pendaftaran.php" class="nav-link"><i class="fas fa-tachometer-alt"></i><span> Dashboard</span></a>
     <a href="form_pendaftaran.php"      class="nav-link"><i class="fas fa-user-plus"></i><span> Input</span></a>
     <a href="daftar_siswa.php"          class="nav-link"><i class="fas fa-users"></i><span> Daftar</span></a>
     <a href="cetak_laporan_pendaftaran.php" class="nav-link"><i class="fas fa-file-alt"></i><span> Cetak</span></a>
