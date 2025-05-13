@@ -6,8 +6,8 @@
     --clr-white: #ffffff;
     --clr-primary: #4a00e0;
     --clr-secondary: #8e2de2;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --font: 'Inter', sans-serif;
+    --clr-shadow: rgba(0, 0, 0, 0.1);
+    --font-family: 'Inter', sans-serif;
 }
 
 * {
@@ -17,15 +17,11 @@
 }
 
 body {
-    font-family: var(--font);
+    font-family: var(--font-family);
     background: var(--clr-bg);
     color: #333;
     padding-top: 60px;
-    /* space for fixed header */
-}
-
-a {
-    text-decoration: none;
+    /* untuk header fixed */
 }
 
 /* 2. Header */
@@ -41,7 +37,7 @@ a {
     align-items: center;
     padding: 0 1rem;
     color: var(--clr-white);
-    box-shadow: 0 2px 8px var(--shadow);
+    box-shadow: 0 2px 8px var(--clr-shadow);
     z-index: 1000;
 }
 
@@ -67,11 +63,11 @@ a {
     padding: 1rem;
 }
 
-/* 4. Statistik Grid */
+/* 4. Statistics Grid */
 .stats-grid {
     display: grid;
-    gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -80,13 +76,13 @@ a {
     border-radius: 8px;
     padding: 1.5rem;
     text-align: center;
-    box-shadow: 0 4px 12px var(--shadow);
+    box-shadow: 0 4px 12px var(--clr-shadow);
     transition: transform .3s, box-shadow .3s;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 24px var(--shadow);
+    box-shadow: 0 8px 24px var(--clr-shadow);
 }
 
 .stat-icon {
@@ -96,9 +92,9 @@ a {
 
 .stat-label {
     font-size: .9rem;
+    color: #666;
     margin-bottom: .25rem;
     text-transform: uppercase;
-    color: #666;
 }
 
 .stat-value {
@@ -108,9 +104,9 @@ a {
 
 /* 5. Chart Section */
 .chart-section {
-    margin-bottom: 2rem;
     display: flex;
     justify-content: center;
+    margin-bottom: 2rem;
 }
 
 .chart-card {
@@ -119,17 +115,14 @@ a {
     background: var(--clr-white);
     padding: 1rem;
     border-radius: 8px;
-    box-shadow: 0 4px 12px var(--shadow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow: 0 4px 12px var(--clr-shadow);
 }
 
 /* 6. Actions Grid */
 .actions-grid {
     display: grid;
-    gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -138,7 +131,7 @@ a {
     border-radius: 8px;
     padding: 1.25rem;
     text-align: center;
-    box-shadow: 0 4px 12px var(--shadow);
+    box-shadow: 0 4px 12px var(--clr-shadow);
     transition: transform .3s, box-shadow .3s;
     display: flex;
     flex-direction: column;
@@ -147,7 +140,7 @@ a {
 
 .action-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--shadow);
+    box-shadow: 0 8px 24px var(--clr-shadow);
 }
 
 .action-card i {
@@ -156,41 +149,13 @@ a {
 }
 
 .action-card span {
-    margin-top: .25rem;
     font-size: .95rem;
     font-weight: 500;
 }
 
-/* 7. Modal Table */
-.modal-content {
-    border-radius: 8px;
-    overflow: hidden;
-}
+/* 7. Modal styles omitted (tidak digunakan di layout ini) */
 
-.modal-header {
-    background: var(--clr-primary);
-    color: var(--clr-white);
-}
-
-.modal-body {
-    padding: 1rem;
-}
-
-.table th,
-.table td {
-    font-size: .85rem;
-    padding: .5rem;
-}
-
-/* 8. Footer (if needed) */
-footer {
-    text-align: center;
-    padding: 1rem;
-    color: #777;
-    font-size: .85rem;
-}
-
-/* 9. Responsive Tweaks */
+/* 8. Responsive */
 @media (max-width: 768px) {
     .chart-card {
         width: 240px;

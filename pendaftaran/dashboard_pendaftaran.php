@@ -8,47 +8,72 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
     exit();
 }
 
-$unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
+$unit = $_SESSION['unit']; // ’SMA’ atau ’SMK’
 
-// Hitung statistik pembayaran
-function getStats($conn, $unit) {
-    $q = $conn->prepare("
-        SELECT
-          SUM(s1.total)                 AS total_siswa,
-          SUM(CASE WHEN pd.id IS NULL THEN 1 ELSE 0 END) AS belum_bayar,
-          SUM(CASE WHEN pd.status_pembayaran = 'Lunas' THEN 1 ELSE 0 END) AS lunas,
-          SUM(CASE WHEN pd.status_pembayaran LIKE 'Angsuran%' THEN 1 ELSE 0 END) AS angsuran
-        FROM (
-          SELECT s.id, 1 AS total
-          FROM siswa s WHERE s.unit = ?
-        ) s1
-        LEFT JOIN pembayaran p  ON s1.id = p.siswa_id
-        LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-    ");
-    $q->bind_param("s", $unit);
-    $q->execute();
-    $r = $q->get_result()->fetch_assoc();
-    $q->close();
+// Fungsi asli menghitung status pembayaran per unit
+function getStatusPembayaranCounts($conn, $unit) {
+    // Total Siswa di unit tersebut
+    $sqlTotal = "SELECT COUNT(*) AS total FROM siswa WHERE unit = ?";
+    $stmt = $conn->prepare($sqlTotal);
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $total = (int)$stmt->get_result()->fetch_assoc()['total'];
+    $stmt->close();
 
-    $total = (int)$r['total_siswa'];
-    $belum = (int)$r['belum_bayar'];
-    $lunas = (int)$r['lunas'];
-    $angsuran = (int)$r['angsuran'];
-    $sudah  = $lunas + $angsuran;
+    // Belum Bayar: siswa tanpa detail pembayaran sama sekali
+    $sqlBelum = "
+      SELECT COUNT(DISTINCT s.id) AS belum
+      FROM siswa s
+      LEFT JOIN pembayaran p ON s.id = p.siswa_id
+      LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
+      WHERE s.unit = ? AND pd.id IS NULL
+    ";
+    $stmt = $conn->prepare($sqlBelum);
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $belum = (int)$stmt->get_result()->fetch_assoc()['belum'];
+    $stmt->close();
 
-    return compact('total','belum','lunas','angsuran','sudah');
+    // Sudah Bayar Lunas & Angsuran
+    $sqlSudah = "
+      SELECT
+        COUNT(DISTINCT CASE WHEN pd.status_pembayaran = 'Lunas' THEN s.id END) AS lunas,
+        COUNT(DISTINCT CASE WHEN pd.status_pembayaran LIKE 'Angsuran%' THEN CONCAT(s.id,'-',pd.angsuran_ke) END) AS angsuran,
+        COUNT(DISTINCT s.id) AS total_sudah
+      FROM siswa s
+      LEFT JOIN pembayaran p ON s.id = p.siswa_id
+      LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
+      WHERE s.unit = ?
+        AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
+    ";
+    $stmt = $conn->prepare($sqlSudah);
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $lunas     = (int)$row['lunas'];
+    $angsuran  = (int)$row['angsuran'];
+    $totalSudah= (int)$row['total_sudah'];
+    $stmt->close();
+
+    return [
+      'total'    => $total,
+      'belum'    => $belum,
+      'lunas'    => $lunas,
+      'angsuran' => $angsuran,
+      'sudah'    => $totalSudah
+    ];
 }
 
-$st = getStats($conn, $unit);
+$stats = getStatusPembayaranCounts($conn, $unit);
 $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard <?= htmlspecialchars($unit) ?> - PPDB Online</title>
-  <!-- Bootstrap & Icons -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard <?= htmlspecialchars($unit) ?> – PPDB Online</title>
+  <!-- Bootstrap & FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <!-- Google Font -->
@@ -58,12 +83,13 @@ $conn->close();
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-  <!-- HEADER -->
+  <!-- HEADER FIXED -->
   <header class="header">
     <div class="header-brand">
-      <i class="fas fa-graduation-cap me-2"></i>
+      <i class="fas fa-school me-2"></i>
       <span>Dashboard <?= htmlspecialchars($unit) ?></span>
     </div>
     <div class="header-user">
@@ -74,38 +100,38 @@ $conn->close();
 
   <main class="main-container">
 
-    <!-- STATISTIK GRID -->
+    <!-- STATISTICS GRID -->
     <section class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon text-primary"><i class="fas fa-users"></i></div>
+        <div class="stat-icon text-primary"><i class="fas fa-user-graduate"></i></div>
         <div class="stat-label">Total Siswa</div>
-        <div class="stat-value"><?= $st['total'] ?></div>
+        <div class="stat-value"><?= $stats['total'] ?></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon text-danger"><i class="fas fa-times-circle"></i></div>
         <div class="stat-label">Belum Bayar</div>
-        <div class="stat-value"><?= $st['belum'] ?></div>
+        <div class="stat-value"><?= $stats['belum'] ?></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon text-success"><i class="fas fa-check-circle"></i></div>
         <div class="stat-label">Lunas</div>
-        <div class="stat-value"><?= $st['lunas'] ?></div>
+        <div class="stat-value"><?= $stats['lunas'] ?></div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon text-warning"><i class="fas fa-hand-holding-usd"></i></div>
+        <div class="stat-icon text-warning"><i class="fas fa-coins"></i></div>
         <div class="stat-label">Angsuran</div>
-        <div class="stat-value"><?= $st['angsuran'] ?></div>
+        <div class="stat-value"><?= $stats['angsuran'] ?></div>
       </div>
     </section>
 
-    <!-- CHART SECTION -->
+    <!-- PAYMENT CHART -->
     <section class="chart-section">
       <div class="chart-card">
         <canvas id="chartPembayaran"></canvas>
       </div>
     </section>
 
-    <!-- ACTIONS GRID -->
+    <!-- ACTION CARDS -->
     <section class="actions-grid">
       <a href="form_pendaftaran.php" class="action-card text-primary">
         <i class="fas fa-user-plus"></i>
@@ -116,7 +142,7 @@ $conn->close();
         <span>Daftar Siswa</span>
       </a>
       <a href="cetak_laporan_pendaftaran.php" class="action-card text-warning">
-        <i class="fas fa-print"></i>
+        <i class="fas fa-file-invoice"></i>
         <span>Cetak Laporan</span>
       </a>
       <a href="review_calon_pendaftar.php" class="action-card text-success">
@@ -127,54 +153,21 @@ $conn->close();
 
   </main>
 
-  <!-- Modal Daftar -->
-  <div class="modal fade" id="modalDaftar" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title">Daftar Siswa</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <table class="table table-striped mb-0">
-            <thead>
-              <tr><th>No</th><th>Nama</th><th>Status</th></tr>
-            </thead>
-            <tbody id="modalBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Chart & Modal Script -->
+  <!-- CHART SCRIPT -->
   <script>
-    // Chart Pembayaran
-    const ctx = document.getElementById('chartPembayaran').getContext('2d');
-    new Chart(ctx, {
+    new Chart(document.getElementById('chartPembayaran'), {
       type: 'doughnut',
       data: {
         labels: ['Lunas','Angsuran','Belum Bayar'],
-        datasets: [{
-          data: [<?= $st['lunas'] ?>,<?= $st['angsuran'] ?>,<?= $st['belum'] ?>],
-          backgroundColor: ['#28a745','#ffc107','#dc3545']
+        datasets:[{
+          data: [<?= $stats['lunas'] ?>,<?= $stats['angsuran'] ?>,<?= $stats['belum'] ?>],
+          backgroundColor:['#28a745','#ffc107','#dc3545']
         }]
       },
-      options: { responsive: true, plugins: { legend:{position:'bottom'} } }
+      options:{responsive:true,plugins:{legend:{position:'bottom'}}}
     });
-
-    // Example: open modal (you can wire to a button)
-    function openDaftar(status) {
-      fetch(`fetch_siswa.php?status=${status}&unit=<?= urlencode($unit) ?>`)
-        .then(r=>r.json()).then(data=>{
-          const body = document.getElementById('modalBody');
-          body.innerHTML = data.length
-            ? data.map((s,i)=>`<tr><td>${i+1}</td><td>${s.nama}</td><td>${s.status_pembayaran}</td></tr>`).join('')
-            : `<tr><td colspan="3" class="text-center">Tidak ada data</td></tr>`;
-          new bootstrap.Modal('#modalDaftar').show();
-        });
-    }
   </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
