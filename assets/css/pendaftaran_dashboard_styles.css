@@ -1,158 +1,207 @@
 /* assets/css/pendaftaran_dashboard_styles.css */
 
-/* 1. Global & Reset */
-*,
-*::before,
-*::after {
+/* 1. Theme & Reset */
+:root {
+    --clr-bg: #f4f6f9;
+    --clr-white: #ffffff;
+    --clr-primary: #4a00e0;
+    --clr-secondary: #8e2de2;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --font: 'Inter', sans-serif;
+}
+
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background: #f9f9f9;
+    font-family: var(--font);
+    background: var(--clr-bg);
     color: #333;
-    font-size: 0.875rem;
-    line-height: 1.4;
+    padding-top: 60px;
+    /* space for fixed header */
+}
+
+a {
+    text-decoration: none;
 }
 
 /* 2. Header */
-.page-header {
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(90deg, var(--clr-primary), var(--clr-secondary));
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #591198;
-    color: #fff;
-    padding: 0.5rem 1rem;
+    padding: 0 1rem;
+    color: var(--clr-white);
+    box-shadow: 0 2px 8px var(--shadow);
+    z-index: 1000;
 }
 
-.page-header h4 {
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
-}
-
-.page-header small {
-    font-size: 0.75rem;
-}
-
-.page-header .btn {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-}
-
-/* 3. Statistik & Navigasi Wrappers */
-.statistik,
-.navigasi {
-    margin-top: 1rem;
-}
-
-.statistik .card,
-.navigasi .card {
-    border: none;
-    border-radius: 6px;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.statistik .card:hover,
-.navigasi .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* 4. Card Content */
-.card-body i {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.card-title {
-    font-size: 1rem;
+.header-brand {
+    font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: 0.25rem;
 }
 
-.card-count {
-    font-size: 1.5rem;
+.header-user {
+    display: flex;
+    align-items: center;
+}
+
+.header-user .btn {
+    margin-left: 1rem;
+    font-size: .85rem;
+}
+
+/* 3. Main Container */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* 4. Statistik Grid */
+.stats-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--clr-white);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: transform .3s, box-shadow .3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px var(--shadow);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: .5rem;
+}
+
+.stat-label {
+    font-size: .9rem;
+    margin-bottom: .25rem;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.stat-value {
+    font-size: 2.25rem;
     font-weight: 700;
 }
 
-.card-footer small {
-    font-size: 0.75rem;
+/* 5. Chart Section */
+.chart-section {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
 }
 
-/* 5. Chart Container */
-.chart-container {
-    max-width: 220px;
-    max-height: 220px;
-    margin: 0 auto;
+.chart-card {
+    width: 300px;
+    height: 300px;
+    background: var(--clr-white);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* 6. Buttons */
-.btn-primary,
-.btn-info,
-.btn-warning,
-.btn-success {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
+/* 6. Actions Grid */
+.actions-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-bottom: 2rem;
 }
 
-/* 7. Modal */
+.action-card {
+    background: var(--clr-white);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: transform .3s, box-shadow .3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--shadow);
+}
+
+.action-card i {
+    font-size: 1.75rem;
+    margin-bottom: .5rem;
+}
+
+.action-card span {
+    margin-top: .25rem;
+    font-size: .95rem;
+    font-weight: 500;
+}
+
+/* 7. Modal Table */
+.modal-content {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
 .modal-header {
-    background: #007bff;
-    color: #fff;
-    padding: 0.5rem 1rem;
-}
-
-.modal-title {
-    font-size: 1rem;
-    font-weight: 600;
+    background: var(--clr-primary);
+    color: var(--clr-white);
 }
 
 .modal-body {
-    padding: 0.5rem 1rem;
+    padding: 1rem;
 }
 
 .table th,
 .table td {
-    padding: 0.5rem;
-    font-size: 0.75rem;
+    font-size: .85rem;
+    padding: .5rem;
 }
 
-/* 8. Footer Social Icons */
-.social-icon {
-    font-size: 1.25rem;
-    margin: 0 0.5rem;
-    transition: transform 0.2s, color 0.2s;
+/* 8. Footer (if needed) */
+footer {
+    text-align: center;
+    padding: 1rem;
+    color: #777;
+    font-size: .85rem;
 }
 
-.social-icon:hover {
-    transform: scale(1.2);
-    color: #591198;
-}
-
-/* 9. Responsive */
-@media (max-width: 992px) {
-
-    .statistik .col-md-4,
-    .navigasi .col-md-3 {
-        flex: 1 1 calc(50% - 1rem);
-    }
-}
-
+/* 9. Responsive Tweaks */
 @media (max-width: 768px) {
-    body {
-        font-size: 0.8rem;
+    .chart-card {
+        width: 240px;
+        height: 240px;
     }
 
-    .statistik .col-md-4,
-    .navigasi .col-md-3 {
-        flex: 1 1 100%;
+    .stat-card {
+        padding: 1rem;
     }
 
-    .chart-container {
-        max-width: 160px;
-        max-height: 160px;
+    .action-card {
+        padding: 1rem;
     }
 }
