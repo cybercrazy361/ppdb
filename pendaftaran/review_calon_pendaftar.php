@@ -55,7 +55,7 @@ $stmt->close();
 
   <div class="container">
     <h4>Review Calon Pendaftar</h4>
-    <a href="pendaftaran_dashboard.php" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a>
+    <a href="pendaftaran_dashboard.php" class="btn-back mb-3"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a>
 
     <div class="table-responsive">
       <table id="calonTable" class="table table-striped table-bordered align-middle">
@@ -74,7 +74,7 @@ $stmt->close();
         </thead>
         <tbody>
         <?php $no = 1; while ($row = $result->fetch_assoc()):
-            // Badge class awal
+            // Pilih badge class
             $cls = match($row['status']) {
               'Pending'   => 'badge-pending',
               'Contacted' => 'badge-contacted',
@@ -92,9 +92,9 @@ $stmt->close();
             <td><?= htmlspecialchars($row['alamat']) ?></td>
             <td><?= htmlspecialchars($row['pilihan']) ?></td>
             <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
-            <td>
+            <td class="status-cell">
               <span class="badge <?= $cls ?> status-badge"><?= htmlspecialchars($row['status']) ?></span>
-              <select class="status-select form-select form-select-sm mt-1">
+              <select class="form-select form-select-sm status-select">
                 <?php foreach (['Pending','Contacted','Accepted','Rejected'] as $st): ?>
                   <option value="<?= $st ?>" <?= $st === $row['status'] ? 'selected' : '' ?>>
                     <?= $st ?>
@@ -117,11 +117,11 @@ $stmt->close();
 
   <script>
   $(document).ready(function() {
-    // Inisialisasi DataTable dengan paging
-    const table = $('#calonTable').DataTable({
+    // Inisialisasi DataTable
+    $('#calonTable').DataTable({
       pageLength: 10,
-      lengthMenu: [ 5, 10, 25, 50 ],
-      order: [[0,'asc']],
+      lengthMenu: [5, 10, 25, 50],
+      order: [[0, 'asc']],
       language: {
         search:     "Cari:",
         lengthMenu: "_MENU_ entri per halaman",
@@ -130,16 +130,15 @@ $stmt->close();
       }
     });
 
-    // Event onchange pada dropdown status
+    // Update status via AJAX
     $('#calonTable').on('change', '.status-select', function() {
-      const $row = $(this).closest('tr');
-      const id      = $row.data('id');
-      const status  = $(this).val();
-      const $badge  = $row.find('.status-badge');
+      const $row   = $(this).closest('tr');
+      const id     = $row.data('id');
+      const status = $(this).val();
+      const $badge = $row.find('.status-badge');
 
       $.post('update_status.php', { id, status }, function(resp) {
         if (resp.success) {
-          // Update badge teks & kelas warna
           $badge.text(status)
                 .removeClass('badge-pending badge-contacted badge-accepted badge-rejected')
                 .addClass('badge-' + status.toLowerCase());
@@ -147,7 +146,7 @@ $stmt->close();
           alert('Gagal mengubah status: ' + (resp.msg || 'Unknown error'));
         }
       }, 'json').fail(() => {
-        alert('Request gagal. Periksa koneksi atau coba lagi.');
+        alert('Request gagal. Coba lagi.');
       });
     });
   });
