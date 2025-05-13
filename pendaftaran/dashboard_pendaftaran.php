@@ -2,17 +2,17 @@
 session_start();
 include '../database_connection.php';
 
-// Pastikan user terlogin sebagai petugas pendaftaran
+// Pastikan pengguna sudah login sebagai petugas pendaftaran
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
     header('Location: login_pendaftaran.php');
     exit();
 }
 
-$unit = $_SESSION['unit']; // ’SMA’ atau ’SMK’
+$unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 
 // Fungsi asli menghitung status pembayaran per unit
 function getStatusPembayaranCounts($conn, $unit) {
-    // Total Siswa di unit tersebut
+    // Total Siswa
     $sqlTotal = "SELECT COUNT(*) AS total FROM siswa WHERE unit = ?";
     $stmt = $conn->prepare($sqlTotal);
     $stmt->bind_param("s", $unit);
@@ -71,7 +71,7 @@ $conn->close();
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard <?= htmlspecialchars($unit) ?> – PPDB Online</title>
   <!-- Bootstrap & FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -83,44 +83,43 @@ $conn->close();
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
 
-  <!-- HEADER FIXED -->
-  <header class="header">
-    <div class="header-brand">
-      <i class="fas fa-school me-2"></i>
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="brand">
+      <i class="fas fa-graduation-cap"></i>
       <span>Dashboard <?= htmlspecialchars($unit) ?></span>
     </div>
-    <div class="header-user">
+    <div class="user-info">
       <span>Hai, <?= htmlspecialchars($_SESSION['nama']) ?></span>
-      <a href="../logout/logout_pendaftaran.php" class="btn btn-sm btn-light ms-3">Logout</a>
+      <a href="../logout/logout_pendaftaran.php" class="btn btn-light btn-sm">Logout</a>
     </div>
   </header>
 
-  <main class="main-container">
+  <main class="container dashboard-main">
 
     <!-- STATISTICS GRID -->
     <section class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon text-primary"><i class="fas fa-user-graduate"></i></div>
-        <div class="stat-label">Total Siswa</div>
-        <div class="stat-value"><?= $stats['total'] ?></div>
+        <div class="icon text-primary"><i class="fas fa-users"></i></div>
+        <div class="label">Total Siswa</div>
+        <div class="value"><?= $stats['total'] ?></div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon text-danger"><i class="fas fa-times-circle"></i></div>
-        <div class="stat-label">Belum Bayar</div>
-        <div class="stat-value"><?= $stats['belum'] ?></div>
+        <div class="icon text-danger"><i class="fas fa-times-circle"></i></div>
+        <div class="label">Belum Bayar</div>
+        <div class="value"><?= $stats['belum'] ?></div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon text-success"><i class="fas fa-check-circle"></i></div>
-        <div class="stat-label">Lunas</div>
-        <div class="stat-value"><?= $stats['lunas'] ?></div>
+        <div class="icon text-success"><i class="fas fa-check-circle"></i></div>
+        <div class="label">Lunas</div>
+        <div class="value"><?= $stats['lunas'] ?></div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon text-warning"><i class="fas fa-coins"></i></div>
-        <div class="stat-label">Angsuran</div>
-        <div class="stat-value"><?= $stats['angsuran'] ?></div>
+        <div class="icon text-warning"><i class="fas fa-hand-holding-usd"></i></div>
+        <div class="label">Angsuran</div>
+        <div class="value"><?= $stats['angsuran'] ?></div>
       </div>
     </section>
 
@@ -142,7 +141,7 @@ $conn->close();
         <span>Daftar Siswa</span>
       </a>
       <a href="cetak_laporan_pendaftaran.php" class="action-card text-warning">
-        <i class="fas fa-file-invoice"></i>
+        <i class="fas fa-print"></i>
         <span>Cetak Laporan</span>
       </a>
       <a href="review_calon_pendaftar.php" class="action-card text-success">
@@ -155,19 +154,34 @@ $conn->close();
 
   <!-- CHART SCRIPT -->
   <script>
-    new Chart(document.getElementById('chartPembayaran'), {
+    const ctx = document.getElementById('chartPembayaran').getContext('2d');
+    new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: ['Lunas','Angsuran','Belum Bayar'],
-        datasets:[{
+        datasets: [{
           data: [<?= $stats['lunas'] ?>,<?= $stats['angsuran'] ?>,<?= $stats['belum'] ?>],
-          backgroundColor:['#28a745','#ffc107','#dc3545']
+          backgroundColor: ['#28a745','#ffc107','#dc3545']
         }]
       },
-      options:{responsive:true,plugins:{legend:{position:'bottom'}}}
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const v = ctx.raw,
+                      t = ctx.dataset.data.reduce((a,b)=>a+b,0),
+                      p = ((v/t)*100).toFixed(1);
+                return `${ctx.label}: ${v} (${p}%)`;
+              }
+            }
+          }
+        }
+      }
     });
   </script>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

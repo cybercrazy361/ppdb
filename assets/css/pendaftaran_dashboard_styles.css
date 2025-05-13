@@ -1,8 +1,6 @@
-/* assets/css/pendaftaran_dashboard_styles.css */
-
 /* 1. Theme & Reset */
 :root {
-    --clr-bg: #f4f6f9;
+    --clr-bg: #f5f7fa;
     --clr-white: #ffffff;
     --clr-primary: #4a00e0;
     --clr-secondary: #8e2de2;
@@ -21,10 +19,11 @@ body {
     background: var(--clr-bg);
     color: #333;
     padding-top: 60px;
-    /* untuk header fixed */
+    /* ruang untuk header fixed */
 }
 
 /* 2. Header */
+.dashboard-header,
 .header {
     position: fixed;
     top: 0;
@@ -41,22 +40,24 @@ body {
     z-index: 1000;
 }
 
-.header-brand {
+.brand,
+.dashboard-header .brand {
     font-size: 1.25rem;
     font-weight: 600;
 }
 
-.header-user {
+.user-info {
     display: flex;
     align-items: center;
 }
 
-.header-user .btn {
+.user-info .btn {
     margin-left: 1rem;
     font-size: .85rem;
 }
 
 /* 3. Main Container */
+.dashboard-main,
 .main-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -85,19 +86,19 @@ body {
     box-shadow: 0 8px 24px var(--clr-shadow);
 }
 
-.stat-icon {
+.icon {
     font-size: 2rem;
     margin-bottom: .5rem;
 }
 
-.stat-label {
+.label {
     font-size: .9rem;
     color: #666;
     margin-bottom: .25rem;
     text-transform: uppercase;
 }
 
-.stat-value {
+.value {
     font-size: 2.25rem;
     font-weight: 700;
 }
@@ -136,6 +137,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: inherit;
 }
 
 .action-card:hover {
@@ -153,9 +155,7 @@ body {
     font-weight: 500;
 }
 
-/* 7. Modal styles omitted (tidak digunakan di layout ini) */
-
-/* 8. Responsive */
+/* 7. Responsive */
 @media (max-width: 768px) {
     .chart-card {
         width: 240px;
