@@ -52,7 +52,7 @@ $status_list = ['Pending','Contacted','Accepted','Rejected'];
 
 <div class="container">
   <h4>Review Calon Pendaftar</h4>
-  <a href="pendaftaran_dashboard.php" class="btn-back mb-3">
+  <a href="dashboard_pendaftaran.php" class="btn-back mb-3">
     <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
   </a>
 
