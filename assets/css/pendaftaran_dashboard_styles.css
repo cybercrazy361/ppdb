@@ -1,7 +1,5 @@
-/* File: assets/css/dashboard_ppdb.css */
-
 /* --------------------------------------------------
-   Theme Variables
+   Variables
 -------------------------------------------------- */
 :root {
     --color-primary: #2e59d9;
@@ -21,7 +19,7 @@
 }
 
 /* --------------------------------------------------
-     Reset & Base
+     Reset & Body
   -------------------------------------------------- */
 *,
 *::before,
@@ -50,6 +48,7 @@ body {
     height: 100%;
     background: var(--color-primary);
     padding-top: var(--navbar-height);
+    transition: width var(--transition);
     overflow-y: auto;
 }
 
@@ -106,8 +105,6 @@ body {
     color: var(--color-secondary);
     background: none;
     border: none;
-    margin-right: 1rem;
-    cursor: pointer;
 }
 
 .navbar .title {
@@ -136,7 +133,7 @@ body {
 }
 
 .navbar .btn-logout:hover {
-    background: #c0392b;
+    background: darken(var(--color-danger), 5%);
 }
 
 /* --------------------------------------------------
@@ -156,7 +153,6 @@ body {
     transition: transform var(--transition), box-shadow var(--transition);
     text-align: center;
     padding: 1.75rem 1rem;
-    cursor: default;
 }
 
 .card:hover {
