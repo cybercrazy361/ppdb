@@ -3,6 +3,7 @@
 
 session_start();
 include '../database_connection.php';
+header('Content-Type: text/html; charset=utf-8');
 
 // Validasi login petugas pendaftaran
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
@@ -57,7 +58,7 @@ $stmt->close();
     <a href="pendaftaran_dashboard.php" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a>
 
     <div class="table-responsive">
-      <table id="calonTable" class="table table-striped table-bordered">
+      <table id="calonTable" class="table table-striped table-bordered align-middle">
         <thead>
           <tr>
             <th>No</th>
@@ -72,17 +73,17 @@ $stmt->close();
           </tr>
         </thead>
         <tbody>
-          <?php $no = 1; while ($row = $result->fetch_assoc()): 
-            // Pilih badge class berdasarkan status
-            switch ($row['status']) {
-              case 'Pending':   $badge = 'badge-pending';   break;
-              case 'Contacted': $badge = 'badge-contacted'; break;
-              case 'Accepted':  $badge = 'badge-accepted';  break;
-              case 'Rejected':  $badge = 'badge-rejected';  break;
-              default:          $badge = 'badge-secondary';
-            }
-          ?>
-          <tr>
+        <?php $no = 1; while ($row = $result->fetch_assoc()):
+            // Badge class awal
+            $cls = match($row['status']) {
+              'Pending'   => 'badge-pending',
+              'Contacted' => 'badge-contacted',
+              'Accepted'  => 'badge-accepted',
+              'Rejected'  => 'badge-rejected',
+              default     => 'badge-secondary'
+            };
+        ?>
+          <tr data-id="<?= $row['id'] ?>">
             <td><?= $no++ ?></td>
             <td><?= htmlspecialchars($row['nama']) ?></td>
             <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
@@ -91,9 +92,18 @@ $stmt->close();
             <td><?= htmlspecialchars($row['alamat']) ?></td>
             <td><?= htmlspecialchars($row['pilihan']) ?></td>
             <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
-            <td><span class="badge <?= $badge ?>"><?= htmlspecialchars($row['status']) ?></span></td>
+            <td>
+              <span class="badge <?= $cls ?> status-badge"><?= htmlspecialchars($row['status']) ?></span>
+              <select class="status-select form-select form-select-sm mt-1">
+                <?php foreach (['Pending','Contacted','Accepted','Rejected'] as $st): ?>
+                  <option value="<?= $st ?>" <?= $st === $row['status'] ? 'selected' : '' ?>>
+                    <?= $st ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </td>
           </tr>
-          <?php endwhile; ?>
+        <?php endwhile; ?>
         </tbody>
       </table>
     </div>
@@ -106,18 +116,41 @@ $stmt->close();
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
   <script>
-    $(document).ready(function() {
-      $('#calonTable').DataTable({
-        // Urutkan default berdasarkan Status (kolom ke-8, index dimulai 0)
-        order: [[8, 'asc']],
-        language: {
-          search:       "Cari:",
-          lengthMenu:   "_MENU_ entri per halaman",
-          info:         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-          paginate:     { previous: "Sebelumnya", next: "Berikutnya" }
+  $(document).ready(function() {
+    // Inisialisasi DataTable dengan paging
+    const table = $('#calonTable').DataTable({
+      pageLength: 10,
+      lengthMenu: [ 5, 10, 25, 50 ],
+      order: [[0,'asc']],
+      language: {
+        search:     "Cari:",
+        lengthMenu: "_MENU_ entri per halaman",
+        info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+        paginate:   { previous: "Sebelumnya", next: "Berikutnya" }
+      }
+    });
+
+    // Event onchange pada dropdown status
+    $('#calonTable').on('change', '.status-select', function() {
+      const $row = $(this).closest('tr');
+      const id      = $row.data('id');
+      const status  = $(this).val();
+      const $badge  = $row.find('.status-badge');
+
+      $.post('update_status.php', { id, status }, function(resp) {
+        if (resp.success) {
+          // Update badge teks & kelas warna
+          $badge.text(status)
+                .removeClass('badge-pending badge-contacted badge-accepted badge-rejected')
+                .addClass('badge-' + status.toLowerCase());
+        } else {
+          alert('Gagal mengubah status: ' + (resp.msg || 'Unknown error'));
         }
+      }, 'json').fail(() => {
+        alert('Request gagal. Periksa koneksi atau coba lagi.');
       });
     });
+  });
   </script>
 </body>
 </html>
