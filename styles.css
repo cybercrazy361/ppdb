@@ -80,10 +80,16 @@ body {
 .card-icon {
     font-size: 3rem;
     background: linear-gradient(45deg, #ff6ec4, #7873f5);
+    color: transparent;
+    /* fallback untuk browser yang tak mendukung clip-text */
+    background-clip: text;
+    /* properti standar */
     -webkit-background-clip: text;
+    /* prefix WebKit */
     -webkit-text-fill-color: transparent;
     transition: transform .3s;
 }
+
 
 .glass-card:hover .card-icon {
     transform: scale(1.1);
