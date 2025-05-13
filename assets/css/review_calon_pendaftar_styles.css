@@ -77,7 +77,7 @@ body {
 
 .table {
     min-width: 1000px;
-    /* atur sesuai jumlah kolom */
+    /* sesuaikan dengan jumlah kolom */
 }
 
 .table th,
@@ -136,11 +136,26 @@ body {
 }
 
 /* DataTables overrides */
-.dataTables_wrapper .dataTables_filter input,
-.dataTables_wrapper .dataTables_length select {
-    border-radius: var(--border-radius);
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 0.25rem;
     border: 1px solid #ddd;
-    padding: .25rem .5rem;
+    padding: .25rem .75rem .25rem .5rem;
+}
+
+.dataTables_wrapper .dataTables_length {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border-radius: 0.25rem;
+    border: 1px solid #ddd;
+    padding: .25rem .75rem .25rem .5rem;
+    width: auto;
+    min-width: 3ch;
+    background-position: right .5rem center;
+    background-repeat: no-repeat;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
