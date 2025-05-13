@@ -1,4 +1,5 @@
-/* File: assets/css/review_calon_pendaftar_styles.css */
+/* File: assets/css/review_calon_pendaftar_responsive.css */
+
 :root {
     --color-primary: #2e59d9;
     --color-secondary: #858796;
@@ -20,43 +21,71 @@
 }
 
 body {
-    background: linear-gradient(135deg, #f0f4ff, #ffffff);
     font-family: var(--font-base);
+    background: #f0f4ff;
     color: var(--color-secondary);
-    padding: 2rem;
+    min-height: 100vh;
 }
 
-.container {
+/* Container full width */
+.main-container {
+    width: 100%;
+    padding: 1.5rem;
+}
+
+/* Card wrapper */
+.card-wrapper {
     background: #fff;
     border-radius: var(--border-radius);
-    padding: 2rem;
-    max-width: 1200px;
-    margin: auto;
+    padding: 1.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-h4 {
-    text-align: center;
-    color: var(--color-primary);
+/* Header */
+.card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1rem;
 }
 
-.table-responsive {
-    margin-top: 1.5rem;
+.card-header h4 {
+    margin: 0;
+    color: var(--color-primary);
+    font-weight: 600;
 }
 
-.dataTables_wrapper .dataTables_filter input,
-.dataTables_wrapper .dataTables_length select {
+.card-header .btn-back {
+    background: var(--color-secondary);
+    color: #fff;
+    border: none;
     border-radius: var(--border-radius);
-    border: 1px solid #ddd;
-    padding: .25rem .5rem;
+    padding: .5rem 1rem;
+    text-decoration: none;
+    transition: background var(--transition);
 }
 
-.table tbody tr:hover {
-    background-color: rgba(46, 89, 217, 0.05);
+.card-header .btn-back:hover {
+    background: #6c757d;
 }
 
-/* dropdown status berwarna */
+/* Table responsive */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    min-width: 1000px;
+    /* atur sesuai jumlah kolom */
+}
+
+.table th,
+.table td {
+    vertical-align: middle !important;
+}
+
+/* Status dropdown warna */
 .status-select {
     min-width: 120px;
     border-radius: var(--border-radius);
@@ -71,28 +100,27 @@ h4 {
     border-color: var(--color-primary);
 }
 
-/* beri warna background sesuai status */
-.status-select.status-pending {
+.status-pending {
     background: var(--color-secondary);
     color: #fff;
 }
 
-.status-select.status-contacted {
+.status-contacted {
     background: var(--color-info);
     color: #fff;
 }
 
-.status-select.status-accepted {
+.status-accepted {
     background: var(--color-success);
     color: #fff;
 }
 
-.status-select.status-rejected {
+.status-rejected {
     background: var(--color-danger);
     color: #fff;
 }
 
-/* input keterangan */
+/* Keterangan input */
 .desc-input {
     width: 100%;
     border: 1px solid #ccc;
@@ -107,16 +135,22 @@ h4 {
     border-color: var(--color-primary);
 }
 
-/* Tombol kembali */
-.btn-back {
-    background-color: var(--color-secondary);
-    color: #fff;
+/* DataTables overrides */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
     border-radius: var(--border-radius);
-    padding: .5rem 1rem;
-    text-decoration: none;
-    transition: background var(--transition);
+    border: 1px solid #ddd;
+    padding: .25rem .5rem;
 }
 
-.btn-back:hover {
-    background-color: #6c757d;
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: var(--border-radius);
+}
+
+/* Mobile: biar scroll, jangan wrap */
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        gap: .75rem;
+    }
 }
