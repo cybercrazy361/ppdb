@@ -1,8 +1,4 @@
 /* File: assets/css/review_calon_pendaftar_styles.css */
-
-/* --------------------------------------------------
-   Theme & Reset
--------------------------------------------------- */
 :root {
     --color-primary: #2e59d9;
     --color-secondary: #858796;
@@ -45,7 +41,6 @@ h4 {
     margin-bottom: 1rem;
 }
 
-/* DataTables Overrides */
 .table-responsive {
     margin-top: 1.5rem;
 }
@@ -57,19 +52,18 @@ h4 {
     padding: .25rem .5rem;
 }
 
-/* Hover Effect untuk Baris */
 .table tbody tr:hover {
     background-color: rgba(46, 89, 217, 0.05);
 }
 
-/* Status dropdown styling */
+/* dropdown status berwarna */
 .status-select {
-    min-width: 140px;
+    min-width: 120px;
     border-radius: var(--border-radius);
     border: 1px solid #ccc;
     padding: .25rem .5rem;
     font-size: .9rem;
-    transition: border var(--transition);
+    transition: border var(--transition), background var(--transition), color var(--transition);
 }
 
 .status-select:focus {
@@ -77,16 +71,43 @@ h4 {
     border-color: var(--color-primary);
 }
 
-/* Keterangan status */
-.status-desc {
-    text-align: center;
-    font-size: .85rem;
-    color: var(--color-secondary);
-    white-space: nowrap;
-    padding-top: .25rem;
+/* beri warna background sesuai status */
+.status-select.status-pending {
+    background: var(--color-secondary);
+    color: #fff;
 }
 
-/* Kembali Button */
+.status-select.status-contacted {
+    background: var(--color-info);
+    color: #fff;
+}
+
+.status-select.status-accepted {
+    background: var(--color-success);
+    color: #fff;
+}
+
+.status-select.status-rejected {
+    background: var(--color-danger);
+    color: #fff;
+}
+
+/* input keterangan */
+.desc-input {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    padding: .25rem .5rem;
+    font-size: .9rem;
+    transition: border var(--transition);
+}
+
+.desc-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+/* Tombol kembali */
 .btn-back {
     background-color: var(--color-secondary);
     color: #fff;
