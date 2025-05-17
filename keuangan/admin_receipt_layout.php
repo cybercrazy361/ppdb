@@ -1,6 +1,35 @@
 <?php
 // admin_receipt_layout.php
 
+
+/**
+ * Mengubah angka menjadi kata (bahasa Indonesia)
+ */
+function terbilang($angka) {
+    $abil = ["","satu","dua","tiga","empat","lima","enam","tujuh","delapan","sembilan","sepuluh","sebelas"];
+    $angka = (int) $angka;
+    if ($angka < 12) {
+        return " " . $abil[$angka];
+    } elseif ($angka < 20) {
+        return terbilang($angka - 10) . " belas";
+    } elseif ($angka < 100) {
+        return terbilang($angka / 10) . " puluh" . terbilang($angka % 10);
+    } elseif ($angka < 200) {
+        return " seratus" . terbilang($angka - 100);
+    } elseif ($angka < 1000) {
+        return terbilang($angka / 100) . " ratus" . terbilang($angka % 100);
+    } elseif ($angka < 2000) {
+        return " seribu" . terbilang($angka - 1000);
+    } elseif ($angka < 1000000) {
+        return terbilang($angka / 1000) . " ribu" . terbilang($angka % 1000);
+    } elseif ($angka < 1000000000) {
+        return terbilang($angka / 1000000) . " juta" . terbilang($angka % 1000000);
+    } else {
+        return "";
+    }
+}
+
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -252,113 +281,156 @@ function getElementValue($elementName) {
                     </div>
                     <!-- Form Input Posisi, Visibilitas, Font Size, Font Family, Upload Logo, dan Teks Watermark -->
                     <div class="col-md-12 mt-4">
-                        <table class="table table-bordered">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>Elemen</th>
-                                    <th>Posisi X (mm)</th>
-                                    <th>Posisi Y (mm)</th>
-                                    <th>Visible</th>
-                                    <th>Font Size (pt)</th>
-                                    <th>Font Family</th>
-                                    <th>Upload Logo / Teks Watermark</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($layouts as $layout) : ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $layout['element_name']))); ?></td>
-                                        <td>
-                                            <input type="number" name="x_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control position-input" value="<?= htmlspecialchars($layout['x_position_mm']); ?>" min="0" step="0.1" required>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="y_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control position-input" value="<?= htmlspecialchars($layout['y_position_mm']); ?>" min="0" step="0.1" required>
-                                        </td>
-                                        <td class="text-center">
-                                            <input type="checkbox" name="visible_<?= htmlspecialchars($layout['element_name']); ?>" <?= $layout['visible'] ? 'checked' : ''; ?>>
-                                        </td>
-                                        <td>
-                                            <?php if ($layout['element_name'] !== 'logo' && $layout['element_name'] !== 'watermark') : ?>
-                                                <input type="number" name="font_size_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control" value="<?= htmlspecialchars($layout['font_size']); ?>" min="1" step="0.1" required>
-                                            <?php else : ?>
-                                                <input type="number" name="font_size_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control" value="<?= htmlspecialchars($layout['font_size']); ?>" min="1" step="0.1" disabled>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($layout['element_name'] !== 'logo' && $layout['element_name'] !== 'watermark') : ?>
-                                                <input type="text" name="font_family_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control" value="<?= htmlspecialchars($layout['font_family']); ?>" required>
-                                            <?php else : ?>
-                                                <input type="text" name="font_family_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control" value="<?= htmlspecialchars($layout['font_family']); ?>" disabled>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($layout['element_name'] === 'logo') : ?>
-                                                <label for="image_path_logo" class="form-label">Upload Logo</label>
-                                                <input type="file" name="image_path_logo" id="image_path_logo" class="form-control">
-                                                <?php if (!empty($layout['image_path'])) : ?>
-                                                    <img src="<?= htmlspecialchars($layout['image_path']); ?>" alt="Logo Saat Ini" style="max-width: 100px; margin-top: 10px;">
-                                                <?php endif; ?>
-                                            <?php elseif ($layout['element_name'] === 'watermark') : ?>
-                                                <label for="watermark_text" class="form-label">Teks Watermark</label>
-                                                <input type="text" name="watermark_text" id="watermark_text" class="form-control" value="<?= htmlspecialchars($layout['watermark_text']); ?>" required>
-                                            <?php else : ?>
-                                                <!-- Kosongkan jika bukan logo atau watermark -->
-                                                -
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+<table class="table table-bordered">
+  <thead class="table-primary">
+    <tr>
+      <th>Elemen</th>
+      <th>Posisi X (mm)</th>
+      <th>Posisi Y (mm)</th>
+      <th>Visible</th>
+      <th>Font Size (pt)</th>
+      <th>Font Family</th>
+      <th>Upload Logo / Teks Watermark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Baris khusus Terbilang -->
+    <tr>
+      <td>Terbilang</td>
+      <td><input type="number" name="x_terbilang" class="form-control position-input"
+                 value="<?= htmlspecialchars(($layouts[array_search('terbilang', array_column($layouts,'element_name'))]['x_position_mm'] ?? 10.0)); ?>"
+                 min="0" step="0.1" required></td>
+      <td><input type="number" name="y_terbilang" class="form-control position-input"
+                 value="<?= htmlspecialchars(($layouts[array_search('terbilang', array_column($layouts,'element_name'))]['y_position_mm'] ?? 110.0)); ?>"
+                 min="0" step="0.1" required></td>
+      <td class="text-center">
+        <input type="checkbox" name="visible_terbilang"
+               <?= ($layouts[array_search('terbilang', array_column($layouts,'element_name'))]['visible'] ?? 1) ? 'checked' : ''; ?>>
+      </td>
+      <td><input type="number" name="font_size_terbilang" class="form-control"
+                 value="<?= htmlspecialchars(($layouts[array_search('terbilang', array_column($layouts,'element_name'))]['font_size'] ?? 12.0)); ?>"
+                 min="1" step="0.1" required></td>
+      <td><input type="text" name="font_family_terbilang" class="form-control"
+                 value="<?= htmlspecialchars(($layouts[array_search('terbilang', array_column($layouts,'element_name'))]['font_family'] ?? 'Nunito, sans-serif')); ?>"
+                 required></td>
+      <td>-</td>
+    </tr>
+
+    <!-- Loop untuk elemen lain -->
+    <?php foreach ($layouts as $layout) : ?>
+      <?php if ($layout['element_name'] === 'terbilang') continue; ?>
+      <tr>
+        <td><?= htmlspecialchars(ucfirst(str_replace('_',' ',$layout['element_name']))); ?></td>
+        <td><input type="number" name="x_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control position-input"
+                   value="<?= htmlspecialchars($layout['x_position_mm']); ?>" min="0" step="0.1" required></td>
+        <td><input type="number" name="y_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control position-input"
+                   value="<?= htmlspecialchars($layout['y_position_mm']); ?>" min="0" step="0.1" required></td>
+        <td class="text-center">
+          <input type="checkbox" name="visible_<?= htmlspecialchars($layout['element_name']); ?>"
+                 <?= $layout['visible'] ? 'checked' : ''; ?>>
+        </td>
+        <td>
+          <?php if (!in_array($layout['element_name'], ['logo','watermark'])): ?>
+            <input type="number" name="font_size_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control"
+                   value="<?= htmlspecialchars($layout['font_size']); ?>" min="1" step="0.1" required>
+          <?php else: ?>
+            <input type="number" class="form-control" value="<?= htmlspecialchars($layout['font_size']); ?>" disabled>
+          <?php endif; ?>
+        </td>
+        <td>
+          <?php if (!in_array($layout['element_name'], ['logo','watermark'])): ?>
+            <input type="text" name="font_family_<?= htmlspecialchars($layout['element_name']); ?>" class="form-control"
+                   value="<?= htmlspecialchars($layout['font_family']); ?>" required>
+          <?php else: ?>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($layout['font_family']); ?>" disabled>
+          <?php endif; ?>
+        </td>
+        <td>
+          <?php if ($layout['element_name']==='logo'): ?>
+            <label class="form-label">Upload Logo</label>
+            <input type="file" name="image_path_logo" class="form-control">
+            <?php if (!empty($layout['image_path'])): ?>
+              <img src="<?= htmlspecialchars($layout['image_path']); ?>" style="max-width:100px;margin-top:10px;">
+            <?php endif; ?>
+          <?php elseif ($layout['element_name']==='watermark'): ?>
+            <label class="form-label">Teks Watermark</label>
+            <input type="text" name="watermark_text" class="form-control"
+                   value="<?= htmlspecialchars($layout['watermark_text']); ?>" required>
+          <?php else: ?>
+            -
+          <?php endif; ?>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
                         <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
                     </div>
                 </div>
                 <div class="row mt-4">
-                    <!-- Preview Layout -->
-                    <div class="col-md-12">
-                        <h4>Preview Layout</h4>
-                        <div class="layout-grid" id="layoutGrid" style="width: <?= htmlspecialchars($paper['paper_width_mm']); ?>mm; height: <?= htmlspecialchars($paper['paper_height_mm']); ?>mm;">
-                            <?php foreach ($layouts as $layout) : ?>
-                                <?php if ($layout['visible']) : ?>
-                                    <?php
-                                        $element = $layout['element_name'];
-                                        $font_size = $layout['font_size'];
-                                        $font_family = $layout['font_family'];
-                                        $x = htmlspecialchars($layout['x_position_mm']);
-                                        $y = htmlspecialchars($layout['y_position_mm']);
-                                        $style_inline = "font-size: {$font_size}pt; font-family: '{$font_family}';";
+<!-- Preview Layout -->
+<div class="col-md-12">
+    <h4>Preview Layout</h4>
+    <div class="layout-grid" id="layoutGrid"
+         style="width: <?= htmlspecialchars($paper['paper_width_mm']); ?>mm;
+                height: <?= htmlspecialchars($paper['paper_height_mm']); ?>mm;">
+        <?php foreach ($layouts as $layout) : ?>
+            <?php if (!$layout['visible']) continue; ?>
 
-                                        if ($element === 'logo' && !empty($layout['image_path'])) {
-                                            // Tampilkan logo sebagai gambar
-                                            echo "<div class='layout-element logo-element' 
-                                                    id='element-{$element}' 
-                                                    data-element='{$element}'
-                                                    style='left: {$x}mm; top: {$y}mm; cursor: move;'>
-                                                        <img src='{$layout['image_path']}' alt='Logo' style='max-width: 100px; max-height: 100px; pointer-events: none;'>
-                                                  </div>";
-                                        } elseif ($element === 'watermark') {
-                                            // Tampilkan watermark sebagai teks
-                                            echo "<div class='layout-element watermark-element' 
-                                                    id='element-{$element}' 
-                                                    data-element='{$element}'
-                                                    style='left: {$x}mm; top: {$y}mm; {$style_inline}; cursor: move;'>
-                                                        {$layout['watermark_text']}
-                                                  </div>";
-                                        } else {
-                                            // Elemen lainnya
-                                            echo "<div class='layout-element' 
-                                                    id='element-{$element}' 
-                                                    data-element='{$element}'
-                                                    style='left: {$x}mm; top: {$y}mm; {$style_inline}; cursor: move;'>
-                                                        " . htmlspecialchars(ucfirst(str_replace('_', ' ', $element))) . ": " . getElementValue($element) . "
-                                                  </div>";
-                                        }
-                                    ?>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                        <p class="mt-2">Anda dapat menyeret elemen pada preview untuk menyesuaikan posisi.</p>
-                    </div>
+            <?php
+            $element      = $layout['element_name'];
+            $x            = $layout['x_position_mm'];
+            $y            = $layout['y_position_mm'];
+            $fs           = $layout['font_size'];
+            $ff           = $layout['font_family'];
+            $style_inline = "left: {$x}mm; top: {$y}mm; font-size: {$fs}pt; font-family:'{$ff}'; cursor:move;";
+            ?>
+
+            <?php if ($element === 'logo' && !empty($layout['image_path'])) : ?>
+                <div class="layout-element logo-element"
+                     id="element-logo"
+                     data-element="logo"
+                     style="<?= $style_inline ?>">
+                    <img src="<?= htmlspecialchars($layout['image_path']) ?>"
+                         alt="Logo"
+                         style="max-width:100px; max-height:100px; pointer-events:none;">
+                </div>
+
+            <?php elseif ($element === 'watermark') : ?>
+                <div class="layout-element watermark-element"
+                     id="element-watermark"
+                     data-element="watermark"
+                     style="<?= $style_inline ?>">
+                    <?= htmlspecialchars($layout['watermark_text']) ?>
+                </div>
+
+            <?php elseif ($element === 'terbilang') : ?>
+                <?php
+                    $total = getElementValue('jumlah') ?: 0;
+                    $kata  = ucfirst(trim(terbilang($total))) . " rupiah";
+                ?>
+                <div class="layout-element"
+                     id="element-terbilang"
+                     data-element="terbilang"
+                     style="<?= $style_inline ?>">
+                    <?= htmlspecialchars($kata) ?>
+                </div>
+
+            <?php else : ?>
+                <div class="layout-element"
+                     id="element-<?= htmlspecialchars($element) ?>"
+                     data-element="<?= htmlspecialchars($element) ?>"
+                     style="<?= $style_inline ?>">
+                    <?= htmlspecialchars(ucfirst(str_replace('_',' ',$element))) ?>:
+                    <?= htmlspecialchars(getElementValue($element)) ?>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+    <p class="mt-2">Anda dapat menyeret elemen pada preview untuk menyesuaikan posisi.</p>
+</div>
+
                 </div>
             </form>
         </div>
