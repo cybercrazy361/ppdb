@@ -454,22 +454,24 @@ function getElementValue($elementName) {
                     <?php
                     break;
 
-                    case 'terbilang':
-    // Ambil total dari pembayaran
+case 'terbilang':
+    // Ambil total pembayaran
     $total = $pembayaran['jumlah'];
-    // Ubah angka ke kata dan tambahkan "rupiah"
+    // Ubah angka ke kata dan tambah “rupiah”
     $kata  = ucfirst(trim(terbilang($total))) . " rupiah";
     ?>
     <div class="receipt-element"
-         style="left: <?= htmlspecialchars($pos['x']); ?>mm;
-                top: <?= htmlspecialchars($pos['y']); ?>mm;
-                font-size: <?= $layout_data['terbilang']['font_size']; ?>pt;
-                font-family: '<?= htmlspecialchars($layout_data['terbilang']['font_family']); ?>';">
-        <?= htmlspecialchars($kata) ?>
+         style="
+           left: <?= htmlspecialchars($pos['x']); ?>mm;
+           top:  <?= htmlspecialchars($pos['y']); ?>mm;
+           font-size: <?= $layout_data['terbilang']['font_size']; ?>pt;
+           font-family: '<?= htmlspecialchars($layout_data['terbilang']['font_family']); ?>';
+           font-style: italic;         /* <–– cetak miring */
+         ">
+      <?= htmlspecialchars($kata); ?>
     </div>
     <?php
     break;
-
                 default:
                     // Elemen tidak dikenali
                     break;
