@@ -330,6 +330,21 @@ function getElementValue($elementName) {
             width: 100%;
             pointer-events: none; /* Pastikan teks tidak mengganggu drag */
         }
+
+        @media print {
+      /* aturan yang sudah ada… */
+
+      /* override border dan shadow pada saat cetak */
+      .receipt-container {
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+      .receipt-element {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    }
     </style>
 </head>
 <body>
@@ -483,5 +498,6 @@ case 'terbilang':
     <div class="print-button">
         <button onclick="window.print()" class="btn btn-primary">Cetak Kuitansi</button>
     </div>
+    
 </body>
 </html>
