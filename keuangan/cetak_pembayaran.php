@@ -470,18 +470,19 @@ function getElementValue($elementName) {
                     break;
 
 case 'jumlah':
-?>
-<div class="receipt-element"
-     style="left: <?= htmlspecialchars($pos['x']); ?>mm;
-            top:  <?= htmlspecialchars($pos['y']); ?>mm;
-            <?= $style_inline; ?>">
-    <p style="<?= $style_inline; ?>">
-        <strong>Jumlah Total:</strong>
-        <?= getElementValue('jumlah'); ?>
-    </p>
-</div>
-<?php
-break;
+    ?>
+    <div class="receipt-element"
+         style="left: <?= htmlspecialchars($pos['x']); ?>mm;
+                top:  <?= htmlspecialchars($pos['y']); ?>mm;
+                <?= $style_inline; ?>">
+        <p style="<?= $style_inline; ?>">
+            <strong>Jumlah Total:</strong>
+            <?= getElementValue('jumlah'); ?>
+        </p>
+    </div>
+    <?php
+    break;
+
 
 case 'terbilang':
     // Ambil total pembayaran
