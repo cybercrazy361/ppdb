@@ -483,7 +483,6 @@ case 'jumlah':
     <?php
     break;
 
-
 case 'terbilang':
     // Ambil total pembayaran
     $total = $pembayaran['jumlah'];
