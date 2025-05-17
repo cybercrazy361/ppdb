@@ -7,6 +7,36 @@ if (session_status() == PHP_SESSION_NONE) {
 
 include '../database_connection.php';
 
+/**
+ * Mengubah angka menjadi kata (bahasa Indonesia)
+ */
+function terbilang($angka) {
+    $abil = ["","satu","dua","tiga","empat","lima","enam","tujuh","delapan","sembilan","sepuluh","sebelas"];
+    $angka = (int) $angka;
+    if ($angka === 0) {
+        return " nol";
+    } elseif ($angka < 12) {
+        return " " . $abil[$angka];
+    } elseif ($angka < 20) {
+        return terbilang($angka - 10) . " belas";
+    } elseif ($angka < 100) {
+        return terbilang($angka / 10) . " puluh" . terbilang($angka % 10);
+    } elseif ($angka < 200) {
+        return " seratus" . terbilang($angka - 100);
+    } elseif ($angka < 1000) {
+        return terbilang($angka / 100) . " ratus" . terbilang($angka % 100);
+    } elseif ($angka < 2000) {
+        return " seribu" . terbilang($angka - 1000);
+    } elseif ($angka < 1000000) {
+        return terbilang($angka / 1000) . " ribu" . terbilang($angka % 1000);
+    } elseif ($angka < 1000000000) {
+        return terbilang($angka / 1000000) . " juta" . terbilang($angka % 1000000);
+    } else {
+        return "";
+    }
+}
+
+
 // Pastikan pengguna sudah login dan memiliki peran yang sesuai
 if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], ['keuangan', 'admin'])) {
     header('Location: login_keuangan.php');
@@ -410,11 +440,27 @@ function getElementValue($elementName) {
                          style="left: <?= htmlspecialchars($pos['x']); ?>mm; top: <?= htmlspecialchars($pos['y']); ?>mm; <?= $style_inline; ?>">
                         <p style="<?= $style_inline; ?> margin: 0;">Terima kasih atas pembayaran Anda.</p>
                         <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p>
-                        <p style="<?= $style_inline; ?> margin-top: 50px;">________________________</p>
+                        <p style="<?= $style_inline; ?> margin-top: 40px;">________________________</p>
                         <p style="<?= $style_inline; ?> margin: 0;">Bagian Keuangan</p>
                     </div>
                     <?php
                     break;
+
+                    case 'terbilang':
+    // Ambil total dari pembayaran
+    $total = $pembayaran['jumlah'];
+    // Ubah angka ke kata dan tambahkan "rupiah"
+    $kata  = ucfirst(trim(terbilang($total))) . " rupiah";
+    ?>
+    <div class="receipt-element"
+         style="left: <?= htmlspecialchars($pos['x']); ?>mm;
+                top: <?= htmlspecialchars($pos['y']); ?>mm;
+                font-size: <?= $layout_data['terbilang']['font_size']; ?>pt;
+                font-family: '<?= htmlspecialchars($layout_data['terbilang']['font_family']); ?>';">
+        <?= htmlspecialchars($kata) ?>
+    </div>
+    <?php
+    break;
 
                 default:
                     // Elemen tidak dikenali
