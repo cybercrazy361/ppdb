@@ -457,8 +457,8 @@ function getElementValue($elementName) {
 case 'terbilang':
     // Ambil total pembayaran
     $total = $pembayaran['jumlah'];
-    // Ubah angka ke kata, trim, kapitalisasi tiap kata, lalu tambahkan “ Rupiah”
-    $kata = 'Terbilang : ' . ucwords(trim(terbilang($total))) . ' Rupiah';
+    // Ubah angka ke kata, kapitalisasi tiap kata, tambahkan “ Rupiah”
+    $angka = ucwords(trim(terbilang($total))) . ' Rupiah';
     ?>
     <div class="receipt-element"
          style="
@@ -466,9 +466,8 @@ case 'terbilang':
            top:  <?= htmlspecialchars($pos['y']); ?>mm;
            font-size: <?= $layout_data['terbilang']['font_size']; ?>pt;
            font-family: '<?= htmlspecialchars($layout_data['terbilang']['font_family']); ?>';
-           font-style: italic;  /* bikin miring */
          ">
-      <?= htmlspecialchars($kata); ?>
+      Terbilang : <em><?= htmlspecialchars($angka); ?></em>
     </div>
     <?php
     break;
