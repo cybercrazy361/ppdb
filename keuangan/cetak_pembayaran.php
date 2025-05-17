@@ -400,7 +400,6 @@ function getElementValue($elementName) {
                 case 'nama':
                 case 'unit':
                 case 'tahun_pelajaran':
-                case 'jumlah':
                 case 'metode_pembayaran':
                 case 'tanggal_pembayaran':
                 case 'keterangan':
