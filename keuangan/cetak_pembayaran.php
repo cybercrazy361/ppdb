@@ -11,31 +11,39 @@ include '../database_connection.php';
  * Mengubah angka menjadi kata (bahasa Indonesia)
  */
 function terbilang($angka) {
-    $abil = ["","satu","dua","tiga","empat","lima","enam","tujuh","delapan","sembilan","sepuluh","sebelas"];
     $angka = (int) $angka;
-    if ($angka === 0) {
-        return " nol";
-    } elseif ($angka < 12) {
-        return " " . $abil[$angka];
+    $abil  = ["nol","satu","dua","tiga","empat","lima","enam","tujuh","delapan","sembilan","sepuluh","sebelas"];
+
+    if ($angka < 12) {
+        return $abil[$angka];
     } elseif ($angka < 20) {
         return terbilang($angka - 10) . " belas";
     } elseif ($angka < 100) {
-        return terbilang($angka / 10) . " puluh" . terbilang($angka % 10);
+        $puluh = intval($angka / 10);
+        $sisa  = $angka % 10;
+        return terbilang($puluh) . " puluh" . ($sisa ? " " . terbilang($sisa) : "");
     } elseif ($angka < 200) {
-        return " seratus" . terbilang($angka - 100);
+        $sisa = $angka - 100;
+        return "seratus" . ($sisa ? " " . terbilang($sisa) : "");
     } elseif ($angka < 1000) {
-        return terbilang($angka / 100) . " ratus" . terbilang($angka % 100);
+        $ratus = intval($angka / 100);
+        $sisa  = $angka % 100;
+        return terbilang($ratus) . " ratus" . ($sisa ? " " . terbilang($sisa) : "");
     } elseif ($angka < 2000) {
-        return " seribu" . terbilang($angka - 1000);
+        $sisa = $angka - 1000;
+        return "seribu" . ($sisa ? " " . terbilang($sisa) : "");
     } elseif ($angka < 1000000) {
-        return terbilang($angka / 1000) . " ribu" . terbilang($angka % 1000);
+        $ribuan = intval($angka / 1000);
+        $sisa   = $angka % 1000;
+        return terbilang($ribuan) . " ribu" . ($sisa ? " " . terbilang($sisa) : "");
     } elseif ($angka < 1000000000) {
-        return terbilang($angka / 1000000) . " juta" . terbilang($angka % 1000000);
-    } else {
-        return "";
+        $juta = intval($angka / 1000000);
+        $sisa = $angka % 1000000;
+        return terbilang($juta) . " juta" . ($sisa ? " " . terbilang($sisa) : "");
     }
-}
 
+    return "";
+}
 
 // Pastikan pengguna sudah login dan memiliki peran yang sesuai
 if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], ['keuangan', 'admin'])) {
