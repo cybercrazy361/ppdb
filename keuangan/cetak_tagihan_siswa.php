@@ -1,4 +1,5 @@
 <?php
+// cetak_tagihan_siswa.php
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
     header('Location: ../login_keuangan.php');
@@ -10,14 +11,14 @@ $unit        = $_SESSION['unit'];
 $bulan_aktif = date('F');
 $tahun_aktif = date('Y');
 
-// 1. Ambil daftar jenis pembayaran untuk unit ini, plus nominal_max dari pengaturan_nominal
+// 1) Ambil daftar jenis pembayaran + nominal_max
 $jenis_pembayaran_list = [];
 $stmt = $conn->prepare("
-    SELECT jp.nama, COALESCE(pn.nominal_max,0) AS nominal 
+    SELECT jp.nama, COALESCE(pn.nominal_max,0) AS nominal_max
     FROM jenis_pembayaran jp
     LEFT JOIN pengaturan_nominal pn 
-      ON pn.jenis_pembayaran_id = jp.id 
-     AND pn.bulan = ? 
+      ON pn.jenis_pembayaran_id = jp.id
+     AND pn.bulan = ?
     WHERE jp.unit = ?
     ORDER BY jp.nama
 ");
@@ -25,11 +26,11 @@ $stmt->bind_param('ss', $bulan_aktif, $unit);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($r = $res->fetch_assoc()) {
-    $jenis_pembayaran_list[$r['nama']] = (int)$r['nominal'];
+    $jenis_pembayaran_list[$r['nama']] = (int)$r['nominal_max'];
 }
 $stmt->close();
 
-// 2. Hitung jumlah yang sudah dibayar per siswa per jenis
+// 2) Hitung sudah bayar per siswa per jenis
 $sudah_bayar = [];
 $stmt = $conn->prepare("
     SELECT s.id AS siswa_id, jp.nama AS jenis, SUM(pd.jumlah) AS total_bayar
@@ -38,11 +39,11 @@ $stmt = $conn->prepare("
     JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
     JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
     WHERE s.unit = ?
+      AND pd.status_pembayaran != 'Lunas'
       AND (
            (jp.nama = 'SPP' AND pd.bulan = ?)
         OR (jp.nama != 'SPP')
       )
-      AND pd.status_pembayaran != 'Lunas'
     GROUP BY s.id, jp.nama
 ");
 $stmt->bind_param('ss', $unit, $bulan_aktif);
@@ -53,7 +54,7 @@ while ($r = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-// 3. Ambil data siswa yang punya tagihan sesuai syarat
+// 3) Ambil daftar siswa yang punya tunggakan
 $siswa_tagihan = [];
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.no_formulir, s.nama
@@ -62,9 +63,10 @@ $stmt = $conn->prepare("
     JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
     JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
     WHERE s.unit = ?
+      AND pd.status_pembayaran != 'Lunas'
       AND (
-           (jp.nama = 'SPP' AND pd.bulan = ? AND pd.status_pembayaran != 'Lunas')
-        OR (jp.nama != 'SPP' AND pd.status_pembayaran != 'Lunas')
+           (jp.nama = 'SPP' AND pd.bulan = ?)
+        OR (jp.nama != 'SPP')
       )
     ORDER BY s.nama
 ");
@@ -107,10 +109,10 @@ $conn->close();
           <th>No</th>
           <th>No Formulir</th>
           <th>Nama</th>
-          <?php foreach ($jenis_pembayaran_list as $jenis => $nominal): ?>
+          <?php foreach ($jenis_pembayaran_list as $jenis => $nominal_max): ?>
             <th>
               <?= htmlspecialchars($jenis) ?><br>
-              <small>(Rp <?= number_format($nominal,0,',','.') ?>)</small>
+              <small>(Rp <?= number_format($nominal_max,0,',','.') ?>)</small>
             </th>
           <?php endforeach; ?>
           <th>Total Sisa</th>
@@ -118,7 +120,8 @@ $conn->close();
       </thead>
       <tbody>
       <?php
-        $no = 1; $grand_total = 0;
+        $no          = 1;
+        $grand_total = 0;
         foreach ($siswa_tagihan as $id => $s): 
           $total_sisa = 0;
       ?>
@@ -126,13 +129,13 @@ $conn->close();
           <td><?= $no++ ?></td>
           <td><?= htmlspecialchars($s['no_formulir']) ?></td>
           <td><?= htmlspecialchars($s['nama']) ?></td>
-          <?php foreach ($jenis_pembayaran_list as $jenis => $nominal): 
+          <?php foreach ($jenis_pembayaran_list as $jenis => $nominal_max):
             $bayar = $sudah_bayar[$id][$jenis] ?? 0;
-            $sisa  = max(0, $nominal - $bayar);
+            $sisa  = max(0, $nominal_max - $bayar);
             $total_sisa += $sisa;
           ?>
             <td>
-              <div>Bayar: <?= $bayar? 'Rp '.number_format($bayar,0,',','.'):'-' ?></div>
+              <div>Bayar: <?= $bayar ? 'Rp '.number_format($bayar,0,',','.') : '-' ?></div>
               <div>Sisa: <strong>Rp <?= number_format($sisa,0,',','.') ?></strong></div>
             </td>
           <?php endforeach; ?>
