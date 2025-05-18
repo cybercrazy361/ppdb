@@ -7,6 +7,7 @@
     --clr-primary: #4e73df;
     --clr-primary-dark: #2e59d9;
     --clr-success: #1cc88a;
+    --clr-info: #36b9cc;
     --clr-warning: #f6c23e;
     --clr-danger: #e74a3b;
     --clr-dark: #343a40;
@@ -18,12 +19,14 @@
 /* =========================
    Global & Body Styles
    ========================= */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
 body {
-    background: linear-gradient(to right, #ece9e6, #ffffff);
-    font-family: 'Nunito', sans-serif;
-    color: var(--clr-dark);
     margin: 0;
     padding: 0;
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--clr-light-bg);
+    color: var(--clr-dark);
 }
 
 /* =========================
@@ -39,28 +42,15 @@ body {
     margin-left: 80px;
 }
 
-/* =========================
-   Table Container
-   ========================= */
-.table-container {
-    max-width: 90%;
-    margin: 0 auto 2rem;
-    background: #ffffff;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
-    animation: fadeIn 0.8s ease-in-out;
+@media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 80px !important;
+    }
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0 !important;
     }
 }
 
@@ -68,11 +58,109 @@ body {
    Heading Styles
    ========================= */
 h1.h3 {
-    text-align: center;
+    font-size: 1.75rem;
     font-weight: 700;
-    color: var(--clr-primary);
+    color: var(--clr-secondary);
     text-transform: uppercase;
+    text-align: center;
     margin-bottom: 1.5rem;
+}
+
+/* =========================
+   Card Styles
+   ========================= */
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition), box-shadow var(--transition);
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background: #f8f9fc;
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--clr-secondary);
+}
+
+.card-body {
+    padding: 1rem 1.5rem;
+}
+
+.card-footer {
+    background: transparent;
+    border-top: none;
+    padding: 1rem 1.5rem;
+}
+
+/* =========================
+   Search Form Styles
+   ========================= */
+.card-body form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--clr-secondary);
+}
+
+.form-control,
+.form-select {
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1rem;
+    transition: box-shadow var(--transition);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.btn {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
+}
+
+.btn-secondary {
+    background-color: #858796;
+    border-color: #858796;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #6e707e;
+    border-color: #5a5c69;
 }
 
 /* =========================
@@ -80,42 +168,44 @@ h1.h3 {
    ========================= */
 .table-responsive {
     overflow-x: auto;
+    margin-top: 1rem;
 }
 
-.table {
+#siswaTable {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0 0.5rem;
 }
 
-.table th {
+#siswaTable th {
     background: linear-gradient(45deg, var(--clr-primary), var(--clr-primary-dark));
-    color: #ffffff;
-    text-align: center;
-    font-size: 0.875rem;
+    color: #fff;
+    text-transform: uppercase;
     font-weight: 600;
+    font-size: 0.875rem;
     padding: 0.75rem 1rem;
     border: none;
-}
-
-.table td {
-    background: #ffffff;
-    font-size: 0.875rem;
-    padding: 0.75rem 1rem;
     text-align: center;
+}
+
+#siswaTable td {
+    background: #fff;
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
     color: var(--clr-secondary);
+    font-size: 0.875rem;
+    text-align: center;
 }
 
-.table tbody tr:nth-child(even) td {
-    background-color: #f9f9f9;
+#siswaTable tbody tr:nth-child(even) td {
+    background-color: #f2f2f2;
 }
 
-.table-hover tbody tr:hover td {
-    background: #f1f1f1;
-    transition: background var(--transition);
+#siswaTable tbody tr:hover td {
+    background-color: #e9ecef;
 }
 
-/* Detail rows (nested tables) */
+/* Nested details table */
 .table-detail-row td {
     padding: 0 !important;
     background: transparent !important;
@@ -149,10 +239,10 @@ h1.h3 {
 }
 
 /* =========================
-   Pagination
+   Pagination Styles
    ========================= */
 .pagination {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     justify-content: center;
 }
 
@@ -160,6 +250,7 @@ h1.h3 {
     border-radius: 0.5rem;
     margin: 0 0.25rem;
     color: var(--clr-primary);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     transition: background var(--transition), color var(--transition);
 }
 
@@ -172,57 +263,6 @@ h1.h3 {
     background-color: var(--clr-primary);
     border-color: var(--clr-primary);
     color: #fff;
-}
-
-/* =========================
-   Buttons
-   ========================= */
-.btn {
-    border-radius: 0.5rem;
-    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
-    font-size: 0.875rem;
-    padding: 0.5rem 1rem;
-}
-
-.btn-primary {
-    background-color: var(--clr-primary);
-    border-color: var(--clr-primary);
-    color: #fff;
-}
-
-.btn-primary:hover {
-    background-color: var(--clr-primary-dark);
-    border-color: var(--clr-primary-dark);
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    border: none;
-    color: #fff;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-}
-
-.btn-edit {
-    background-color: var(--clr-warning);
-    border-color: var(--clr-warning);
-    color: #fff;
-}
-
-.btn-delete {
-    background-color: var(--clr-danger);
-    border-color: var(--clr-danger);
-    color: #fff;
-}
-
-/* Return button */
-.btn-kembali {
-    display: inline-block;
-    margin-top: 1.5rem;
 }
 
 /* =========================
@@ -255,5 +295,32 @@ h1.h3 {
 
     table {
         width: 100%;
+    }
+}
+
+/* =========================
+   Footer Styles
+   ========================= */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 250px;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    transition: margin var(--transition);
+}
+
+.sidebar.collapsed~.footer {
+    left: 80px;
+}
+
+@media (max-width: 991.98px),
+(max-width: 767.98px) {
+    .footer {
+        left: 0 !important;
+        width: 100% !important;
     }
 }
