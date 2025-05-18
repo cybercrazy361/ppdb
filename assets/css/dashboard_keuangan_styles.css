@@ -1,158 +1,156 @@
-/* dashboard_keuangan_styles.css */
+:root {
+    --primary: #4e73df;
+    --success: #1cc88a;
+    --danger: #e74a3b;
+    --text-dark: #5a5c69;
+    --bg-light: #f8f9fc;
+    --transition: 0.3s;
+    --card-radius: 1rem;
+    --shadow-light: rgba(0, 0, 0, 0.05);
+}
 
-/* General Styles */
+/* Reset & Body */
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: #f8f9fc;
+    background: var(--bg-light);
 }
 
+/* Dashboard Title */
 .dashboard-title {
-    font-size: 1.75rem;
-    font-weight: 500;
-    color: #5a5c69;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
 }
 
-.card {
+/* Metric Cards */
+.card-metric {
     border: none;
-    border-radius: 1rem;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
-.card .card-body {
-    padding: 1.5rem;
+.card-metric:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.card .card-footer {
-    background-color: transparent;
-    border-top: none;
+/* Card Body */
+.card-body {
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
 }
 
+/* Icons */
 .card-icon {
-    width: 60px;
-    height: 60px;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.25rem;
 }
 
+.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.bg-success {
+    background-color: var(--success) !important;
+}
+
+.bg-danger {
+    background-color: var(--danger) !important;
+}
+
+/* Text */
 .card-title {
-    font-size: 1rem;
+    margin: 0;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #5a5c69;
+    color: var(--text-dark);
 }
 
 .card-text {
-    font-size: 2rem;
+    margin: 0.25rem 0 0;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #5a5c69;
+    color: var(--text-dark);
 }
 
-.total-card .card-icon {
-    background-color: #4e73df;
+/* Footers on Cards */
+.card-footer {
+    background: transparent;
+    border-top: none;
+    padding: 0.75rem 1.25rem;
 }
 
-.paid-card .card-icon {
-    background-color: #1cc88a;
-}
-
-.unpaid-card .card-icon {
-    background-color: #e74a3b;
-}
-
-/* Hover Effects */
-.card:hover {
-    transform: translateY(-5px);
-    transition: all 0.3s ease;
-}
-
-.card .card-icon i {
-    color: #fff;
-}
-
-/* Chart Styles */
+/* Statistik Chart */
 .chart-container {
     position: relative;
-    height: 300px;
+    height: 40vh;
+    width: 100%;
 }
 
-.card .card-header {
-    background-color: #f8f9fc;
+/* Card Header */
+.card-header {
+    background: var(--bg-light);
     border-bottom: none;
 }
 
-.card .card-header h3 {
+.card-header h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #5a5c69;
+    color: var(--text-dark);
 }
 
-/* Footer Styles */
+/* Main Content & Footer Adjustments */
+.main-content {
+    margin-left: 260px;
+    /* sama dengan sidebar width */
+    transition: margin-left var(--transition);
+}
+
 .footer {
     position: fixed;
     bottom: 0;
-    width: calc(100% - 220px);
-    /* Adjusted width to account for sidebar */
-    margin-left: 220px;
-    /* Adjusted margin to align with main content */
-    background-color: #fff;
+    left: 260px;
+    right: 0;
+    background: #fff;
     border-top: 1px solid #e3e6f0;
-    z-index: 1000;
-    transition: margin-left 0.3s ease, width 0.3s ease;
+    padding: 0.75rem 1rem;
+    transition: left var(--transition);
 }
 
-.footer.sidebar-collapsed {
-    width: calc(100% - 70px);
-    margin-left: 70px;
+.sidebar-collapsed .main-content {
+    margin-left: 80px;
 }
 
+.sidebar-collapsed .footer {
+    left: 80px;
+}
+
+/* Responsive */
 @media (max-width: 991.98px) {
+
+    .main-content,
     .footer {
-        width: 100%;
-        margin-left: 0;
+        margin-left: 80px !important;
+        left: 80px !important;
     }
 }
 
 @media (max-width: 767.98px) {
+
+    .main-content,
     .footer {
-        width: 100%;
-        margin-left: 0;
+        margin-left: 0 !important;
+        left: 0 !important;
     }
-}
-
-/* Main Content Adjustments */
-.main-content {
-    margin-left: 220px;
-    transition: margin-left 0.3s ease;
-}
-
-.main-content.sidebar-collapsed {
-    margin-left: 70px;
-}
-
-@media (max-width: 991.98px) {
-    .main-content {
-        margin-left: 70px;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .main-content {
-        margin-left: 0;
-    }
-}
-
-/* Topbar Adjustments */
-.navbar {
-    height: 50px;
-    /* Reduced height */
-    min-height: 50px;
-    padding: 0 1rem;
-}
-
-.navbar .navbar-nav .nav-link {
-    height: 50px;
-    display: flex;
-    align-items: center;
 }
