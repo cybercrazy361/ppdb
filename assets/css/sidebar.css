@@ -1,209 +1,233 @@
-/* sidebar.css */
-
-/* ================ */
-/* Variables         */
-/* ================ */
-:root {
-    --sidebar-width: 250px;
-    --sidebar-collapsed-width: 80px;
-    --sidebar-gradient: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-    --text-color: #ecf0f1;
-    --hover-bg: rgba(255, 255, 255, 0.1);
-    --active-bg: rgba(255, 255, 255, 0.2);
-    --accent-color: #1abc9c;
-    --logout-color: #e74c3c;
-}
-
-/* ================ */
-/* Sidebar Container */
-/* ================ */
+/* ========================
+   Sidebar Container Styles
+   ======================== */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    width: var(--sidebar-width);
-    height: 100vh;
-    background: var(--sidebar-gradient);
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    transition: width 0.3s ease;
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-}
-
-.sidebar.collapsed {
-    width: var(--sidebar-collapsed-width);
-}
-
-/* ================ */
-/* User Panel        */
-/* ================ */
-.sidebar-header {
-    margin-bottom: 1.5rem;
-}
-
-.user-panel {
-    display: flex;
-    align-items: center;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar.collapsed .user-panel {
-    opacity: 0;
-}
-
-.avatar,
-.avatar-placeholder {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--active-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 0.75rem;
-    overflow: hidden;
-    font-size: 1.2rem;
-}
-
-.avatar {
-    object-fit: cover;
-}
-
-.user-info h4 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.user-info p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: rgba(236, 240, 241, 0.7);
-}
-
-/* ================ */
-/* Menu & Links      */
-/* ================ */
-.menu {
-    flex: 1;
+    width: 220px;
+    height: 100%;
+    background: linear-gradient(135deg, #4e73df 0%, #2e59d9 100%);
     overflow-y: auto;
+    transition: width 0.3s ease, background 0.3s ease;
+    z-index: 1000;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.menu ul {
-    list-style: none;
-    padding: 0;
+/* Sidebar Collapsed */
+.sidebar.collapsed {
+    width: 70px;
+    transition: width 0.3s ease;
+}
+
+/* Smooth Scroll */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+/* ========================
+   User Info Styles
+   ======================== */
+.sidebar .user-info {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.sidebar .user-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.sidebar .user-info p {
+    font-size: 0.9rem;
     margin: 0;
 }
 
-.menu li {
-    margin-bottom: 0.5rem;
-}
-
-.menu a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--text-color);
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    transition: background 0.3s ease;
-}
-
-.menu a i {
-    min-width: 24px;
-    text-align: center;
-    margin-right: 0.75rem;
-    font-size: 1.1rem;
-    transition: transform 0.3s ease;
-}
-
-.sidebar.collapsed .menu a i {
-    margin: 0 auto;
-}
-
-.sidebar.collapsed .menu a span {
+.sidebar.collapsed .user-info h4,
+.sidebar.collapsed .user-info p {
     display: none;
 }
 
-/* Hover & Active */
-.menu a:hover {
-    background: var(--hover-bg);
+/* ========================
+   Navigation Menu Styles
+   ======================== */
+.sidebar .nav {
+    margin-top: 20px;
+    padding-left: 0;
+    list-style: none;
 }
 
-.menu a:hover i {
-    transform: scale(1.2);
+.sidebar .nav-item {
+    width: 100%;
 }
 
-.menu a.active {
-    background: var(--active-bg);
-    border-left: 4px solid var(--accent-color);
-}
-
-/* ================ */
-/* Submenu (Bootstrap collapse) */
-/* ================ */
-.collapse {
-    margin-top: 0.25rem;
-}
-
-.collapse .nav-link {
-    padding: 0.5rem 1.5rem;
-    font-size: 0.9rem;
-    color: rgba(236, 240, 241, 0.9);
-}
-
-.collapse .nav-link:hover,
-.collapse .nav-link.active {
-    background: var(--hover-bg);
-    color: var(--text-color);
-    border-left: 4px solid var(--accent-color);
-}
-
-/* ================ */
-/* Logout Link       */
-/* ================ */
-.logout {
-    margin-top: auto;
-}
-
-.logout a {
+.sidebar .nav-link {
+    color: #fff;
+    padding: 15px 20px;
     display: flex;
     align-items: center;
-    color: var(--logout-color);
-    padding: 0.75rem 1rem;
-    font-weight: 600;
     text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.sidebar .nav-link i {
+    margin-right: 15px;
+    font-size: 1.25rem;
+    min-width: 25px;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 15px 0;
+}
+
+.sidebar.collapsed .nav-link span {
+    display: none;
+}
+
+/* ========================
+   Hover and Active States
+   ======================== */
+.sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 0.5rem;
-    transition: background 0.3s ease;
 }
 
-.logout a i {
-    margin-right: 0.75rem;
+.sidebar .nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-left: 4px solid #1cc88a;
+    border-radius: 0.5rem 0 0 0.5rem;
 }
 
-.logout a:hover {
-    background: rgba(231, 76, 60, 0.1);
+/* ========================
+   Submenu Styles
+   ======================== */
+.sidebar .collapse {
+    padding-left: 15px;
+    background: rgba(0, 0, 0, 0.1);
+    margin: 5px 0;
+    border-radius: 5px;
 }
 
-/* ================ */
-/* Responsive        */
-/* ================ */
-@media (max-width: 992px) {
+.sidebar .btn-toggle-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar .btn-toggle-nav .nav-link {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    color: #d1d3e2;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.sidebar .btn-toggle-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.sidebar .btn-toggle-nav .nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-left: 4px solid #1cc88a;
+}
+
+/* ========================
+   Logout Link Styles
+   ======================== */
+.sidebar .logout-link {
+    margin-top: auto;
+    padding: 20px 0;
+}
+
+.sidebar .logout-link .nav-link {
+    color: #ff6b6b;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.sidebar .logout-link .nav-link:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 0.5rem;
+    color: #ff6b6b;
+}
+
+/* ========================
+   Sidebar Toggle Button
+   ======================== */
+#sidebarToggle {
+    font-size: 1.5rem;
+    color: #1cc88a;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    color: #17a673;
+}
+
+/* ========================
+   Responsive Design
+   ======================== */
+@media (max-width: 991.98px) {
     .sidebar {
-        width: var(--sidebar-collapsed-width);
+        width: 70px;
+    }
+
+    .sidebar .user-info h4,
+    .sidebar .user-info p {
+        display: none;
+    }
+
+    .sidebar .nav-link {
+        justify-content: center;
+        padding: 15px 0;
+    }
+
+    .sidebar .nav-link span {
+        display: none;
     }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
     .sidebar {
         width: 100%;
+        height: auto;
         position: relative;
     }
 
-    .sidebar .user-panel {
+    .sidebar .user-info {
         display: none;
     }
+
+    .sidebar .nav-link {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .sidebar .nav-link span {
+        display: none;
+    }
+}
+
+/* ========================
+   Smooth Transition for Elements
+   ======================== */
+.sidebar,
+.sidebar .nav-link,
+.sidebar .btn-toggle-nav .nav-link {
+    transition: all 0.3s ease;
 }
