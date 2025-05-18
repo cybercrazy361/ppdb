@@ -38,35 +38,12 @@
 }
 
 /* ================ */
-/* Header & Toggle   */
+/* User Panel        */
 /* ================ */
 .sidebar-header {
-    display: flex;
-    align-items: center;
     margin-bottom: 1.5rem;
 }
 
-.toggle-btn {
-    background: none;
-    border: none;
-    color: var(--accent-color);
-    font-size: 1.5rem;
-    cursor: pointer;
-    margin-right: 1rem;
-    transition: color 0.3s ease;
-}
-
-.toggle-btn:hover {
-    color: #16a085;
-}
-
-.sidebar.collapsed .toggle-btn {
-    margin-right: 0;
-}
-
-/* ================ */
-/* User Panel        */
-/* ================ */
 .user-panel {
     display: flex;
     align-items: center;
@@ -169,8 +146,6 @@
 /* Submenu (Bootstrap collapse) */
 /* ================ */
 .collapse {
-    background: transparent;
-    transition: max-height 0.3s ease;
     margin-top: 0.25rem;
 }
 
@@ -199,8 +174,8 @@
     align-items: center;
     color: var(--logout-color);
     padding: 0.75rem 1rem;
-    text-decoration: none;
     font-weight: 600;
+    text-decoration: none;
     border-radius: 0.5rem;
     transition: background 0.3s ease;
 }
@@ -216,19 +191,19 @@
 /* ================ */
 /* Responsive        */
 /* ================ */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .sidebar {
+        width: var(--sidebar-collapsed-width);
+    }
+}
+
+@media (max-width: 767px) {
+    .sidebar {
+        width: 100%;
         position: relative;
-        width: 100%;
-        height: auto;
-        padding: 0.5rem;
     }
 
-    .sidebar.collapsed {
-        width: 100%;
-    }
-
-    .sidebar-header {
-        justify-content: space-between;
+    .sidebar .user-panel {
+        display: none;
     }
 }

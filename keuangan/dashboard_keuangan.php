@@ -2,7 +2,7 @@
 session_start();
 include '../database_connection.php';
 
-// Pastikan pengguna sudah login dan berhak akses
+// Hak akses
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
     header('Location: login_keuangan.php');
     exit();
@@ -10,14 +10,14 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 
 $unit = $_SESSION['unit'];
 
-// Ambil data total
+// Total siswa
 $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
 $stmt->bind_param('s', $unit);
 $stmt->execute();
 $total_siswa = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
 $stmt->close();
 
-// Ambil data sudah bayar
+// Sudah bayar
 $sql = "
 SELECT COUNT(DISTINCT s.id) AS sudah_bayar
 FROM siswa s
@@ -32,7 +32,7 @@ $stmt->execute();
 $total_sudah_bayar = $stmt->get_result()->fetch_assoc()['sudah_bayar'] ?? 0;
 $stmt->close();
 
-// Ambil data belum bayar
+// Belum bayar
 $sql = "
 SELECT COUNT(*) AS belum_bayar
 FROM siswa s
@@ -73,51 +73,57 @@ $conn->close();
         <i class="fas fa-bars"></i>
       </button>
       <div class="ms-auto d-flex align-items-center">
-        <span class="user-name me-2"><?= htmlspecialchars($_SESSION['nama']); ?></span>
+        <span class="user-name"><?= htmlspecialchars($_SESSION['nama']); ?></span>
         <i class="fas fa-user-circle fa-2x text-secondary"></i>
       </div>
     </nav>
 
     <section class="container-fluid p-4">
       <div class="page-header mb-4">
-        <h1>Dashboard Keuangan</h1>
+        <h1 class="dashboard-title">Dashboard Keuangan</h1>
         <p class="text-muted">Unit: <strong><?= htmlspecialchars($unit); ?></strong></p>
       </div>
 
       <div class="row g-4 mb-5">
         <div class="col-lg-4">
-          <div class="info-card shadow-sm">
-            <div class="card-icon"><i class="fas fa-users"></i></div>
-            <div class="info-content">
-              <h5>Total Siswa</h5>
-              <h2><?= htmlspecialchars($total_siswa); ?></h2>
+          <div class="card total-card">
+            <div class="card-body">
+              <div class="card-icon"><i class="fas fa-users"></i></div>
+              <div class="ms-3">
+                <h5 class="card-title">Total Siswa</h5>
+                <h2 class="card-text"><?= htmlspecialchars($total_siswa); ?></h2>
+              </div>
             </div>
-            <small class="text-muted">Jumlah total siswa terdaftar</small>
+            <div class="card-footer">Jumlah total siswa terdaftar</div>
           </div>
         </div>
         <div class="col-lg-4">
-          <div class="info-card shadow-sm">
-            <div class="card-icon success"><i class="fas fa-user-check"></i></div>
-            <div class="info-content">
-              <h5>Sudah Membayar</h5>
-              <h2><?= htmlspecialchars($total_sudah_bayar); ?></h2>
+          <div class="card paid-card">
+            <div class="card-body">
+              <div class="card-icon success"><i class="fas fa-user-check"></i></div>
+              <div class="ms-3">
+                <h5 class="card-title">Sudah Membayar</h5>
+                <h2 class="card-text"><?= htmlspecialchars($total_sudah_bayar); ?></h2>
+              </div>
             </div>
-            <small class="text-muted">Siswa yang telah menyelesaikan pembayaran</small>
+            <div class="card-footer">Siswa yang telah menyelesaikan pembayaran</div>
           </div>
         </div>
         <div class="col-lg-4">
-          <div class="info-card shadow-sm">
-            <div class="card-icon danger"><i class="fas fa-user-times"></i></div>
-            <div class="info-content">
-              <h5>Belum Membayar</h5>
-              <h2><?= htmlspecialchars($total_belum_bayar); ?></h2>
+          <div class="card unpaid-card">
+            <div class="card-body">
+              <div class="card-icon danger"><i class="fas fa-user-times"></i></div>
+              <div class="ms-3">
+                <h5 class="card-title">Belum Membayar</h5>
+                <h2 class="card-text"><?= htmlspecialchars($total_belum_bayar); ?></h2>
+              </div>
             </div>
-            <small class="text-muted">Siswa yang belum melakukan pembayaran</small>
+            <div class="card-footer">Siswa yang belum melakukan pembayaran</div>
           </div>
         </div>
       </div>
 
-      <div class="card shadow-sm mb-5">
+      <div class="card mb-5">
         <div class="card-header">
           <h3>Statistik Pembayaran</h3>
         </div>
@@ -128,7 +134,7 @@ $conn->close();
     </section>
   </main>
 
-  <footer class="footer text-center py-3">
+  <footer class="footer text-center">
     &copy; <?= date('Y'); ?> Sistem Keuangan PPDB
   </footer>
 

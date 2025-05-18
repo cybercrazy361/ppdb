@@ -9,7 +9,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <aside class="sidebar">
   <div class="sidebar-header">
-        <div class="user-panel">
+    <div class="user-panel">
       <?php if (!empty($_SESSION['profile_pic'])): ?>
         <img src="<?= htmlspecialchars($_SESSION['profile_pic']); ?>" alt="Avatar" class="avatar">
       <?php else: ?>
@@ -40,9 +40,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </a>
       </li>
       <li>
-        <a href="#submenuSettingTagihan" 
-           data-bs-toggle="collapse" 
-           aria-expanded="<?= in_array($current_page, ['setting_nominal.php','setting_jenis_pembayaran.php']) ? 'true' : 'false' ?>" 
+        <a href="#submenuSettingTagihan"
+           data-bs-toggle="collapse"
+           aria-expanded="<?= in_array($current_page, ['setting_nominal.php','setting_jenis_pembayaran.php']) ? 'true' : 'false' ?>"
            class="<?= in_array($current_page, ['setting_nominal.php','setting_jenis_pembayaran.php']) ? 'active' : '' ?>">
           <i class="fas fa-file-invoice-dollar"></i><span>Setting</span>
           <i class="fas fa-chevron-down ms-auto"></i>
