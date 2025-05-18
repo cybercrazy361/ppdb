@@ -1,141 +1,125 @@
 // sidebar.js
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
     const footer = document.querySelector('.footer');
+    const COLLAPSED_KEY = 'sidebar-collapsed';
 
     /**
-     * Fungsi untuk mengatur status sidebar berdasarkan parameter
-     * @param {boolean} collapsed - Apakah sidebar dalam keadaan collapsed
+     * Toggle a class on multiple elements.
+     * @param {string} className
+     * @param {HTMLElement[]} elements
      */
-    function setSidebarState(collapsed) {
-        if (collapsed) {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('sidebar-collapsed');
-            footer.classList.add('sidebar-collapsed');
-            sidebarToggle.setAttribute('aria-expanded', 'false');
-        } else {
-            sidebar.classList.remove('collapsed');
-            mainContent.classList.remove('sidebar-collapsed');
-            footer.classList.remove('sidebar-collapsed');
-            sidebarToggle.setAttribute('aria-expanded', 'true');
-        }
-    }
+    const toggleClassOn = (className, elements) => {
+        elements.forEach(el => el.classList.toggle(className));
+    };
 
     /**
-     * Memuat status sidebar dari localStorage
+     * Set sidebar state (collapsed / expanded).
+     * @param {boolean} collapsed
      */
-    function loadSidebarState() {
-        const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+    const setSidebarState = (collapsed) => {
+        const action = collapsed ? 'add' : 'remove';
+
+        sidebar.classList[action]('collapsed');
+        mainContent.classList[action]('sidebar-collapsed');
+        footer.classList[action]('sidebar-collapsed');
+
+        sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+        localStorage.setItem(COLLAPSED_KEY, String(collapsed));
+    };
+
+    /**
+     * Load and apply persisted sidebar state.
+     */
+    const loadSidebarState = () => {
+        const isCollapsed = localStorage.getItem(COLLAPSED_KEY) === 'true';
         setSidebarState(isCollapsed);
-    }
+    };
 
     /**
-     * Menyimpan status sidebar ke localStorage
-     * @param {boolean} collapsed - Apakah sidebar dalam keadaan collapsed
+     * Close sidebar when clicking outside on mobile.
+     * @param {MouseEvent} e
      */
-    function saveSidebarState(collapsed) {
-        localStorage.setItem('sidebar-collapsed', collapsed);
-    }
-
-    // Inisialisasi status sidebar saat halaman dimuat
-    loadSidebarState();
-
-    /**
-     * Event Listener untuk tombol toggle sidebar
-     */
-    sidebarToggle.addEventListener('click', function () {
-        sidebar.classList.toggle('collapsed');
-        mainContent.classList.toggle('sidebar-collapsed');
-        footer.classList.toggle('sidebar-collapsed');
-
-        // Menyimpan status sidebar setelah toggle
-        const isCollapsed = sidebar.classList.contains('collapsed');
-        saveSidebarState(isCollapsed);
-
-        // Mengupdate atribut aria-expanded untuk aksesibilitas
-        sidebarToggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
-    });
-
-    /**
-     * Menangani klik di luar sidebar untuk menutupnya (hanya pada perangkat mobile)
-     */
-    document.addEventListener('click', function (e) {
-        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-        if (viewportWidth < 768) { // Perangkat mobile
-            if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
-                if (!sidebar.classList.contains('collapsed')) {
-                    setSidebarState(true); // Menutup sidebar
-                    saveSidebarState(true);
-                }
+    const handleOutsideClick = (e) => {
+        if (window.innerWidth < 768 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+            if (!sidebar.classList.contains('collapsed')) {
+                setSidebarState(true);
             }
         }
-    });
+    };
 
     /**
-     * Fungsi untuk menutup semua submenu kecuali yang sedang dibuka
+     * Debounce utility to limit function calls.
+     * @param {Function} fn
+     * @param {number} wait
      */
-    function closeOtherSubmenus(currentLink) {
-        const submenuLinks = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
-        submenuLinks.forEach(function (link) {
+    const debounce = (fn, wait = 100) => {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn.apply(this, args), wait);
+        };
+    };
+
+    /**
+     * Close all submenus except the one related to current link.
+     * @param {HTMLElement} currentLink
+     */
+    const closeOtherSubmenus = (currentLink) => {
+        document.querySelectorAll('.nav-link[data-target]').forEach(link => {
             if (link !== currentLink) {
-                const target = link.getAttribute('href');
-                const collapseElement = document.querySelector(target);
-                if (collapseElement.classList.contains('show')) {
-                    const bsCollapse = new bootstrap.Collapse(collapseElement, {
-                        toggle: false
-                    });
-                    bsCollapse.hide();
+                const targetEl = document.querySelector(link.dataset.target);
+                if (targetEl.classList.contains('show')) {
+                    new bootstrap.Collapse(targetEl, { toggle: false }).hide();
                 }
                 link.classList.remove('active');
             }
         });
-    }
+    };
 
     /**
-     * Event Listener untuk setiap link yang memiliki submenu
+     * Initialize submenu toggles.
      */
-    const submenuLinks = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
-    submenuLinks.forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault(); // Mencegah perilaku default link
+    const initSubmenus = () => {
+        document.querySelectorAll('.nav-link[data-target]').forEach(link => {
+            const targetSelector = link.dataset.target;
+            const collapseEl = document.querySelector(targetSelector);
 
-            // Menutup submenu lain
-            closeOtherSubmenus(link);
-
-            const target = this.getAttribute('href');
-            const collapseElement = document.querySelector(target);
-            const bsCollapse = new bootstrap.Collapse(collapseElement, {
-                toggle: true
-            });
-
-            // Menambahkan kelas active saat submenu dibuka
-            collapseElement.addEventListener('shown.bs.collapse', function () {
-                link.classList.add('active');
-            }, { once: true });
-
-            // Menghapus kelas active saat submenu ditutup
-            collapseElement.addEventListener('hidden.bs.collapse', function () {
-                link.classList.remove('active');
-            }, { once: true });
-        });
-    });
-
-    /**
-     * Menambahkan kelas active pada menu utama jika salah satu submenu aktif
-     */
-    function setActiveMainMenu() {
-        submenuLinks.forEach(function (link) {
-            const target = link.getAttribute('href');
-            const collapseElement = document.querySelector(target);
-            if (collapseElement.classList.contains('show')) {
+            // Sync initial active state
+            if (collapseEl.classList.contains('show')) {
                 link.classList.add('active');
             }
-        });
-    }
 
-    // Inisialisasi status submenu saat halaman dimuat
-    setActiveMainMenu();
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeOtherSubmenus(link);
+
+                const bsCollapse = new bootstrap.Collapse(collapseEl, { toggle: true });
+                collapseEl.addEventListener('shown.bs.collapse', () => link.classList.add('active'), { once: true });
+                collapseEl.addEventListener('hidden.bs.collapse', () => link.classList.remove('active'), { once: true });
+            });
+        });
+    };
+
+    // ——— Initialization ———
+    loadSidebarState();
+    initSubmenus();
+
+    // Toggle sidebar on button click
+    sidebarToggle.addEventListener('click', () => {
+        setSidebarState(!sidebar.classList.contains('collapsed'));
+    });
+
+    // Click outside to close (mobile)
+    document.addEventListener('click', handleOutsideClick);
+
+    // Ensure sidebar auto-closes on window resize < 768px
+    window.addEventListener('resize', debounce(() => {
+        if (window.innerWidth < 768 && !sidebar.classList.contains('collapsed')) {
+            setSidebarState(true);
+        }
+    }));
 });
