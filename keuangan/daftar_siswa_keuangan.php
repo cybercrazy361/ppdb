@@ -271,6 +271,9 @@ $conn->close();
         <button type="button" class="btn btn-success no-print" onclick="printTable()">
             <i class="fas fa-print"></i> Cetak
         </button>
+        <button type="button" class="btn btn-warning no-print me-2" onclick="window.location='cetak_tagihan_siswa.php'">
+            <i class="fas fa-file-invoice"></i> Tagihan
+        </button>
     </div>
 
     <!-- Search Form -->
