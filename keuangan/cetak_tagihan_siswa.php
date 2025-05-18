@@ -9,9 +9,19 @@ include '../database_connection.php';
 
 $unit        = $_SESSION['unit'];
 $bulan_aktif = date('F');
-$tahun_aktif = date('Y');
+$tahun_now   = date('Y');
+$bulan_now   = date('n');
 
-// 0) Ambil daftar tahun pelajaran yang ada di pembayaran
+// 0) Hitung default tahun ajaran berdasarkan bulan saat ini:
+//    Jika bulan >= 7 (Juli), maka tahun ajarannya "$tahun_now/($tahun_now+1)"
+//    Jika bulan < 7, maka "$tahun_now-1/$tahun_now"
+if ($bulan_now >= 7) {
+    $default_tp = $tahun_now . '/' . ($tahun_now + 1);
+} else {
+    $default_tp = ($tahun_now - 1) . '/' . $tahun_now;
+}
+
+// 1) Ambil daftar tahun pelajaran yang ada di tabel pembayaran untuk unit ini
 $tahun_pelajaran_list = [];
 $stmt = $conn->prepare("
     SELECT DISTINCT p.tahun_pelajaran
@@ -28,11 +38,10 @@ while ($r = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-// Pilih tahun ajaran dari GET, atau default ke yang pertama (terbaru)
-$tp_selected = $_GET['tp'] ?? ($tahun_pelajaran_list[0] ?? '');
+// 2) Pilih tahun ajaran: dari GET jika ada, else gunakan $default_tp
+$tp_selected = $_GET['tp'] ?? $default_tp;
 
-
-// 1) Ambil daftar jenis pembayaran + nominal_max
+// 3) Ambil daftar jenis pembayaran + nominal_max
 $jenis_pembayaran_list = [];
 $stmt = $conn->prepare("
     SELECT jp.nama,
@@ -41,7 +50,7 @@ $stmt = $conn->prepare("
     LEFT JOIN pengaturan_nominal pn 
       ON pn.jenis_pembayaran_id = jp.id
      AND pn.bulan = ?
-     AND pn.unit = ?
+     AND pn.unit  = ?
     WHERE jp.unit = ?
     ORDER BY jp.nama
 ");
@@ -53,11 +62,11 @@ while ($r = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-// 2) Hitung total sudah dibayar per siswa per jenis, filter tahun_pelajaran
+// 4) Hitung total sudah dibayar per siswa per jenis di tahun ajaran terpilih
 $sudah_bayar = [];
 $stmt = $conn->prepare("
-    SELECT s.id         AS siswa_id,
-           jp.nama      AS jenis,
+    SELECT s.id           AS siswa_id,
+           jp.nama        AS jenis,
            SUM(pd.jumlah) AS total_bayar
     FROM siswa s
     JOIN pembayaran p ON s.id = p.siswa_id
@@ -80,7 +89,7 @@ while ($r = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-// 3) Ambil daftar siswa yang punya tunggakan di tahun ajaran & bulan ini
+// 5) Ambil daftar siswa yang punya tunggakan di tahun ajaran & bulan ini
 $siswa_tagihan = [];
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.no_formulir, s.nama
