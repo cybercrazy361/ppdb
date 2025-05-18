@@ -258,3 +258,25 @@
         width: 0;
     }
 }
+
+/* ===== Fix pop-out submenu text/icon color when sidebar is collapsed ===== */
+.sidebar.collapsed .has-submenu:hover>.collapse {
+    background: #fff;
+    /* pastikan latar putih */
+}
+
+/* Teks link menjadi gelap */
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link {
+    color: var(--clr-dark) !important;
+}
+
+/* Ikon di dalam pop-out submenu juga gelap */
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link i {
+    color: var(--clr-secondary) !important;
+}
+
+/* Saat hover di pop-out, ubah bg & teks dengan kontras */
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link:hover {
+    background: var(--clr-active-bg) !important;
+    color: #fff !important;
+}
