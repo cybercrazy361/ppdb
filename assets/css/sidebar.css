@@ -12,6 +12,8 @@
     --clr-text-muted: rgba(255, 255, 255, 0.6);
     --clr-active-bg: rgba(255, 255, 255, 0.15);
     --clr-active-border: rgba(255, 255, 255, 0.3);
+    --clr-dark: #343a40;
+    --clr-secondary: #5a5c69;
     --transition: 0.3s ease;
 }
 
@@ -24,9 +26,7 @@
     left: 0;
     width: 250px;
     height: 100%;
-    background: linear-gradient(to bottom,
-            var(--clr-sidebar-start),
-            var(--clr-sidebar-end));
+    background: linear-gradient(to bottom, var(--clr-sidebar-start), var(--clr-sidebar-end));
     display: flex;
     flex-direction: column;
     transition: width var(--transition), background var(--transition);
@@ -189,7 +189,6 @@
 /* =========================
    Collapsed State Adjustments
    ========================= */
-/* Icon-only style */
 .sidebar.collapsed .nav-link {
     justify-content: center;
     padding: .75rem 0;
@@ -205,18 +204,18 @@
     display: none !important;
 }
 
-/* Hide all submenu blocks */
 .sidebar.collapsed .collapse {
     display: none !important;
 }
 
-/* Remove active border-left */
 .sidebar.collapsed .nav-link.active {
     border-left: none;
     background-color: var(--clr-active-bg);
 }
 
-/* ==== Pop-out Submenu on Hover ==== */
+/* =========================
+   Pop-out Submenu on Hover (Collapsed)
+   ========================= */
 .sidebar.collapsed .has-submenu {
     position: relative;
 }
@@ -226,7 +225,6 @@
     position: absolute;
     top: 0;
     left: 80px;
-    /* match collapsed width */
     background: #ffffff;
     min-width: 180px;
     border-radius: .5rem;
@@ -235,15 +233,25 @@
     z-index: 1000;
 }
 
+/* Show icons and text, left-aligned */
 .sidebar.collapsed .has-submenu:hover>.collapse .nav-link {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    gap: .75rem;
     padding: .5rem 1rem;
-    color: var(--clr-dark);
+    color: var(--clr-dark) !important;
 }
 
+/* Icon color */
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link i {
+    color: var(--clr-secondary) !important;
+}
+
+/* Hover on pop-out items */
 .sidebar.collapsed .has-submenu:hover>.collapse .nav-link:hover {
-    background: var(--clr-active-bg);
+    background: var(--clr-active-bg) !important;
+    color: #fff !important;
 }
 
 /* =========================
@@ -257,26 +265,4 @@
     .sidebar.collapsed {
         width: 0;
     }
-}
-
-/* ===== Fix pop-out submenu text/icon color when sidebar is collapsed ===== */
-.sidebar.collapsed .has-submenu:hover>.collapse {
-    background: #fff;
-    /* pastikan latar putih */
-}
-
-/* Teks link menjadi gelap */
-.sidebar.collapsed .has-submenu:hover>.collapse .nav-link {
-    color: var(--clr-dark) !important;
-}
-
-/* Ikon di dalam pop-out submenu juga gelap */
-.sidebar.collapsed .has-submenu:hover>.collapse .nav-link i {
-    color: var(--clr-secondary) !important;
-}
-
-/* Saat hover di pop-out, ubah bg & teks dengan kontras */
-.sidebar.collapsed .has-submenu:hover>.collapse .nav-link:hover {
-    background: var(--clr-active-bg) !important;
-    color: #fff !important;
 }
