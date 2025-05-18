@@ -262,33 +262,45 @@ $conn->close();
             </ul>
         </nav>
 
-        <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Daftar Siswa Keuangan - <?= htmlspecialchars($petugas_unit); ?></h1>
+<div class="container-fluid">
+    <!-- Judul + Tombol Cetak -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Daftar Siswa Keuangan - <?= htmlspecialchars($petugas_unit); ?>
+        </h1>
+        <button type="button" class="btn btn-success no-print" onclick="printTable()">
+            <i class="fas fa-print"></i> Cetak
+        </button>
+    </div>
 
-            <!-- Search Form dan Tombol Cetak -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form class="row g-3" method="GET" action="daftar_siswa_keuangan.php">
-                        <div class="col-md-3">
-                            <label for="search_no_formulir" class="form-label">Cari No Formulir</label>
-                            <input type="text" class="form-control" id="search_no_formulir" name="search_no_formulir" placeholder="Masukkan No Formulir" value="<?= htmlspecialchars($search_no_formulir); ?>">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="search_nama" class="form-label">Cari Nama Siswa</label>
-                            <input type="text" class="form-control" id="search_nama" name="search_nama" placeholder="Masukkan Nama Siswa" value="<?= htmlspecialchars($search_nama); ?>">
-                        </div>
-                        <div class="col-md-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search"></i> Cari</button>
-                            <a href="daftar_siswa_keuangan.php" class="btn btn-secondary"><i class="fas fa-undo"></i> Reset</a>
-                        </div>
-                        <div class="col-md-3 d-flex align-items-end justify-content-end">
-                            <button type="button" class="btn btn-success no-print" onclick="printTable()">
-                                <i class="fas fa-print"></i> Cetak
-                            </button>
-                        </div>
-                    </form>
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form class="row g-3" method="GET" action="daftar_siswa_keuangan.php">
+                <div class="col-md-3">
+                    <label for="search_no_formulir" class="form-label">Cari No Formulir</label>
+                    <input type="text" class="form-control" id="search_no_formulir" name="search_no_formulir"
+                           placeholder="Masukkan No Formulir"
+                           value="<?= htmlspecialchars($search_no_formulir); ?>">
                 </div>
-            </div>
+                <div class="col-md-3">
+                    <label for="search_nama" class="form-label">Cari Nama Siswa</label>
+                    <input type="text" class="form-control" id="search_nama" name="search_nama"
+                           placeholder="Masukkan Nama Siswa"
+                           value="<?= htmlspecialchars($search_nama); ?>">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <a href="daftar_siswa_keuangan.php" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i> Reset
+                    </a>
+                </div>
+                <!-- tombol Cetak dihapus dari sini -->
+            </form>
+        </div>
+    </div>
 
             <!-- Siswa Table -->
             <div class="card shadow mb-4 printable-area">
