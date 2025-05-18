@@ -46,15 +46,14 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.sidebar .user-info h4 {
+.sidebar .user-info h4,
+.sidebar .user-info p {
     margin: 0;
-    font-size: 1.25rem;
     color: var(--clr-text);
 }
 
 .sidebar .user-info p {
-    margin: .25rem 0 0;
-    font-size: .9rem;
+    margin-top: .25rem;
     color: var(--clr-text-muted);
 }
 
@@ -75,7 +74,6 @@
     margin-bottom: .25rem;
 }
 
-/* Nav links */
 .sidebar .nav-link {
     display: flex;
     align-items: center;
@@ -99,7 +97,6 @@
     flex-grow: 1;
 }
 
-/* Hover & Active */
 .sidebar .nav-link:hover {
     background-color: var(--clr-active-bg);
     color: #fff;
@@ -120,11 +117,23 @@
 }
 
 /* =========================
-   Submenu (Setting Tagihan)
+   Submenu (has-submenu)
    ========================= */
+.sidebar .has-submenu>.nav-link {
+    position: relative;
+}
+
 .sidebar .has-submenu .fa-chevron-down {
     margin-left: auto;
     transition: transform var(--transition);
+}
+
+.sidebar .has-submenu .collapse {
+    margin: .25rem 0;
+    padding-left: 1.25rem;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: .5rem;
+    transition: height var(--transition);
 }
 
 .sidebar .has-submenu .collapse.show+.fa-chevron-down,
@@ -132,13 +141,9 @@
     transform: rotate(180deg);
 }
 
-.sidebar .collapse {
-    margin: .25rem 0;
-    padding-left: 1.25rem;
-    background-color: rgba(0, 0, 0, 0.03);
-    border-radius: .5rem;
-}
-
+/* =========================
+   Toggle-Nav Buttons (nested menus)
+   ========================= */
 .sidebar .btn-toggle-nav .nav-link {
     padding: .5rem 1rem;
     font-size: .9rem;
@@ -146,61 +151,48 @@
     transition: background var(--transition), color var(--transition);
 }
 
-.sidebar .btn-toggle-nav .nav-link:hover {
-    background-color: var(--clr-active-bg);
-    color: #fff;
-}
-
+.sidebar .btn-toggle-nav .nav-link:hover,
 .sidebar .btn-toggle-nav .nav-link.active {
     background-color: var(--clr-active-bg);
     color: #fff;
 }
 
 /* =========================
-   Logout (highlighted)
+   Logout Link
    ========================= */
 .sidebar .logout-link {
     margin-top: auto;
-    /* tetap di bawah */
     padding: 1.5rem 1rem;
-    /* ruang ekstra di sekitar */
 }
 
 .sidebar .logout-link .nav-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* teks + ikon di tengah */
-    gap: 0.75rem;
+    gap: .75rem;
     background-color: #e74a3b;
-    /* merah cerah */
     color: #fff;
-    /* teks putih */
     font-weight: 700;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    /* sudut agak melengkung */
-    transition: background 0.2s ease;
+    padding: .75rem 1rem;
+    border-radius: .5rem;
+    transition: background .2s ease;
 }
 
 .sidebar .logout-link .nav-link i {
     font-size: 1.2rem;
-    /* ikon sedikit lebih besar */
 }
 
 .sidebar .logout-link .nav-link:hover {
     background-color: #c0392b;
-    /* merah gelap saat hover */
 }
 
 /* =========================
    Collapsed State Adjustments
    ========================= */
+/* Icon-only style */
 .sidebar.collapsed .nav-link {
-    /* Hilangkan padding kiri/kanan, center ikon */
     justify-content: center;
-    padding: 0.75rem 0;
-    /* Buat kotak ikon bundar */
+    padding: .75rem 0;
     width: 48px;
     height: 48px;
     margin: .5rem auto;
@@ -213,15 +205,45 @@
     display: none !important;
 }
 
-/* Sembunyikan seluruh submenu */
+/* Hide all submenu blocks */
 .sidebar.collapsed .collapse {
     display: none !important;
 }
 
-/* Hapus border‐left saat collapsed */
+/* Remove active border-left */
 .sidebar.collapsed .nav-link.active {
     border-left: none;
     background-color: var(--clr-active-bg);
+}
+
+/* ==== Pop-out Submenu on Hover ==== */
+.sidebar.collapsed .has-submenu {
+    position: relative;
+}
+
+.sidebar.collapsed .has-submenu:hover>.collapse {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 80px;
+    /* match collapsed width */
+    background: #ffffff;
+    min-width: 180px;
+    border-radius: .5rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.1);
+    padding: .5rem 0;
+    z-index: 1000;
+}
+
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link {
+    display: flex;
+    align-items: center;
+    padding: .5rem 1rem;
+    color: var(--clr-dark);
+}
+
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link:hover {
+    background: var(--clr-active-bg);
 }
 
 /* =========================
