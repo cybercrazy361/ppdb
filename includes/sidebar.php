@@ -9,10 +9,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <aside class="sidebar">
   <div class="sidebar-header">
-    <button id="sidebarToggle" class="toggle-btn" aria-expanded="true" aria-label="Toggle Sidebar">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="user-panel">
+        <div class="user-panel">
       <?php if (!empty($_SESSION['profile_pic'])): ?>
         <img src="<?= htmlspecialchars($_SESSION['profile_pic']); ?>" alt="Avatar" class="avatar">
       <?php else: ?>
