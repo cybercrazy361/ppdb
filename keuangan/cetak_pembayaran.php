@@ -390,7 +390,7 @@ function getElementValue($elementName) {
                     <div class="receipt-element receipt-header"
                         style="left: 50%; top: <?= htmlspecialchars($pos['y']); ?>mm; width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm; transform: translateX(-50%); <?= $style_inline; ?>">
                         <h2 style="<?= $style_inline; ?> margin: 0;">KUITANSI PEMBAYARAN</h2>
-                        <p style="<?= $style_inline; ?> margin: 5px 0 0 0;">Sistem Keuangan PPDB</p>
+                       <p style="<?= $style_inline; ?> margin:5px 0 0 0;"><?= $unit; ?></p>
 
                     </div>
                     <?php
