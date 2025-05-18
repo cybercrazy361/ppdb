@@ -11,18 +11,22 @@ $unit        = $_SESSION['unit'];
 $bulan_aktif = date('F');
 $tahun_aktif = date('Y');
 
-// 1) Ambil daftar jenis pembayaran + nominal_max
+// 1) Ambil daftar jenis pembayaran + nominal_max (tanpa filter bulan untuk nominal)
 $jenis_pembayaran_list = [];
 $stmt = $conn->prepare("
-    SELECT jp.nama, COALESCE(pn.nominal_max,0) AS nominal_max
+    SELECT jp.nama,
+           COALESCE((
+             SELECT pn.nominal_max 
+             FROM pengaturan_nominal pn 
+             WHERE pn.jenis_pembayaran_id = jp.id
+             ORDER BY pn.id DESC
+             LIMIT 1
+           ), 0) AS nominal_max
     FROM jenis_pembayaran jp
-    LEFT JOIN pengaturan_nominal pn 
-      ON pn.jenis_pembayaran_id = jp.id
-     AND pn.bulan = ?
     WHERE jp.unit = ?
     ORDER BY jp.nama
 ");
-$stmt->bind_param('ss', $bulan_aktif, $unit);
+$stmt->bind_param('s', $unit);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($r = $res->fetch_assoc()) {
@@ -30,10 +34,12 @@ while ($r = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-// 2) Hitung sudah bayar per siswa per jenis
+// 2) Hitung total sudah dibayar per siswa per jenis
 $sudah_bayar = [];
 $stmt = $conn->prepare("
-    SELECT s.id AS siswa_id, jp.nama AS jenis, SUM(pd.jumlah) AS total_bayar
+    SELECT s.id AS siswa_id,
+           jp.nama AS jenis,
+           SUM(pd.jumlah) AS total_bayar
     FROM siswa s
     JOIN pembayaran p ON s.id = p.siswa_id
     JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
@@ -90,7 +96,8 @@ $conn->close();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     @media print { .no-print{display:none;} body{margin:20px;} }
-    table{font-size:12pt;} th,td{text-align:center;vertical-align:middle;}
+    table { font-size:12pt; }
+    th, td { text-align:center; vertical-align:middle; }
   </style>
 </head>
 <body>
@@ -122,13 +129,14 @@ $conn->close();
       <?php
         $no          = 1;
         $grand_total = 0;
-        foreach ($siswa_tagihan as $id => $s): 
+        foreach ($siswa_tagihan as $id => $s):
           $total_sisa = 0;
       ?>
         <tr>
           <td><?= $no++ ?></td>
           <td><?= htmlspecialchars($s['no_formulir']) ?></td>
           <td><?= htmlspecialchars($s['nama']) ?></td>
+
           <?php foreach ($jenis_pembayaran_list as $jenis => $nominal_max):
             $bayar = $sudah_bayar[$id][$jenis] ?? 0;
             $sisa  = max(0, $nominal_max - $bayar);
@@ -139,6 +147,7 @@ $conn->close();
               <div>Sisa: <strong>Rp <?= number_format($sisa,0,',','.') ?></strong></div>
             </td>
           <?php endforeach; ?>
+
           <td><strong>Rp <?= number_format($total_sisa,0,',','.') ?></strong></td>
         </tr>
       <?php 
