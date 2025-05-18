@@ -2,7 +2,7 @@
 session_start();
 include '../database_connection.php';
 
-// Cek login
+// Pastikan pengguna sudah login
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
     header('Location: login_keuangan.php');
     exit();
@@ -10,135 +10,152 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 
 $unit = $_SESSION['unit'];
 
-// Query data
-$stmt = $conn->prepare("SELECT COUNT(*) FROM siswa WHERE unit = ?");
-$stmt->bind_param('s', $unit);
-$stmt->execute();
-$total_siswa = $stmt->get_result()->fetch_row()[0];
-$stmt->close();
+// Ambil total siswa pada unit tersebut
+$sql_total = "SELECT COUNT(*) AS total FROM siswa WHERE unit = ?";
+$stmt_total = $conn->prepare($sql_total);
+$stmt_total->bind_param('s', $unit);
+$stmt_total->execute();
+$result_total = $stmt_total->get_result()->fetch_assoc();
+$total_siswa = $result_total['total'] ?? 0;
+$stmt_total->close();
 
-$stmt = $conn->prepare("
-    SELECT COUNT(DISTINCT s.id)
-    FROM siswa s
-    JOIN pembayaran p ON s.id = p.siswa_id
-    JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-    WHERE s.unit = ? AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
-");
-$stmt->bind_param('s', $unit);
-$stmt->execute();
-$total_sudah = $stmt->get_result()->fetch_row()[0];
-$stmt->close();
+// Ambil jumlah siswa yang sudah membayar
+$sql_sudah = "
+SELECT COUNT(DISTINCT s.id) AS sudah_bayar 
+FROM siswa s
+INNER JOIN pembayaran p ON s.id = p.siswa_id
+INNER JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
+WHERE s.unit = ? AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
+";
+$stmt_sudah = $conn->prepare($sql_sudah);
+$stmt_sudah->bind_param('s', $unit);
+$stmt_sudah->execute();
+$result_sudah = $stmt_sudah->get_result()->fetch_assoc();
+$total_sudah_bayar = $result_sudah['sudah_bayar'] ?? 0;
+$stmt_sudah->close();
 
-$total_belum = $total_siswa - $total_sudah;
+// Hitung sisa
+$total_belum_bayar = $total_siswa - $total_sudah_bayar;
+
 $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Keuangan</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/css/sidebar.css" rel="stylesheet">
-  <link href="../assets/css/dashboard_keuangan_styles.css" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/a2e0b4f5c7.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Keuangan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../assets/css/dashboard_keuangan_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-light">
-  <?php include '../includes/sidebar.php'; ?>
+<body>
+    <?php include '../includes/sidebar.php'; ?>
 
-  <main class="main-content p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold text-secondary mb-0">Dashboard Keuangan</h2>
-      <div class="text-end">
-        <span class="me-2 text-secondary">Hai, <?= htmlspecialchars($_SESSION['nama']); ?></span>
-        <i class="fas fa-user-circle fa-lg text-secondary"></i>
-      </div>
+    <div class="main-content p-4">
+        <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
+            <button id="sidebarToggle" class="btn btn-link d-md-inline rounded-circle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="#">
+                        <span class="me-2"><?= htmlspecialchars($_SESSION['nama']); ?></span>
+                        <i class="fas fa-user-circle fa-lg"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <h1 class="h3 text-dark mb-4">Dashboard Keuangan</h1>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card total-card">
+                    <div class="card-body">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title">Total Siswa</h5>
+                            <p class="card-text"><?= htmlspecialchars($total_siswa); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card paid-card">
+                    <div class="card-body">
+                        <div class="card-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title">Sudah Membayar</h5>
+                            <p class="card-text"><?= htmlspecialchars($total_sudah_bayar); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card unpaid-card">
+                    <div class="card-body">
+                        <div class="card-icon">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title">Belum Membayar</h5>
+                            <p class="card-text"><?= htmlspecialchars($total_belum_bayar); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Statistik Pembayaran</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="paymentChart"></canvas>
+            </div>
+        </div>
     </div>
 
-    <div class="row gy-4">
-      <div class="col-sm-6 col-lg-4">
-        <div class="card shadow-sm hover-up">
-          <div class="card-body d-flex align-items-center">
-            <div class="icon bg-primary text-white">
-              <i class="fas fa-users"></i>
-            </div>
-            <div class="ms-3">
-              <h6 class="text-secondary mb-1">Total Siswa</h6>
-              <h3 class="fw-bold"><?= $total_siswa; ?></h3>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card shadow-sm hover-up">
-          <div class="card-body d-flex align-items-center">
-            <div class="icon bg-success text-white">
-              <i class="fas fa-user-check"></i>
-            </div>
-            <div class="ms-3">
-              <h6 class="text-secondary mb-1">Sudah Membayar</h6>
-              <h3 class="fw-bold"><?= $total_sudah; ?></h3>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card shadow-sm hover-up">
-          <div class="card-body d-flex align-items-center">
-            <div class="icon bg-danger text-white">
-              <i class="fas fa-user-times"></i>
-            </div>
-            <div class="ms-3">
-              <h6 class="text-secondary mb-1">Belum Membayar</h6>
-              <h3 class="fw-bold"><?= $total_belum; ?></h3>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <footer class="footer text-center">
+        &copy; <?= date('Y'); ?> Sistem Keuangan PPDB
+    </footer>
 
-    <div class="card shadow-sm mt-4">
-      <div class="card-header bg-white border-0">
-        <h5 class="mb-0 text-secondary">Statistik Pembayaran</h5>
-      </div>
-      <div class="card-body">
-        <canvas id="paymentChart" height="150"></canvas>
-      </div>
-    </div>
-  </main>
-
-  <footer class="footer text-center text-secondary py-3">
-    &copy; <?= date('Y'); ?> Sistem Keuangan PPDB
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../assets/js/sidebar.js"></script>
-  <script>
-    const ctx = document.getElementById('paymentChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Sudah Membayar','Belum Membayar'],
-        datasets: [{ data: [<?= $total_sudah; ?>,<?= $total_belum; ?>] }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'bottom' },
-          tooltip: {
-            callbacks: {
-              label: ctx => {
-                const val = ctx.raw;
-                const tot = ctx.dataset.data.reduce((a,b)=>a+b,0);
-                const pct = ((val/tot)*100).toFixed(1);
-                return `${ctx.label}: ${val} (${pct}%)`;
-              }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script>
+        const ctx = document.getElementById('paymentChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sudah Membayar', 'Belum Membayar'],
+                datasets: [{
+                    data: [<?= $total_sudah_bayar; ?>, <?= $total_belum_bayar; ?>]
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const val = ctx.raw;
+                                const tot = ctx.dataset.data.reduce((a,b)=>a+b,0);
+                                const pct = ((val/tot)*100).toFixed(1);
+                                return `${ctx.label}: ${val} (${pct}%)`;
+                            }
+                        }
+                    }
+                }
             }
-          }
-        }
-      }
-    });
-  </script>
+        });
+    </script>
 </body>
 </html>

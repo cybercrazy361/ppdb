@@ -1,34 +1,50 @@
-// sidebar.js
-document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('sidebarToggle');
+// assets/js/sidebar.js
+
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const footer = document.querySelector('.footer');
 
-    // Load state
-    const collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-    sidebar.classList.toggle('collapsed', collapsed);
+    function setSidebarState(collapsed) {
+        sidebar.classList.toggle('collapsed', collapsed);
+        mainContent.classList.toggle('sidebar-collapsed', collapsed);
+        footer.classList.toggle('sidebar-collapsed', collapsed);
+        sidebarToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
 
-    // Toggle sidebar
-    toggleBtn.addEventListener('click', () => {
-        const isCollapsed = sidebar.classList.toggle('collapsed');
-        localStorage.setItem('sidebar-collapsed', isCollapsed);
+    function loadSidebarState() {
+        setSidebarState(localStorage.getItem('sidebar-collapsed') === 'true');
+    }
+
+    function saveSidebarState(collapsed) {
+        localStorage.setItem('sidebar-collapsed', collapsed);
+    }
+
+    loadSidebarState();
+
+    sidebarToggle.addEventListener('click', function () {
+        const isCollapsed = !sidebar.classList.contains('collapsed');
+        setSidebarState(isCollapsed);
+        saveSidebarState(isCollapsed);
     });
 
-    // Auto-close on small screens when clicking outside
-    document.addEventListener('click', e => {
-        const width = window.innerWidth;
-        if (width < 768 && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-            sidebar.classList.add('collapsed');
-            localStorage.setItem('sidebar-collapsed', true);
+    document.addEventListener('click', function (e) {
+        if (window.innerWidth < 768 &&
+            !sidebar.contains(e.target) &&
+            !sidebarToggle.contains(e.target) &&
+            !sidebar.classList.contains('collapsed')) {
+            setSidebarState(true);
+            saveSidebarState(true);
         }
     });
 
-    // Submenu rotate
-    const submenuToggles = document.querySelectorAll('.has-submenu > .nav-link');
-    submenuToggles.forEach(link => {
-        link.addEventListener('click', e => {
+    const submenuLinks = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
+    submenuLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
-            const collapseEl = document.querySelector(link.getAttribute('href'));
-            const bsCollapse = new bootstrap.Collapse(collapseEl, { toggle: true });
+            const target = document.querySelector(this.getAttribute('href'));
+            new bootstrap.Collapse(target, { toggle: true });
         });
     });
 });
