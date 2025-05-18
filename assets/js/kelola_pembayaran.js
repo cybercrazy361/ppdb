@@ -6,208 +6,218 @@ document.addEventListener('DOMContentLoaded', function () {
     // ========================
     function formatCurrencyInput(input) {
         input.addEventListener('input', function () {
-            let cursorPosition = input.selectionStart;
-            let originalLength = input.value.length;
-
-            // Hapus semua karakter non-digit
-            let value = input.value.replace(/\D/g, '');
-            if (value === '') {
+            let cursorPos = input.selectionStart;
+            let origLen = input.value.length;
+            let digits = input.value.replace(/\D/g, '');
+            if (!digits) {
                 input.value = '';
                 return;
             }
-
-            // Format ke dalam format rupiah
-            let formattedValue = new Intl.NumberFormat('id-ID').format(value);
-            input.value = formattedValue;
-
-            // Hitung perbedaan panjang setelah format
-            let newLength = formattedValue.length;
-            cursorPosition += newLength - originalLength;
-
-            // Set kembali posisi kursor
-            input.setSelectionRange(cursorPosition, cursorPosition);
+            let formatted = new Intl.NumberFormat('id-ID').format(digits);
+            input.value = formatted;
+            let newLen = formatted.length;
+            cursorPos += newLen - origLen;
+            input.setSelectionRange(cursorPos, cursorPos);
         });
     }
 
     // ========================
-    // 2. Pencarian No Formulir (Autocomplete)
+    // 2. Autocomplete Siswa
     // ========================
     const noFormulirInput = document.getElementById('no_formulir');
     const namaInput = document.getElementById('nama');
 
-    function searchStudent(query) {
-        if (query.length < 2) {
-            document.getElementById('siswa-suggestions').style.display = 'none';
-            return;
-        }
-
-        fetch(`search_student.php?query=${encodeURIComponent(query)}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const suggestions = document.getElementById('siswa-suggestions');
-                suggestions.innerHTML = '';
-                if (data.success && data.data.length > 0) {
-                    data.data.forEach(student => {
-                        const div = document.createElement('div');
+    function searchStudent(q) {
+        const sug = document.getElementById('siswa-suggestions');
+        if (q.length < 2) return sug.style.display = 'none';
+        fetch(`search_student.php?query=${encodeURIComponent(q)}`)
+            .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+            .then(j => {
+                sug.innerHTML = '';
+                if (j.success && j.data.length) {
+                    j.data.forEach(s => {
+                        let div = document.createElement('div');
                         div.className = 'dropdown-item';
-                        div.textContent = `${student.no_formulir} - ${student.nama}`;
-                        div.style.cursor = 'pointer';
-                        div.onclick = () => selectStudent(student);
-                        suggestions.appendChild(div);
+                        div.textContent = `${s.no_formulir} – ${s.nama}`;
+                        div.onclick = () => {
+                            noFormulirInput.value = s.no_formulir;
+                            namaInput.value = s.nama;
+                            sug.style.display = 'none';
+                        };
+                        sug.appendChild(div);
                     });
-                    suggestions.style.display = 'block';
                 } else {
-                    suggestions.innerHTML = '<div class="dropdown-item">Tidak ditemukan</div>';
-                    suggestions.style.display = 'block';
+                    sug.innerHTML = '<div class="dropdown-item">Tidak ditemukan</div>';
                 }
+                sug.style.display = 'block';
             })
-            .catch(error => console.error('Error:', error));
+            .catch(err => console.error('searchStudent error:', err));
     }
 
-    function selectStudent(student) {
-        noFormulirInput.value = student.no_formulir;
-        namaInput.value = student.nama;
-        document.getElementById('siswa-suggestions').style.display = 'none';
-    }
-
-    // Implementasi Debounce untuk Pencarian
-    function debounce(func, delay) {
-        let debounceTimer;
-        return function () {
-            const context = this;
-            const args = arguments;
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => func.apply(context, args), delay);
-        }
+    function debounce(fn, ms) {
+        let t;
+        return function (...args) {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, args), ms);
+        };
     }
 
     if (noFormulirInput) {
-        noFormulirInput.addEventListener('input', debounce(function () {
-            searchStudent(noFormulirInput.value.trim());
-        }, 300)); // 300ms delay
+        noFormulirInput.addEventListener('input',
+            debounce(() => searchStudent(noFormulirInput.value.trim()), 300)
+        );
     }
-
-    // ========================
-    // 3. Menutup Suggestion saat Klik di Luar Dropdown
-    // ========================
-    document.addEventListener('click', function (e) {
-        if (!noFormulirInput.contains(e.target) && !document.getElementById('siswa-suggestions').contains(e.target)) {
-            document.getElementById('siswa-suggestions').style.display = 'none';
+    document.addEventListener('click', e => {
+        const sug = document.getElementById('siswa-suggestions');
+        if (sug && !sug.contains(e.target) && e.target !== noFormulirInput) {
+            sug.style.display = 'none';
         }
     });
 
     // ========================
-    // 4. Menambah Jenis Pembayaran Dinamis
+    // 3. Dynamic Payment Items
     // ========================
     const paymentWrapper = document.getElementById('payment-wrapper');
     const addPaymentBtn = document.getElementById('add-payment-btn');
 
-    // Pastikan jenisPembayaranList telah terdefinisi
-    if (typeof jenisPembayaranList === 'undefined' || !Array.isArray(jenisPembayaranList)) {
-        console.error('jenisPembayaranList tidak didefinisikan atau bukan array. Pastikan variabel tersebut telah didefinisikan di PHP.');
-    } else {
-        // Fungsi untuk mendapatkan opsi jenis pembayaran dari variabel JavaScript
-        function getJenisPembayaranOptions(selectedId = '') {
-            let options = '<option value="" disabled>Pilih Jenis Pembayaran</option>';
-            jenisPembayaranList.forEach(jenis => {
-                if (jenis.id == selectedId) {
-                    options += `<option value="${jenis.id}" selected>${jenis.nama}</option>`;
-                } else {
-                    options += `<option value="${jenis.id}">${jenis.nama}</option>`;
-                }
-            });
-            return options;
+    function isSPP(id) {
+        return Array.isArray(jenisPembayaranList) &&
+            jenisPembayaranList.some(j => j.id == id && j.nama.toLowerCase() === 'spp');
+    }
+
+    function getJenisPembayaranOptions(sel = '') {
+        if (!Array.isArray(jenisPembayaranList)) return '<option disabled>Data kosong</option>';
+        let opts = '<option value="" disabled>Pilih Jenis Pembayaran</option>';
+        jenisPembayaranList.forEach(j => {
+            opts += `<option value="${j.id}"${j.id == sel ? ' selected' : ''}>${j.nama}</option>`;
+        });
+        return opts;
+    }
+
+    function addPayment(selectedId = '', selectedBulan = '') {
+        const item = document.createElement('div');
+        item.className = 'payment-item mb-3';
+        item.innerHTML = `
+            <div class="row g-2">
+              <div class="col-md-5">
+                <select name="jenis_pembayaran[]" class="form-select jenis-pembayaran" required>
+                  ${getJenisPembayaranOptions(selectedId)}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" required>
+              </div>
+              <div class="col-md-3 d-flex align-items-start">
+                <select name="bulan[]" class="form-select bulan-pembayaran flex-grow-1" style="display:none;">
+                  <option value="" disabled selected>Pilih Bulan</option>
+                  <option>Juli</option><option>Agustus</option><option>September</option>
+                  <option>Oktober</option><option>November</option><option>Desember</option>
+                  <option>Januari</option><option>Februari</option><option>Maret</option>
+                  <option>April</option><option>Mei</option><option>Juni</option>
+                </select>
+                <button type="button" class="btn btn-danger remove-payment-btn ms-2">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>`;
+        paymentWrapper.appendChild(item);
+
+        // apply currency format
+        const ji = item.querySelector('.jumlah-input');
+        formatCurrencyInput(ji);
+
+        const js = item.querySelector('.jenis-pembayaran');
+        const bs = item.querySelector('.bulan-pembayaran');
+        if (selectedId && isSPP(selectedId)) {
+            bs.style.display = 'block';
+            bs.value = selectedBulan;
         }
+        js.addEventListener('change', () => {
+            if (isSPP(js.value)) bs.style.display = 'block';
+            else {
+                bs.style.display = 'none';
+                bs.value = '';
+            }
+        });
+    }
 
-        // Fungsi untuk menambahkan jenis pembayaran
-        function addPayment(selectedId = '', selectedBulan = '') {
-            const paymentItem = document.createElement('div');
-            paymentItem.className = 'payment-item mb-3';
-            paymentItem.innerHTML = `
-                <div class="row">
-                    <div class="col-md-5">
-                        <select name="jenis_pembayaran[]" class="form-select jenis-pembayaran" required>
-                            ${getJenisPembayaranOptions(selectedId)}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" required>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="bulan[]" class="form-select bulan-pembayaran" style="display: none;">
-                            <option value="" disabled selected>Pilih Bulan</option>
-                            <option value="Juli">Juli</option>
-                            <option value="Agustus">Agustus</option>
-                            <option value="September">September</option>
-                            <option value="Oktober">Oktober</option>
-                            <option value="November">November</option>
-                            <option value="Desember">Desember</option>
-                            <option value="Januari">Januari</option>
-                            <option value="Februari">Februari</option>
-                            <option value="Maret">Maret</option>
-                            <option value="April">April</option>
-                            <option value="Mei">Mei</option>
-                            <option value="Juni">Juni</option>
-                        </select>
-                        <button type="button" class="btn btn-danger remove-payment-btn mt-2"><i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-            `;
-            paymentWrapper.appendChild(paymentItem);
+    if (addPaymentBtn) {
+        addPaymentBtn.addEventListener('click', () => {
+            if (!Array.isArray(jenisPembayaranList)) {
+                console.error('jenisPembayaranList belum tersedia!');
+                return;
+            }
+            addPayment();
+        });
+    }
+    if (paymentWrapper) {
+        paymentWrapper.addEventListener('click', e => {
+            const btn = e.target.closest('.remove-payment-btn');
+            if (btn) btn.closest('.payment-item').remove();
+        });
+    }
 
-            // Terapkan format rupiah pada input jumlah yang baru ditambahkan
-            const newJumlahInput = paymentItem.querySelector('.jumlah-input');
-            formatCurrencyInput(newJumlahInput);
+    // ========================
+    // 4. AJAX Submit Tambah Pembayaran
+    // ========================
+    const tambahForm = document.getElementById('tambahPembayaranForm');
+    if (tambahForm) {
+        tambahForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const errBox = document.getElementById('form-errors');
+            errBox.style.display = 'none';
+            errBox.innerHTML = '';
 
-            // Jika jenis pembayaran adalah SPP, tampilkan dropdown bulan
-            const jenisPembayaranSelect = paymentItem.querySelector('.jenis-pembayaran');
-            const bulanPembayaranSelect = paymentItem.querySelector('.bulan-pembayaran');
+            // collect values
+            const noF = noFormulirInput.value.trim();
+            const nama = namaInput.value.trim();
+            const tp = document.getElementById('tahun_pelajaran').value.trim();
+            const met = document.getElementById('metode_pembayaran').value.trim();
+            const ket = document.getElementById('keterangan').value.trim();
+            const jenis = Array.from(document.querySelectorAll('select[name="jenis_pembayaran[]"]')).map(el => el.value);
+            const jum = Array.from(document.querySelectorAll('input[name="jumlah[]"]')).map(el => el.value);
+            const bulan = Array.from(document.querySelectorAll('select[name="bulan[]"]')).map(el => el.value);
 
-            if (selectedId !== '' && isSPP(selectedId)) {
-                bulanPembayaranSelect.style.display = 'block';
-                bulanPembayaranSelect.value = selectedBulan;
+            let errs = [];
+            if (!noF) errs.push('No Formulir harus diisi.');
+            if (!nama) errs.push('Nama siswa tidak valid.');
+            if (!tp) errs.push('Tahun Pelajaran harus dipilih.');
+            if (!met) errs.push('Metode Pembayaran harus dipilih.');
+
+            let total = 0;
+            jenis.forEach((j, i) => {
+                const x = parseFloat(jum[i].replace(/\D/g, '')) || 0;
+                total += x;
+                if (!j) errs.push(`Jenis pembayaran item ${i + 1} belum dipilih.`);
+                if (x <= 0) errs.push(`Jumlah item ${i + 1} harus > 0.`);
+                if (isSPP(j) && !bulan[i]) errs.push(`Bulan item ${i + 1} (SPP) harus dipilih.`);
+            });
+            if (total <= 0) errs.push('Total pembayaran harus > 0.');
+
+            if (errs.length) {
+                errBox.innerHTML = errs.join('<br>');
+                errBox.style.display = 'block';
+                return;
             }
 
-            // Event listener untuk mengubah jenis pembayaran
-            jenisPembayaranSelect.addEventListener('change', function () {
-                if (isSPP(this.value)) {
-                    bulanPembayaranSelect.style.display = 'block';
-                } else {
-                    bulanPembayaranSelect.style.display = 'none';
-                    bulanPembayaranSelect.value = '';
-                }
-            });
-        }
-
-        // Fungsi untuk memeriksa apakah jenis pembayaran adalah SPP
-        function isSPP(jenis_pembayaran_id) {
-            return jenisPembayaranList.some(jenis => jenis.id == jenis_pembayaran_id && jenis.nama.toLowerCase() === 'spp');
-        }
-
-        // Event listener untuk tombol tambah pembayaran
-        if (addPaymentBtn) {
-            addPaymentBtn.addEventListener('click', function () {
-                addPayment();
-            });
-        }
-
-        // Menghapus Jenis Pembayaran Dinamis (Event Delegation)
-        if (paymentWrapper) {
-            paymentWrapper.addEventListener('click', function (event) {
-                if (event.target.classList.contains('remove-payment-btn') || event.target.closest('.remove-payment-btn')) {
-                    const button = event.target.closest('.remove-payment-btn');
-                    const paymentItem = button.closest('.payment-item');
-                    if (paymentItem) {
-                        paymentItem.remove();
+            fetch('tambah_pembayaran.php', {
+                method: 'POST',
+                body: new FormData(tambahForm)
+            })
+                .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+                .then(j => {
+                    if (j.success) window.location.reload();
+                    else {
+                        errBox.innerHTML = j.message;
+                        errBox.style.display = 'block';
                     }
-                }
-            });
-        }
+                })
+                .catch(err => {
+                    console.error('submit error:', err);
+                    errBox.innerHTML = 'Gagal menyimpan, cek console.';
+                    errBox.style.display = 'block';
+                });
+        });
     }
 
     // ========================
