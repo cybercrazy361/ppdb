@@ -334,78 +334,62 @@ $csrf_token = $_SESSION['csrf_token'];
         &copy; <?php echo date('Y'); ?> Sistem Keuangan PPDB
     </footer>
 
-<!-- Modal Tambah Pembayaran -->
-<div class="modal fade" id="modalTambahPembayaran" tabindex="-1" aria-labelledby="modalTambahPembayaranLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <form method="POST" id="tambahPembayaranForm">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalTambahPembayaranLabel">
-            <i class="fas fa-coins me-2"></i>Tambah Pembayaran
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+    <!-- Modal Tambah Pembayaran -->
+    <div class="modal fade" id="modalTambahPembayaran" tabindex="-1" aria-labelledby="modalTambahPembayaranLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="POST" id="tambahPembayaranForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTambahPembayaranLabel">Tambah Pembayaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="form-errors" class="alert alert-danger" style="display: none;"></div>
+                        <div class="mb-3 position-relative">
+                            <label for="no_formulir" class="form-label">No Formulir</label>
+                            <input type="text" name="no_formulir" id="no_formulir" class="form-control" placeholder="Masukkan No Formulir" autocomplete="off" required>
+                            <div id="siswa-suggestions" class="dropdown-menu" style="display: none;"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama Siswa</label>
+                            <input type="text" name="nama" id="nama" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
+                            <select name="tahun_pelajaran" id="tahun_pelajaran" class="form-select" required>
+                                <option value="" disabled selected>Pilih Tahun Pelajaran</option>
+                                <?php foreach ($tahun_pelajaran_list as $tahun) : ?>
+                                    <option value="<?= htmlspecialchars($tahun); ?>"><?= htmlspecialchars($tahun); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="metode_pembayaran" class="form-label">Metode Pembayaran</label>
+                            <select name="metode_pembayaran" id="metode_pembayaran" class="form-select" required>
+                                <option value="" disabled selected>Pilih Metode Pembayaran</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Transfer">Transfer</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jenis Pembayaran</label>
+                            <div id="payment-wrapper"></div>
+                            <button type="button" id="add-payment-btn" class="btn btn-info mt-2"><i class="fas fa-plus"></i> Tambah Jenis Pembayaran</button>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keterangan" class="form-label">Keterangan</label>
+                            <textarea name="keterangan" id="keterangan" class="form-control" placeholder="Opsional"></textarea>
+                        </div>
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="modal-body">
-          <div id="form-errors" class="alert alert-danger" style="display: none;"></div>
-          
-          <div class="mb-3 position-relative">
-            <label for="no_formulir" class="form-label">No Formulir</label>
-            <input type="text" name="no_formulir" id="no_formulir" class="form-control" placeholder="Masukkan No Formulir" autocomplete="off" required>
-            <div id="siswa-suggestions" class="dropdown-menu" style="display: none;"></div>
-          </div>
-          
-          <div class="mb-3">
-            <label for="nama" class="form-label">Nama Siswa</label>
-            <input type="text" name="nama" id="nama" class="form-control" readonly>
-          </div>
-          
-          <div class="mb-3">
-            <label for="tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
-            <select name="tahun_pelajaran" id="tahun_pelajaran" class="form-select" required>
-              <option value="" disabled selected>Pilih Tahun Pelajaran</option>
-              <?php foreach ($tahun_pelajaran_list as $tahun) : ?>
-                <option value="<?= htmlspecialchars($tahun); ?>"><?= htmlspecialchars($tahun); ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label for="metode_pembayaran" class="form-label">Metode Pembayaran</label>
-            <select name="metode_pembayaran" id="metode_pembayaran" class="form-select" required>
-              <option value="" disabled selected>Pilih Metode Pembayaran</option>
-              <option value="Cash">Cash</option>
-              <option value="Transfer">Transfer</option>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label">Jenis Pembayaran</label>
-            <div id="payment-wrapper"></div>
-            <button type="button" id="add-payment-btn" class="btn btn-info mt-2">
-              <i class="fas fa-plus me-1"></i>Tambah Jenis Pembayaran
-            </button>
-          </div>
-          
-          <div class="mb-3">
-            <label for="keterangan" class="form-label">Keterangan</label>
-            <textarea name="keterangan" id="keterangan" class="form-control" placeholder="Opsional"></textarea>
-          </div>
-          
-          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="fas fa-times me-1"></i>Batal
-          </button>
-          <button type="submit" class="btn btn-primary">
-            <i class="fas fa-save me-1"></i>Simpan
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
-</div>
 
     <!-- Modal Edit Pembayaran -->
     <div class="modal fade" id="modalEditPembayaran" tabindex="-1" aria-labelledby="modalEditPembayaranLabel" aria-hidden="true">
