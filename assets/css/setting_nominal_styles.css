@@ -1,148 +1,176 @@
-/* assets/css/setting_nominal_styles.css */
+/* File: assets/css/setting_nominal_styles.css */
 
-/* ========================
-   1. Gaya Umum
-   ======================== */
-
-/* Font dan Warna Latar Belakang */
-body {
-    font-family: 'Nunito', sans-serif;
-    background-color: #f8f9fc;
+/* =========================
+   Theme Variables
+   ========================= */
+:root {
+    --clr-primary: #4e73df;
+    --clr-primary-dark: #2e59d9;
+    --clr-secondary: #5a5c69;
+    --clr-success: #1cc88a;
+    --clr-info: #36b9cc;
+    --clr-warning: #f6c23e;
+    --clr-danger: #e74a3b;
+    --clr-light-bg: #f8f9fc;
+    --clr-dark-text: #343a40;
+    --clr-muted-text: #858796;
+    --clr-border: #e3e6f0;
+    --transition: 0.3s ease;
 }
 
+/* =========================
+   Global Styles
+   ========================= */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--clr-light-bg);
+    color: var(--clr-dark-text);
+    margin: 0;
+}
+
+/* Adjust main-content margin to align with sidebar */
+.main-content {
+    margin-left: 250px;
+    padding: 1.5rem;
+    transition: margin var(--transition);
+}
+
+.sidebar.collapsed+.main-content {
+    margin-left: 80px;
+}
+
+/* =========================
+   Dashboard Title/Header
+   ========================= */
 .dashboard-title {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #5a5c69;
+    color: var(--clr-secondary);
+    margin: 0;
 }
 
+/* =========================
+   Card Styles
+   ========================= */
 .card {
+    background: #fff;
     border: none;
-    border-radius: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition), box-shadow var(--transition);
+    margin-bottom: 1.5rem;
 }
 
-.card .card-body {
-    padding: 1.5rem;
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.1);
 }
 
-.card .card-header {
-    background-color: #f8f9fc;
+.card-header {
+    background: var(--clr-light-bg);
     border-bottom: none;
+    padding: 1rem 1.5rem;
 }
 
-.card .card-header h3 {
+.card-header h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #5a5c69;
+    color: var(--clr-secondary);
 }
 
+.card-body {
+    padding: 1rem 1.5rem;
+}
+
+/* =========================
+   Table Styles
+   ========================= */
 .table-responsive {
-    margin-top: 1rem;
+    overflow-x: auto;
 }
 
 .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
     font-size: 0.9rem;
-    /* Mengurangi ukuran font */
 }
 
-/* Header Tabel */
 .table thead th {
-    font-size: 0.85rem;
+    background: linear-gradient(45deg, var(--clr-primary), var(--clr-primary-dark));
+    color: #fff;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 700;
-    color: #858796;
-    border-bottom: 1px solid #e3e6f0;
-    padding-top: 0.5rem;
-    /* Mengurangi padding */
-    padding-bottom: 0.5rem;
-    /* Mengurangi padding */
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: none;
+    padding: 0.75rem 1rem;
 }
 
-/* Sel Tabel */
 .table tbody td {
-    color: #5a5c69;
-    padding-top: 0.5rem;
-    /* Mengurangi padding */
-    padding-bottom: 0.5rem;
-    /* Mengurangi padding */
+    background: #fff;
+    color: var(--clr-secondary);
     vertical-align: middle;
-    /* Menengahkan konten secara vertikal */
+    padding: 0.75rem 1rem;
 }
 
-.table tbody tr {
-    height: 40px;
-    /* Opsional: Menetapkan tinggi baris tetap */
+.table tbody tr:nth-child(even) td {
+    background: #f2f2f2;
 }
 
-.table .btn {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.5rem;
-    /* Mengurangi padding */
+.table-hover tbody tr:hover td {
+    background: rgba(78, 115, 223, 0.1);
 }
 
-/* Pagination */
-.pagination .page-item.active .page-link {
-    background-color: #4e73df;
-    border-color: #4e73df;
-}
-
-/* ========================
-   2. Gaya Modal
-   ======================== */
-
-/* Modal Umum */
-.modal-content {
-    border-radius: 1rem;
-}
-
-.modal-header {
-    border-bottom: none;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-}
-
-.modal-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #5a5c69;
-}
-
-.modal-body {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-}
-
+/* =========================
+   Form & Input Styles
+   ========================= */
 .form-label {
     font-weight: 600;
-    color: #5a5c69;
+    color: var(--clr-secondary);
 }
 
-.form-control {
+.form-control,
+.form-select {
     border-radius: 0.5rem;
-    padding-top: 0.375rem;
-    padding-bottom: 0.375rem;
+    border: 1px solid var(--clr-border);
+    padding: 0.5rem 1rem;
+    transition: box-shadow var(--transition);
 }
 
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* =========================
+   Button Styles
+   ========================= */
 .btn {
-    padding-top: 0.375rem;
-    padding-bottom: 0.375rem;
+    border-radius: 0.5rem;
+    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
 }
 
 .btn-primary {
-    background-color: #4e73df;
-    border-color: #4e73df;
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: #fff;
 }
 
 .btn-primary:hover {
-    background-color: #2e59d9;
-    border-color: #2653d4;
+    background-color: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
 }
 
 .btn-success {
-    background-color: #1cc88a;
-    border-color: #17a673;
+    background-color: var(--clr-success);
+    border-color: var(--clr-success);
+    color: #fff;
 }
 
 .btn-success:hover {
@@ -150,19 +178,20 @@ body {
     border-color: #138f65;
 }
 
-.btn-info {
-    background-color: #36b9cc;
-    border-color: #2c9faf;
+.btn-secondary {
+    background-color: #858796;
+    border-color: #858796;
+    color: #fff;
 }
 
-.btn-info:hover {
-    background-color: #2c9faf;
-    border-color: #288b9c;
+.btn-secondary:hover {
+    background-color: #6e707e;
+    border-color: #5a5c69;
 }
 
 .btn-warning {
-    background-color: #f6c23e;
-    border-color: #f4b619;
+    background-color: var(--clr-warning);
+    border-color: var(--clr-warning);
     color: #fff;
 }
 
@@ -172,8 +201,9 @@ body {
 }
 
 .btn-danger {
-    background-color: #e74a3b;
-    border-color: #e02d1b;
+    background-color: var(--clr-danger);
+    border-color: var(--clr-danger);
+    color: #fff;
 }
 
 .btn-danger:hover {
@@ -181,193 +211,102 @@ body {
     border-color: #d72a18;
 }
 
-/* ========================
-   3. Gaya Footer
-   ======================== */
-
-/* Footer */
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: calc(100% - 220px);
-    /* Sesuaikan dengan lebar sidebar */
-    margin-left: 220px;
-    background-color: #fff;
-    border-top: 1px solid #e3e6f0;
-    z-index: 1000;
-    transition: margin-left 0.3s ease;
+/* Edit & Delete buttons size */
+.edit-nominal-btn,
+.delete-nominal-btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
 }
 
-.footer.sidebar-collapsed {
-    width: calc(100% - 70px);
-    margin-left: 70px;
+/* =========================
+   Modal Styles
+   ========================= */
+.modal-content {
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 991.98px) {
-    .footer {
-        width: 100%;
-        margin-left: 0;
-    }
+.modal-header {
+    border-bottom: none;
+    padding: 0.75rem 1.25rem;
 }
 
-@media (max-width: 767.98px) {
-    .footer {
-        width: 100%;
-        margin-left: 0;
-    }
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--clr-secondary);
 }
 
-/* ========================
-   4. Penyesuaian Main Content
-   ======================== */
-
-/* Main Content */
-.main-content {
-    margin-left: 220px;
-    transition: margin-left 0.3s ease;
+.modal-body {
+    padding: 1rem 1.25rem;
 }
 
-.main-content.sidebar-collapsed {
-    margin-left: 70px;
+.modal-footer {
+    border-top: none;
+    padding: 0.75rem 1.25rem;
+    justify-content: flex-end;
 }
 
-@media (max-width: 991.98px) {
-    .main-content {
-        margin-left: 70px;
-    }
+.modal .form-control,
+.modal .form-select {
+    width: 100%;
 }
 
-@media (max-width: 767.98px) {
-    .main-content {
-        margin-left: 0;
-    }
+.modal .btn {
+    min-width: 6rem;
 }
 
-/* ========================
-   5. Penyesuaian Topbar
-   ======================== */
-
-/* Topbar */
+/* =========================
+   Topbar & Footer Adjustments
+   ========================= */
 .navbar {
     height: 50px;
-    /* Reduced height */
     min-height: 50px;
     padding: 0 1rem;
 }
 
-.navbar .navbar-nav .nav-link {
+.navbar .nav-link {
     height: 50px;
     display: flex;
     align-items: center;
 }
 
-/* ========================
-   6. Penyesuaian Form dan Input
-   ======================== */
-
-/* Payment Wrapper */
-#payment-wrapper .payment-item {
-    margin-bottom: 15px;
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 250px;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid var(--clr-border);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    transition: margin var(--transition);
+    z-index: 1000;
 }
 
-.input-group .form-select {
-    width: 45%;
-    margin-right: 10px;
+.sidebar.collapsed~.footer {
+    left: 80px;
 }
 
-.input-group .form-control {
-    width: 40%;
-    margin-right: 10px;
-}
-
-.input-group .btn {
-    width: auto;
-}
-
-/* Siswa Suggestions */
-#siswa-suggestions {
-    position: absolute;
-    z-index: 1050;
-    background: rgb(255, 255, 255);
-    border: 1px solid #de6fcb;
-    max-height: 200px;
-    overflow-y: auto;
-    width: 100%;
-}
-
-#siswa-suggestions .dropdown-item {
-    padding: 10px;
-    cursor: pointer;
-}
-
-#siswa-suggestions .dropdown-item:hover {
-    background-color: #81bde0;
-}
-
-/* ========================
-   7. Styling Tambahan untuk Setting Nominal
-   ======================== */
-
-/* Tambah dan Edit Modal */
-.modal .form-select,
-.modal .form-control {
-    width: 100%;
-}
-
-.modal .btn {
-    width: auto;
-}
-
-/* Tombol Tambah Pengaturan Nominal */
-#modalTambahNominal .btn-success {
-    background-color: #1cc88a;
-    border-color: #17a673;
-}
-
-#modalTambahNominal .btn-success:hover {
-    background-color: #17a673;
-    border-color: #138f65;
-}
-
-/* Tombol Edit dan Hapus */
-.edit-nominal-btn,
-.delete-nominal-btn {
-    margin-right: 5px;
-}
-
-/* Responsive Tables */
-@media (max-width: 768px) {
-    .table-responsive {
-        overflow-x: scroll;
+@media (max-width: 991.98px),
+(max-width: 767.98px) {
+    .footer {
+        left: 0 !important;
+        width: 100% !important;
     }
 }
 
-/* Alert Styling */
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    border-radius: 0.25rem;
-    padding: 0.75rem 1.25rem;
-    margin-bottom: 1rem;
+/* =========================
+   Responsive Adjustments
+   ========================= */
+@media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 80px !important;
+    }
 }
 
-/* ========================
-   8. Animasi dan Efek Hover
-   ======================== */
-
-/* Hover Effects on Table Rows */
-.table-hover tbody tr:hover {
-    background-color: rgba(78, 115, 223, 0.1);
-    /* Warna biru lembut saat hover */
-}
-
-/* Animasi masuk modal */
-.modal.fade .modal-dialog {
-    transform: translate(0, -50px);
-    transition: transform 0.3s ease-out;
-}
-
-.modal.show .modal-dialog {
-    transform: translate(0, 0);
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0 !important;
+    }
 }
