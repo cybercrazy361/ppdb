@@ -1,9 +1,14 @@
 /* assets/css/sidebar.css */
 :root {
-    --clr-primary: #4e73df;
-    --clr-dark: #5a5c69;
-    --clr-light: #f8f9fc;
-    --clr-danger: #e74a3b;
+    /* Warna Utama */
+    --clr-sidebar-start: #2c3e50;
+    /* gelap ke biru tua */
+    --clr-sidebar-end: #1abc9c;
+    /* teal cerah */
+    --clr-text: rgba(255, 255, 255, 0.9);
+    --clr-text-muted: rgba(255, 255, 255, 0.6);
+    --clr-active-bg: rgba(255, 255, 255, 0.1);
+    --clr-active-border: rgba(255, 255, 255, 0.3);
     --transition: 0.3s ease;
 }
 
@@ -13,10 +18,11 @@
     left: 0;
     width: 250px;
     height: 100%;
-    background: #fff;
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(to bottom, var(--clr-sidebar-start), var(--clr-sidebar-end));
+    display: flex;
+    flex-direction: column;
     padding-top: 1rem;
-    transition: width var(--transition);
+    transition: width var(--transition), background var(--transition);
     z-index: 1000;
 }
 
@@ -24,20 +30,23 @@
     width: 80px;
 }
 
+/* Header User */
 .sidebar .user-info {
     padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    color: var(--clr-dark);
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .sidebar .user-info h4 {
+    margin: 0;
     font-size: 1.25rem;
-    margin-bottom: 0.25rem;
+    color: var(--clr-text);
 }
 
 .sidebar .user-info p {
+    margin: 0.25rem 0 0;
     font-size: 0.9rem;
-    color: #777;
+    color: var(--clr-text-muted);
 }
 
 .sidebar.collapsed .user-info h4,
@@ -45,7 +54,9 @@
     display: none;
 }
 
+/* Navigasi */
 .sidebar .nav {
+    flex-grow: 1;
     padding-top: 1rem;
 }
 
@@ -56,74 +67,89 @@
 .sidebar .nav-link {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     padding: 0.75rem 1.25rem;
-    color: var(--clr-dark);
+    color: var(--clr-text);
+    font-weight: 600;
     border-radius: 0.5rem;
-    transition: background var(--transition), color var(--transition);
     text-decoration: none;
+    transition: background var(--transition), color var(--transition);
 }
 
 .sidebar .nav-link i {
-    min-width: 20px;
+    min-width: 24px;
     font-size: 1.1rem;
-    color: var(--clr-primary);
+    color: var(--clr-text-muted);
+    transition: color var(--transition);
 }
 
 .sidebar .nav-link span {
     flex-grow: 1;
 }
 
+/* Hover & Active */
 .sidebar .nav-link:hover {
-    background-color: rgba(78, 115, 223, 0.1);
-    color: var(--clr-primary);
+    background-color: var(--clr-active-bg);
 }
 
 .sidebar .nav-link.active {
-    background-color: var(--clr-primary);
+    background-color: var(--clr-active-bg);
+    border-left: 4px solid var(--clr-active-border);
+}
+
+.sidebar .nav-link.active i,
+.sidebar .nav-link:hover i {
     color: #fff;
 }
 
-.sidebar .nav-link.active i {
-    color: #fff;
-}
-
+/* Submenu */
 .sidebar .collapse {
-    padding-left: 1rem;
-    background-color: rgba(0, 0, 0, 0.03);
-    border-radius: 0.5rem;
+    margin: 0.25rem 0;
+    padding-left: 1.25rem;
 }
 
 .sidebar .btn-toggle-nav .nav-link {
-    padding: 0.5rem 1.5rem;
-    color: #555;
+    padding: 0.5rem 1rem;
     font-size: 0.9rem;
+    color: var(--clr-text-muted);
 }
 
 .sidebar .btn-toggle-nav .nav-link:hover {
-    background-color: rgba(78, 115, 223, 0.1);
-    color: var(--clr-primary);
-}
-
-.sidebar .btn-toggle-nav .nav-link.active {
-    background-color: var(--clr-primary);
+    background-color: var(--clr-active-bg);
     color: #fff;
 }
 
+.sidebar .btn-toggle-nav .nav-link.active {
+    background-color: var(--clr-active-bg);
+    color: #fff;
+}
+
+/* Logout */
+.sidebar .logout-link {
+    margin-top: auto;
+    padding: 1rem 0;
+}
+
 .sidebar .logout-link .nav-link {
-    color: var(--clr-danger);
-    font-weight: 600;
+    color: #ff7675;
 }
 
 .sidebar .logout-link .nav-link:hover {
-    background-color: rgba(231, 74, 59, 0.1);
+    background-color: rgba(255, 118, 117, 0.1);
 }
 
+/* Tutup teks saat collapsed */
 .sidebar.collapsed .nav-link span,
-.sidebar.collapsed .nav-link .fas.fa-chevron-down {
+.sidebar.collapsed .btn-toggle-nav .nav-link span {
     display: none;
 }
 
+/* Toggle button hanya ikon */
+.sidebar.collapsed .nav-link i {
+    margin: 0 auto;
+}
+
+/* Responsive */
 @media (max-width: 991.98px) {
     .sidebar {
         width: 80px;
