@@ -1,50 +1,61 @@
 // assets/js/sidebar.js
 
-document.addEventListener('DOMContentLoaded', function () {
-    const sidebarToggle = document.getElementById('sidebarToggle');
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('sidebarToggle');
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
     const footer = document.querySelector('.footer');
 
-    function setSidebarState(collapsed) {
-        sidebar.classList.toggle('collapsed', collapsed);
-        mainContent.classList.toggle('sidebar-collapsed', collapsed);
-        footer.classList.toggle('sidebar-collapsed', collapsed);
-        sidebarToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-    }
+    // ===== Load & apply saved collapsed state =====
+    const wasCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+    sidebar.classList.toggle('collapsed', wasCollapsed);
+    mainContent?.classList.toggle('sidebar-collapsed', wasCollapsed);
+    footer?.classList.toggle('sidebar-collapsed', wasCollapsed);
+    toggleBtn.setAttribute('aria-expanded', (!wasCollapsed).toString());
 
-    function loadSidebarState() {
-        setSidebarState(localStorage.getItem('sidebar-collapsed') === 'true');
-    }
-
-    function saveSidebarState(collapsed) {
-        localStorage.setItem('sidebar-collapsed', collapsed);
-    }
-
-    loadSidebarState();
-
-    sidebarToggle.addEventListener('click', function () {
-        const isCollapsed = !sidebar.classList.contains('collapsed');
-        setSidebarState(isCollapsed);
-        saveSidebarState(isCollapsed);
+    // ===== Toggle sidebar open/close =====
+    toggleBtn.addEventListener('click', () => {
+        const isNowCollapsed = !sidebar.classList.contains('collapsed');
+        sidebar.classList.toggle('collapsed', isNowCollapsed);
+        mainContent?.classList.toggle('sidebar-collapsed', isNowCollapsed);
+        footer?.classList.toggle('sidebar-collapsed', isNowCollapsed);
+        localStorage.setItem('sidebar-collapsed', isNowCollapsed);
+        toggleBtn.setAttribute('aria-expanded', (!isNowCollapsed).toString());
     });
 
-    document.addEventListener('click', function (e) {
-        if (window.innerWidth < 768 &&
+    // ===== Auto‐close on mobile when clicking outside =====
+    document.addEventListener('click', e => {
+        if (
+            window.innerWidth < 768 &&
             !sidebar.contains(e.target) &&
-            !sidebarToggle.contains(e.target) &&
-            !sidebar.classList.contains('collapsed')) {
-            setSidebarState(true);
-            saveSidebarState(true);
+            !toggleBtn.contains(e.target) &&
+            !sidebar.classList.contains('collapsed')
+        ) {
+            sidebar.classList.add('collapsed');
+            mainContent?.classList.add('sidebar-collapsed');
+            footer?.classList.add('sidebar-collapsed');
+            localStorage.setItem('sidebar-collapsed', true);
+            toggleBtn.setAttribute('aria-expanded', 'false');
         }
     });
 
-    const submenuLinks = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
-    submenuLinks.forEach(link => {
-        link.addEventListener('click', function (e) {
+    // ===== Submenu toggle handlers =====
+    document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]').forEach(link => {
+        const selector = link.getAttribute('href');
+        const targetEl = document.querySelector(selector);
+        if (!targetEl) return;
+
+        // Buat satu instance Collapse tanpa toggle otomatis
+        const bsCollapse = new bootstrap.Collapse(targetEl, { toggle: false });
+
+        // Klik link → toggle submenu
+        link.addEventListener('click', e => {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            new bootstrap.Collapse(target, { toggle: true });
+            bsCollapse.toggle();
         });
+
+        // Update class active & rotasi arrow
+        targetEl.addEventListener('shown.bs.collapse', () => link.classList.add('active'));
+        targetEl.addEventListener('hidden.bs.collapse', () => link.classList.remove('active'));
     });
 });
