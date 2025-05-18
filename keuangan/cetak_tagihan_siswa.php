@@ -1,5 +1,4 @@
 <?php
-// cetak_tagihan_siswa.php
 session_start();
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
@@ -9,16 +8,14 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 
 include '../database_connection.php';
 
-// Unit petugas
 $unit = $_SESSION['unit'];
-
-// Tentukan bulan dan tahun berjalan
 $bulan_aktif = date('F');
 $tahun_aktif = date('Y');
 
-// Query untuk mendapatkan siswa dengan tagihan SPP bulan berjalan dan tunggakan lainnya
+// Query mendapatkan siswa dengan tagihan SPP bulan aktif dan semua tunggakan lain yang belum lunas
 $query = "
-SELECT s.no_formulir, s.nama, jp.nama AS jenis_pembayaran, pd.jumlah, pd.bulan, pd.status_pembayaran, pd.angsuran_ke
+SELECT s.id AS siswa_id, s.no_formulir, s.nama, jp.nama AS jenis_pembayaran, 
+       pd.jumlah, pd.bulan, pd.status_pembayaran, pd.angsuran_ke
 FROM siswa s
 JOIN pembayaran p ON s.id = p.siswa_id
 JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
@@ -35,13 +32,30 @@ $stmt->bind_param('ss', $unit, $bulan_aktif);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$tagihan_siswa = [];
+$siswa_tagihan = [];
 while ($row = $result->fetch_assoc()) {
-    $tagihan_siswa[] = $row;
+    $siswa_id = $row['siswa_id'];
+
+    if (!isset($siswa_tagihan[$siswa_id])) {
+        $siswa_tagihan[$siswa_id] = [
+            'no_formulir' => $row['no_formulir'],
+            'nama' => $row['nama'],
+            'tagihan' => []
+        ];
+    }
+
+    $jenis = $row['jenis_pembayaran'];
+    if (!isset($siswa_tagihan[$siswa_id]['tagihan'][$jenis])) {
+        $siswa_tagihan[$siswa_id]['tagihan'][$jenis] = 0;
+    }
+    $siswa_tagihan[$siswa_id]['tagihan'][$jenis] += $row['jumlah'];
 }
 
 $stmt->close();
 $conn->close();
+
+// Ambil daftar jenis pembayaran
+$jenis_pembayaran_list = ["Uang Pangkal", "SPP", "Seragam", "Lainnya"]; // Sesuaikan jika ada tambahan jenis lain
 ?>
 
 <!DOCTYPE html>
@@ -55,6 +69,13 @@ $conn->close();
             .no-print { display: none; }
             body { margin: 20px; }
         }
+        table {
+            font-size: 12pt;
+        }
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -64,8 +85,8 @@ $conn->close();
         <p>Bulan: <?= htmlspecialchars($bulan_aktif) . " " . htmlspecialchars($tahun_aktif); ?></p>
     </div>
 
-    <?php if (empty($tagihan_siswa)): ?>
-        <div class="alert alert-success text-center">Tidak ada tagihan di bulan ini.</div>
+    <?php if (empty($siswa_tagihan)): ?>
+        <div class="alert alert-success text-center">Tidak ada tagihan siswa untuk bulan ini.</div>
     <?php else: ?>
         <table class="table table-bordered">
             <thead class="table-primary">
@@ -73,26 +94,42 @@ $conn->close();
                     <th>No</th>
                     <th>No Formulir</th>
                     <th>Nama Siswa</th>
-                    <th>Jenis Tagihan</th>
-                    <th>Bulan</th>
-                    <th>Angsuran ke</th>
-                    <th>Jumlah Tagihan</th>
-                    <th>Status</th>
+                    <?php foreach ($jenis_pembayaran_list as $jenis): ?>
+                        <th><?= htmlspecialchars($jenis); ?></th>
+                    <?php endforeach; ?>
+                    <th>Total Tagihan</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $no = 1; foreach ($tagihan_siswa as $ts): ?>
+                <?php
+                $no = 1;
+                $grand_total = 0;
+
+                foreach ($siswa_tagihan as $tagihan):
+                    $total_per_siswa = 0;
+                ?>
                     <tr>
                         <td><?= $no++; ?></td>
-                        <td><?= htmlspecialchars($ts['no_formulir']); ?></td>
-                        <td><?= htmlspecialchars($ts['nama']); ?></td>
-                        <td><?= htmlspecialchars($ts['jenis_pembayaran']); ?></td>
-                        <td><?= htmlspecialchars($ts['bulan']); ?></td>
-                        <td><?= $ts['angsuran_ke'] ? htmlspecialchars($ts['angsuran_ke']) : '-'; ?></td>
-                        <td>Rp <?= number_format($ts['jumlah'],0,',','.'); ?></td>
-                        <td><?= htmlspecialchars($ts['status_pembayaran']); ?></td>
+                        <td><?= htmlspecialchars($tagihan['no_formulir']); ?></td>
+                        <td><?= htmlspecialchars($tagihan['nama']); ?></td>
+
+                        <?php foreach ($jenis_pembayaran_list as $jenis): ?>
+                            <?php 
+                                $jumlah = $tagihan['tagihan'][$jenis] ?? 0;
+                                $total_per_siswa += $jumlah;
+                            ?>
+                            <td><?= $jumlah ? 'Rp ' . number_format($jumlah, 0, ',', '.') : '-'; ?></td>
+                        <?php endforeach; ?>
+
+                        <td><strong>Rp <?= number_format($total_per_siswa, 0, ',', '.'); ?></strong></td>
                     </tr>
+                    <?php $grand_total += $total_per_siswa; ?>
                 <?php endforeach; ?>
+
+                <tr class="table-success">
+                    <td colspan="<?= 3 + count($jenis_pembayaran_list); ?>" class="text-end"><strong>Total Semua Tagihan:</strong></td>
+                    <td><strong>Rp <?= number_format($grand_total, 0, ',', '.'); ?></strong></td>
+                </tr>
             </tbody>
         </table>
     <?php endif; ?>
