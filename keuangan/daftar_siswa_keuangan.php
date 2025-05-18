@@ -208,34 +208,41 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/sidebar.css">
     <link rel="stylesheet" href="../assets/css/keuangan_siswa_styles.css">
     <style>
-        /* CSS untuk tampilan cetak */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .printable-area, .printable-area * {
-                visibility: visible;
-            }
-            .printable-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-            /* Hilangkan scrollbar pada tabel saat dicetak */
-            .table-responsive {
-                overflow: visible !important;
-            }
-            /* Atur lebar tabel agar sesuai halaman */
-            table {
-                width: 100%;
-            }
-            /* Sembunyikan tombol cetak */
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
+  /* CSS untuk tampilan cetak */
+  @media print {
+      body * {
+          visibility: hidden;
+      }
+      .printable-area,
+      .printable-area * {
+          visibility: visible;
+          /* Hapus semua shadow saat print */
+          box-shadow: none !important;
+      }
+      .printable-area {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          /* Pastikan background putih */
+          background: #fff !important;
+      }
+      /* Hilangkan scrollbar pada tabel saat dicetak */
+      .table-responsive {
+          overflow: visible !important;
+          box-shadow: none !important;
+      }
+      /* Atur lebar tabel agar sesuai halaman */
+      table {
+          width: 100%;
+      }
+      /* Sembunyikan tombol cetak */
+      .no-print {
+          display: none;
+      }
+  }
+</style>
+
 </head>
 <body>
     <?php include '../includes/sidebar.php'; ?>
