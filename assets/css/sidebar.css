@@ -157,20 +157,40 @@
 }
 
 /* =========================
-   Logout
+   Logout (highlighted)
    ========================= */
 .sidebar .logout-link {
     margin-top: auto;
-    padding: 1rem 0;
+    /* tetap di bawah */
+    padding: 1.5rem 1rem;
+    /* ruang ekstra di sekitar */
 }
 
 .sidebar .logout-link .nav-link {
-    color: #ff7675;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* teks + ikon di tengah */
+    gap: 0.75rem;
+    background-color: #e74a3b;
+    /* merah cerah */
+    color: #fff;
+    /* teks putih */
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    /* sudut agak melengkung */
+    transition: background 0.2s ease;
+}
+
+.sidebar .logout-link .nav-link i {
+    font-size: 1.2rem;
+    /* ikon sedikit lebih besar */
 }
 
 .sidebar .logout-link .nav-link:hover {
-    background-color: rgba(255, 118, 117, 0.1);
+    background-color: #c0392b;
+    /* merah gelap saat hover */
 }
 
 /* =========================
