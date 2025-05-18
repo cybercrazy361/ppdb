@@ -11,22 +11,41 @@ $unit        = $_SESSION['unit'];
 $bulan_aktif = date('F');
 $tahun_aktif = date('Y');
 
-// 1) Ambil daftar jenis pembayaran + nominal_max (tanpa filter bulan untuk nominal)
+// 0) Ambil daftar tahun pelajaran yang ada di pembayaran
+$tahun_pelajaran_list = [];
+$stmt = $conn->prepare("
+    SELECT DISTINCT p.tahun_pelajaran
+    FROM pembayaran p
+    JOIN siswa s ON p.siswa_id = s.id
+    WHERE s.unit = ?
+    ORDER BY p.tahun_pelajaran DESC
+");
+$stmt->bind_param('s', $unit);
+$stmt->execute();
+$res = $stmt->get_result();
+while ($r = $res->fetch_assoc()) {
+    $tahun_pelajaran_list[] = $r['tahun_pelajaran'];
+}
+$stmt->close();
+
+// Pilih tahun ajaran dari GET, atau default ke yang pertama (terbaru)
+$tp_selected = $_GET['tp'] ?? ($tahun_pelajaran_list[0] ?? '');
+
+
+// 1) Ambil daftar jenis pembayaran + nominal_max
 $jenis_pembayaran_list = [];
 $stmt = $conn->prepare("
     SELECT jp.nama,
-           COALESCE((
-             SELECT pn.nominal_max 
-             FROM pengaturan_nominal pn 
-             WHERE pn.jenis_pembayaran_id = jp.id
-             ORDER BY pn.id DESC
-             LIMIT 1
-           ), 0) AS nominal_max
+           COALESCE(pn.nominal_max,0) AS nominal_max
     FROM jenis_pembayaran jp
+    LEFT JOIN pengaturan_nominal pn 
+      ON pn.jenis_pembayaran_id = jp.id
+     AND pn.bulan = ?
+     AND pn.unit = ?
     WHERE jp.unit = ?
     ORDER BY jp.nama
 ");
-$stmt->bind_param('s', $unit);
+$stmt->bind_param('sss', $bulan_aktif, $unit, $unit);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($r = $res->fetch_assoc()) {
@@ -34,17 +53,18 @@ while ($r = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-// 2) Hitung total sudah dibayar per siswa per jenis
+// 2) Hitung total sudah dibayar per siswa per jenis, filter tahun_pelajaran
 $sudah_bayar = [];
 $stmt = $conn->prepare("
-    SELECT s.id AS siswa_id,
-           jp.nama AS jenis,
+    SELECT s.id         AS siswa_id,
+           jp.nama      AS jenis,
            SUM(pd.jumlah) AS total_bayar
     FROM siswa s
     JOIN pembayaran p ON s.id = p.siswa_id
     JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
     JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
     WHERE s.unit = ?
+      AND p.tahun_pelajaran = ?
       AND pd.status_pembayaran != 'Lunas'
       AND (
            (jp.nama = 'SPP' AND pd.bulan = ?)
@@ -52,7 +72,7 @@ $stmt = $conn->prepare("
       )
     GROUP BY s.id, jp.nama
 ");
-$stmt->bind_param('ss', $unit, $bulan_aktif);
+$stmt->bind_param('sss', $unit, $tp_selected, $bulan_aktif);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($r = $res->fetch_assoc()) {
@@ -60,7 +80,7 @@ while ($r = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-// 3) Ambil daftar siswa yang punya tunggakan
+// 3) Ambil daftar siswa yang punya tunggakan di tahun ajaran & bulan ini
 $siswa_tagihan = [];
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.no_formulir, s.nama
@@ -69,6 +89,7 @@ $stmt = $conn->prepare("
     JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
     JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
     WHERE s.unit = ?
+      AND p.tahun_pelajaran = ?
       AND pd.status_pembayaran != 'Lunas'
       AND (
            (jp.nama = 'SPP' AND pd.bulan = ?)
@@ -76,7 +97,7 @@ $stmt = $conn->prepare("
       )
     ORDER BY s.nama
 ");
-$stmt->bind_param('ss', $unit, $bulan_aktif);
+$stmt->bind_param('sss', $unit, $tp_selected, $bulan_aktif);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($r = $res->fetch_assoc()) {
@@ -102,9 +123,25 @@ $conn->close();
 </head>
 <body>
 <div class="container">
+
+  <!-- Dropdown Tahun Pelajaran -->
+  <form method="get" class="row g-2 align-items-end no-print my-3">
+    <div class="col-auto">
+      <label for="tp" class="form-label">Tahun Ajaran</label>
+      <select name="tp" id="tp" class="form-select" onchange="this.form.submit()">
+        <?php foreach($tahun_pelajaran_list as $tp): ?>
+          <option value="<?= htmlspecialchars($tp) ?>"
+            <?= $tp === $tp_selected ? 'selected' : '' ?>>
+            <?= htmlspecialchars($tp) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+  </form>
+
   <div class="text-center my-4">
     <h3>Rekap Tagihan Siswa <?= htmlspecialchars($unit) ?></h3>
-    <p>Bulan <?= htmlspecialchars("$bulan_aktif $tahun_aktif") ?></p>
+    <p>Bulan <?= htmlspecialchars("$bulan_aktif $tp_selected") ?></p>
   </div>
 
   <?php if (empty($siswa_tagihan)): ?>
