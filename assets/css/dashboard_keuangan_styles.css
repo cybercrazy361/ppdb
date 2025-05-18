@@ -1,158 +1,118 @@
-/* dashboard_keuangan_styles.css */
+/* File: dashboard_keuangan_styles.css */
+:root {
+    --bs-body-bg: #f4f6f8;
+    --text-color: #2c3e50;
+    --card-bg: #ffffff;
+    --card-radius: 1rem;
+    --card-shadow: rgba(0, 0, 0, 0.05) 0px 4px 12px;
+    --primary: #2980b9;
+    --success: #1abc9c;
+    --danger: #e74c3c;
+}
 
-/* General Styles */
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: #f8f9fc;
+    background-color: var(--bs-body-bg);
+    color: var(--text-color);
 }
 
-.dashboard-title {
-    font-size: 1.75rem;
-    font-weight: 500;
-    color: #5a5c69;
+.main-content {
+    margin-left: var(--sidebar-width);
+    transition: margin .3s ease;
 }
 
-.card {
-    border: none;
-    border-radius: 1rem;
+.main-content.collapsed {
+    margin-left: var(--sidebar-collapsed-width);
 }
 
-.card .card-body {
+.topbar {
+    background: #fff;
+    height: 60px;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+.stat-card .card-body {
+    display: flex;
+    align-items: center;
     padding: 1.5rem;
 }
 
-.card .card-footer {
-    background-color: transparent;
-    border-top: none;
-}
-
-.card-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    font-size: 1.5rem;
+.stat-card .icon {
+    font-size: 2rem;
+    color: #fff;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: .75rem;
 }
 
-.card-title {
+.stat-card h5 {
+    margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: #5a5c69;
 }
 
-.card-text {
-    font-size: 2rem;
+.stat-card h2 {
+    margin: .25rem 0 0;
+    font-size: 2.25rem;
     font-weight: 700;
-    color: #5a5c69;
 }
 
-.total-card .card-icon {
-    background-color: #4e73df;
-}
-
-.paid-card .card-icon {
-    background-color: #1cc88a;
-}
-
-.unpaid-card .card-icon {
-    background-color: #e74a3b;
-}
-
-/* Hover Effects */
-.card:hover {
-    transform: translateY(-5px);
-    transition: all 0.3s ease;
-}
-
-.card .card-icon i {
-    color: #fff;
-}
-
-/* Chart Styles */
-.chart-container {
-    position: relative;
-    height: 300px;
-}
-
-.card .card-header {
-    background-color: #f8f9fc;
+.card-header {
+    background: var(--bs-body-bg);
     border-bottom: none;
+    padding: 1rem 1.5rem;
 }
 
-.card .card-header h3 {
+.card-header h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #5a5c69;
 }
 
-/* Footer Styles */
 .footer {
+    background: #fff;
     position: fixed;
     bottom: 0;
-    width: calc(100% - 220px);
-    /* Adjusted width to account for sidebar */
-    margin-left: 220px;
-    /* Adjusted margin to align with main content */
-    background-color: #fff;
-    border-top: 1px solid #e3e6f0;
-    z-index: 1000;
-    transition: margin-left 0.3s ease, width 0.3s ease;
+    left: var(--sidebar-width);
+    right: 0;
+    border-top: 1px solid #e0e0e0;
+    transition: left .3s ease;
 }
 
-.footer.sidebar-collapsed {
-    width: calc(100% - 70px);
-    margin-left: 70px;
+.footer.collapsed {
+    left: var(--sidebar-collapsed-width);
 }
 
-@media (max-width: 991.98px) {
-    .footer {
-        width: 100%;
-        margin-left: 0;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .footer {
-        width: 100%;
-        margin-left: 0;
-    }
-}
-
-/* Main Content Adjustments */
-.main-content {
-    margin-left: 220px;
-    transition: margin-left 0.3s ease;
-}
-
-.main-content.sidebar-collapsed {
-    margin-left: 70px;
-}
-
-@media (max-width: 991.98px) {
+@media (max-width: 992px) {
     .main-content {
-        margin-left: 70px;
+        margin-left: var(--sidebar-collapsed-width);
+    }
+
+    .footer {
+        left: var(--sidebar-collapsed-width);
     }
 }
 
-@media (max-width: 767.98px) {
-    .main-content {
+@media (max-width: 767px) {
+
+    .main-content,
+    .footer {
         margin-left: 0;
+        left: 0;
     }
-}
-
-/* Topbar Adjustments */
-.navbar {
-    height: 50px;
-    /* Reduced height */
-    min-height: 50px;
-    padding: 0 1rem;
-}
-
-.navbar .navbar-nav .nav-link {
-    height: 50px;
-    display: flex;
-    align-items: center;
 }

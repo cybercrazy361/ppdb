@@ -1,216 +1,158 @@
+<!-- File: dashboard_keuangan.php -->
 <?php
 session_start();
 include '../database_connection.php';
-
-// Pastikan pengguna sudah login
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
-    header('Location: login_keuangan.php');
-    exit();
+if (!isset($_SESSION['username']) || $_SESSION['role']!=='keuangan') {
+    header('Location: login_keuangan.php'); exit();
 }
-
 $unit = $_SESSION['unit'];
+// Ambil data statistik
+$stmt = $conn->prepare("SELECT COUNT(*) total FROM siswa WHERE unit = ?");
+$stmt->bind_param('s',$unit); $stmt->execute();
+$total_siswa = $stmt->get_result()->fetch_assoc()['total'] ?? 0; $stmt->close();
 
-// Ambil total siswa pada unit tersebut
-$sql_total = "SELECT COUNT(*) AS total FROM siswa WHERE unit = ?";
-$stmt_total = $conn->prepare($sql_total);
-$stmt_total->bind_param('s', $unit);
-$stmt_total->execute();
-$result_total = $stmt_total->get_result()->fetch_assoc();
-$total_siswa = $result_total['total'] ?? 0;
-$stmt_total->close();
+$stmt = $conn->prepare("
+  SELECT COUNT(DISTINCT s.id) as sudah 
+  FROM siswa s
+  JOIN pembayaran p ON s.id=p.siswa_id
+  JOIN pembayaran_detail pd ON p.id=pd.pembayaran_id
+  WHERE s.unit=? AND (pd.status_pembayaran='Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
+");
+$stmt->bind_param('s',$unit); $stmt->execute();
+$total_sudah = $stmt->get_result()->fetch_assoc()['sudah'] ?? 0; $stmt->close();
 
-// Ambil jumlah siswa yang sudah membayar (punya status_pembayaran = 'Lunas' atau 'Angsuran ke-x')
-$sql_sudah = "
-SELECT COUNT(DISTINCT s.id) AS sudah_bayar 
-FROM siswa s
-INNER JOIN pembayaran p ON s.id = p.siswa_id
-INNER JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-WHERE s.unit = ? AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
-";
-$stmt_sudah = $conn->prepare($sql_sudah);
-$stmt_sudah->bind_param('s', $unit);
-$stmt_sudah->execute();
-$result_sudah = $stmt_sudah->get_result()->fetch_assoc();
-$total_sudah_bayar = $result_sudah['sudah_bayar'] ?? 0;
-$stmt_sudah->close();
-
-// Ambil jumlah siswa yang belum membayar (tidak ada pembayaran lunas atau angsuran)
-$sql_belum = "
-SELECT COUNT(DISTINCT s.id) AS belum_bayar
-FROM siswa s
-WHERE s.unit = ?
-  AND NOT EXISTS (
-    SELECT 1 
-    FROM pembayaran p
-    JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-    WHERE p.siswa_id = s.id
-      AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
-  )
-";
-$stmt_belum = $conn->prepare($sql_belum);
-$stmt_belum->bind_param('s', $unit);
-$stmt_belum->execute();
-$result_belum = $stmt_belum->get_result()->fetch_assoc();
-$total_belum_bayar = $result_belum['belum_bayar'] ?? 0;
-$stmt_belum->close();
-
+$total_belum = $total_siswa - $total_sudah;
 $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Keuangan</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/dashboard_keuangan_styles.css">
-    <link rel="stylesheet" href="../assets/css/sidebar.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Keuangan</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/sidebar.css" rel="stylesheet">
+  <link href="../assets/css/dashboard_keuangan_styles.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <?php include '../includes/sidebar.php'; ?>
+  <?php include '../includes/sidebar.php'; ?>
 
-    <div class="main-content">
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-            <button id="sidebarToggle" class="btn btn-link d-md-inline rounded-circle me-3">
-                <i class="fas fa-bars"></i>
-            </button>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link" href="#">
-                        <span class="me-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['nama']); ?></span>
-                        <i class="fas fa-user-circle fa-lg"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="dashboard-title">Dashboard Keuangan</h1>
-            </div>
-
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="card total-card shadow h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="card-icon bg-primary text-white">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="ms-3">
-                                <h5 class="card-title">Total Siswa</h5>
-                                <h2 class="card-text"><?php echo htmlspecialchars($total_siswa); ?></h2>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Jumlah total siswa</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card paid-card shadow h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="card-icon bg-success text-white">
-                                <i class="fas fa-user-check"></i>
-                            </div>
-                            <div class="ms-3">
-                                <h5 class="card-title">Sudah Membayar</h5>
-                                <h2 class="card-text"><?php echo htmlspecialchars($total_sudah_bayar); ?></h2>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Siswa yang telah membayar</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card unpaid-card shadow h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="card-icon bg-danger text-white">
-                                <i class="fas fa-user-times"></i>
-                            </div>
-                            <div class="ms-3">
-                                <h5 class="card-title">Belum Membayar</h5>
-                                <h2 class="card-text"><?php echo htmlspecialchars($total_belum_bayar); ?></h2>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Siswa yang belum membayar</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chart Pembayaran -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h3 class="mb-0">Statistik Pembayaran</h3>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="position: relative; height:40vh; width:80vw">
-                        <canvas id="paymentChart"></canvas>
-                    </div>
-                </div>
-            </div>
+  <main class="main-content">
+    <header class="topbar shadow-sm">
+      <div class="container-fluid d-flex align-items-center justify-content-between">
+        <h1 class="page-title">Dashboard Keuangan</h1>
+        <div class="user-dropdown">
+          <span class="me-2"><?php echo htmlspecialchars($_SESSION['nama']); ?></span>
+          <i class="fas fa-user-circle fa-lg"></i>
         </div>
-    </div>
+      </div>
+    </header>
 
-    <footer class="footer bg-white text-center py-3">
-        &copy; <?php echo date('Y'); ?> Sistem Keuangan PPDB
+    <section class="container-fluid pt-4">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card stat-card shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="icon bg-primary">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="ps-3">
+                  <h5>Total Siswa</h5>
+                  <h2><?php echo $total_siswa; ?></h2>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <small>Jumlah seluruh siswa unit <?php echo htmlspecialchars($unit); ?></small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card stat-card shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="icon bg-success">
+                  <i class="fas fa-user-check"></i>
+                </div>
+                <div class="ps-3">
+                  <h5>Sudah Membayar</h5>
+                  <h2><?php echo $total_sudah; ?></h2>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <small>Siswa dengan status pembayaran lengkap/angsuran</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card stat-card shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="icon bg-danger">
+                  <i class="fas fa-user-times"></i>
+                </div>
+                <div class="ps-3">
+                  <h5>Belum Membayar</h5>
+                  <h2><?php echo $total_belum; ?></h2>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <small>Siswa yang belum melakukan pembayaran</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-4 shadow-sm">
+        <div class="card-header">
+          <h3>Statistik Pembayaran</h3>
+        </div>
+        <div class="card-body">
+          <canvas id="paymentChart" style="height:300px;"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer text-center py-3 shadow-sm">
+      &copy; <?php echo date('Y'); ?> Sistem Keuangan PPDB
     </footer>
+  </main>
 
-    <script>
-    const ctx = document.getElementById('paymentChart').getContext('2d');
-
-    const paymentChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Sudah Membayar', 'Belum Membayar'],
-            datasets: [{
-                data: [<?php echo $total_sudah_bayar; ?>, <?php echo $total_belum_bayar; ?>],
-                backgroundColor: ['#28a745', '#dc3545'],
-                hoverBackgroundColor: ['#218838', '#c82333'],
-                borderWidth: 1,
-                borderColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        font: {
-                            size: 14,
-                            family: 'Nunito, sans-serif'
-                        },
-                        color: '#333'
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const value = context.raw;
-                            const label = context.label;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = ((value / total) * 100).toFixed(2);
-                            return `${label}: ${value} siswa (${percentage}%)`;
-                        }
-                    }
-                }
-            },
-            animation: {
-                animateScale: true
-            }
-        }
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/sidebar.js"></script>
+  <script>
+    // Sidebar toggle
+    document.getElementById('sidebarToggle').addEventListener('click',function(){
+      document.querySelector('.sidebar').classList.toggle('collapsed');
+      document.querySelector('.main-content').classList.toggle('collapsed');
+      document.querySelector('.footer').classList.toggle('collapsed');
     });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Custom JS -->
-    <script src="../assets/js/sidebar.js"></script>
+
+    // Chart.js
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+    new Chart(ctx,{
+      type:'doughnut',
+      data:{
+        labels:['Sudah Membayar','Belum Membayar'],
+        datasets:[{
+          data:[<?php echo $total_sudah;?>,<?php echo $total_belum;?>],
+          backgroundColor:['#1abc9c','#e74c3c'],
+          hoverOffset:10
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{
+          legend:{position:'bottom',labels:{padding:20,font:{size:14}}},
+          tooltip:{callbacks:{label(ctx){let v=ctx.raw,T=ctx.dataset.data.reduce((a,b)=>a+b),p=(v/T*100).toFixed(1);return`${ctx.label}: ${v} (${p}%)`;}}}
+        }
+      }
+    });
+  </script>
 </body>
 </html>
