@@ -1,285 +1,259 @@
-/* keuangan_siswa_styles.css */
+/* File: assets/css/keuangan_siswa_styles.css */
 
-/* Import the same font as the dashboard */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+/* =========================
+   Theme Variables
+   ========================= */
+:root {
+    --clr-primary: #4e73df;
+    --clr-primary-dark: #2e59d9;
+    --clr-success: #1cc88a;
+    --clr-warning: #f6c23e;
+    --clr-danger: #e74a3b;
+    --clr-dark: #343a40;
+    --clr-secondary: #5a5c69;
+    --clr-light-bg: #f8f9fc;
+    --transition: 0.3s ease;
+}
 
-/* General Styles */
+/* =========================
+   Global & Body Styles
+   ========================= */
 body {
+    background: linear-gradient(to right, #ece9e6, #ffffff);
     font-family: 'Nunito', sans-serif;
-    background-color: #f8f9fc;
+    color: var(--clr-dark);
+    margin: 0;
+    padding: 0;
 }
 
+/* =========================
+   Main Content Container
+   ========================= */
 .main-content {
-    margin-left: 220px;
-    transition: margin-left 0.3s ease;
+    margin-left: 250px;
+    padding: 1.5rem;
+    transition: margin var(--transition);
 }
 
-.main-content.sidebar-collapsed {
-    margin-left: 70px;
+.sidebar.collapsed+.main-content {
+    margin-left: 80px;
 }
 
-@media (max-width: 991.98px) {
-    .main-content {
-        margin-left: 70px;
+/* =========================
+   Table Container
+   ========================= */
+.table-container {
+    max-width: 90%;
+    margin: 0 auto 2rem;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-@media (max-width: 767.98px) {
-    .main-content {
-        margin-left: 0;
-    }
-}
-
-/* Page Title */
+/* =========================
+   Heading Styles
+   ========================= */
 h1.h3 {
-    color: #5a5c69;
-    font-weight: 600;
+    text-align: center;
+    font-weight: 700;
+    color: var(--clr-primary);
+    text-transform: uppercase;
     margin-bottom: 1.5rem;
 }
 
-/* Card Styles */
-.card {
-    border: none;
-    border-radius: 1rem;
-    background-color: #ffffff;
-    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, .15);
-}
-
-.card-header {
-    background-color: #f8f9fc;
-    border-bottom: none;
-    padding: 1rem 1.5rem;
-}
-
-.card-header h3 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #5a5c69;
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-
-.card-footer {
-    background-color: transparent;
-    border-top: none;
-}
-
-/* Search Form Styles */
-.card-body form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.card-body form .form-label {
-    font-weight: 600;
-    color: #5a5c69;
-}
-
-.card-body form .form-control {
-    border-radius: 0.5rem;
-    border: 1px solid #d1d3e2;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-}
-
-.card-body form .btn {
-    padding: 0.5rem 1.5rem;
-    font-size: 1rem;
-    border-radius: 0.5rem;
-}
-
-/* Table Styles */
+/* =========================
+   Table Styles
+   ========================= */
 .table-responsive {
     overflow-x: auto;
 }
 
-#siswaTable {
+.table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
 }
 
-#siswaTable th,
-#siswaTable td {
-    padding: 0.75rem 1rem;
-    vertical-align: middle;
-    border: 1px solid #e3e6f0;
-}
-
-#siswaTable thead th {
-    background-color: #4e73df;
+.table th {
+    background: linear-gradient(45deg, var(--clr-primary), var(--clr-primary-dark));
     color: #ffffff;
-    font-weight: 700;
     text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border: none;
 }
 
-#siswaTable tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
+.table td {
+    background: #ffffff;
+    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    color: var(--clr-secondary);
 }
 
-#siswaTable tbody tr:hover {
-    background-color: #e9ecef;
+.table tbody tr:nth-child(even) td {
+    background-color: #f9f9f9;
 }
 
-#siswaTable tbody td {
-    color: #5a5c69;
-    font-size: 0.95rem;
+.table-hover tbody tr:hover td {
+    background: #f1f1f1;
+    transition: background var(--transition);
 }
 
-/* Pagination Styles */
+/* Detail rows (nested tables) */
+.table-detail-row td {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* =========================
+   Status Badges
+   ========================= */
+.status-pending {
+    background-color: #f8d7da;
+    color: #721c24;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.status-cicilan {
+    background-color: #fff3cd;
+    color: #856404;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.status-lunas {
+    background-color: #d4edda;
+    color: #155724;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
+/* =========================
+   Pagination
+   ========================= */
 .pagination {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
+    justify-content: center;
 }
 
 .pagination .page-link {
-    color: #4e73df;
-    border: 1px solid #d1d3e2;
     border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
     margin: 0 0.25rem;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #4e73df;
-    color: #ffffff;
-    border-color: #4e73df;
+    color: var(--clr-primary);
+    transition: background var(--transition), color var(--transition);
 }
 
 .pagination .page-link:hover {
-    background-color: #d1d3e2;
-    color: #4e73df;
+    background-color: var(--clr-primary);
+    color: #fff;
 }
 
-/* Footer Styles */
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: calc(100% - 220px);
-    margin-left: 220px;
-    background-color: #fff;
-    border-top: 1px solid #e3e6f0;
-    z-index: 1000;
-    transition: margin-left 0.3s ease, width 0.3s ease;
+.pagination .page-item.active .page-link {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: #fff;
 }
 
-.footer.sidebar-collapsed {
-    width: calc(100% - 70px);
-    margin-left: 70px;
+/* =========================
+   Buttons
+   ========================= */
+.btn {
+    border-radius: 0.5rem;
+    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
 }
 
-@media (max-width: 991.98px),
-(max-width: 767.98px) {
-    .footer {
-        width: 100%;
-        margin-left: 0;
-    }
-}
-
-/* Button Styles */
 .btn-primary {
-    background-color: #4e73df;
-    border-color: #4e73df;
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: #fff;
 }
 
 .btn-primary:hover {
-    background-color: #2e59d9;
-    border-color: #2653d4;
+    background-color: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
 }
 
 .btn-secondary {
-    background-color: #858796;
-    border-color: #858796;
+    background-color: #6c757d;
+    border: none;
+    color: #fff;
 }
 
 .btn-secondary:hover {
-    background-color: #6e707e;
-    border-color: #5a5c69;
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
 
-/* Additional Styles */
-.text-gray-800 {
-    color: #5a5c69 !important;
+.btn-edit {
+    background-color: var(--clr-warning);
+    border-color: var(--clr-warning);
+    color: #fff;
 }
 
-.text-gray-600 {
-    color: #858796 !important;
+.btn-delete {
+    background-color: var(--clr-danger);
+    border-color: var(--clr-danger);
+    color: #fff;
 }
 
-.small {
-    font-size: 0.875rem;
+/* Return button */
+.btn-kembali {
+    display: inline-block;
+    margin-top: 1.5rem;
 }
 
-.mb-4 {
-    margin-bottom: 1.5rem !important;
-}
-
-.mb-0 {
-    margin-bottom: 0 !important;
-}
-
-.d-flex {
-    display: flex !important;
-}
-
-.justify-content-center {
-    justify-content: center !important;
-}
-
-.align-items-center {
-    align-items: center !important;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .card-body form .col-md-4 {
-        flex: 0 0 100%;
-        max-width: 100%;
+/* =========================
+   Print Styles
+   ========================= */
+@media print {
+    body * {
+        visibility: hidden;
     }
 
-    .card-body form .d-flex {
-        justify-content: flex-start;
+    .printable-area,
+    .printable-area * {
+        visibility: visible;
     }
-}
 
-/* Custom Pagination Styles */
-.pagination .page-link {
-    color: #4e73df;
-    border-color: #d1d3e2;
-    border-radius: 0.5rem;
-}
+    .printable-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
 
-.pagination .page-item.active .page-link {
-    background-color: #4e73df;
-    border-color: #4e73df;
-    color: #ffffff;
-}
+    .no-print {
+        display: none;
+    }
 
-.pagination .page-link:hover {
-    background-color: #d1d3e2;
-    color: #4e73df;
-}
+    .table-responsive {
+        overflow: visible !important;
+    }
 
-.pagination .page-item.disabled .page-link {
-    color: #6c757d;
-    pointer-events: none;
-    background-color: #fff;
-    border-color: #dee2e6;
-}
-
-/* Topbar Adjustments */
-.navbar {
-    height: 50px;
-    /* Reduced height */
-    min-height: 50px;
-    padding: 0 1rem;
-}
-
-.navbar .navbar-nav .nav-link {
-    height: 50px;
-    display: flex;
-    align-items: center;
+    table {
+        width: 100%;
+    }
 }
