@@ -1,5 +1,5 @@
 <?php
-// Aktifkan error reporting saat pengembangan
+// Aktifkan error reporting saat pengembangan (hapus di produksi)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -10,7 +10,7 @@ if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit'])) {
 }
 include '../database_connection.php';
 
-$unit = $_SESSION['unit']; // Hanya SMA/SMK sesuai login
+$unit = $_SESSION['unit'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -54,8 +54,15 @@ $unit = $_SESSION['unit']; // Hanya SMA/SMK sesuai login
             </thead>
             <tbody id="tabelSiswa">
                 <?php
-                // Query dengan prepared statement
-                $sql = "SELECT * FROM siswa WHERE unit = ? ORDER BY nama ASC";
+                // Query siswa + subquery ambil metode pembayaran terakhir (atau NULL jika belum ada)
+                $sql = "SELECT s.*, 
+                          (SELECT metode_pembayaran FROM pembayaran 
+                            WHERE pembayaran.siswa_id = s.id 
+                            ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1
+                          ) AS metode_terakhir
+                        FROM siswa s 
+                        WHERE s.unit = ?
+                        ORDER BY s.nama ASC";
                 $stmt = $conn->prepare($sql);
                 if (!$stmt) {
                     echo "<tr><td colspan='8' class='text-danger'>Terjadi kesalahan: " . htmlspecialchars($conn->error) . "</td></tr>";
@@ -70,7 +77,9 @@ $unit = $_SESSION['unit']; // Hanya SMA/SMK sesuai login
                         if ($status == 'Lunas') $badge = 'success';
                         else if ($status == 'Angsuran') $badge = 'warning';
                         else if ($status == 'Pending') $badge = 'danger';
-                    ?>
+
+                        $metode = $row['metode_terakhir'] ?? 'Belum Ada';
+                ?>
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= htmlspecialchars($row['no_formulir']) ?></td>
@@ -78,10 +87,10 @@ $unit = $_SESSION['unit']; // Hanya SMA/SMK sesuai login
                         <td><?= substr($row['jenis_kelamin'], 0, 1) ?></td>
                         <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
                         <td><span class="badge bg-<?= $badge ?>"><?= htmlspecialchars($status) ?></span></td>
-                        <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '-') ?></td>
+                        <td><?= htmlspecialchars($metode) ?></td>
                         <td><?= htmlspecialchars($row['tanggal_pendaftaran']) ?></td>
                     </tr>
-                    <?php
+                <?php
                     endwhile;
                     $stmt->close();
                 }
