@@ -269,13 +269,34 @@ function getElementValue($elementName) {
                             <div class="card-body">
                                 <h5 class="card-title">Ukuran Kertas (mm)</h5>
                                 <div class="mb-3">
-                                    <label for="paper_width_mm" class="form-label">Lebar Kertas (mm)</label>
-                                    <input type="number" name="paper_width_mm" id="paper_width_mm" class="form-control" value="<?= htmlspecialchars($paper['paper_width_mm']); ?>" min="50" step="0.1" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="paper_height_mm" class="form-label">Tinggi Kertas (mm)</label>
-                                    <input type="number" name="paper_height_mm" id="paper_height_mm" class="form-control" value="<?= htmlspecialchars($paper['paper_height_mm']); ?>" min="100" step="0.1" required>
-                                </div>
+    <label for="paper_width_mm" class="form-label">Lebar Kertas (mm)</label>
+    <input 
+      type="number" 
+      name="paper_width_mm" 
+      id="paper_width_mm" 
+      class="form-control"
+      value="<?= htmlspecialchars($paper['paper_width_mm']); ?>"
+      min="50" 
+      step="0.1" 
+      required
+      oninput="this.value = this.value.replace(',', '.');"
+    >
+</div>
+<div class="mb-3">
+    <label for="paper_height_mm" class="form-label">Tinggi Kertas (mm)</label>
+    <input 
+      type="number" 
+      name="paper_height_mm" 
+      id="paper_height_mm" 
+      class="form-control"
+      value="<?= htmlspecialchars($paper['paper_height_mm']); ?>"
+      min="100" 
+      step="0.1" 
+      required
+      oninput="this.value = this.value.replace(',', '.');"
+    >
+</div>
+
                             </div>
                         </div>
                     </div>
