@@ -190,7 +190,7 @@ function getElementValue($elementName) {
         }
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             font-size: 12pt;
         }
         .receipt-container {
@@ -201,7 +201,7 @@ function getElementValue($elementName) {
             padding: 0 10mm 5mm;
             box-sizing: border-box;
             background-color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
         .receipt-element {
             position: absolute;
@@ -210,16 +210,17 @@ function getElementValue($elementName) {
             border: none !important;
             outline: none !important;
             box-shadow: none !important;
-            font-family: Arial, sans-serif !important;
+            /* hapus font-family: Arial, sans-serif !important; 
+               biarkan inline style mengambil alih */
         }
 
-        /* Tabel dan teks mewarisi font Arial */
+        /* Tabel dan teks mewarisi font Courier New */
         .receipt-element table,
         .receipt-element table th,
         .receipt-element table td,
         .receipt-element h3,
         .receipt-element p {
-            font-family: Arial, sans-serif !important;
+            font-family: 'Courier New', Courier, monospace !important;
             font-size: inherit !important;
         }
 
@@ -232,13 +233,14 @@ function getElementValue($elementName) {
             text-align: center;
             left: 50%;
             transform: translateX(-50%);
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
+
         table {
             border-collapse: collapse;
             width: 100%;
             margin-top: 5mm; /* sedikit ruang di bawah header */
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
         table, th, td {
             border: 1px solid #000;
@@ -246,23 +248,26 @@ function getElementValue($elementName) {
         th, td {
             padding: 4px;
             font-size: 10pt;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
+
         .print-button {
             display: none;
         }
+
         .receipt-element.logo-element img {
             max-width: 100px;
             max-height: 100px;
             pointer-events: none;
         }
+
         .receipt-element.watermark-element {
             opacity: 0.3;
             transform: rotate(-45deg);
             text-align: center;
             width: 100%;
             pointer-events: none;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
     }
 
@@ -279,7 +284,7 @@ function getElementValue($elementName) {
         border-radius: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
         overflow: hidden;
-        font-family: Arial, sans-serif;
+        font-family: 'Courier New', Courier, monospace;
         font-size: 12pt;
     }
     .receipt-element {
@@ -293,7 +298,7 @@ function getElementValue($elementName) {
         user-select: none;
         white-space: nowrap;
         transition: background-color 0.2s, border-color 0.2s;
-        font-family: Arial, sans-serif;
+        font-family: 'Courier New', Courier, monospace;
         font-weight: 600;
         color: #5a5c69;
     }
@@ -314,7 +319,7 @@ function getElementValue($elementName) {
         text-align: center;
         left: 50%;
         transform: translateX(-50%);
-        font-family: Arial, sans-serif;
+        font-family: 'Courier New', Courier, monospace;
     }
     .receipt-element.logo-element img {
         max-width: 100px;
@@ -327,7 +332,7 @@ function getElementValue($elementName) {
         text-align: center;
         width: 100%;
         pointer-events: none;
-        font-family: Arial, sans-serif;
+        font-family: 'Courier New', Courier, monospace;
     }
 
     /* override border dan shadow saat cetak */
