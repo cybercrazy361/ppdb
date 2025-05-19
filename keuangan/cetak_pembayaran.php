@@ -181,171 +181,177 @@ function getElementValue($elementName) {
 <head>
     <meta charset="UTF-8">
     <title>Cetak Kuitansi Pembayaran</title>
-    <style>
-        /* CSS untuk tampilan cetak */
-        @media print {
-            @page {
-                size: <?= htmlspecialchars($paper_width_mm); ?>mm <?= htmlspecialchars($paper_height_mm); ?>mm; 
-                margin: 0;
-            }
-            body {
-                margin: 0;
-                font-family: 'Nunito', sans-serif;
-                font-size: 12pt;
-            }
-            .receipt-container {
-                position: relative;
-                width: <?= htmlspecialchars($paper_width_mm); ?>mm;
-                height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-                padding: 10mm;
-                box-sizing: border-box;
-                background-color: #fff;
-            }
-            .receipt-element {
-                position: absolute;
-                white-space: nowrap;
-                border: none !important;
-                outline: none !important;
-                box-shadow: none !important;
-                background-color: transparent !important;
-            }
-
-            /* Pastikan tabel dan sel mewarisi ukuran font */
-            .receipt-element table, 
-            .receipt-element table th, 
-            .receipt-element table td,
-            .receipt-element h3,
-            .receipt-element p {
-                font-size: inherit !important;
-                font-family: inherit !important;
-            }
-
-            .receipt-header {
-                display: flex;
-                flex-direction: column;
-                align-items: center; 
-                justify-content: center; 
-                width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
-                text-align: center;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                margin-top: 10mm;
-            }
-            table, th, td {
-                border: 1px solid #000;
-            }
-            th, td {
-                padding: 4px;
-                font-size: 10pt; /* Boleh diubah sesuai keinginan */
-            }
-            .print-button {
-                display: none;
-            }
-
-            /* Styling untuk Logo dan Watermark saat cetak */
-            .receipt-element.logo-element img {
-                max-width: 100px;
-                max-height: 100px;
-                pointer-events: none; /* Pastikan gambar tidak mengganggu drag */
-            }
-
-            .receipt-element.watermark-element {
-                opacity: 0.3;
-                transform: rotate(-45deg);
-                /* Rotasi untuk efek watermark */
-                text-align: center;
-                width: 100%;
-                pointer-events: none; /* Pastikan teks tidak mengganggu drag */
-            }
+<style>
+    /* CSS untuk tampilan cetak */
+    @media print {
+        @page {
+            size: <?= htmlspecialchars($paper_width_mm); ?>mm <?= htmlspecialchars($paper_height_mm); ?>mm;
+            margin: 0;
         }
-
-        /* CSS untuk tampilan layar */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+        }
         .receipt-container {
             position: relative;
             width: <?= htmlspecialchars($paper_width_mm); ?>mm;
             height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-            border: 1px solid #dee2e6;
             padding: 10mm;
             box-sizing: border-box;
-            margin: 20px auto;
-            font-family: 'Nunito', sans-serif;
-            font-size: 12pt;
             background-color: #fff;
-            border-radius: 1rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            overflow: hidden;
+            font-family: Arial, sans-serif;
         }
         .receipt-element {
             position: absolute;
-            background-color: rgba(0, 123, 255, 0.3);
-            border: 1px solid #007bff;
-            border-radius: 0.5rem;
-            padding: 2px 4px;
-            font-size: 8pt;
-            cursor: move;
-            user-select: none;
             white-space: nowrap;
-            transition: background-color 0.2s, border-color 0.2s;
-            font-weight: 600;
-            color: #5a5c69;
+            background-color: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            font-family: Arial, sans-serif !important;
         }
 
-        .receipt-element:hover {
-            background-color: rgba(0, 123, 255, 0.5);
-            border-color: #0056b3;
-        }
-
-        .print-button {
-            text-align: center;
-            margin-top: 20px;
+        /* Tabel dan teks mewarisi font Arial */
+        .receipt-element table,
+        .receipt-element table th,
+        .receipt-element table td,
+        .receipt-element h3,
+        .receipt-element p {
+            font-family: Arial, sans-serif !important;
+            font-size: inherit !important;
         }
 
         .receipt-header {
             display: flex;
             flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
+            align-items: center;
+            justify-content: center;
             width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
             text-align: center;
             left: 50%;
             transform: translateX(-50%);
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10mm;
+            font-family: Arial, sans-serif;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 4px;
+            font-size: 10pt;
+            font-family: Arial, sans-serif;
+        }
+        .print-button {
+            display: none;
         }
 
-        /* Styling untuk Logo dan Watermark di tampilan layar */
         .receipt-element.logo-element img {
             max-width: 100px;
             max-height: 100px;
-            pointer-events: none; /* Pastikan gambar tidak mengganggu drag */
+            pointer-events: none;
         }
 
         .receipt-element.watermark-element {
             opacity: 0.3;
             transform: rotate(-45deg);
-            /* Rotasi untuk efek watermark */
             text-align: center;
             width: 100%;
-            pointer-events: none; /* Pastikan teks tidak mengganggu drag */
+            pointer-events: none;
+            font-family: Arial, sans-serif;
         }
-
-        @media print {
-      /* aturan yang sudah ada… */
-
-      /* override border dan shadow pada saat cetak */
-      .receipt-container {
-        border: none !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-      }
-      .receipt-element {
-        background-color: transparent !important;
-        border: none !important;
-      }
     }
-    </style>
+
+    /* CSS untuk tampilan layar (preview) */
+    .receipt-container {
+        position: relative;
+        width: <?= htmlspecialchars($paper_width_mm); ?>mm;
+        height: <?= htmlspecialchars($paper_height_mm); ?>mm;
+        border: 1px solid #dee2e6;
+        padding: 10mm;
+        box-sizing: border-box;
+        margin: 20px auto;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        overflow: hidden;
+
+        /* Ganti Nunito ke Arial untuk preview juga */
+        font-family: Arial, sans-serif;
+        font-size: 12pt;
+    }
+    .receipt-element {
+        position: absolute;
+        background-color: rgba(0, 123, 255, 0.3);
+        border: 1px solid #007bff;
+        border-radius: 0.5rem;
+        padding: 2px 4px;
+        font-size: 8pt;
+        cursor: move;
+        user-select: none;
+        white-space: nowrap;
+        transition: background-color 0.2s, border-color 0.2s;
+        font-family: Arial, sans-serif;
+        font-weight: 600;
+        color: #5a5c69;
+    }
+
+    .receipt-element:hover {
+        background-color: rgba(0, 123, 255, 0.5);
+        border-color: #0056b3;
+    }
+
+    .print-button {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .receipt-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: Arial, sans-serif;
+    }
+
+    .receipt-element.logo-element img {
+        max-width: 100px;
+        max-height: 100px;
+        pointer-events: none;
+    }
+
+    .receipt-element.watermark-element {
+        opacity: 0.3;
+        transform: rotate(-45deg);
+        text-align: center;
+        width: 100%;
+        pointer-events: none;
+        font-family: Arial, sans-serif;
+    }
+
+    @media print {
+        /* override border dan shadow pada saat cetak */
+        .receipt-container {
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+        }
+        .receipt-element {
+            background-color: transparent !important;
+            border: none !important;
+        }
+    }
+</style>
+
 </head>
 <body>
     <div class="receipt-container">
