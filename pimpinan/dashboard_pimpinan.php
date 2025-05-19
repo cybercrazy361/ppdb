@@ -11,6 +11,8 @@ if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit'])) {
 include '../database_connection.php';
 
 $unit = $_SESSION['unit'];
+$tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -54,13 +56,12 @@ $unit = $_SESSION['unit'];
             </thead>
             <tbody id="tabelSiswa">
                 <?php
-                // Query siswa + subquery ambil metode pembayaran terakhir (atau NULL jika belum ada)
+                // Query siswa + total bayar + status pembayaran dinamis + metode terakhir
                 $sql = "SELECT s.*, 
-                          (SELECT metode_pembayaran FROM pembayaran 
-                            WHERE pembayaran.siswa_id = s.id 
-                            ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1
-                          ) AS metode_terakhir
-                        FROM siswa s 
+                            COALESCE((SELECT SUM(jumlah) FROM pembayaran WHERE siswa_id=s.id),0) AS total_bayar,
+                            (SELECT metode_pembayaran FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS metode_terakhir,
+                            (SELECT COUNT(*) FROM pembayaran WHERE siswa_id=s.id) AS jumlah_transaksi
+                        FROM siswa s
                         WHERE s.unit = ?
                         ORDER BY s.nama ASC";
                 $stmt = $conn->prepare($sql);
@@ -72,12 +73,18 @@ $unit = $_SESSION['unit'];
                     $result = $stmt->get_result();
                     $no = 1;
                     while ($row = $result->fetch_assoc()):
-                        $status = $row['status_pembayaran'];
-                        $badge = 'secondary';
-                        if ($status == 'Lunas') $badge = 'success';
-                        else if ($status == 'Angsuran') $badge = 'warning';
-                        else if ($status == 'Pending') $badge = 'danger';
-
+                        $total_bayar = (float)$row['total_bayar'];
+                        $jumlah_transaksi = (int)$row['jumlah_transaksi'];
+                        if ($jumlah_transaksi == 0) {
+                            $status = "Belum Bayar";
+                            $badge = "danger";
+                        } elseif ($total_bayar >= $tagihan_total) {
+                            $status = "Lunas";
+                            $badge = "success";
+                        } else {
+                            $status = "Angsuran";
+                            $badge = "warning";
+                        }
                         $metode = $row['metode_terakhir'] ?? 'Belum Ada';
                 ?>
                     <tr>
