@@ -197,7 +197,8 @@ function getElementValue($elementName) {
             position: relative;
             width: <?= htmlspecialchars($paper_width_mm); ?>mm;
             height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-            padding: 10mm;
+            /* padding atas 0 agar mentok ke tepi atas */
+            padding: 0 10mm 5mm;
             box-sizing: border-box;
             background-color: #fff;
             font-family: Arial, sans-serif;
@@ -236,7 +237,7 @@ function getElementValue($elementName) {
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-top: 10mm;
+            margin-top: 5mm; /* sedikit ruang di bawah header */
             font-family: Arial, sans-serif;
         }
         table, th, td {
@@ -250,13 +251,11 @@ function getElementValue($elementName) {
         .print-button {
             display: none;
         }
-
         .receipt-element.logo-element img {
             max-width: 100px;
             max-height: 100px;
             pointer-events: none;
         }
-
         .receipt-element.watermark-element {
             opacity: 0.3;
             transform: rotate(-45deg);
@@ -273,15 +272,13 @@ function getElementValue($elementName) {
         width: <?= htmlspecialchars($paper_width_mm); ?>mm;
         height: <?= htmlspecialchars($paper_height_mm); ?>mm;
         border: 1px solid #dee2e6;
-        padding: 10mm;
+        padding: 10mm;  /* preview tetap pakai padding 10mm */
         box-sizing: border-box;
         margin: 20px auto;
         background-color: #fff;
         border-radius: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
         overflow: hidden;
-
-        /* Ganti Nunito ke Arial untuk preview juga */
         font-family: Arial, sans-serif;
         font-size: 12pt;
     }
@@ -300,17 +297,14 @@ function getElementValue($elementName) {
         font-weight: 600;
         color: #5a5c69;
     }
-
     .receipt-element:hover {
         background-color: rgba(0, 123, 255, 0.5);
         border-color: #0056b3;
     }
-
     .print-button {
         text-align: center;
         margin-top: 20px;
     }
-
     .receipt-header {
         display: flex;
         flex-direction: column;
@@ -322,13 +316,11 @@ function getElementValue($elementName) {
         transform: translateX(-50%);
         font-family: Arial, sans-serif;
     }
-
     .receipt-element.logo-element img {
         max-width: 100px;
         max-height: 100px;
         pointer-events: none;
     }
-
     .receipt-element.watermark-element {
         opacity: 0.3;
         transform: rotate(-45deg);
@@ -338,8 +330,8 @@ function getElementValue($elementName) {
         font-family: Arial, sans-serif;
     }
 
+    /* override border dan shadow saat cetak */
     @media print {
-        /* override border dan shadow pada saat cetak */
         .receipt-container {
             border: none !important;
             box-shadow: none !important;
