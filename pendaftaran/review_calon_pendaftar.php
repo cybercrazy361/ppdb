@@ -19,7 +19,7 @@ $stmt->fetch();
 $stmt->close();
 
 // 3) Query data calon_pendaftar
-$sql = "SELECT id, nama, asal_sekolah, email, no_hp, alamat, pilihan, tanggal_daftar, status, notes
+$sql = "SELECT id, nama, jenis_kelamin, asal_sekolah, email, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan, tanggal_daftar, status, notes
         FROM calon_pendaftar " .
        ($unit !== 'Yayasan' ? "WHERE pilihan = ? " : "") .
        "ORDER BY id DESC";
@@ -71,6 +71,7 @@ foreach ($calon as $row) {
     .btn-back { float:right; }
     @media (max-width:600px){
       .rekap-box{ font-size:.9rem;}
+      .table-responsive { font-size: 0.92rem;}
     }
   </style>
   <link rel="stylesheet" href="../assets/css/review_calon_pendaftar_styles.css">
@@ -100,10 +101,13 @@ foreach ($calon as $row) {
             <tr>
               <th>No</th>
               <th>Nama</th>
+              <th>Jenis Kelamin</th>
               <th>Asal Sekolah</th>
               <th>Email</th>
               <th>No HP</th>
               <th>Alamat</th>
+              <th>Pendidikan Ortu/Wali</th>
+              <th>No HP Ortu/Wali</th>
               <th>Pilihan</th>
               <th>Tanggal Daftar</th>
               <th>Status</th>
@@ -118,10 +122,13 @@ foreach ($calon as $row) {
             <tr data-id="<?= $row['id'] ?>">
               <td><?= $no++ ?></td>
               <td><?= htmlspecialchars($row['nama']) ?></td>
+              <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
               <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
               <td><?= htmlspecialchars($row['email']) ?></td>
               <td><?= htmlspecialchars($row['no_hp']) ?></td>
               <td><?= htmlspecialchars($row['alamat']) ?></td>
+              <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
+              <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
               <td><?= htmlspecialchars($row['pilihan']) ?></td>
               <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
               <td class="text-center">
@@ -185,7 +192,6 @@ foreach ($calon as $row) {
       $.post('update_status.php', {id, status}, function(res){
         if(res.success){
           $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
-          // Update rekap box
           location.reload(); // Reload page untuk update rekap
         } else {
           alert('Error menyimpan status');
