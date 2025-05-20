@@ -45,7 +45,7 @@ if (isset($_SESSION['pimpinan'])) {
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 mb-2">Masuk</button>
-                        <a href="../index.html" class="btn btn-link">Kembali ke Halaman Utama</a>
+                        <a href="../index.php" class="btn btn-secondary w-100">Kembali</a>
                         <!-- 
                             Ganti href="../index.php" jika tombol "Kembali" 
                             harus mengarah ke halaman lain (misal "../home.php")
