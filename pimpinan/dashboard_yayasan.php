@@ -151,13 +151,25 @@ if ($id_jenis_pangkal) {
 </div>
 
 <script>
+function resetNomorUrut() {
+    let rows = document.querySelectorAll('#tabelSiswaYayasan tbody tr');
+    let n = 1;
+    rows.forEach(function(row) {
+        if (row.style.display !== "none") {
+            row.children[0].textContent = n++;
+        }
+    });
+}
+
 document.getElementById('searchInput').addEventListener('keyup', function() {
     var filter = this.value.toLowerCase();
     var rows = document.querySelectorAll('#tabelSiswaYayasan tbody tr');
     rows.forEach(function(row) {
         row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
     });
+    resetNomorUrut();
 });
+
 document.getElementById('unitFilter').addEventListener('change', function() {
     var unit = this.value;
     var rows = document.querySelectorAll('#tabelSiswaYayasan tbody tr');
@@ -168,7 +180,12 @@ document.getElementById('unitFilter').addEventListener('change', function() {
             row.style.display = "none";
         }
     });
+    resetNomorUrut();
 });
+
+// Pastikan nomor urut benar saat pertama kali load
+window.addEventListener('DOMContentLoaded', resetNomorUrut);
 </script>
+
 </body>
 </html>
