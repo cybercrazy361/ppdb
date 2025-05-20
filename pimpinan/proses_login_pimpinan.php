@@ -1,4 +1,8 @@
 <?php
+// Aktifkan error reporting saat pengembangan, matikan di produksi
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 include '../database_connection.php';
 
@@ -13,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Query tabel pimpinan, unit-nya bisa Yayasan/SMA/SMK
+    // Query ke tabel pimpinan dengan unit (Yayasan/SMA/SMK)
     $sql = "SELECT * FROM pimpinan WHERE username = ? AND unit = ?";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
@@ -28,30 +32,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
-            // Sukses login, buat session sesuai unit
+            // Login sukses
             $_SESSION['pimpinan'] = $row['nama'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['unit']     = $row['unit'];
             session_regenerate_id(true);
 
-            // Redirect dashboard sesuai unit
+            // Redirect ke dashboard sesuai unit
             if ($unit === 'Yayasan') {
                 header("Location: dashboard_yayasan.php");
+                exit();
             } else {
                 header("Location: dashboard_pimpinan.php");
+                exit();
             }
-            exit();
         } else {
+            // Password salah
             header("Location: login_pimpinan.php?error=Password salah!");
             exit();
         }
     } else {
+        // Username/unit tidak ditemukan
         header("Location: login_pimpinan.php?error=Username/unit tidak ditemukan!");
         exit();
     }
     $stmt->close();
     $conn->close();
 } else {
+    // Jika bukan POST, kembalikan ke login
     header("Location: login_pimpinan.php");
     exit();
 }
