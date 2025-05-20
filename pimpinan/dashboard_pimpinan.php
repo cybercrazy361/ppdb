@@ -8,7 +8,7 @@ if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit'])) {
     header("Location: login_pimpinan");
     exit();
 }
-include '../database_connection';
+include '../database_connection.php';
 
 $unit = $_SESSION['unit'];
 $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
