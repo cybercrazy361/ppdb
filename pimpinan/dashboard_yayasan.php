@@ -1,15 +1,15 @@
 <?php
-// FILE: dashboard_yayasan.php
+// FILE: dashboard_yayasan
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
 if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit']) || $_SESSION['unit'] !== 'Yayasan') {
-    header("Location: login_pimpinan.php");
+    header("Location: login_pimpinan");
     exit();
 }
-include '../database_connection.php';
+include '../database_connection';
 
 // Ambil ID jenis pembayaran Uang Pangkal
 $id_jenis_pangkal = null;
@@ -61,7 +61,7 @@ if ($id_jenis_pangkal) {
         <a class="navbar-brand fw-bold" href="#">Dashboard Yayasan</a>
         <span class="navbar-text ms-auto">
             <?= htmlspecialchars($_SESSION['pimpinan']) ?>
-            | <a href="logout.php" class="btn btn-sm btn-outline-danger ms-2">Logout</a>
+            | <a href="logout" class="btn btn-sm btn-outline-danger ms-2">Logout</a>
         </span>
     </div>
 </nav>

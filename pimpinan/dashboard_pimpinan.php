@@ -5,10 +5,10 @@ ini_set('display_errors', 1);
 
 session_start();
 if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit'])) {
-    header("Location: login_pimpinan.php");
+    header("Location: login_pimpinan");
     exit();
 }
-include '../database_connection.php';
+include '../database_connection';
 
 $unit = $_SESSION['unit'];
 $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
@@ -105,7 +105,7 @@ $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
         <a class="navbar-brand fw-bold" href="#">PPDB <?= htmlspecialchars($unit) ?></a>
         <span class="navbar-text ms-auto">
             <?= htmlspecialchars($_SESSION['pimpinan']) ?> (<?= htmlspecialchars($unit) ?>)
-            | <a href="logout.php" class="btn btn-sm btn-outline-danger ms-2">Logout</a>
+            | <a href="logout" class="btn btn-sm btn-outline-danger ms-2">Logout</a>
         </span>
     </div>
 </nav>

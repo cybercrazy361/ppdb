@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 
 session_start();
 if (isset($_SESSION['pimpinan'])) {
-    header('Location: dashboard_pimpinan.php');
+    header('Location: dashboard_pimpinan');
     exit();
 }
 ?>
@@ -27,7 +27,7 @@ if (isset($_SESSION['pimpinan'])) {
                     <?php if (!empty($_GET['error'])): ?>
                         <div class="alert alert-danger"><?= htmlspecialchars($_GET['error']) ?></div>
                     <?php endif; ?>
-                    <form method="post" action="proses_login_pimpinan.php" autocomplete="off">
+                    <form method="post" action="proses_login_pimpinan" autocomplete="off">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="off">
