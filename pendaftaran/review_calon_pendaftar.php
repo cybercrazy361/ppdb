@@ -1,6 +1,4 @@
 <?php
-// File: review_calon_pendaftar.php
-
 session_start();
 include '../database_connection.php';
 
@@ -20,7 +18,7 @@ $stmt->fetch();
 $stmt->close();
 
 // 3) Query data calon_pendaftar
-$sql = "SELECT id,nama,asal_sekolah,email,no_hp,alamat,pilihan,tanggal_daftar,status,notes
+$sql = "SELECT id, nama, asal_sekolah, email, no_hp, alamat, pilihan, tanggal_daftar, status, notes
         FROM calon_pendaftar " .
        ($unit !== 'Yayasan' ? "WHERE pilihan = ? " : "") .
        "ORDER BY id DESC";
@@ -31,16 +29,26 @@ if ($unit !== 'Yayasan') {
 }
 $stmt->execute();
 $result = $stmt->get_result();
+$calon = [];
+while ($row = $result->fetch_assoc()) $calon[] = $row;
 $stmt->close();
 
-// 4) Daftar status & keterangan default
-$status_desc = [
-    'Pending'   => 'Menunggu tindak lanjut',
-    'Contacted' => 'Sudah dihubungi',
-    'Accepted'  => 'Calon diterima',
-    'Rejected'  => 'Calon ditolak'
+// 4) Daftar status dinamis & inisialisasi rekap
+$status_list = [
+    'PPDB Bersama'        => 'Sudah melakukan pembayaran/PPDB Bersama',
+    'Uang Titipan'        => 'Uang titipan sudah masuk',
+    'Akan Bayar'          => 'Akan melakukan pembayaran',
+    'Menunggu Negeri'     => 'Menunggu sekolah negeri',
+    'Tidak Ada Konfirmasi'=> 'Tidak ada konfirmasi',
+    'Tidak Jadi'          => 'Tidak jadi daftar'
 ];
-$status_list = array_keys($status_desc);
+$rekap = array_fill_keys(array_keys($status_list), 0);
+// Hitung jumlah tiap status
+foreach ($calon as $row) {
+    $st = $row['status'];
+    if (isset($rekap[$st])) $rekap[$st]++;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -48,24 +56,43 @@ $status_list = array_keys($status_desc);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Review Calon Pendaftar</title>
-
-  <!-- Google Fonts, Bootstrap, FontAwesome, DataTables CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-  <!-- Custom Responsive CSS -->
+  <style>
+    .status-ppdb-bersama { background:#198754 !important; color:#fff !important; }
+    .status-uang-titipan { background:#6f42c1 !important; color:#fff !important; }
+    .status-akan-bayar { background:#fd7e14 !important; color:#fff !important; }
+    .status-menunggu-negeri { background:#ffc107 !important; color:#333 !important; }
+    .status-tidak-ada-konfirmasi { background:#6c757d !important; color:#fff !important; }
+    .status-tidak-jadi { background:#dc3545 !important; color:#fff !important; }
+    .rekap-box { margin-bottom:16px; }
+    .rekap-box .badge { font-size:1rem; padding:.5em 1em; }
+    .btn-back { float:right; }
+    @media (max-width:600px){
+      .rekap-box{ font-size:.9rem;}
+    }
+  </style>
   <link rel="stylesheet" href="../assets/css/review_calon_pendaftar_styles.css">
 </head>
 <body>
-
   <div class="main-container">
     <div class="card-wrapper">
-      <div class="card-header">
-        <h4>Review Calon Pendaftar</h4>
-        <a href="dashboard_pendaftaran.php" class="btn-back">
-          <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Review Calon Pendaftar</h4>
+        <a href="dashboard_pendaftaran.php" class="btn btn-secondary btn-sm btn-back">
+          <i class="fas fa-arrow-left"></i> Dashboard
         </a>
+      </div>
+
+      <!-- Box Rekap Status -->
+      <div class="rekap-box mb-3">
+        <?php foreach($rekap as $key => $count): 
+          $cls = 'status-'.strtolower(str_replace(' ', '-', $key));
+        ?>
+          <span class="badge <?= $cls ?>"><?= $key ?>: <?= $count ?></span>
+        <?php endforeach; ?>
       </div>
 
       <div class="table-responsive">
@@ -85,7 +112,7 @@ $status_list = array_keys($status_desc);
             </tr>
           </thead>
           <tbody>
-          <?php $no=1; while ($row = $result->fetch_assoc()):
+          <?php $no=1; foreach ($calon as $row):
               $current = $row['status'];
               $notes   = $row['notes'];
           ?>
@@ -98,27 +125,20 @@ $status_list = array_keys($status_desc);
               <td><?= htmlspecialchars($row['alamat']) ?></td>
               <td><?= htmlspecialchars($row['pilihan']) ?></td>
               <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
-
-              <!-- Status dropdown berwarna -->
               <td class="text-center">
-                <select class="status-select status-<?= strtolower($current) ?> form-select form-select-sm">
-                  <?php foreach ($status_list as $st): ?>
-                  <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>>
-                    <?= $st ?>
-                  </option>
+                <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
+                  <?php foreach ($status_list as $st => $desc): ?>
+                  <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $st ?></option>
                   <?php endforeach; ?>
                 </select>
               </td>
-
-              <!-- Keterangan editable -->
               <td>
-                <input type="text"
-                       class="desc-input"
+                <input type="text" class="desc-input form-control form-control-sm"
                        value="<?= htmlspecialchars($notes) ?>"
                        placeholder="Keterangan..." />
               </td>
             </tr>
-          <?php endwhile; ?>
+          <?php endforeach; ?>
           </tbody>
         </table>
       </div>
@@ -146,16 +166,14 @@ $status_list = array_keys($status_desc);
       }
     });
 
-    // Styling entries-per-page & search box dengan Bootstrap
-    $('div.dataTables_length select').addClass('form-select form-select-sm');
-    $('div.dataTables_filter input').addClass('form-control form-control-sm');
-
     // Mapping kelas warna
     const classes = {
-      'Pending':'status-pending',
-      'Contacted':'status-contacted',
-      'Accepted':'status-accepted',
-      'Rejected':'status-rejected'
+      'PPDB Bersama':'status-ppdb-bersama',
+      'Uang Titipan':'status-uang-titipan',
+      'Akan Bayar':'status-akan-bayar',
+      'Menunggu Negeri':'status-menunggu-negeri',
+      'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
+      'Tidak Jadi':'status-tidak-jadi'
     };
 
     // Update status ke server & update warna
@@ -164,11 +182,12 @@ $status_list = array_keys($status_desc);
             $row = $sel.closest('tr'),
             id   = $row.data('id'),
             status = $sel.val();
+      // AJAX post ke update_status.php (wajib Anda buat juga!)
       $.post('update_status.php', {id, status}, function(res){
         if(res.success){
-          $sel
-            .removeClass('status-pending status-contacted status-accepted status-rejected')
-            .addClass(classes[status]);
+          $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
+          // Update rekap box
+          location.reload(); // Reload page untuk update rekap
         } else {
           alert('Error menyimpan status');
         }
