@@ -18,110 +18,119 @@ if (empty($_SESSION['csrf_token'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
     <style>
-body {
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #13bef1 0%, #0781e4 100%);
-    font-family: 'Poppins', sans-serif;
-}
-
-.header-banner {
-    width: 100%;
-    background: linear-gradient(135deg, #3ac5fc 70%, #0b64c0 100%);
-    border-radius: 24px 24px 0 0;
-    margin: 24px auto 0 auto;
-    padding: 32px 0 18px 0;
-    text-align: center;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-    color: #0054a3;
-    position: relative;
-    max-width: 900px;
-}
-
-.header-banner h1 {
-    font-weight: 800;
-    font-size: 2.6rem;
-    margin-bottom: 10px;
-    color: #1879dc;
-    letter-spacing: 2px;
-}
-
-.header-banner p {
-    font-size: 1.14rem;
-    color: #24292f;
-    font-weight: 500;
-    margin-bottom: 0;
-}
-
-.form-wrapper {
-    margin: 0 auto;
-    margin-top: 0;
-    max-width: 900px;
-    padding-bottom: 40px;
-}
-
-.form-container {
-    background: #fff;
-    border-radius: 0 0 18px 18px;
-    padding: 36px 32px 32px 32px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.07);
-    margin: 0;
-    max-width: 100%;
-}
-
-@media (max-width: 768px) {
-    .header-banner, .form-wrapper {
-        max-width: 100%;
-        border-radius: 0;
-        margin: 0;
-    }
-    .form-container {
-        padding: 22px 8px 18px 8px;
-        border-radius: 0 0 14px 14px;
-    }
-    .header-banner h1 {
-        font-size: 1.4rem;
-    }
-}
-
-.form-label {
-    color: #1a3a63;
-    font-weight: 600;
-    font-size: 1.04rem;
-    margin-bottom: 2px;
-}
-.form-control, .form-select {
-    font-size: 1.03rem;
-    border-radius: 8px;
-    margin-bottom: 18px;
-}
-.btn-submit {
-    background: linear-gradient(90deg,#0cb6fa 0%,#1879dc 100%);
-    border: none;
-    color: #fff;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: .2s;
-    margin-right: 8px;
-}
-.btn-submit:hover {
-    background: #1879dc;
-    color: #fff;
-}
-.btn-reset {
-    background: #e1e7ee;
-    border: none;
-    color: #3b3b3b;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: .2s;
-}
-.btn-reset:hover {
-    background: #b2c3d9;
-    color: #222;
-}
-
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #18c2ef 0%, #1879dc 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        .header-glass {
+            background: rgba(255,255,255,0.27);
+            border-radius: 22px 22px 0 0;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 16px rgba(20,56,110,0.07);
+            text-align: center;
+            padding: 2.5rem 2rem 1.2rem 2rem;
+            margin-bottom: 0;
+            max-width: 610px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .header-glass h1 {
+            color: #1879dc;
+            font-weight: 800;
+            font-size: 2.2rem;
+            margin-bottom: 0.6rem;
+            letter-spacing: 1.5px;
+        }
+        .header-glass p {
+            font-size: 1.07rem;
+            color: #2d4263;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        .form-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 0 0 20px 20px;
+            padding: 2.7rem 2.1rem 2.1rem 2.1rem;
+            max-width: 610px;
+            margin: -16px auto 0 auto;
+            box-shadow: 0 8px 28px rgba(24, 121, 220, 0.13);
+            border: 1px solid #f1f5fa;
+            animation: fadeInUp 0.8s;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px);}
+            to   { opacity: 1; transform: none;}
+        }
+        .form-label {
+            color: #2d4263;
+            font-weight: 600;
+            font-size: 1.06rem;
+            margin-bottom: 2px;
+        }
+        .form-control, .form-select {
+            font-size: 1.03rem;
+            border-radius: 9px;
+            box-shadow: none;
+            margin-bottom: 10px;
+            transition: border-color 0.19s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #18c2ef;
+            box-shadow: 0 0 0 1.5px #b7e2f8;
+        }
+        .input-group-text.icon-field {
+            background: #eaf5fd;
+            color: #137cd8;
+            border: none;
+            border-radius: 9px 0 0 9px;
+            font-size: 1.18rem;
+        }
+        .btn-submit {
+            background: linear-gradient(90deg,#18c2ef 0%,#1879dc 100%);
+            border: none;
+            color: #fff;
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: 1.07rem;
+            padding: 11px 0;
+            transition: .2s;
+            margin-right: 8px;
+            width: 49%;
+            box-shadow: 0 2px 10px rgba(24,121,220,0.10);
+        }
+        .btn-submit:hover {
+            background: linear-gradient(90deg,#1879dc 0%, #12deae 100%);
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .btn-reset {
+            background: #e9f4fd;
+            color: #2173ad;
+            border: none;
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: 1.07rem;
+            width: 49%;
+            transition: .2s;
+        }
+        .btn-reset:hover {
+            background: #c9e4fa;
+            color: #074b7b;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .text-muted {
+            font-size: .98rem;
+            color: #687a92 !important;
+        }
+        @media (max-width: 720px) {
+            .header-glass, .form-card { max-width: 98vw; padding: 1.6rem 5vw 1.1rem 5vw; }
+            .form-card { margin: -14px auto 0 auto; }
+            .header-glass h1 { font-size: 1.35rem;}
+        }
+        @media (max-width: 440px) {
+            .header-glass, .form-card { padding: 1.1rem 3vw 1rem 3vw; }
+        }
     </style>
 </head>
 <body>
