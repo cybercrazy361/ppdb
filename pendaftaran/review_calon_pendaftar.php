@@ -1,4 +1,5 @@
 <?php
+// File: review_calon_pendaftar.php
 session_start();
 include '../database_connection.php';
 
@@ -22,7 +23,6 @@ $sql = "SELECT id, nama, asal_sekolah, email, no_hp, alamat, pilihan, tanggal_da
         FROM calon_pendaftar " .
        ($unit !== 'Yayasan' ? "WHERE pilihan = ? " : "") .
        "ORDER BY id DESC";
-
 $stmt = $conn->prepare($sql);
 if ($unit !== 'Yayasan') {
     $stmt->bind_param("s", $unit);
@@ -48,7 +48,6 @@ foreach ($calon as $row) {
     $st = $row['status'];
     if (isset($rekap[$st])) $rekap[$st]++;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
