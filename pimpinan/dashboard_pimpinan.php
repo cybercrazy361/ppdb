@@ -22,6 +22,25 @@ $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css">
+    <style>
+        @media print {
+            body {
+                background: #fff !important;
+            }
+            .navbar, #searchInput, .btn-cetak, .navbar-text {
+                display: none !important;
+            }
+            .table {
+                font-size: 11pt;
+            }
+            .print-title {
+                display: block !important;
+            }
+        }
+        .print-title {
+            display: none;
+        }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -36,8 +55,17 @@ $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
 </nav>
 
 <div class="container mb-4">
-    <h2 class="mb-3 fw-bold" style="color:var(--clr-primary)">Data Siswa <?= htmlspecialchars($unit) ?> & Status Pembayaran</h2>
-    <div class="mb-3">
+    <!-- Judul Print Khusus Print -->
+    <h3 class="print-title text-center mb-3 fw-bold" style="color:#4a00e0">
+        DATA SISWA & STATUS PEMBAYARAN <?= htmlspecialchars($unit) ?><br>
+        <small><?= date('d-m-Y H:i') ?> Dicetak oleh: <?= htmlspecialchars($_SESSION['pimpinan']) ?></small>
+    </h3>
+    <!-- Tombol Cetak -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold m-0" style="color:var(--clr-primary)">Data Siswa <?= htmlspecialchars($unit) ?> & Status Pembayaran</h2>
+        <button onclick="window.print()" class="btn btn-cetak btn-success d-print-none"><i class="fa fa-print"></i> Cetak</button>
+    </div>
+    <div class="mb-3 d-print-none">
         <input type="text" class="form-control" id="searchInput" placeholder="Cari nama / formulir...">
     </div>
     <div class="table-responsive">
@@ -56,7 +84,6 @@ $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
             </thead>
             <tbody id="tabelSiswa">
                 <?php
-                // Query siswa + total bayar + status pembayaran dinamis + metode terakhir
                 $sql = "SELECT s.*, 
                             COALESCE((SELECT SUM(jumlah) FROM pembayaran WHERE siswa_id=s.id),0) AS total_bayar,
                             (SELECT metode_pembayaran FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS metode_terakhir,
@@ -118,5 +145,7 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
     });
 });
 </script>
+<!-- FontAwesome Print Icon CDN (optional) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
