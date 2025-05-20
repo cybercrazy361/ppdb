@@ -1,19 +1,32 @@
 <?php
-// Aktifkan error reporting saat pengembangan (hapus di produksi)
+// FILE: dashboard_yayasan.php
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
-// Contoh: Pastikan session yayasan sudah login
-if (!isset($_SESSION['yayasan'])) {
-    header("Location: login_yayasan.php");
+if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit']) || $_SESSION['unit'] !== 'Yayasan') {
+    header("Location: login_pimpinan.php");
     exit();
 }
 include '../database_connection.php';
 
-// Konstanta tagihan tiap unit (bisa dinamis sesuai pengaturan di DB kalau butuh)
-$tagihan_sma = 5000000;
-$tagihan_smk = 5000000;
+// Ambil ID jenis pembayaran Uang Pangkal
+$id_jenis_pangkal = null;
+$res_pangkal = $conn->query("SELECT id FROM jenis_pembayaran WHERE nama='Uang Pangkal' LIMIT 1");
+if ($res_pangkal && $row = $res_pangkal->fetch_assoc()) {
+    $id_jenis_pangkal = $row['id'];
+}
+
+// Ambil nominal tagihan Uang Pangkal per unit dari DB
+$tagihan_unit = [];
+if ($id_jenis_pangkal) {
+    $q = $conn->query("SELECT unit, nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id=$id_jenis_pangkal");
+    while ($row = $q->fetch_assoc()) {
+        $tagihan_unit[$row['unit']] = (float)$row['nominal_max'];
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -26,74 +39,17 @@ $tagihan_smk = 5000000;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @media print {
-            html, body {
-                background: #fff !important;
-                color: #000 !important;
-                font-family: 'Arial', 'Calibri', sans-serif !important;
-                font-size: 12pt !important;
-                margin: 0;
-                padding: 0;
-            }
-            .navbar, #searchInput, .btn-cetak, .navbar-text, .d-print-none, .filter-unit {
-                display: none !important;
-            }
-            .container {
-                width: 96% !important;
-                margin: 0 auto !important;
-                padding: 0 !important;
-            }
-            .print-title {
-                display: block !important;
-                text-align: center;
-                color: #000 !important;
-                font-size: 20pt !important;
-                font-weight: bold !important;
-                margin-bottom: 5px;
-                margin-top: 30px;
-            }
-            .print-title small {
-                display: block;
-                color: #000 !important;
-                font-size: 11pt !important;
-                font-weight: normal !important;
-                margin-bottom: 10px;
-            }
-            .judul-tabel-print {
-                display: block !important;
-                text-align: center;
-                color: #000 !important;
-                font-size: 15pt !important;
-                font-weight: bold !important;
-                margin-bottom: 18px;
-            }
-            .table-responsive {
-                margin: 0 !important;
-            }
-            .table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-                margin: auto;
-                font-size: 11pt !important;
-                background: #fff !important;
-            }
-            .table th, .table td {
-                border: 1px solid #333 !important;
-                padding: 7px 8px !important;
-                color: #000 !important;
-            }
-            .table thead th {
-                background: #ececec !important;
-                color: #000 !important;
-                font-weight: bold !important;
-            }
-            .badge {
-                color: #000 !important;
-                background: none !important;
-                border: none !important;
-                font-weight: bold !important;
-                font-size: 11pt !important;
-                padding: 0 !important;
-            }
+            html, body { background: #fff !important; color: #000 !important; font-family: 'Arial', 'Calibri', sans-serif !important; font-size: 12pt !important; margin: 0; padding: 0; }
+            .navbar, #searchInput, .btn-cetak, .navbar-text, .d-print-none, .filter-unit { display: none !important; }
+            .container { width: 96% !important; margin: 0 auto !important; padding: 0 !important; }
+            .print-title { display: block !important; text-align: center; color: #000 !important; font-size: 20pt !important; font-weight: bold !important; margin-bottom: 5px; margin-top: 30px; }
+            .print-title small { display: block; color: #000 !important; font-size: 11pt !important; font-weight: normal !important; margin-bottom: 10px; }
+            .judul-tabel-print { display: block !important; text-align: center; color: #000 !important; font-size: 15pt !important; font-weight: bold !important; margin-bottom: 18px; }
+            .table-responsive { margin: 0 !important; }
+            .table { width: 100% !important; border-collapse: collapse !important; margin: auto; font-size: 11pt !important; background: #fff !important; }
+            .table th, .table td { border: 1px solid #333 !important; padding: 7px 8px !important; color: #000 !important; }
+            .table thead th { background: #ececec !important; color: #000 !important; font-weight: bold !important; }
+            .badge { color: #000 !important; background: none !important; border: none !important; font-weight: bold !important; font-size: 11pt !important; padding: 0 !important; }
         }
         .print-title, .judul-tabel-print { display: none; }
     </style>
@@ -104,7 +60,7 @@ $tagihan_smk = 5000000;
     <div class="container">
         <a class="navbar-brand fw-bold" href="#">Dashboard Yayasan</a>
         <span class="navbar-text ms-auto">
-            <?= htmlspecialchars($_SESSION['yayasan']) ?>
+            <?= htmlspecialchars($_SESSION['pimpinan']) ?>
             | <a href="logout.php" class="btn btn-sm btn-outline-danger ms-2">Logout</a>
         </span>
     </div>
@@ -114,7 +70,7 @@ $tagihan_smk = 5000000;
     <!-- Judul Print -->
     <div class="print-title">
         DATA SISWA & STATUS PEMBAYARAN YAYASAN<br>
-        <small><?= date('d-m-Y H:i') ?> Dicetak oleh: <?= htmlspecialchars($_SESSION['yayasan']) ?></small>
+        <small><?= date('d-m-Y H:i') ?> Dicetak oleh: <?= htmlspecialchars($_SESSION['pimpinan']) ?></small>
     </div>
     <div class="judul-tabel-print">
         Data Siswa SMA & SMK & Status Pembayaran
@@ -161,13 +117,14 @@ $tagihan_smk = 5000000;
                 $result = $conn->query($sql);
                 $no = 1;
                 while ($row = $result->fetch_assoc()):
+                    $unit = $row['unit'];
                     $total_bayar = (float)$row['total_bayar'];
                     $jumlah_transaksi = (int)$row['jumlah_transaksi'];
-                    $tagihan_total = ($row['unit'] === 'SMK') ? $tagihan_smk : $tagihan_sma;
+                    $tagihan_total = isset($tagihan_unit[$unit]) ? $tagihan_unit[$unit] : 0;
                     if ($jumlah_transaksi == 0) {
                         $status = "Belum Bayar";
                         $badge = "danger";
-                    } elseif ($total_bayar >= $tagihan_total) {
+                    } elseif ($total_bayar >= $tagihan_total && $tagihan_total > 0) {
                         $status = "Lunas";
                         $badge = "success";
                     } else {
@@ -176,9 +133,9 @@ $tagihan_smk = 5000000;
                     }
                     $metode = $row['metode_terakhir'] ?? 'Belum Ada';
                 ?>
-                    <tr data-unit="<?= htmlspecialchars($row['unit']) ?>">
+                    <tr data-unit="<?= htmlspecialchars($unit) ?>">
                         <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($row['unit']) ?></td>
+                        <td><?= htmlspecialchars($unit) ?></td>
                         <td><?= htmlspecialchars($row['no_formulir']) ?></td>
                         <td><?= htmlspecialchars($row['nama']) ?></td>
                         <td><?= substr($row['jenis_kelamin'], 0, 1) ?></td>
@@ -194,7 +151,6 @@ $tagihan_smk = 5000000;
 </div>
 
 <script>
-// Search/filter tabel realtime
 document.getElementById('searchInput').addEventListener('keyup', function() {
     var filter = this.value.toLowerCase();
     var rows = document.querySelectorAll('#tabelSiswaYayasan tbody tr');
@@ -202,7 +158,6 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
         row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
     });
 });
-// Filter unit SMA/SMK
 document.getElementById('unitFilter').addEventListener('change', function() {
     var unit = this.value;
     var rows = document.querySelectorAll('#tabelSiswaYayasan tbody tr');
