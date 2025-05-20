@@ -11,7 +11,20 @@ if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit'])) {
 include(__DIR__ . '/../database_connection.php');
 
 $unit = $_SESSION['unit'];
-$tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
+// Dapatkan tagihan Uang Pangkal sesuai unit dari DB (pengaturan_nominal)
+$tagihan_total = 0;
+$id_jenis_pangkal = null;
+$res_pangkal = $conn->query("SELECT id FROM jenis_pembayaran WHERE nama='Uang Pangkal' LIMIT 1");
+if ($res_pangkal && $row = $res_pangkal->fetch_assoc()) {
+    $id_jenis_pangkal = $row['id'];
+    $res_nom = $conn->prepare("SELECT nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id=? AND unit=? LIMIT 1");
+    $res_nom->bind_param("is", $id_jenis_pangkal, $unit);
+    $res_nom->execute();
+    $res_nom->bind_result($tagihan_total);
+    $res_nom->fetch();
+    $res_nom->close();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
