@@ -12,7 +12,6 @@ include '../database_connection.php';
 
 $unit = $_SESSION['unit'];
 $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -22,22 +21,79 @@ $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @media print {
-            body {
+            html, body {
                 background: #fff !important;
+                color: #000 !important;
+                font-family: 'Arial', 'Calibri', sans-serif !important;
+                font-size: 12pt !important;
+                margin: 0;
+                padding: 0;
             }
-            .navbar, #searchInput, .btn-cetak, .navbar-text {
+            .navbar, #searchInput, .btn-cetak, .navbar-text, .d-print-none {
                 display: none !important;
             }
-            .table {
-                font-size: 11pt;
+            .container {
+                width: 96% !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
             }
             .print-title {
                 display: block !important;
+                text-align: center;
+                color: #000 !important;
+                font-size: 20pt !important;
+                font-weight: bold !important;
+                margin-bottom: 5px;
+                margin-top: 30px;
+            }
+            .print-title small {
+                display: block;
+                color: #000 !important;
+                font-size: 11pt !important;
+                font-weight: normal !important;
+                margin-bottom: 10px;
+            }
+            .judul-tabel-print {
+                display: block !important;
+                text-align: center;
+                color: #000 !important;
+                font-size: 15pt !important;
+                font-weight: bold !important;
+                margin-bottom: 18px;
+            }
+            .table-responsive {
+                margin: 0 !important;
+            }
+            .table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin: auto;
+                font-size: 11pt !important;
+                background: #fff !important;
+            }
+            .table th, .table td {
+                border: 1px solid #333 !important;
+                padding: 7px 8px !important;
+                color: #000 !important;
+            }
+            .table thead th {
+                background: #ececec !important;
+                color: #000 !important;
+                font-weight: bold !important;
+            }
+            .badge {
+                color: #000 !important;
+                background: none !important;
+                border: none !important;
+                font-weight: bold !important;
+                font-size: 11pt !important;
+                padding: 0 !important;
             }
         }
-        .print-title {
+        .print-title, .judul-tabel-print {
             display: none;
         }
     </style>
@@ -55,15 +111,19 @@ $tagihan_total = 5000000; // <--- GANTI sesuai jumlah tagihan seharusnya!
 </nav>
 
 <div class="container mb-4">
-    <!-- Judul Print Khusus Print -->
-    <h3 class="print-title text-center mb-3 fw-bold" style="color:#4a00e0">
-        DATA SISWA & STATUS PEMBAYARAN <?= htmlspecialchars($unit) ?><br>
+    <!-- Judul Print -->
+    <div class="print-title">
+        DATA SISWA & STATUS PEMBAYARAN <?= strtoupper(htmlspecialchars($unit)) ?><br>
         <small><?= date('d-m-Y H:i') ?> Dicetak oleh: <?= htmlspecialchars($_SESSION['pimpinan']) ?></small>
-    </h3>
+    </div>
+    <div class="judul-tabel-print">
+        Data Siswa <?= htmlspecialchars($unit) ?> & Status Pembayaran
+    </div>
+
     <!-- Tombol Cetak -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 d-print-none">
         <h2 class="fw-bold m-0" style="color:var(--clr-primary)">Data Siswa <?= htmlspecialchars($unit) ?> & Status Pembayaran</h2>
-        <button onclick="window.print()" class="btn btn-cetak btn-success d-print-none"><i class="fa fa-print"></i> Cetak</button>
+        <button onclick="window.print()" class="btn btn-cetak btn-success"><i class="fa fa-print"></i> Cetak</button>
     </div>
     <div class="mb-3 d-print-none">
         <input type="text" class="form-control" id="searchInput" placeholder="Cari nama / formulir...">
@@ -145,7 +205,5 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
     });
 });
 </script>
-<!-- FontAwesome Print Icon CDN (optional) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
