@@ -137,7 +137,7 @@ if (empty($_SESSION['csrf_token'])) {
     <div class="container py-5">
         <!-- HEADER -->
         <div class="header-glass mb-0">
-            <h1><i class="fa fa-user-plus me-2"></i>Pendaftaran Awal</h1>
+            <h1><i class="fa fa-user-plus me-2"></i>Selamat Datang Di Sistem Pendaftaran Online</h1>
             <p class="mt-3">Lengkapi data berikut untuk mendaftar di Yayasan Pendidikan Dharma Karya.</p>
         </div>
         <!-- FORM -->
