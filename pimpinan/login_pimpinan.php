@@ -46,7 +46,7 @@ if (isset($_SESSION['pimpinan'])) {
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 mb-2">Masuk</button>
-                        <a href="../index.html" class="btn btn-secondary w-100">Kembali</a>
+                        <a href="../" class="btn btn-secondary w-100">Kembali</a>
                     </form>
                 </div>
             </div>
