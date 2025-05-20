@@ -9,7 +9,7 @@ if (!isset($_SESSION['pimpinan']) || !isset($_SESSION['unit']) || $_SESSION['uni
     header("Location: login_pimpinan");
     exit();
 }
-include '../database_connection';
+include(__DIR__ . '/../database_connection.php');
 
 // Ambil ID jenis pembayaran Uang Pangkal
 $id_jenis_pangkal = null;
