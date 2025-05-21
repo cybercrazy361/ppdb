@@ -12,7 +12,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 $filter_unit   = $_SESSION['unit'];  // 'SMA' atau 'SMK'
 $filter_status = isset($_GET['status']) ? $_GET['status'] : 'Semua';
 $allowed_status = ['Semua','Lunas','Angsuran','Belum Bayar'];
-if (!in_array($filter_status,$allowed_status)) {
+if (!in_array($filter_status, $allowed_status)) {
     $filter_status = 'Semua';
 }
 
@@ -36,7 +36,7 @@ function getStatusPembayaranCounts($conn,$unit) {
     $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit=?");
     $stmt->bind_param("s",$unit); $stmt->execute();
     $total=$stmt->get_result()->fetch_assoc()['total']; $stmt->close();
-    // belum bayar (belum lunas 2 komponen)
+    // belum bayar
     $stmt = $conn->prepare("
       SELECT COUNT(*) AS belum
       FROM siswa s
@@ -52,7 +52,7 @@ function getStatusPembayaranCounts($conn,$unit) {
     ");
     $stmt->bind_param("s",$unit); $stmt->execute();
     $belum=$stmt->get_result()->fetch_assoc()['belum']; $stmt->close();
-    // lunas (kedua lunas)
+    // lunas
     $stmt = $conn->prepare("
       SELECT COUNT(*) AS lunas
       FROM siswa s
@@ -68,7 +68,7 @@ function getStatusPembayaranCounts($conn,$unit) {
     ");
     $stmt->bind_param("s",$unit); $stmt->execute();
     $lunas=$stmt->get_result()->fetch_assoc()['lunas']; $stmt->close();
-    // angsuran (salah satu lunas saja)
+    // angsuran
     $stmt = $conn->prepare("
       SELECT COUNT(*) AS angsuran
       FROM siswa s
@@ -113,28 +113,33 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("s",$filter_unit);
 $stmt->execute();
 $result = $stmt->get_result();
-$rows = [];
+$all = [];
 while($r=$result->fetch_assoc()){
   $up = (int)$r['up']; $sj=(int)$r['sj'];
-  if($up>0 && $sj>0)       $r['status']='Lunas';
-  elseif($up>0||$sj>0)     $r['status']='Angsuran';
-  else                     $r['status']='Belum Bayar';
-  $rows[]=$r;
+  $r['status'] = ($up>0 && $sj>0) ? 'Lunas' : (($up>0||$sj>0) ? 'Angsuran' : 'Belum Bayar');
+  $all[] = $r;
 }
 $stmt->close();
 $conn->close();
+
 // filter status
 if($filter_status!='Semua'){
-  $rows = array_filter($rows,fn($r)=>$r['status']==$filter_status);
+  $all = array_filter($all, fn($r)=>$r['status']==$filter_status);
 }
 
-// paging
-$page  = max(1,intval($_GET['page']??1));
-$limit = 20;
-$total = count($rows);
-$pages = ceil($total/$limit);
-$offset=($page-1)*$limit;
-$show  = array_slice($rows,$offset,$limit);
+// paging / print_all
+$page     = max(1,intval($_GET['page']??1));
+$limit    = 20;
+$total    = count($all);
+$pages    = ceil($total/$limit);
+$printAll = isset($_GET['print_all']) && $_GET['print_all']=='1';
+
+if ($printAll) {
+    $show = $all;
+} else {
+    $off  = ($page-1)*$limit;
+    $show = array_slice($all,$off,$limit);
+}
 
 // badge helper
 function badge($s){
@@ -149,7 +154,7 @@ function badge($s){
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Laporan Pendaftaran <?=htmlspecialchars($filter_unit)?></title>
+  <title>PPDB <?=htmlspecialchars($filter_unit)?> — Laporan</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <!-- Bootstrap & FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -157,11 +162,11 @@ function badge($s){
   <style>
     body{font-family:'Poppins',sans-serif;background:#f4f7fc;color:#333;}
     h2,h4{font-weight:600;}
-    .filter-bar .form-select{max-width:180px;}
-    .filter-bar .btn{white-space:nowrap;}
-    /* print */
-    @media print{
+    .filter-bar .btn, .filter-bar .form-select{white-space:nowrap;}
+    /* hide on print */
+    @media print {
       .no-print{display:none!important;}
+      .pagination{display:none!important;}
       body *{visibility:hidden;}
       #printableArea, #printableArea *{visibility:visible;}
       #printableArea{position:absolute;top:0;left:0;width:100%;}
@@ -183,10 +188,10 @@ function badge($s){
     </div>
   </div>
 
-  <div class="row g-3 mb-4">
+  <div class="row g-3 mb-4 text-center">
     <div class="col-md-3">
       <div class="card shadow-sm">
-        <div class="card-body text-center">
+        <div class="card-body">
           <i class="fas fa-user-graduate fa-2x text-primary"></i>
           <h5 class="mt-2">Total Siswa</h5>
           <h3 class="fw-bold"><?=$stat['total']?></h3>
@@ -195,7 +200,7 @@ function badge($s){
     </div>
     <div class="col-md-3">
       <div class="card shadow-sm">
-        <div class="card-body text-center">
+        <div class="card-body">
           <i class="fas fa-check-circle fa-2x text-success"></i>
           <h5 class="mt-2">Lunas</h5>
           <h3 class="fw-bold"><?=$stat['lunas']?></h3>
@@ -204,7 +209,7 @@ function badge($s){
     </div>
     <div class="col-md-3">
       <div class="card shadow-sm">
-        <div class="card-body text-center">
+        <div class="card-body">
           <i class="fas fa-wallet fa-2x text-warning"></i>
           <h5 class="mt-2">Angsuran</h5>
           <h3 class="fw-bold"><?=$stat['angsuran']?></h3>
@@ -213,7 +218,7 @@ function badge($s){
     </div>
     <div class="col-md-3">
       <div class="card shadow-sm">
-        <div class="card-body text-center">
+        <div class="card-body">
           <i class="fas fa-times-circle fa-2x text-danger"></i>
           <h5 class="mt-2">Belum Bayar</h5>
           <h3 class="fw-bold"><?=$stat['belum']?></h3>
@@ -231,7 +236,7 @@ function badge($s){
       </select>
     </div>
     <div class="col-auto">
-      <button class="btn btn-primary"><i class="fas fa-filter me-1"></i> Filter</button>
+      <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
     </div>
   </form>
 
@@ -251,7 +256,7 @@ function badge($s){
         </tr>
       </thead>
       <tbody>
-        <?php if($total): $n=$offset+1; foreach($show as $r): ?>
+        <?php if($total): $n = ($printAll ? 1 : $off+1); foreach($show as $r): ?>
         <tr>
           <td><?=$n++?></td>
           <td><?=htmlspecialchars($r['no_formulir'])?></td>
@@ -274,31 +279,35 @@ function badge($s){
 
 <div class="container mb-4 text-center no-print">
   <button class="btn btn-success me-2" onclick="window.print()">
-    <i class="fas fa-print me-1"></i> Cetak
+    <i class="fas fa-print me-1"></i> Cetak Halaman
   </button>
+  <?php if (!$printAll): ?>
+  <a href="?print_all=1&status=<?=urlencode($filter_status)?>" class="btn btn-outline-primary me-2">
+    <i class="fas fa-print me-1"></i> Cetak Semua
+  </a>
+  <?php endif; ?>
   <a href="dashboard_pendaftaran.php" class="btn btn-secondary">
     <i class="fas fa-arrow-left me-1"></i> Kembali
   </a>
 </div>
 
-<!-- Pagination -->
-<?php if($pages>1): ?>
-<div class="container no-print">
+<?php if(!$printAll && $pages>1): ?>
+<div class="container no-print mb-4">
   <nav><ul class="pagination justify-content-center">
     <li class="page-item <?=$page<=1?'disabled':''?>">
       <a class="page-link" href="?page=<?=$page-1?>&status=<?=$filter_status?>">Previous</a>
     </li>
-    <?php for($i=1;$i<=$pages;$i++): ?>
+    <?php for($i=1; $i<=$pages; $i++): ?>
       <li class="page-item <?=$i==$page?'active':''?>">
         <a class="page-link" href="?page=<?=$i?>&status=<?=$filter_status?>"><?=$i?></a>
       </li>
-    <?php endfor;?>
+    <?php endfor; ?>
     <li class="page-item <?=$page>=$pages?'disabled':''?>">
       <a class="page-link" href="?page=<?=$page+1?>&status=<?=$filter_status?>">Next</a>
     </li>
   </ul></nav>
 </div>
-<?php endif;?>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
