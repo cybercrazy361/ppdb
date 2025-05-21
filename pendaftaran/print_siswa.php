@@ -85,13 +85,13 @@ function tanggal_id($tgl) {
     padding-bottom: 9px;
   }
   .logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
+  width: 120px;   /* Ukuran logo lebih besar */
+  height: 120px;
+  object-fit: contain;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
   .header-content {
     width: 100%;
     position: absolute;
