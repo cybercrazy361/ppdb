@@ -28,6 +28,10 @@ function tanggal_id($tgl) {
     $year = date('Y', strtotime($tgl));
     return "$date $month $year";
 }
+
+// QR code Google Maps sekolah, ganti link sesuai kebutuhan
+$qr_url = "https://maps.app.goo.gl/BGqjXngfB7Gvs6ht5"; // contoh
+$qr_code = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" . urlencode($qr_url) . "&choe=UTF-8";
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -35,81 +39,44 @@ function tanggal_id($tgl) {
   <meta charset="UTF-8">
   <title>Bukti Pendaftaran Siswa Baru</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f6f8fa;
-    }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; }
     .container {
-      width: 650px;
-      margin: 24px auto;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 0 8px rgba(60,60,60,0.13);
-      padding: 36px 36px 20px 36px;
+      width: 800px; margin: 22px auto; background: #fff;
+      border-radius: 10px; box-shadow: 0 0 8px rgba(60,60,60,0.13);
+      padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
     }
     .header {
-      text-align: center;
-      border-bottom: 2px solid #d1d5db;
-      margin-bottom: 24px;
-      padding-bottom: 14px;
+      text-align: center; border-bottom: 2px solid #d1d5db; margin-bottom: 18px; padding-bottom: 9px;
     }
-    .logo {
-      width: 74px; height: 74px; object-fit: contain;
-      margin-bottom: 6px;
+    .logo { width: 72px; height: 72px; object-fit: contain; margin-bottom: 2px;}
+    .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
+    .sub-title { font-size: 16px; font-weight: 500; }
+    .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
+    .no-reg { margin-bottom: 10px; font-weight: 500; }
+    .data-table caption {
+      background: #eaf2ce; font-weight: bold; font-size: 16px; padding: 5px 0;
+      border-radius: 4px 4px 0 0;
+      margin-bottom: 0;
     }
-    .sekolah-title {
-      font-size: 21px; font-weight: 700; color: #29367d;
-      text-transform: uppercase;
+    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px;}
+    .data-table th, .data-table td {
+      border: 1px solid #777; padding: 7px 12px; font-size: 15px;
     }
-    .alamat {
-      color: #444; font-size: 13px; margin-top: 2px; margin-bottom: 0;
+    .data-table th { background: #f2f6e9; text-align: left; width: 34%; }
+    .data-table td { background: #fff; }
+    .row-btm {
+      display: flex; justify-content: space-between; align-items: flex-start; margin-top: 18px;
     }
-    .bukti-title {
-      text-align: center;
-      font-size: 19px;
-      font-weight: bold;
-      margin: 24px 0 22px 0;
-      letter-spacing: 1px;
-      color: #1c2b5a;
+    .info-contact { font-size: 14px; line-height: 1.7; }
+    .qr-box { text-align: center; }
+    .qr-box img { width: 85px; height: 85px; }
+    .qr-box span { font-size: 13px; display: block; margin-top: 2px; }
+    .note {
+      font-size: 13px; margin-top: 15px; color: #333;
+      background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
     }
-    table.data-siswa {
-      width: 100%;
-      font-size: 16px;
-      border-collapse: collapse;
-      margin-bottom: 18px;
-    }
-    table.data-siswa td {
-      padding: 8px 10px 8px 0;
-      border: none;
-      vertical-align: top;
-    }
-    table.data-siswa td.label {
-      width: 36%; color: #222; font-weight: 600;
-    }
-    .catatan {
-      font-size: 14px; margin-top: 12px; margin-bottom: 22px; color: #555;
-      background: #f3f4f6;
-      border-left: 4px solid #3b82f6;
-      padding: 10px 18px;
-    }
-    .ttd-box {
-      display: flex; justify-content: flex-end; margin-top: 36px;
-    }
-    .ttd {
-      text-align: left;
-      margin-right: 50px;
-    }
-    .ttd .tgl {
-      font-size: 15px;
-    }
-    .ttd .petugas {
-      margin-top: 60px;
-      font-weight: bold;
-      border-top: 1px dashed #666;
-      padding-top: 4px;
-      text-align: center;
-      font-size: 16px;
-    }
+    .ttd-box { text-align: right; margin-top: 38px; margin-right: 35px;}
+    .ttd-petugas { margin-top: 65px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 180px;}
     @media print {
       body { background: #fff; }
       .container { box-shadow: none; border: none; }
@@ -119,66 +86,44 @@ function tanggal_id($tgl) {
 <body onload="window.print()">
   <div class="container">
     <div class="header">
-      <!-- Ganti src logo dengan logo sekolah -->
       <img src="../assets/logo_sekolah.png" alt="Logo" class="logo" onerror="this.style.display='none'">
-      <div class="sekolah-title">SMA / SMK CONTOH MULIA</div>
-      <div class="alamat">Jl. Contoh Alamat No.123, Kota Contoh, Telp: 0812-XXXX-XXXX</div>
+      <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
+      <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
+      <div class="tahun-ajaran">TAHUN AJARAN <?= date('Y') . "/" . (date('Y')+1) ?></div>
     </div>
-    <div class="bukti-title">
-      Bukti Pendaftaran Siswa Baru<br>
-      Tahun Pelajaran <?= date('Y') . "/" . (date('Y')+1) ?>
-    </div>
-    <table class="data-siswa">
-      <tr>
-        <td class="label">No Formulir</td>
-        <td>: <?= safe($row['no_formulir']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">Nama Lengkap</td>
-        <td>: <?= safe($row['nama']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">Jenis Kelamin</td>
-        <td>: <?= safe($row['jenis_kelamin']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">Tempat, Tanggal Lahir</td>
-        <td>: <?= safe($row['tempat_lahir']) ?>, <?= tanggal_id($row['tanggal_lahir']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">Asal Sekolah</td>
-        <td>: <?= safe($row['asal_sekolah']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">Alamat</td>
-        <td>: <?= safe($row['alamat']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">No. HP Siswa</td>
-        <td>: <?= safe($row['no_hp']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">No. HP Orang Tua/Wali</td>
-        <td>: <?= safe($row['no_hp_ortu']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">Unit Pilihan</td>
-        <td>: <?= safe($row['unit']) ?></td>
-      </tr>
-      <tr>
-        <td class="label">Tanggal Pendaftaran</td>
-        <td>: <?= tanggal_id($row['tanggal_pendaftaran']) ?></td>
-      </tr>
+    <div class="no-reg"><b>No. Reg :</b> <?= safe($row['no_formulir']) ?></div>
+    <table class="data-table">
+      <caption>DATA CALON PESERTA DIDIK BARU</caption>
+      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
+      <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
+      <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
+      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
+      <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
+      <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
+      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
+      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
+      <tr><th>Email</th><td><?= safe($row['email'] ?? '-') ?></td></tr>
     </table>
-    <div class="catatan">
+    <div class="row-btm">
+      <div class="info-contact">
+        Informasi lebih lanjut hubungi:<br>
+        Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
+        Hotline SMK : <b>085880120889</b> (Bu Ina)
+      </div>
+      <div class="qr-box">
+        <img src="<?= $qr_code ?>" alt="QR Lokasi"><br>
+        <span>Scan Lokasi</span>
+      </div>
+    </div>
+    <div class="note">
       <b>Catatan:</b><br>
-      Bukti ini agar disimpan dan dibawa saat daftar ulang.<br>
-      Pastikan semua data telah sesuai. Untuk perbaikan data silakan hubungi panitia PPDB.
+      Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
+      Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
     </div>
     <div class="ttd-box">
-      <div class="ttd">
-        <div class="tgl">................., <?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="petugas">(Petugas Pendaftaran)</div>
+      <div>
+        <div><?= tanggal_id(date('Y-m-d')) ?></div>
+        <div class="ttd-petugas">(Petugas Pendaftaran)</div>
       </div>
     </div>
   </div>
