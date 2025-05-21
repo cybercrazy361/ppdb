@@ -9,9 +9,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 }
 
 // Ambil unit dari sesi login
-$unit = $_SESSION['unit'];
+$unit = $_SESSION['unit']; // Misalnya SMA atau SMK
 
-// Pagination
+// Pagination settings
 $limit = 5;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
@@ -26,7 +26,7 @@ $totalResult = $stmtTotal->get_result();
 $totalSiswa = $totalResult->fetch_assoc()['total'];
 $stmtTotal->close();
 
-// Query utama (LOGIKA STATUS PEMBAYARAN)
+// Query untuk mengambil data siswa dengan status pembayaran yang tepat
 $query = "
     SELECT 
         s.*, 
@@ -38,36 +38,17 @@ $query = "
              LIMIT 1),
             'Belum Ada'
         ) AS metode_pembayaran,
-        -- Logika status pembayaran
-        CASE
-            WHEN 
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = s.id AND pd1.jenis_pembayaran = 'Uang Pangkal' AND pd1.status_pembayaran = 'Lunas'
-                ) > 0
-            AND
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = s.id AND pd2.jenis_pembayaran = 'SPP Juli' AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
-            THEN 'Lunas'
-            WHEN 
-                (
-                    (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                        WHERE p1.siswa_id = s.id AND pd1.jenis_pembayaran = 'Uang Pangkal' AND pd1.status_pembayaran = 'Lunas'
-                    ) > 0
-                    OR
-                    (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                        WHERE p2.siswa_id = s.id AND pd2.jenis_pembayaran = 'SPP Juli' AND pd2.status_pembayaran = 'Lunas'
-                    ) > 0
-                )
-            THEN 'Angsuran'
+        CASE 
+            WHEN COUNT(pd.id) = 0 THEN 'Belum Bayar'
+            WHEN MAX(CASE WHEN pd.status_pembayaran = 'Lunas' THEN 1 ELSE 0 END) = 1 THEN 'Lunas'
+            WHEN MAX(CASE WHEN pd.status_pembayaran LIKE 'Angsuran%' THEN 1 ELSE 0 END) = 1 THEN 'Angsuran'
             ELSE 'Belum Bayar'
         END AS status_pembayaran
     FROM siswa s
+    LEFT JOIN pembayaran p ON s.id = p.siswa_id
+    LEFT JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
     WHERE s.unit = ?
+    GROUP BY s.id
     ORDER BY s.id DESC
     LIMIT ? OFFSET ?
 ";
@@ -79,7 +60,7 @@ $result = $stmt->get_result();
 // Hitung total halaman
 $totalPages = ceil($totalSiswa / $limit);
 
-// Fungsi format tanggal Indonesia
+// Fungsi untuk format tanggal Indonesia
 function formatTanggalIndonesia($tanggal) {
     if ($tanggal == '0000-00-00' || $tanggal == null) {
         return '-';
@@ -93,10 +74,11 @@ function formatTanggalIndonesia($tanggal) {
     $date = date('d', strtotime($tanggal));
     $month = $bulan[date('F', strtotime($tanggal))];
     $year = date('Y', strtotime($tanggal));
+
     return "$date $month $year";
 }
 
-// Fungsi label status pembayaran
+// Fungsi untuk mengganti status pembayaran menjadi label dan ikon
 function getStatusPembayaranLabel($status) {
     switch (strtolower($status)) {
         case 'lunas':
@@ -111,6 +93,7 @@ function getStatusPembayaranLabel($status) {
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -119,9 +102,12 @@ function getStatusPembayaranLabel($status) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/daftar_siswa_styles.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <h2 class="text-center mb-4">Daftar Siswa <?= htmlspecialchars($unit); ?></h2>
+
+        <!-- Menampilkan Pesan Sukses atau Error -->
         <?php
         if (isset($_SESSION['success_message'])) {
             echo '<div class="alert alert-success alert-dismissible fade show" role="alert">'
@@ -130,6 +116,7 @@ function getStatusPembayaranLabel($status) {
             </div>';
             unset($_SESSION['success_message']);
         }
+
         if (isset($_SESSION['error_message'])) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
                 . htmlspecialchars($_SESSION['error_message']) .
@@ -137,6 +124,7 @@ function getStatusPembayaranLabel($status) {
             </div>';
             unset($_SESSION['error_message']);
         }
+
         if (isset($_SESSION['edit_errors'])) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
                 . implode('<br>', array_map('htmlspecialchars', $_SESSION['edit_errors'])) .
@@ -144,6 +132,7 @@ function getStatusPembayaranLabel($status) {
             </div>';
             unset($_SESSION['edit_errors']);
         }
+
         if (isset($_SESSION['delete_errors'])) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
                 . implode('<br>', array_map('htmlspecialchars', $_SESSION['delete_errors'])) .
@@ -152,6 +141,7 @@ function getStatusPembayaranLabel($status) {
             unset($_SESSION['delete_errors']);
         }
         ?>
+
         <div class="table-responsive">
             <table class="table table-hover table-bordered align-middle">
                 <thead class="table-dark">
@@ -221,13 +211,18 @@ function getStatusPembayaranLabel($status) {
                     <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">Previous</a>
                 </li>
                 <?php
-                $max_links = 5;
+                // Tentukan rentang halaman yang ditampilkan
+                $max_links = 5; // Maksimal jumlah link halaman yang ditampilkan
                 $start_page = max(1, $page - floor($max_links / 2));
                 $end_page = min($totalPages, $start_page + $max_links - 1);
+
+                // Jika tidak cukup halaman di akhir, geser ke kiri
                 if (($end_page - $start_page) < ($max_links - 1)) {
                     $start_page = max(1, $end_page - $max_links + 1);
                 }
-                for ($i = $start_page; $i <= $end_page; $i++): ?>
+
+                for ($i = $start_page; $i <= $end_page; $i++):
+                ?>
                     <li class="page-item <?= $page == $i ? 'active' : '' ?>">
                         <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
                     </li>
@@ -243,6 +238,7 @@ function getStatusPembayaranLabel($status) {
             </div>
         </nav>
     </div>
+
 
     <!-- Modal Edit -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -322,6 +318,7 @@ function getStatusPembayaranLabel($status) {
     </div>
 
     <script>
+        // Edit button event listener
         document.querySelectorAll('.editBtn').forEach(button => {
             button.addEventListener('click', () => {
                 document.getElementById('editId').value = button.getAttribute('data-id');
@@ -334,6 +331,8 @@ function getStatusPembayaranLabel($status) {
                 document.getElementById('editNoHp').value = button.getAttribute('data-no_hp');
             });
         });
+
+        // Delete button event listener
         document.querySelectorAll('.deleteBtn').forEach(button => {
             button.addEventListener('click', () => {
                 document.getElementById('deleteId').value = button.getAttribute('data-id');
@@ -341,6 +340,8 @@ function getStatusPembayaranLabel($status) {
             });
         });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
