@@ -31,6 +31,9 @@ $totalSiswa = $totalResult->fetch_assoc()['total'];
 $stmtTotal->close();
 
 // Query untuk mengambil data siswa dengan status pembayaran Uang Pangkal dan SPP Juli
+$uang_pangkal_id = 1; // Uang Pangkal SMA
+$spp_id = 2;          // SPP SMA
+
 $query = "
     SELECT 
         s.*, 
@@ -47,14 +50,15 @@ $query = "
                 (SELECT COUNT(*) FROM pembayaran_detail pd1 
                     JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
                     WHERE p1.siswa_id = s.id 
-                    AND pd1.jenis_pembayaran = 'Uang Pangkal' 
+                    AND pd1.jenis_pembayaran_id = $uang_pangkal_id
                     AND pd1.status_pembayaran = 'Lunas'
                 ) > 0
             AND
                 (SELECT COUNT(*) FROM pembayaran_detail pd2 
                     JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
                     WHERE p2.siswa_id = s.id 
-                    AND pd2.jenis_pembayaran = 'SPP Juli' 
+                    AND pd2.jenis_pembayaran_id = $spp_id
+                    AND pd2.bulan = 'Juli'
                     AND pd2.status_pembayaran = 'Lunas'
                 ) > 0
             THEN 'Lunas'
@@ -63,14 +67,15 @@ $query = "
                     (SELECT COUNT(*) FROM pembayaran_detail pd1 
                         JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
                         WHERE p1.siswa_id = s.id 
-                        AND pd1.jenis_pembayaran = 'Uang Pangkal' 
+                        AND pd1.jenis_pembayaran_id = $uang_pangkal_id
                         AND pd1.status_pembayaran = 'Lunas'
                     ) > 0
                     OR
                     (SELECT COUNT(*) FROM pembayaran_detail pd2 
                         JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
                         WHERE p2.siswa_id = s.id 
-                        AND pd2.jenis_pembayaran = 'SPP Juli' 
+                        AND pd2.jenis_pembayaran_id = $spp_id
+                        AND pd2.bulan = 'Juli'
                         AND pd2.status_pembayaran = 'Lunas'
                     ) > 0
                 )
