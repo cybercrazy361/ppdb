@@ -10,21 +10,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $asal_sekolah = $_POST['asal_sekolah'];
     $alamat = $_POST['alamat'];
     $no_hp = $_POST['no_hp'];
+    $no_hp_ortu = $_POST['no_hp_ortu'] ?? null; // <-- pastikan nama input di form sama
 
+    // Gunakan prepared statement untuk keamanan
     $query = "UPDATE siswa SET 
-                nama = '$nama', 
-                jenis_kelamin = '$jenis_kelamin',
-                tempat_lahir = '$tempat_lahir',
-                tanggal_lahir = '$tanggal_lahir',
-                asal_sekolah = '$asal_sekolah',
-                alamat = '$alamat',
-                no_hp = '$no_hp'
-              WHERE id = $id";
+                nama = ?, 
+                jenis_kelamin = ?,
+                tempat_lahir = ?,
+                tanggal_lahir = ?,
+                asal_sekolah = ?,
+                alamat = ?,
+                no_hp = ?,
+                no_hp_ortu = ?
+              WHERE id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param(
+        'ssssssssi',
+        $nama,
+        $jenis_kelamin,
+        $tempat_lahir,
+        $tanggal_lahir,
+        $asal_sekolah,
+        $alamat,
+        $no_hp,
+        $no_hp_ortu,
+        $id
+    );
 
-    if ($conn->query($query)) {
+    if ($stmt->execute()) {
         header('Location: daftar_siswa.php');
+        exit();
     } else {
-        echo "Error: " . $conn->error;
+        echo "Error: " . $stmt->error;
     }
 }
 ?>
