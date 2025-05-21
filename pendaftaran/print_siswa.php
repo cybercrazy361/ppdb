@@ -168,7 +168,6 @@ function tanggal_id($tgl) {
       <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
-      <tr><th>Email</th><td><?= safe($row['email'] ?? '-') ?></td></tr>
     </table>
     <div class="row-btm">
       <div class="info-contact">
