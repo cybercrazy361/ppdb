@@ -18,6 +18,18 @@ if (!$row) die('Data siswa tidak ditemukan.');
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
+// Tanggal Indonesia
+function tanggal_id($tgl) {
+    if (!$tgl || $tgl == '0000-00-00') return '-';
+    $bulan = [
+        'January'=>'Januari','February'=>'Februari','March'=>'Maret','April'=>'April','May'=>'Mei','June'=>'Juni',
+        'July'=>'Juli','August'=>'Agustus','September'=>'September','October'=>'Oktober','November'=>'November','December'=>'Desember'
+    ];
+    $date = date('d', strtotime($tgl));
+    $month = $bulan[date('F', strtotime($tgl))];
+    $year = date('Y', strtotime($tgl));
+    return "$date $month $year";
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -39,11 +51,15 @@ function safe($str) { return htmlspecialchars($str ?? '-'); }
       <th colspan="2" class="judul">DATA CALON PESERTA DIDIK BARU</th>
     </tr>
     <tr>
-      <td>Tanggal Pendaftaran</td>
-      <td><?= safe($row['tanggal_pendaftaran']) ?></td>
+      <td>No Formulir</td>
+      <td><?= safe($row['no_formulir']) ?></td>
     </tr>
     <tr>
-      <td>Nama Calon Peserta Didik</td>
+      <td>Tanggal Pendaftaran</td>
+      <td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td>
+    </tr>
+    <tr>
+      <td>Nama Lengkap</td>
       <td><?= safe($row['nama']) ?></td>
     </tr>
     <tr>
@@ -51,40 +67,28 @@ function safe($str) { return htmlspecialchars($str ?? '-'); }
       <td><?= safe($row['jenis_kelamin']) ?></td>
     </tr>
     <tr>
-      <td>Asal Sekolah SMP/MTs</td>
+      <td>Tempat, Tanggal Lahir</td>
+      <td><?= safe($row['tempat_lahir']) ?>, <?= tanggal_id($row['tanggal_lahir']) ?></td>
+    </tr>
+    <tr>
+      <td>Asal Sekolah</td>
       <td><?= safe($row['asal_sekolah']) ?></td>
     </tr>
     <tr>
-      <td>Nama Orang Tua/Wali</td>
-      <td><?= safe($row['nama_ortu'] ?? $row['nama_ortu_wali'] ?? '-') ?></td>
-    </tr>
-    <tr>
-      <td>Pendidikan Terakhir</td>
-      <td><?= safe($row['pendidikan_terakhir'] ?? '-') ?></td>
-    </tr>
-    <tr>
-      <td>Pekerjaan Orang Tua/Wali</td>
-      <td><?= safe($row['pekerjaan_ortu'] ?? '-') ?></td>
-    </tr>
-    <tr>
-      <td>Alamat Rumah</td>
+      <td>Alamat</td>
       <td><?= safe($row['alamat']) ?></td>
-    </tr>
-    <tr>
-      <td>No. HP Orang Tua/Wali</td>
-      <td><?= safe($row['no_hp_ortu'] ?? '-') ?></td>
     </tr>
     <tr>
       <td>No. HP Siswa</td>
       <td><?= safe($row['no_hp']) ?></td>
     </tr>
     <tr>
-      <td>Pilihan Sekolah/Jurusan</td>
-      <td><?= safe($row['unit']) ?></td>
+      <td>No. HP Orang Tua/Wali</td>
+      <td><?= safe($row['no_hp_ortu']) ?></td>
     </tr>
     <tr>
-      <td>Email</td>
-      <td><?= safe($row['email'] ?? '-') ?></td>
+      <td>Unit Pilihan</td>
+      <td><?= safe($row['unit']) ?></td>
     </tr>
   </table>
 </body>
