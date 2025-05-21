@@ -45,10 +45,9 @@ function tanggal_id($tgl) {
     padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
   }
 
-  .header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+.header {
+  position: relative;
+  min-height: 80px;
   border-bottom: 2px solid #d1d5db;
   margin-bottom: 18px;
   padding-bottom: 9px;
@@ -58,32 +57,55 @@ function tanggal_id($tgl) {
   width: 80px;
   height: 80px;
   object-fit: contain;
-  margin-bottom: 0;
-  margin-right: 0;
-  flex-shrink: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .header-content {
   width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 80px;
   display: flex;
   flex-direction: column;
-  align-items: center;   /* center (tengah) horizontal */
-  text-align: center;    /* rata tengah semua isi header-content */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none; /* biar tombol print dll tetap bisa diklik */
 }
 
 @media print {
   .header {
-    display: flex;
-    align-items: center;
-    gap: 18px;
+    position: relative;
+    min-height: 80px;
+    border-bottom: 2px solid #d1d5db;
+    margin-bottom: 18px;
+    padding-bottom: 9px;
+  }
+  .logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
   .header-content {
     width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
+    pointer-events: none;
   }
 }
-
 
   .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
   .sub-title { font-size: 16px; font-weight: 500; }
@@ -196,12 +218,13 @@ function tanggal_id($tgl) {
   <div class="container">
     <div class="header">
         <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
-        <div class="header-content">
+        <div class="header-title-center">
             <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
             <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
             <div class="tahun-ajaran">TAHUN AJARAN <?= date('Y') . "/" . (date('Y')+1) ?></div>
         </div>
     </div>
+
     <div class="no-reg"><b>No. Reg :</b> <?= safe($row['no_formulir']) ?></div>
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
