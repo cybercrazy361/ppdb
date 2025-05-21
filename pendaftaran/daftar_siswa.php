@@ -140,13 +140,13 @@ function getStatusPembayaranLabel($status) {
 
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Daftar Siswa <?= htmlspecialchars($unit); ?></h2>
+        <h2 class="text-center mb-4">Daftar Siswa <?= htmlspecialchars($unit ?? '') ?></h2>
 
         <!-- Menampilkan Pesan Sukses atau Error -->
         <?php
         if (isset($_SESSION['success_message'])) {
             echo '<div class="alert alert-success alert-dismissible fade show" role="alert">'
-                . htmlspecialchars($_SESSION['success_message']) .
+                . htmlspecialchars($_SESSION['success_message'] ?? '') .
                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>';
             unset($_SESSION['success_message']);
@@ -154,7 +154,7 @@ function getStatusPembayaranLabel($status) {
 
         if (isset($_SESSION['error_message'])) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
-                . htmlspecialchars($_SESSION['error_message']) .
+                . htmlspecialchars($_SESSION['error_message'] ?? '') .
                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>';
             unset($_SESSION['error_message']);
@@ -162,7 +162,7 @@ function getStatusPembayaranLabel($status) {
 
         if (isset($_SESSION['edit_errors'])) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
-                . implode('<br>', array_map('htmlspecialchars', $_SESSION['edit_errors'])) .
+                . implode('<br>', array_map(fn($e) => htmlspecialchars($e ?? ''), $_SESSION['edit_errors'])) .
                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>';
             unset($_SESSION['edit_errors']);
@@ -170,7 +170,7 @@ function getStatusPembayaranLabel($status) {
 
         if (isset($_SESSION['delete_errors'])) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
-                . implode('<br>', array_map('htmlspecialchars', $_SESSION['delete_errors'])) .
+                . implode('<br>', array_map(fn($e) => htmlspecialchars($e ?? ''), $_SESSION['delete_errors'])) .
                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>';
             unset($_SESSION['delete_errors']);
@@ -178,24 +178,24 @@ function getStatusPembayaranLabel($status) {
         ?>
 
         <div class="table-responsive">
-    <table class="table table-hover table-bordered align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>No</th>
-                <th>No Formulir</th>
-                <th>Nama</th>
-                <th>Jenis Kelamin</th>
-                <th>Tempat/Tanggal Lahir</th>
-                <th>Asal Sekolah</th>
-                <th>Alamat</th>
-                <th>No HP</th>
-                <th>Status Pembayaran</th>
-                <th>Metode Pembayaran</th>
-                <th>Tanggal Pendaftaran</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>No</th>
+                        <th>No Formulir</th>
+                        <th>Nama</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Tempat/Tanggal Lahir</th>
+                        <th>Asal Sekolah</th>
+                        <th>Alamat</th>
+                        <th>No HP</th>
+                        <th>Status Pembayaran</th>
+                        <th>Metode Pembayaran</th>
+                        <th>Tanggal Pendaftaran</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
 <?php
 if ($result->num_rows > 0) {
     $no = $offset + 1;
@@ -236,9 +236,9 @@ if ($result->num_rows > 0) {
     echo "<tr><td colspan='12' class='text-center'>Tidak ada data siswa.</td></tr>";
 }
 ?>
-</tbody>
-    </table>
-</div>
+                </tbody>
+            </table>
+        </div>
         <!-- Pagination -->
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
@@ -280,7 +280,7 @@ if ($result->num_rows > 0) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="edit_siswa.php" method="POST">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']); ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editModalLabel">Edit Data Siswa</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -334,7 +334,7 @@ if ($result->num_rows > 0) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="delete_siswa.php" method="POST">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']); ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteModalLabel">Hapus Data Siswa</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
