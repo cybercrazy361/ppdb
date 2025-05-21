@@ -75,19 +75,17 @@ function tanggal_id($tgl) {
 .footer-ttd-kanan {
   width: 100%;
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   align-items: flex-end;
   margin-top: 65px;
   min-height: 90px;
 }
 
-.ttd-block-kanan {
+.footer-ttd-kanan > div {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;   /* Rata kanan blok tanda tangan */
-  text-align: right;
-  font-size: 16px;
-  margin-right: 16px;
+  align-items: flex-end;   /* RATA KANAN untuk seluruh blok */
 }
 
 .ttd-tanggal-kanan {
@@ -97,23 +95,18 @@ function tanggal_id($tgl) {
   width: 100%;
 }
 
-.ttd-petugas-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;     /* Nama dan label selalu rata tengah */
-  min-width: 180px;
-  margin-top: 12px;
-}
-
 .ttd-petugas-kanan {
   font-weight: bold;
   margin-bottom: 1px;
-  text-align: center;
+  text-align: right;
+  width: 100%;
 }
+
 .ttd-label-kanan {
   font-weight: normal;
   font-size: 14px;
-  text-align: center;
+  text-align: right;
+  width: 100%;
 }
 
 /* PRINTING - supaya layout rapi dan warna tetap */
@@ -193,12 +186,10 @@ function tanggal_id($tgl) {
       Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
     </div>
     <div class="footer-ttd-kanan">
-    <div class="ttd-block-kanan">
+    <div>
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="ttd-petugas-wrap">
         <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
         <div class="ttd-label-kanan">Petugas Pendaftaran</div>
-        </div>
     </div>
     </div>
   </div>
