@@ -46,61 +46,52 @@ function tanggal_id($tgl) {
   }
 
 .header {
-  position: relative;
-  min-height: 80px;
+  display: flex;
+  align-items: center;   /* vertical centering */
   border-bottom: 2px solid #d1d5db;
   margin-bottom: 18px;
-  padding-bottom: 9px;
+  padding: 18px 0 9px 0; /* atas 18px, bawah 9px */
+  min-height: 120px;     /* ikut tinggi logo */
+  position: relative;
 }
 
 .logo {
-  width: 120px;
-  height: 120px;
+  width: 110px;  /* atau 100px/120px sesuai kebutuhan */
+  height: 110px;
   object-fit: contain;
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 2;
+  margin-right: 24px;
+  flex-shrink: 0;
 }
 
 .header-content {
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 80px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center;  /* center text */
   justify-content: center;
   text-align: center;
-  pointer-events: none; /* biar tombol print dll tetap bisa diklik */
+  pointer-events: none;
 }
 
 @media print {
   .header {
-    position: relative;
-    min-height: 80px;
+    display: flex;
+    align-items: center;
     border-bottom: 2px solid #d1d5db;
     margin-bottom: 18px;
-    padding-bottom: 9px;
+    padding: 18px 0 9px 0;
+    min-height: 120px;
+    position: relative;
   }
   .logo {
-    width: 120px;
-    height: 120px;
+    width: 110px;
+    height: 110px;
     object-fit: contain;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 2;
+    margin-right: 24px;
+    flex-shrink: 0;
   }
-  
   .header-content {
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 80px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -227,6 +218,7 @@ function tanggal_id($tgl) {
         <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
     </div>
     </div>
+
     <div class="no-reg"><b>No. Reg :</b> <?= safe($row['no_formulir']) ?></div>
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
