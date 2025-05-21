@@ -38,53 +38,83 @@ function tanggal_id($tgl) {
   <meta charset="UTF-8">
   <title>Bukti Pendaftaran Siswa Baru</title>
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; }
+  .container {
+    width: 800px; max-width: 100%; margin: 22px auto; background: #fff;
+    border-radius: 10px; box-shadow: 0 0 8px rgba(60,60,60,0.13);
+    padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
+  }
+  .header {
+    text-align: center; border-bottom: 2px solid #d1d5db; margin-bottom: 18px; padding-bottom: 9px;
+  }
+  .logo { width: 72px; height: 72px; object-fit: contain; margin-bottom: 2px;}
+  .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
+  .sub-title { font-size: 16px; font-weight: 500; }
+  .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
+  .no-reg { margin-bottom: 10px; font-weight: 500; }
+  .data-table caption {
+    background: #eaf2ce; font-weight: bold; font-size: 16px; padding: 5px 0;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 0;
+  }
+  .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px;}
+  .data-table th, .data-table td {
+    border: 1px solid #777; padding: 7px 12px; font-size: 15px;
+  }
+  .data-table th { background: #f2f6e9; text-align: left; width: 34%; }
+  .data-table td { background: #fff; }
+  .row-btm {
+    display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 18px;
+  }
+  .info-contact { font-size: 14px; line-height: 1.7; }
+  .note {
+    font-size: 13px; margin-top: 15px; color: #333;
+    background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
+  }
+  .ttd-box { text-align: right; margin-top: 38px; margin-right: 35px;}
+  .ttd-petugas { margin-top: 40px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 220px;}
+  .ttd-label { font-size: 14px; font-weight: normal; }
+  .no-print { 
+    position: fixed;
+    top: 30px; right: 50px;
+    z-index: 1000;
+  }
+
+  /* Tambahan supaya warna tetap saat print */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+    html, body {
+      width: 210mm;
+      height: 297mm;
+      background: #fff !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
     .container {
-      width: 800px; margin: 22px auto; background: #fff;
-      border-radius: 10px; box-shadow: 0 0 8px rgba(60,60,60,0.13);
-      padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
+      width: 100% !important;
+      max-width: 185mm !important;
+      min-height: 250mm;
+      margin: 0 auto !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
+      page-break-after: avoid;
     }
-    .header {
-      text-align: center; border-bottom: 2px solid #d1d5db; margin-bottom: 18px; padding-bottom: 9px;
+    .no-print {
+      display: none !important;
     }
-    .logo { width: 72px; height: 72px; object-fit: contain; margin-bottom: 2px;}
-    .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
-    .sub-title { font-size: 16px; font-weight: 500; }
-    .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
-    .no-reg { margin-bottom: 10px; font-weight: 500; }
-    .data-table caption {
-      background: #eaf2ce; font-weight: bold; font-size: 16px; padding: 5px 0;
-      border-radius: 4px 4px 0 0;
-      margin-bottom: 0;
-    }
-    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px;}
-    .data-table th, .data-table td {
-      border: 1px solid #777; padding: 7px 12px; font-size: 15px;
-    }
-    .data-table th { background: #f2f6e9; text-align: left; width: 34%; }
-    .data-table td { background: #fff; }
-    .row-btm {
-      display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 18px;
-    }
-    .info-contact { font-size: 14px; line-height: 1.7; }
+    .data-table caption,
+    .data-table th,
     .note {
-      font-size: 13px; margin-top: 15px; color: #333;
-      background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
     }
-    .ttd-box { text-align: right; margin-top: 38px; margin-right: 35px;}
-    .ttd-petugas { margin-top: 40px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 220px;}
-    .ttd-label { font-size: 14px; font-weight: normal; }
-    .no-print { 
-      position: fixed;
-      top: 30px; right: 50px;
-      z-index: 1000;
-    }
-    @media print {
-      body { background: #fff; }
-      .container { box-shadow: none; border: none; }
-      .no-print { display: none !important; }
-    }
-  </style>
+  }
+</style>
+
 </head>
 <body>
   <!-- Tombol Cetak, hanya tampil di layar -->
