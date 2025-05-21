@@ -72,7 +72,8 @@ function tanggal_id($tgl) {
       background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
     }
     .ttd-box { text-align: right; margin-top: 38px; margin-right: 35px;}
-    .ttd-petugas { margin-top: 65px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 220px;}
+    .ttd-petugas { margin-top: 40px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 220px;}
+    .ttd-label { font-size: 14px; font-weight: normal; }
     @media print {
       body { background: #fff; }
       .container { box-shadow: none; border: none; }
@@ -116,7 +117,10 @@ function tanggal_id($tgl) {
     <div class="ttd-box">
       <div>
         <div><?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="ttd-petugas"><?= safe($petugas) ?></div>
+        <div class="ttd-petugas">
+            <?= safe($petugas) ?><br>
+            <span class="ttd-label">Petugas Pendaftaran</span>
+        </div>
       </div>
     </div>
   </div>
