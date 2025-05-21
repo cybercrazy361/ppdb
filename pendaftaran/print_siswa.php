@@ -74,6 +74,11 @@ function tanggal_id($tgl) {
     .ttd-box { text-align: right; margin-top: 38px; margin-right: 35px;}
     .ttd-petugas { margin-top: 40px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 220px;}
     .ttd-label { font-size: 14px; font-weight: normal; }
+    .no-print { 
+      position: fixed;
+      top: 30px; right: 50px;
+      z-index: 1000;
+    }
     @media print {
       body { background: #fff; }
       .container { box-shadow: none; border: none; }
@@ -81,7 +86,11 @@ function tanggal_id($tgl) {
     }
   </style>
 </head>
-<body onload="window.print()">
+<body>
+  <!-- Tombol Cetak, hanya tampil di layar -->
+  <button class="no-print btn-cetak" onclick="window.print()" style="padding:8px 20px;background:#25a244;color:#fff;border:none;border-radius:6px;font-size:16px;cursor:pointer">
+    <i class="fas fa-print"></i> Cetak
+  </button>
   <div class="container">
     <div class="header">
       <img src="../assets/logo_sekolah.png" alt="Logo" class="logo" onerror="this.style.display='none'">
@@ -124,5 +133,7 @@ function tanggal_id($tgl) {
       </div>
     </div>
   </div>
+  <!-- Icon FontAwesome agar tombol print ada ikon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
