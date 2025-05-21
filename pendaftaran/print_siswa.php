@@ -158,7 +158,7 @@ function tanggal_id($tgl) {
   </button>
   <div class="container">
     <div class="header">
-      <img src="../assets/logo_sekolah.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
       <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
       <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
       <div class="tahun-ajaran">TAHUN AJARAN <?= date('Y') . "/" . (date('Y')+1) ?></div>
