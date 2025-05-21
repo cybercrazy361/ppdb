@@ -217,14 +217,13 @@ function tanggal_id($tgl) {
   </button>
   <div class="container">
     <div class="header">
-        <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
-        <div class="header-title-center">
-            <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
-            <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
-            <div class="tahun-ajaran">TAHUN AJARAN <?= date('Y') . "/" . (date('Y')+1) ?></div>
-        </div>
+    <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+    <div class="header-content">
+        <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
+        <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
+        <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
     </div>
-
+    </div>
     <div class="no-reg"><b>No. Reg :</b> <?= safe($row['no_formulir']) ?></div>
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
