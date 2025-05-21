@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
