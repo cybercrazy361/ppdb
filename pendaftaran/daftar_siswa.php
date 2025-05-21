@@ -223,8 +223,79 @@ if ($result->num_rows > 0) {
     </div>
 
     <!-- Modal Edit -->
-    <!-- ...Modal Edit dan Modal Delete sama seperti sebelumnya... -->
-    <!-- Copy saja dari kode Anda sebelumnya -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="edit_siswa.php" method="POST">
+                <input type="hidden" id="editId" name="id">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Data Siswa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editNama" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="editNama" name="nama" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editJenisKelamin" class="form-label">Jenis Kelamin</label>
+                        <select class="form-select" id="editJenisKelamin" name="jenis_kelamin" required>
+                            <option value="">-- Pilih Jenis Kelamin --</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTempatLahir" class="form-label">Tempat Lahir</label>
+                        <input type="text" class="form-control" id="editTempatLahir" name="tempat_lahir" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTanggalLahir" class="form-label">Tanggal Lahir</label>
+                        <input type="date" class="form-control" id="editTanggalLahir" name="tanggal_lahir" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAsalSekolah" class="form-label">Asal Sekolah</label>
+                        <input type="text" class="form-control" id="editAsalSekolah" name="asal_sekolah" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAlamat" class="form-label">Alamat</label>
+                        <textarea class="form-control" id="editAlamat" name="alamat" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editNoHp" class="form-label">No HP</label>
+                        <input type="text" class="form-control" id="editNoHp" name="no_hp" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="delete_siswa.php" method="POST">
+                <input type="hidden" id="deleteId" name="id">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Siswa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus data <b id="deleteNama"></b>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <script>
         // Edit button event listener
