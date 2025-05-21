@@ -90,7 +90,7 @@ function tanggal_id($tgl) {
 
 .ttd-tanggal-kanan {
   font-size: 17px;
-  margin-bottom: 38px;
+  margin-bottom: 58px;
   text-align: center;
   width: 100%;
 }
@@ -190,7 +190,6 @@ function tanggal_id($tgl) {
     <div class="footer-ttd-kanan">
     <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
-        <br><br>
         <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
         <div class="ttd-label-kanan">Petugas Pendaftaran</div>
     </div>
