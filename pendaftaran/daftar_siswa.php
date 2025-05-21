@@ -138,6 +138,7 @@ function getStatusPembayaranLabel($status) {
                         <th>Asal Sekolah</th>
                         <th>Alamat</th>
                         <th>No HP</th>
+                        <th>No HP Ortu</th>
                         <th>Status Pembayaran</th>
                         <th>Metode Pembayaran</th>
                         <th>Tanggal Pendaftaran</th>
@@ -158,6 +159,7 @@ if ($result->num_rows > 0) {
         echo "<td>" . htmlspecialchars($row['asal_sekolah'] ?? '') . "</td>";
         echo "<td>" . htmlspecialchars($row['alamat'] ?? '') . "</td>";
         echo "<td>" . htmlspecialchars($row['no_hp'] ?? '') . "</td>";
+        echo "<td>" . htmlspecialchars($row['no_hp_ortu'] ?? '') . "</td>"; // Tambah no hp ortu
         echo "<td class='text-center'>" . getStatusPembayaranLabel($row['status_pembayaran'] ?? '') . "</td>";
         echo "<td>" . htmlspecialchars($row['metode_pembayaran'] ?? '') . "</td>";
         echo "<td>" . formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') . "</td>";
@@ -174,6 +176,7 @@ if ($result->num_rows > 0) {
                         data-asal_sekolah='" . htmlspecialchars($row['asal_sekolah'] ?? '') . "' 
                         data-alamat='" . htmlspecialchars($row['alamat'] ?? '') . "' 
                         data-no_hp='" . htmlspecialchars($row['no_hp'] ?? '') . "' 
+                        data-no_hp_ortu='" . htmlspecialchars($row['no_hp_ortu'] ?? '') . "' 
                         data-bs-toggle='modal' 
                         data-bs-target='#editModal'>Edit</button>
                 <button class='btn btn-danger btn-sm deleteBtn' 
@@ -185,7 +188,7 @@ if ($result->num_rows > 0) {
         echo "</tr>";
     }
 } else {
-    echo "<tr><td colspan='12' class='text-center'>Tidak ada data siswa.</td></tr>";
+    echo "<tr><td colspan='13' class='text-center'>Tidak ada data siswa.</td></tr>";
 }
 ?>
                 </tbody>
@@ -265,6 +268,10 @@ if ($result->num_rows > 0) {
                         <label for="editNoHp" class="form-label">No HP</label>
                         <input type="text" class="form-control" id="editNoHp" name="no_hp" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="editNoHpOrtu" class="form-label">No HP Orang Tua</label>
+                        <input type="text" class="form-control" id="editNoHpOrtu" name="no_hp_ortu" required>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -297,27 +304,28 @@ if ($result->num_rows > 0) {
     </div>
 </div>
 
-    <script>
-        // Edit button event listener
-        document.querySelectorAll('.editBtn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.getElementById('editId').value = button.getAttribute('data-id');
-                document.getElementById('editNama').value = button.getAttribute('data-nama');
-                document.getElementById('editJenisKelamin').value = button.getAttribute('data-jenis_kelamin');
-                document.getElementById('editTempatLahir').value = button.getAttribute('data-tempat_lahir');
-                document.getElementById('editTanggalLahir').value = button.getAttribute('data-tanggal_lahir');
-                document.getElementById('editAsalSekolah').value = button.getAttribute('data-asal_sekolah');
-                document.getElementById('editAlamat').value = button.getAttribute('data-alamat');
-                document.getElementById('editNoHp').value = button.getAttribute('data-no_hp');
-            });
+<script>
+    // Edit button event listener
+    document.querySelectorAll('.editBtn').forEach(button => {
+        button.addEventListener('click', () => {
+            document.getElementById('editId').value = button.getAttribute('data-id');
+            document.getElementById('editNama').value = button.getAttribute('data-nama');
+            document.getElementById('editJenisKelamin').value = button.getAttribute('data-jenis_kelamin');
+            document.getElementById('editTempatLahir').value = button.getAttribute('data-tempat_lahir');
+            document.getElementById('editTanggalLahir').value = button.getAttribute('data-tanggal_lahir');
+            document.getElementById('editAsalSekolah').value = button.getAttribute('data-asal_sekolah');
+            document.getElementById('editAlamat').value = button.getAttribute('data-alamat');
+            document.getElementById('editNoHp').value = button.getAttribute('data-no_hp');
+            document.getElementById('editNoHpOrtu').value = button.getAttribute('data-no_hp_ortu');
         });
-        document.querySelectorAll('.deleteBtn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.getElementById('deleteId').value = button.getAttribute('data-id');
-                document.getElementById('deleteNama').innerText = button.getAttribute('data-nama');
-            });
+    });
+    document.querySelectorAll('.deleteBtn').forEach(button => {
+        button.addEventListener('click', () => {
+            document.getElementById('deleteId').value = button.getAttribute('data-id');
+            document.getElementById('deleteNama').innerText = button.getAttribute('data-nama');
         });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
