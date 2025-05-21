@@ -2,6 +2,7 @@
 session_start();
 include '../database_connection.php';
 
+// Pastikan login
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     header('Location: login_pendaftaran.php');
     exit();
@@ -15,6 +16,7 @@ if (!in_array($filter_unit, $allowed_units)) $filter_unit = $_SESSION['unit'];
 $allowed_status = ['Semua', 'Lunas', 'Angsuran', 'Belum Bayar'];
 if (!in_array($filter_status, $allowed_status)) $filter_status = 'Semua';
 
+// Format tanggal Indonesia
 function formatTanggalIndonesia($tanggal) {
     if (!$tanggal || $tanggal == '0000-00-00') return '-';
     $bulan = [
@@ -28,13 +30,13 @@ function formatTanggalIndonesia($tanggal) {
     return "$date $month $year";
 }
 
-// Statistik dashboard (biarkan tetap)
+// Statistik dashboard
 function getStatusPembayaranCounts($conn, $unit) {
     $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
     $stmt->bind_param("s", $unit); $stmt->execute();
     $total = $stmt->get_result()->fetch_assoc()['total']; $stmt->close();
 
-    // Belum bayar (belum ada Uang Pangkal & SPP Juli Lunas)
+    // Belum Bayar
     $stmt = $conn->prepare("
         SELECT COUNT(*) AS belum FROM siswa s
         WHERE s.unit=? AND NOT EXISTS (
@@ -50,7 +52,7 @@ function getStatusPembayaranCounts($conn, $unit) {
     $stmt->bind_param("s", $unit); $stmt->execute();
     $belum = $stmt->get_result()->fetch_assoc()['belum']; $stmt->close();
 
-    // Lunas: sudah dua2nya
+    // Lunas
     $stmt = $conn->prepare("
         SELECT COUNT(*) AS lunas FROM siswa s
         WHERE s.unit=?
@@ -67,7 +69,7 @@ function getStatusPembayaranCounts($conn, $unit) {
     $stmt->bind_param("s", $unit); $stmt->execute();
     $lunas = $stmt->get_result()->fetch_assoc()['lunas']; $stmt->close();
 
-    // Angsuran: salah satu saja yang lunas
+    // Angsuran
     $stmt = $conn->prepare("
         SELECT COUNT(*) AS angsuran FROM siswa s
         WHERE s.unit=?
@@ -104,20 +106,17 @@ $belumBayar = $statistik['belum_bayar'];
 $sudahBayarLunas = $statistik['sudah_bayar_lunas'];
 $sudahBayarAngsuran = $statistik['sudah_bayar_angsuran'];
 
-// Ambil data siswa + status pembayaran logika baru
+// Query siswa + status pembayaran logika baru
 $query = "
     SELECT s.*,
-    -- Cek status pembayaran Uang Pangkal Lunas
     (SELECT COUNT(*) FROM pembayaran_detail pd1
         JOIN pembayaran p1 ON pd1.pembayaran_id=p1.id
         WHERE p1.siswa_id=s.id AND pd1.jenis_pembayaran_id=1 AND pd1.status_pembayaran='Lunas'
     ) AS lunas_uang_pangkal,
-    -- Cek status pembayaran SPP Juli Lunas
     (SELECT COUNT(*) FROM pembayaran_detail pd2
         JOIN pembayaran p2 ON pd2.pembayaran_id=p2.id
         WHERE p2.siswa_id=s.id AND pd2.jenis_pembayaran_id=2 AND pd2.bulan='Juli' AND pd2.status_pembayaran='Lunas'
     ) AS lunas_spp_juli,
-    -- Metode pembayaran terakhir
     COALESCE((
         SELECT p.metode_pembayaran FROM pembayaran p
         WHERE p.siswa_id=s.id ORDER BY p.tanggal_pembayaran DESC LIMIT 1
@@ -132,10 +131,8 @@ $stmt->bind_param('s', $filter_unit);
 $stmt->execute();
 $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
-    // Tentukan status pembayaran sesuai logika:
     $lunas_uang_pangkal = (int)$row['lunas_uang_pangkal'];
     $lunas_spp_juli     = (int)$row['lunas_spp_juli'];
-
     if ($lunas_uang_pangkal > 0 && $lunas_spp_juli > 0) {
         $row['status_pembayaran'] = 'Lunas';
     } elseif ($lunas_uang_pangkal > 0 || $lunas_spp_juli > 0) {
@@ -147,7 +144,7 @@ while ($row = $result->fetch_assoc()) {
 }
 unset($stmt);unset($result);
 
-// Filter data sesuai status jika bukan Semua
+// Filter sesuai status
 if ($filter_status != 'Semua') {
     $rows = array_filter($rows, function($row) use($filter_status) {
         return $row['status_pembayaran'] == $filter_status;
@@ -237,8 +234,9 @@ function getStatusPembayaranLabel($status) {
         <div class="row mb-3">
             <div class="col-12">
                 <h4 class="mb-3">Detail Siswa</h4>
-                <table class="table table-striped table-bordered detail-table">
-                    <thead>
+                <div class="table-responsive">
+                <table class="table table-striped table-bordered detail-table align-middle">
+                    <thead class="table-primary">
                         <tr>
                             <th>No</th>
                             <th>No Formulir</th>
@@ -277,6 +275,7 @@ function getStatusPembayaranLabel($status) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
