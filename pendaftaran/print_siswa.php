@@ -45,9 +45,34 @@ function tanggal_id($tgl) {
     padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
   }
   .header {
-    text-align: center; border-bottom: 2px solid #d1d5db; margin-bottom: 18px; padding-bottom: 9px;
-  }
-  .logo { width: 72px; height: 72px; object-fit: contain; margin-bottom: 2px;}
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 2px solid #d1d5db;
+  margin-bottom: 18px;
+  padding-bottom: 9px;
+  /* text-align: center; dihapus supaya flex */
+}
+
+.logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  margin-bottom: 0;  /* diubah dari 2px jadi 0 */
+  margin-right: 0;
+  flex-shrink: 0;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
   .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
   .sub-title { font-size: 16px; font-weight: 500; }
   .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
@@ -148,6 +173,17 @@ function tanggal_id($tgl) {
   }
 }
 
+@media print {
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .header-content {
+    align-items: flex-start;
+  }
+}
+
 </style>
 
 </head>
@@ -158,10 +194,12 @@ function tanggal_id($tgl) {
   </button>
   <div class="container">
     <div class="header">
-      <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
-      <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
-      <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
-      <div class="tahun-ajaran">TAHUN AJARAN <?= date('Y') . "/" . (date('Y')+1) ?></div>
+        <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+        <div class="header-content">
+            <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
+            <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
+            <div class="tahun-ajaran">TAHUN AJARAN <?= date('Y') . "/" . (date('Y')+1) ?></div>
+        </div>
     </div>
     <div class="no-reg"><b>No. Reg :</b> <?= safe($row['no_formulir']) ?></div>
     <table class="data-table">
