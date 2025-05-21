@@ -46,52 +46,61 @@ function tanggal_id($tgl) {
   }
 
 .header {
-  display: flex;
-  align-items: center;   /* vertical centering */
+  position: relative;
+  min-height: 80px;
   border-bottom: 2px solid #d1d5db;
   margin-bottom: 18px;
-  padding: 18px 0 9px 0; /* atas 18px, bawah 9px */
-  min-height: 120px;     /* ikut tinggi logo */
-  position: relative;
+  padding-bottom: 9px;
 }
 
 .logo {
-  width: 110px;  /* atau 100px/120px sesuai kebutuhan */
-  height: 110px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
-  margin-right: 24px;
-  flex-shrink: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
 }
 
 .header-content {
-  flex: 1;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 80px;
   display: flex;
   flex-direction: column;
-  align-items: center;  /* center text */
+  align-items: center;
   justify-content: center;
   text-align: center;
-  pointer-events: none;
+  pointer-events: none; /* biar tombol print dll tetap bisa diklik */
 }
 
 @media print {
   .header {
-    display: flex;
-    align-items: center;
+    position: relative;
+    min-height: 80px;
     border-bottom: 2px solid #d1d5db;
     margin-bottom: 18px;
-    padding: 18px 0 9px 0;
-    min-height: 120px;
-    position: relative;
+    padding-bottom: 9px;
   }
   .logo {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
-    margin-right: 24px;
-    flex-shrink: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
   }
+  
   .header-content {
-    flex: 1;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
