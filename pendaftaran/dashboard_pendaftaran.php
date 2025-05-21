@@ -10,48 +10,82 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 
 $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 
-function getStats($conn, $unit) {
-    // total pendaftar
+// === PAKAI LOGIKA STATUS PEMBAYARAN SAMA SEPERTI daftar_siswa.php ===
+$uang_pangkal_id = 1;
+$spp_id = 2;
+
+function getStats($conn, $unit, $uang_pangkal_id, $spp_id) {
+    // Total pendaftar
     $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
     $stmt->bind_param("s", $unit); $stmt->execute();
     $total = $stmt->get_result()->fetch_assoc()['total']; $stmt->close();
 
-    // belum bayar
-    $stmt = $conn->prepare("
-        SELECT COUNT(DISTINCT s.id) AS belum
-        FROM siswa s
-        LEFT JOIN pembayaran p ON s.id=p.siswa_id
-        LEFT JOIN pembayaran_detail pd ON p.id=pd.pembayaran_id
-        WHERE s.unit=? AND pd.id IS NULL
-    ");
-    $stmt->bind_param("s",$unit); $stmt->execute();
-    $belum = $stmt->get_result()->fetch_assoc()['belum']; $stmt->close();
+    // Hitung semua status pembayaran
+    $sql = "
+    SELECT s.id,
+      CASE
+        WHEN 
+            (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                WHERE p1.siswa_id = s.id 
+                  AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                  AND pd1.status_pembayaran = 'Lunas'
+            ) > 0
+        AND
+            (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                WHERE p2.siswa_id = s.id 
+                  AND pd2.jenis_pembayaran_id = $spp_id
+                  AND pd2.bulan = 'Juli'
+                  AND pd2.status_pembayaran = 'Lunas'
+            ) > 0
+        THEN 'Lunas'
+        WHEN 
+            (
+                (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                    WHERE p1.siswa_id = s.id 
+                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                      AND pd1.status_pembayaran = 'Lunas'
+                ) > 0
+                OR
+                (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                    WHERE p2.siswa_id = s.id 
+                      AND pd2.jenis_pembayaran_id = $spp_id
+                      AND pd2.bulan = 'Juli'
+                      AND pd2.status_pembayaran = 'Lunas'
+                ) > 0
+            )
+        THEN 'Angsuran'
+        ELSE 'Belum Bayar'
+      END AS status_pembayaran
+    FROM siswa s
+    WHERE s.unit = ?
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // lunas & angsuran
-    $stmt = $conn->prepare("
-        SELECT
-          COUNT(DISTINCT CASE WHEN pd.status_pembayaran='Lunas' THEN s.id END) AS lunas,
-          COUNT(DISTINCT s.id) AS bayar
-        FROM siswa s
-        LEFT JOIN pembayaran p ON s.id=p.siswa_id
-        LEFT JOIN pembayaran_detail pd ON p.id=pd.pembayaran_id
-        WHERE s.unit=? AND (pd.status_pembayaran='Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
-    ");
-    $stmt->bind_param("s",$unit); $stmt->execute();
-    $row = $stmt->get_result()->fetch_assoc(); $stmt->close();
-
-    $lunas = (int)$row['lunas'];
-    $bayar = (int)$row['bayar'];
-    $angsuran = max(0, $bayar - $lunas);
+    $lunas = $angsuran = $belum = 0;
+    while ($row = $result->fetch_assoc()) {
+        if ($row['status_pembayaran'] === 'Lunas') $lunas++;
+        elseif ($row['status_pembayaran'] === 'Angsuran') $angsuran++;
+        else $belum++;
+    }
+    $stmt->close();
 
     return [
-      'total'=>$total, 'belum'=>$belum,
-      'lunas'=>$lunas, 'angsuran'=>$angsuran,
-      'bayar'=>$bayar
+      'total'    => $total,
+      'lunas'    => $lunas,
+      'angsuran' => $angsuran,
+      'belum'    => $belum,
+      'bayar'    => $lunas + $angsuran
     ];
 }
 
-$stat = getStats($conn, $unit);
+$stat = getStats($conn, $unit, $uang_pangkal_id, $spp_id);
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -60,17 +94,12 @@ $conn->close();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Dashboard <?=htmlspecialchars($unit)?> – PPDB</title>
-  <!-- Bootstrap & FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <!-- Custom CSS -->
   <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css">
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-  <!-- Sidebar -->
   <nav class="sidebar">
     <div class="brand">PPDB <?=htmlspecialchars($unit)?></div>
     <a href="dashboard_pendaftaran.php" class="nav-link"><i class="fas fa-tachometer-alt"></i><span> Dashboard</span></a>
@@ -79,8 +108,6 @@ $conn->close();
     <a href="cetak_laporan_pendaftaran.php" class="nav-link"><i class="fas fa-file-alt"></i><span> Cetak</span></a>
     <a href="review_calon_pendaftar.php" class="nav-link"><i class="fas fa-check-circle"></i><span> Review</span></a>
   </nav>
-
-  <!-- Main -->
   <div class="main">
     <header class="navbar">
       <button class="toggle-btn"><i class="fas fa-bars"></i></button>
@@ -90,8 +117,6 @@ $conn->close();
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
       </div>
     </header>
-
-    <!-- Statistik Cards -->
     <section class="dashboard-cards">
       <div class="card">
         <div class="icon text-primary"><i class="fas fa-user-graduate"></i></div>
@@ -99,14 +124,17 @@ $conn->close();
         <div class="count"><?=$stat['total']?></div>
         <div class="subtext">Unit <?=htmlspecialchars($unit)?></div>
       </div>
-      <div class="card">
-        <div class="icon text-success"><i class="fas fa-money-bill-wave"></i></div>
-        <div class="title">Sudah Bayar</div>
-        <div class="count"><?=$stat['bayar']?></div>
-        <div class="subtext">
-          <i class="fas fa-check-circle text-success"></i> <?=$stat['lunas']?> Lunas<br>
-          <i class="fas fa-wallet text-warning"></i> <?=$stat['angsuran']?> Angsuran
-        </div>
+      <div class="card" style="cursor:pointer" onclick="showModal('lunas')">
+        <div class="icon text-success"><i class="fas fa-check-circle"></i></div>
+        <div class="title">Lunas</div>
+        <div class="count"><?=$stat['lunas']?></div>
+        <div class="subtext">Sudah lunas semua</div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="showModal('angsuran')">
+        <div class="icon text-warning"><i class="fas fa-wallet"></i></div>
+        <div class="title">Angsuran</div>
+        <div class="count"><?=$stat['angsuran']?></div>
+        <div class="subtext">Sebagian lunas</div>
       </div>
       <div class="card" style="cursor:pointer" onclick="showModal('belum')">
         <div class="icon text-danger"><i class="fas fa-exclamation-circle"></i></div>
@@ -115,8 +143,6 @@ $conn->close();
         <div class="subtext">Segera follow-up</div>
       </div>
     </section>
-
-    <!-- Chart -->
     <section class="chart-card">
       <h6>Persentase Pembayaran</h6>
       <div class="chart-container">
@@ -124,7 +150,6 @@ $conn->close();
       </div>
     </section>
   </div>
-
   <!-- Modal Daftar Siswa -->
   <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -146,16 +171,12 @@ $conn->close();
       </div>
     </div>
   </div>
-
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Sidebar toggle on small screens
     document.querySelector('.toggle-btn').addEventListener('click', () => {
       document.querySelector('.sidebar').classList.toggle('collapsed');
     });
 
-    // Show modal and fetch data
     function showModal(status) {
       const body = document.getElementById('modalBody');
       body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
@@ -181,11 +202,10 @@ $conn->close();
     new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Sudah Bayar','Belum Bayar'],
+        labels: ['Lunas','Angsuran','Belum Bayar'],
         datasets: [{
-          data: [<?=$stat['bayar']?>,<?=$stat['belum']?>],
-          backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--color-success'),
-                            getComputedStyle(document.documentElement).getPropertyValue('--color-danger')],
+          data: [<?=$stat['lunas']?>,<?=$stat['angsuran']?>,<?=$stat['belum']?>],
+          backgroundColor: ['#198754','#ffc107','#dc3545'],
           hoverOffset:20
         }]
       },
