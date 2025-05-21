@@ -37,7 +37,7 @@ function tanggal_id($tgl) {
 <head>
   <meta charset="UTF-8">
   <title>Bukti Pendaftaran Siswa Baru</title>
-  <style>
+<style>
   body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; }
   .container {
     width: 800px; max-width: 100%; margin: 22px auto; background: #fff;
@@ -71,16 +71,41 @@ function tanggal_id($tgl) {
     font-size: 13px; margin-top: 15px; color: #333;
     background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
   }
-  .ttd-box { text-align: right; margin-top: 38px; margin-right: 35px;}
-  .ttd-petugas { margin-top: 40px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 220px;}
-  .ttd-label { font-size: 14px; font-weight: normal; }
+
+  /* Footer tanda tangan rata kanan bawah */
+  .footer-ttd-kanan {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: 65px;
+    min-height: 90px;
+  }
+  .ttd-block-kanan {
+    text-align: right;
+    font-size: 16px;
+    margin-right: 16px;
+  }
+  .ttd-tanggal-kanan {
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+  .ttd-petugas-kanan {
+    font-weight: bold;
+    margin-bottom: 1px;
+  }
+  .ttd-label-kanan {
+    font-weight: normal;
+    font-size: 14px;
+  }
+
   .no-print { 
     position: fixed;
     top: 30px; right: 50px;
     z-index: 1000;
   }
 
-  /* Tambahan supaya warna tetap saat print */
+  /* PRINTING - Supaya warna tetap dan layout A4 */
   @media print {
     @page {
       size: A4 portrait;
@@ -112,8 +137,12 @@ function tanggal_id($tgl) {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
+    .footer-ttd-kanan {
+      margin-top: 75px !important;
+    }
   }
 </style>
+
 
 </head>
 <body>
@@ -153,15 +182,14 @@ function tanggal_id($tgl) {
       Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
       Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
     </div>
-    <div class="ttd-box">
-      <div>
-        <div><?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="ttd-petugas">
-            <?= safe($petugas) ?><br>
-            <span class="ttd-label">Petugas Pendaftaran</span>
-        </div>
-      </div>
-    </div>
+    <div class="footer-ttd-kanan">
+  <div class="ttd-block-kanan">
+    <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
+    <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
+    <div class="ttd-label-kanan">Petugas Pendaftaran</div>
+  </div>
+</div>
+
   </div>
   <!-- Icon FontAwesome agar tombol print ada ikon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
