@@ -82,30 +82,39 @@ function tanggal_id($tgl) {
   min-height: 90px;
 }
 
-.footer-ttd-kanan > div {
+.ttd-block-kanan {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;   /* RATA KANAN untuk seluruh blok */
+  align-items: flex-end; /* tanggal tetap kanan */
+  min-width: 220px;
 }
 
 .ttd-tanggal-kanan {
   font-size: 15px;
-  margin-bottom: 16px;
+  margin-bottom: 28px;
   text-align: right;
+  width: 100%;
+}
+
+/* Ini bagian kunci untuk rata tengah tanda tangan */
+.ttd-petugas-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
 }
 
 .ttd-petugas-kanan {
   font-weight: bold;
-  margin-bottom: 1px;
-  text-align: right;
+  margin-bottom: 2px;
+  text-align: center;
   width: 100%;
 }
 
 .ttd-label-kanan {
   font-weight: normal;
   font-size: 14px;
-  text-align: right;
+  text-align: center;
   width: 100%;
 }
 
@@ -186,12 +195,14 @@ function tanggal_id($tgl) {
       Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
     </div>
     <div class="footer-ttd-kanan">
-    <div>
+    <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
+        <div class="ttd-petugas-center">
+        <div class="ttd-petugas-kanan"><b><?= safe($petugas) ?></b></div>
         <div class="ttd-label-kanan">Petugas Pendaftaran</div>
+        </div>
     </div>
-    </div>
+</div>
   </div>
   <!-- Icon FontAwesome agar tombol print ada ikon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
