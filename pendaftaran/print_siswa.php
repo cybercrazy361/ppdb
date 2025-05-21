@@ -44,6 +44,7 @@ function tanggal_id($tgl) {
     border-radius: 10px; box-shadow: 0 0 8px rgba(60,60,60,0.13);
     padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
   }
+
   .header {
   display: flex;
   align-items: center;
@@ -51,28 +52,39 @@ function tanggal_id($tgl) {
   border-bottom: 2px solid #d1d5db;
   margin-bottom: 18px;
   padding-bottom: 9px;
-  /* text-align: center; dihapus supaya flex */
 }
 
 .logo {
-  width: 72px;
-  height: 72px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
-  margin-bottom: 0;  /* diubah dari 2px jadi 0 */
+  margin-bottom: 0;
   margin-right: 0;
   flex-shrink: 0;
 }
 
 .header-content {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;   /* center (tengah) horizontal */
+  text-align: center;    /* rata tengah semua isi header-content */
 }
-.header-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+
+@media print {
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .header-content {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
 }
+
+
   .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
   .sub-title { font-size: 16px; font-weight: 500; }
   .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
@@ -170,17 +182,6 @@ function tanggal_id($tgl) {
   }
   .footer-ttd-kanan {
     margin-top: 75px !important;
-  }
-}
-
-@media print {
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-  }
-  .header-content {
-    align-items: flex-start;
   }
 }
 
