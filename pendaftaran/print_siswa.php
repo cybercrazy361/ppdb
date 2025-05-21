@@ -59,7 +59,7 @@ function tanggal_id($tgl) {
   object-fit: contain;
   position: absolute;
   left: 0;
-  top: -20px;  /* dari 'top: 0' menjadi 'top: -10px' atau lebih kecil lagi */
+  top: -30px;  /* dari 'top: 0' menjadi 'top: -10px' atau lebih kecil lagi */
   z-index: 2;
 }
 
@@ -91,7 +91,7 @@ function tanggal_id($tgl) {
     object-fit: contain;
     position: absolute;
     left: 0;
-    top: -20px; /* atau sesuaikan */
+    top: -30px; /* atau sesuaikan */
     z-index: 2;
   }
   
