@@ -80,7 +80,11 @@ function tanggal_id($tgl) {
   margin-top: 65px;
   min-height: 90px;
 }
+
 .ttd-block-kanan {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;   /* Rata kanan blok tanda tangan */
   text-align: right;
   font-size: 16px;
   margin-right: 16px;
@@ -89,16 +93,18 @@ function tanggal_id($tgl) {
 .ttd-tanggal-kanan {
   font-size: 15px;
   margin-bottom: 16px;
-  text-align: right; /* Biar tetap kanan */
+  text-align: right;
+  width: 100%;
 }
 
 .ttd-petugas-wrap {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center;     /* Nama dan label selalu rata tengah */
   min-width: 180px;
   margin-top: 12px;
 }
+
 .ttd-petugas-kanan {
   font-weight: bold;
   margin-bottom: 1px;
@@ -110,50 +116,44 @@ function tanggal_id($tgl) {
   text-align: center;
 }
 
-  .no-print { 
-    position: fixed;
-    top: 30px; right: 50px;
-    z-index: 1000;
+/* PRINTING - supaya layout rapi dan warna tetap */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
   }
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .container {
+    width: 100% !important;
+    max-width: 185mm !important;
+    min-height: 250mm;
+    margin: 0 auto !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-after: avoid;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .data-table caption,
+  .data-table th,
+  .note {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .footer-ttd-kanan {
+    margin-top: 75px !important;
+  }
+}
 
-  /* PRINTING - Supaya warna tetap dan layout A4 */
-  @media print {
-    @page {
-      size: A4 portrait;
-      margin: 12mm;
-    }
-    html, body {
-      width: 210mm;
-      height: 297mm;
-      background: #fff !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    .container {
-      width: 100% !important;
-      max-width: 185mm !important;
-      min-height: 250mm;
-      margin: 0 auto !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      border: none !important;
-      page-break-after: avoid;
-    }
-    .no-print {
-      display: none !important;
-    }
-    .data-table caption,
-    .data-table th,
-    .note {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    .footer-ttd-kanan {
-      margin-top: 75px !important;
-    }
-  }
 </style>
-
 
 </head>
 <body>
