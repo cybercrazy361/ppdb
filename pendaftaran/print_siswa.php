@@ -54,12 +54,13 @@ function tanggal_id($tgl) {
 }
 
 .logo {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
   position: absolute;
   left: 0;
   top: 0;
+  z-index: 2;
 }
 
 .header-content {
@@ -85,12 +86,13 @@ function tanggal_id($tgl) {
     padding-bottom: 9px;
   }
   .logo {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
     position: absolute;
     left: 0;
     top: 0;
+    z-index: 2;
   }
   
   .header-content {
