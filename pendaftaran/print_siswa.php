@@ -16,6 +16,9 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
+// Ambil nama petugas (dari database jika ada field nama, atau dari username)
+$petugas = isset($_SESSION['nama_petugas']) ? $_SESSION['nama_petugas'] : $_SESSION['username'];
+
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
@@ -28,10 +31,6 @@ function tanggal_id($tgl) {
     $year = date('Y', strtotime($tgl));
     return "$date $month $year";
 }
-
-// QR code Google Maps sekolah, ganti link sesuai kebutuhan
-$qr_url = "https://maps.app.goo.gl/BGqjXngfB7Gvs6ht5"; // contoh
-$qr_code = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" . urlencode($qr_url) . "&choe=UTF-8";
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -65,21 +64,19 @@ $qr_code = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" . urlenc
     .data-table th { background: #f2f6e9; text-align: left; width: 34%; }
     .data-table td { background: #fff; }
     .row-btm {
-      display: flex; justify-content: space-between; align-items: flex-start; margin-top: 18px;
+      display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 18px;
     }
     .info-contact { font-size: 14px; line-height: 1.7; }
-    .qr-box { text-align: center; }
-    .qr-box img { width: 85px; height: 85px; }
-    .qr-box span { font-size: 13px; display: block; margin-top: 2px; }
     .note {
       font-size: 13px; margin-top: 15px; color: #333;
       background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
     }
     .ttd-box { text-align: right; margin-top: 38px; margin-right: 35px;}
-    .ttd-petugas { margin-top: 65px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 180px;}
+    .ttd-petugas { margin-top: 65px; font-weight: bold; border-top: 1px dashed #666; padding-top: 4px; text-align: center; font-size: 16px; width: 220px;}
     @media print {
       body { background: #fff; }
       .container { box-shadow: none; border: none; }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
@@ -110,10 +107,6 @@ $qr_code = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" . urlenc
         Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
         Hotline SMK : <b>085880120889</b> (Bu Ina)
       </div>
-      <div class="qr-box">
-        <img src="<?= $qr_code ?>" alt="QR Lokasi"><br>
-        <span>Scan Lokasi</span>
-      </div>
     </div>
     <div class="note">
       <b>Catatan:</b><br>
@@ -123,7 +116,7 @@ $qr_code = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" . urlenc
     <div class="ttd-box">
       <div>
         <div><?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="ttd-petugas">(Petugas Pendaftaran)</div>
+        <div class="ttd-petugas"><?= safe($petugas) ?></div>
       </div>
     </div>
   </div>
