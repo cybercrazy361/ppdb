@@ -54,12 +54,12 @@ function tanggal_id($tgl) {
 }
 
 .logo {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
   position: absolute;
   left: 0;
-  top: -15px;  /* dari 'top: 0' menjadi 'top: -10px' atau lebih kecil lagi */
+  top: -20px;  /* dari 'top: 0' menjadi 'top: -10px' atau lebih kecil lagi */
   z-index: 2;
 }
 
@@ -91,7 +91,7 @@ function tanggal_id($tgl) {
     object-fit: contain;
     position: absolute;
     left: 0;
-    top: -15px; /* atau sesuaikan */
+    top: -20px; /* atau sesuaikan */
     z-index: 2;
   }
   
