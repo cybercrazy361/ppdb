@@ -47,15 +47,15 @@ function tanggal_id($tgl) {
 
 .header {
   position: relative;
-  min-height: 80px;
+  min-height: 150px; /* > dari tinggi logo */
   border-bottom: 2px solid #d1d5db;
   margin-bottom: 18px;
   padding-bottom: 9px;
 }
 
 .logo {
-  width: 80px;
-  height: 80px;
+  width: 150px;   /* atau 120px, sesuaikan */
+  height: 150px;
   object-fit: contain;
   position: absolute;
   left: 0;
@@ -67,13 +67,13 @@ function tanggal_id($tgl) {
   position: absolute;
   left: 0;
   top: 0;
-  height: 80px;
+  height: 150px; /* sama/minimal dengan logo */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  pointer-events: none; /* biar tombol print dll tetap bisa diklik */
+  pointer-events: none;
 }
 
 @media print {
