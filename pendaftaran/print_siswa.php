@@ -36,7 +36,7 @@ function tanggal_id($tgl) {
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Bukti Pendaftaran Siswa Baru</title>
+  <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
 <style>
   body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; }
   .container {
