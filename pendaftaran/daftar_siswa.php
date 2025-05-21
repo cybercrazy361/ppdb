@@ -178,67 +178,67 @@ function getStatusPembayaranLabel($status) {
         ?>
 
         <div class="table-responsive">
-            <table class="table table-hover table-bordered align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>No</th>
-                        <th>No Formulir</th>
-                        <th>Nama</th>
-                        <th>Jenis Kelamin</th>
-                        <th>Tempat/Tanggal Lahir</th>
-                        <th>Asal Sekolah</th>
-                        <th>Alamat</th>
-                        <th>No HP</th>
-                        <th>Status Pembayaran</th>
-                        <th>Metode Pembayaran</th>
-                        <th>Tanggal Pendaftaran</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    if ($result->num_rows > 0) {
-                        $no = $offset + 1;
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>" . $no++ . "</td>";
-                            echo "<td>" . htmlspecialchars($row['no_formulir']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nama']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['jenis_kelamin']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['tempat_lahir']) . ", " . formatTanggalIndonesia($row['tanggal_lahir']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['asal_sekolah']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['alamat']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['no_hp']) . "</td>";
-                            echo "<td class='text-center'>" . getStatusPembayaranLabel($row['status_pembayaran']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['metode_pembayaran']) . "</td>";
-                            echo "<td>" . formatTanggalIndonesia($row['tanggal_pendaftaran']) . "</td>";
-                            echo "<td class='text-center'>
-                                    <button class='btn btn-warning btn-sm editBtn' 
-                                            data-id='" . htmlspecialchars($row['id']) . "' 
-                                            data-nama='" . htmlspecialchars($row['nama']) . "' 
-                                            data-jenis_kelamin='" . htmlspecialchars($row['jenis_kelamin']) . "' 
-                                            data-tempat_lahir='" . htmlspecialchars($row['tempat_lahir']) . "' 
-                                            data-tanggal_lahir='" . htmlspecialchars($row['tanggal_lahir']) . "' 
-                                            data-asal_sekolah='" . htmlspecialchars($row['asal_sekolah']) . "' 
-                                            data-alamat='" . htmlspecialchars($row['alamat']) . "' 
-                                            data-no_hp='" . htmlspecialchars($row['no_hp']) . "' 
-                                            data-bs-toggle='modal' 
-                                            data-bs-target='#editModal'>Edit</button>
-                                    <button class='btn btn-danger btn-sm deleteBtn' 
-                                            data-id='" . htmlspecialchars($row['id']) . "' 
-                                            data-nama='" . htmlspecialchars($row['nama']) . "' 
-                                            data-bs-toggle='modal' 
-                                            data-bs-target='#deleteModal'>Delete</button>
-                                </td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='12' class='text-center'>Tidak ada data siswa.</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>No</th>
+                <th>No Formulir</th>
+                <th>Nama</th>
+                <th>Jenis Kelamin</th>
+                <th>Tempat/Tanggal Lahir</th>
+                <th>Asal Sekolah</th>
+                <th>Alamat</th>
+                <th>No HP</th>
+                <th>Status Pembayaran</th>
+                <th>Metode Pembayaran</th>
+                <th>Tanggal Pendaftaran</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            if ($result->num_rows > 0) {
+                $no = $offset + 1;
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . $no++ . "</td>";
+                    echo "<td>" . htmlspecialchars($row['no_formulir'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($row['nama'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($row['jenis_kelamin'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($row['tempat_lahir'] ?? '') . ", " . formatTanggalIndonesia($row['tanggal_lahir'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($row['asal_sekolah'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($row['alamat'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($row['no_hp'] ?? '') . "</td>";
+                    echo "<td class='text-center'>" . getStatusPembayaranLabel($row['status_pembayaran'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($row['metode_pembayaran'] ?? '') . "</td>";
+                    echo "<td>" . formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') . "</td>";
+                    echo "<td class='text-center'>
+                            <button class='btn btn-warning btn-sm editBtn' 
+                                    data-id='" . htmlspecialchars($row['id'] ?? '') . "' 
+                                    data-nama='" . htmlspecialchars($row['nama'] ?? '') . "' 
+                                    data-jenis_kelamin='" . htmlspecialchars($row['jenis_kelamin'] ?? '') . "' 
+                                    data-tempat_lahir='" . htmlspecialchars($row['tempat_lahir'] ?? '') . "' 
+                                    data-tanggal_lahir='" . htmlspecialchars($row['tanggal_lahir'] ?? '') . "' 
+                                    data-asal_sekolah='" . htmlspecialchars($row['asal_sekolah'] ?? '') . "' 
+                                    data-alamat='" . htmlspecialchars($row['alamat'] ?? '') . "' 
+                                    data-no_hp='" . htmlspecialchars($row['no_hp'] ?? '') . "' 
+                                    data-bs-toggle='modal' 
+                                    data-bs-target='#editModal'>Edit</button>
+                            <button class='btn btn-danger btn-sm deleteBtn' 
+                                    data-id='" . htmlspecialchars($row['id'] ?? '') . "' 
+                                    data-nama='" . htmlspecialchars($row['nama'] ?? '') . "' 
+                                    data-bs-toggle='modal' 
+                                    data-bs-target='#deleteModal'>Delete</button>
+                        </td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='12' class='text-center'>Tidak ada data siswa.</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
         <!-- Pagination -->
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
