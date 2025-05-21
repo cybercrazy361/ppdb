@@ -72,32 +72,43 @@ function tanggal_id($tgl) {
     background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
   }
 
-  /* Footer tanda tangan rata kanan bawah */
-  .footer-ttd-kanan {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-top: 65px;
-    min-height: 90px;
-  }
-  .ttd-block-kanan {
-    text-align: right;
-    font-size: 16px;
-    margin-right: 16px;
-  }
-  .ttd-tanggal-kanan {
-    font-size: 15px;
-    margin-bottom: 28px;
-  }
-  .ttd-petugas-kanan {
-    font-weight: bold;
-    margin-bottom: 1px;
-  }
-  .ttd-label-kanan {
-    font-weight: normal;
-    font-size: 14px;
-  }
+.footer-ttd-kanan {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: 65px;
+  min-height: 90px;
+}
+.ttd-block-kanan {
+  text-align: right;
+  font-size: 16px;
+  margin-right: 16px;
+}
+
+.ttd-tanggal-kanan {
+  font-size: 15px;
+  margin-bottom: 16px;
+  text-align: right; /* Biar tetap kanan */
+}
+
+.ttd-petugas-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 180px;
+  margin-top: 12px;
+}
+.ttd-petugas-kanan {
+  font-weight: bold;
+  margin-bottom: 1px;
+  text-align: center;
+}
+.ttd-label-kanan {
+  font-weight: normal;
+  font-size: 14px;
+  text-align: center;
+}
 
   .no-print { 
     position: fixed;
@@ -182,13 +193,14 @@ function tanggal_id($tgl) {
       Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
     </div>
     <div class="footer-ttd-kanan">
-  <div class="ttd-block-kanan">
-    <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
-    <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
-    <div class="ttd-label-kanan">Petugas Pendaftaran</div>
-  </div>
-</div>
-
+    <div class="ttd-block-kanan">
+        <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
+        <div class="ttd-petugas-wrap">
+        <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
+        <div class="ttd-label-kanan">Petugas Pendaftaran</div>
+        </div>
+    </div>
+    </div>
   </div>
   <!-- Icon FontAwesome agar tombol print ada ikon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
