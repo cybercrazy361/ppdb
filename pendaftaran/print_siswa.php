@@ -228,7 +228,7 @@ function tanggal_id($tgl) {
     </div>
     </div>
 
-    <div class="no-reg"><b>No. Reg :</b> <?= safe($row['no_formulir']) ?></div>
+    <div class="no-reg"><b>No. Reg / No Formulir :</b> <?= safe($row['no_formulir']) ?></div>
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
