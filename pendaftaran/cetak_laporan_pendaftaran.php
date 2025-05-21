@@ -11,6 +11,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 // Ambil unit otomatis dari session
 $filter_unit   = $_SESSION['unit'];  // 'SMA' atau 'SMK'
 $filter_status = isset($_GET['status']) ? $_GET['status'] : 'Semua';
+$printAll      = isset($_GET['print_all']) && $_GET['print_all']=='1';
 $allowed_status = ['Semua','Lunas','Angsuran','Belum Bayar'];
 if (!in_array($filter_status, $allowed_status)) {
     $filter_status = 'Semua';
@@ -127,26 +128,23 @@ if($filter_status!='Semua'){
   $all = array_filter($all, fn($r)=>$r['status']==$filter_status);
 }
 
-// paging / print_all
-$page     = max(1,intval($_GET['page']??1));
-$limit    = 20;
-$total    = count($all);
-$pages    = ceil($total/$limit);
-$printAll = isset($_GET['print_all']) && $_GET['print_all']=='1';
+// paging or all
+$page   = max(1,intval($_GET['page']??1));
+$limit  = 20;
+$total  = count($all);
+$pages  = ceil($total/$limit);
+$offset = ($page-1)*$limit;
 
-if ($printAll) {
-    $show = $all;
-} else {
-    $off  = ($page-1)*$limit;
-    $show = array_slice($all,$off,$limit);
-}
+$show = $printAll
+    ? $all
+    : array_slice($all,$offset,$limit);
 
 // badge helper
 function badge($s){
   return match($s){
-    'Lunas'      => '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Lunas</span>',
-    'Angsuran'   => '<span class="badge bg-warning text-dark"><i class="fas fa-wallet"></i> Angsuran</span>',
-    default      => '<span class="badge bg-danger"><i class="fas fa-times-circle"></i> Belum Bayar</span>',
+    'Lunas'    => '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Lunas</span>',
+    'Angsuran' => '<span class="badge bg-warning text-dark"><i class="fas fa-wallet"></i> Angsuran</span>',
+    default    => '<span class="badge bg-danger"><i class="fas fa-times-circle"></i> Belum Bayar</span>',
   };
 }
 ?>
@@ -160,13 +158,11 @@ function badge($s){
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    body{font-family:'Poppins',sans-serif;background:#f4f7fc;color:#333;}
+    body {font-family:'Poppins',sans-serif;background:#f4f7fc;color:#333;}
     h2,h4{font-weight:600;}
     .filter-bar .btn, .filter-bar .form-select{white-space:nowrap;}
-    /* hide on print */
     @media print {
-      .no-print{display:none!important;}
-      .pagination{display:none!important;}
+      .no-print, .pagination {display:none!important;}
       body *{visibility:hidden;}
       #printableArea, #printableArea *{visibility:visible;}
       #printableArea{position:absolute;top:0;left:0;width:100%;}
@@ -176,7 +172,6 @@ function badge($s){
 <body>
 
 <div class="container py-4" id="printableArea">
-
   <div class="row align-items-center mb-4">
     <div class="col-2 text-center">
       <img src="../assets/images/logo_trans.png" class="img-fluid" style="max-height:80px">
@@ -256,7 +251,7 @@ function badge($s){
         </tr>
       </thead>
       <tbody>
-        <?php if($total): $n = ($printAll ? 1 : $off+1); foreach($show as $r): ?>
+        <?php if($total): $n = $printAll ? 1 : $offset+1; foreach($show as $r): ?>
         <tr>
           <td><?=$n++?></td>
           <td><?=htmlspecialchars($r['no_formulir'])?></td>
@@ -282,7 +277,7 @@ function badge($s){
     <i class="fas fa-print me-1"></i> Cetak Halaman
   </button>
   <?php if (!$printAll): ?>
-  <a href="?print_all=1&status=<?=urlencode($filter_status)?>" class="btn btn-outline-primary me-2">
+  <a href="?print_all=1&status=<?=urlencode($filter_status)?>" target="_blank" class="btn btn-outline-primary me-2">
     <i class="fas fa-print me-1"></i> Cetak Semua
   </a>
   <?php endif; ?>
@@ -293,20 +288,29 @@ function badge($s){
 
 <?php if(!$printAll && $pages>1): ?>
 <div class="container no-print mb-4">
-  <nav><ul class="pagination justify-content-center">
-    <li class="page-item <?=$page<=1?'disabled':''?>">
-      <a class="page-link" href="?page=<?=$page-1?>&status=<?=$filter_status?>">Previous</a>
-    </li>
-    <?php for($i=1; $i<=$pages; $i++): ?>
-      <li class="page-item <?=$i==$page?'active':''?>">
-        <a class="page-link" href="?page=<?=$i?>&status=<?=$filter_status?>"><?=$i?></a>
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item <?=$page<=1?'disabled':''?>">
+        <a class="page-link" href="?page=<?=$page-1?>&status=<?=$filter_status?>">Previous</a>
       </li>
-    <?php endfor; ?>
-    <li class="page-item <?=$page>=$pages?'disabled':''?>">
-      <a class="page-link" href="?page=<?=$page+1?>&status=<?=$filter_status?>">Next</a>
-    </li>
-  </ul></nav>
+      <?php for($i=1;$i<=$pages;$i++): ?>
+        <li class="page-item <?=$i==$page?'active':''?>">
+          <a class="page-link" href="?page=<?=$i?>&status=<?=$filter_status?>"><?=$i?></a>
+        </li>
+      <?php endfor;?>
+      <li class="page-item <?=$page>=$pages?'disabled':''?>">
+        <a class="page-link" href="?page=<?=$page+1?>&status=<?=$filter_status?>">Next</a>
+      </li>
+    </ul>
+  </nav>
 </div>
+<?php endif; ?>
+
+<?php if($printAll): ?>
+<script>
+  // Jika dibuka via "Cetak Semua", otomatis print lalu kembali
+  window.onload = ()=> { window.print(); }
+</script>
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
