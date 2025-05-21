@@ -110,10 +110,19 @@ function display_errors() {
             </div>
 
             <div class="col-md-6">
-                <label for="no_hp" class="form-label">No HP</label>
+                <label for="no_hp" class="form-label">No HP Siswa</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-phone"></i></span>
                     <input type="tel" id="no_hp" name="no_hp" class="form-control" placeholder="08xxxxxxxxxx" required>
+                </div>
+            </div>
+
+            <!-- Tambahan No HP Orang Tua -->
+            <div class="col-md-6">
+                <label for="no_hp_ortu" class="form-label">No HP Orang Tua</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user-friends"></i></span>
+                    <input type="tel" id="no_hp_ortu" name="no_hp_ortu" class="form-control" placeholder="08xxxxxxxxxx" required>
                 </div>
             </div>
 
