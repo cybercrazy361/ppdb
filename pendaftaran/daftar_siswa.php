@@ -213,23 +213,23 @@ function getStatusPembayaranLabel($status) {
                     echo "<td>" . htmlspecialchars($row['metode_pembayaran'] ?? '') . "</td>";
                     echo "<td>" . formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') . "</td>";
                     echo "<td class='text-center'>
-                            <button class='btn btn-warning btn-sm editBtn' 
-                                    data-id='" . htmlspecialchars($row['id'] ?? '') . "' 
-                                    data-nama='" . htmlspecialchars($row['nama'] ?? '') . "' 
-                                    data-jenis_kelamin='" . htmlspecialchars($row['jenis_kelamin'] ?? '') . "' 
-                                    data-tempat_lahir='" . htmlspecialchars($row['tempat_lahir'] ?? '') . "' 
-                                    data-tanggal_lahir='" . htmlspecialchars($row['tanggal_lahir'] ?? '') . "' 
-                                    data-asal_sekolah='" . htmlspecialchars($row['asal_sekolah'] ?? '') . "' 
-                                    data-alamat='" . htmlspecialchars($row['alamat'] ?? '') . "' 
-                                    data-no_hp='" . htmlspecialchars($row['no_hp'] ?? '') . "' 
-                                    data-bs-toggle='modal' 
-                                    data-bs-target='#editModal'>Edit</button>
-                            <button class='btn btn-danger btn-sm deleteBtn' 
-                                    data-id='" . htmlspecialchars($row['id'] ?? '') . "' 
-                                    data-nama='" . htmlspecialchars($row['nama'] ?? '') . "' 
-                                    data-bs-toggle='modal' 
-                                    data-bs-target='#deleteModal'>Delete</button>
-                        </td>";
+                    <button class='btn btn-warning btn-sm editBtn' 
+                            data-id='" . htmlspecialchars($row['id'] ?? '') . "' 
+                            data-nama='" . htmlspecialchars($row['nama'] ?? '') . "' 
+                            data-jenis_kelamin='" . htmlspecialchars($row['jenis_kelamin'] ?? '') . "' 
+                            data-tempat_lahir='" . htmlspecialchars($row['tempat_lahir'] ?? '') . "' 
+                            data-tanggal_lahir='" . htmlspecialchars($row['tanggal_lahir'] ?? '') . "' 
+                            data-asal_sekolah='" . htmlspecialchars($row['asal_sekolah'] ?? '') . "' 
+                            data-alamat='" . htmlspecialchars($row['alamat'] ?? '') . "' 
+                            data-no_hp='" . htmlspecialchars($row['no_hp'] ?? '') . "' 
+                            data-bs-toggle='modal' 
+                            data-bs-target='#editModal'>Edit</button>
+                    <button class='btn btn-danger btn-sm deleteBtn' 
+                            data-id='" . htmlspecialchars($row['id'] ?? '') . "' 
+                            data-nama='" . htmlspecialchars($row['nama'] ?? '') . "' 
+                            data-bs-toggle='modal' 
+                            data-bs-target='#deleteModal'>Delete</button>
+                </td>";
                     echo "</tr>";
                 }
             } else {
