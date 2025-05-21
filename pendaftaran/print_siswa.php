@@ -96,7 +96,7 @@ function tanggal_id($tgl) {
 }
 
 .ttd-petugas-kanan {
-  font-weight: bold;
+  font-weight: normal;
   font-size: 21px;
   margin-bottom: 1px;
   text-align: center;
