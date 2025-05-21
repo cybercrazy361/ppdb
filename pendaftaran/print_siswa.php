@@ -72,23 +72,30 @@ function tanggal_id($tgl) {
     background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
   }
 
-.footer-ttd-tengah {
+.footer-ttd-kanan {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;     /* Rata tengah seluruh blok */
+  justify-content: flex-end;
+  align-items: flex-end;
   margin-top: 65px;
   min-height: 90px;
 }
 
-.ttd-tanggal-tengah {
+.ttd-block-kanan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.ttd-tanggal-kanan {
   font-size: 17px;
   margin-bottom: 38px;
   text-align: center;
   width: 100%;
 }
 
-.ttd-petugas-tengah {
+.ttd-petugas-kanan {
   font-weight: bold;
   font-size: 21px;
   margin-bottom: 1px;
@@ -96,12 +103,13 @@ function tanggal_id($tgl) {
   width: 100%;
 }
 
-.ttd-label-tengah {
+.ttd-label-kanan {
   font-weight: normal;
   font-size: 17px;
   text-align: center;
   width: 100%;
 }
+
 
 /* PRINTING - supaya layout rapi dan warna tetap */
 @media print {
@@ -179,10 +187,12 @@ function tanggal_id($tgl) {
       Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
       Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
     </div>
-    <div class="footer-ttd-tengah">
-    <div class="ttd-tanggal-tengah"><?= tanggal_id(date('Y-m-d')) ?></div>
-    <div class="ttd-petugas-tengah"><b><?= safe($petugas) ?></b></div>
-    <div class="ttd-label-tengah">Petugas Pendaftaran</div>
+    <div class="footer-ttd-kanan">
+    <div class="ttd-block-kanan">
+        <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
+        <div class="ttd-petugas-kanan"><b><?= safe($petugas) ?></b></div>
+        <div class="ttd-label-kanan">Petugas Pendaftaran</div>
+    </div>
     </div>
   </div>
   <!-- Icon FontAwesome agar tombol print ada ikon -->
