@@ -90,7 +90,7 @@ function tanggal_id($tgl) {
 
 .ttd-tanggal-kanan {
   font-size: 17px;
-  margin-bottom: 58px;
+  margin-bottom: 70px;
   text-align: center;
   width: 100%;
 }
