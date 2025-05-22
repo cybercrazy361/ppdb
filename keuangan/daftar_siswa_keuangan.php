@@ -12,18 +12,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 // Include koneksi database
 include '../database_connection.php';
 
-// Ambil tahun pelajaran dari parameter GET, atau fallback ke tahun pertama di data
-if (isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran']!=='') {
-    $tahun_cetak = htmlspecialchars($_GET['tahun_pelajaran']);
-} elseif (!empty($siswa_data)) {
-    // ambil tahun_pelajaran dari pembayaran pertama
-    $firstSiswa   = reset($siswa_data);
-    $firstPemb    = reset($firstSiswa['pembayaran']);
-    $tahun_cetak  = $firstPemb['tahun_pelajaran'];
-} else {
-    $tahun_cetak = '-';
-}
-
 // Ambil unit petugas dari sesi
 $petugas_unit = $_SESSION['unit'];
 
@@ -36,6 +24,12 @@ $csrf_token = $_SESSION['csrf_token'];
 // Ambil parameter pencarian
 $search_no_formulir = isset($_GET['search_no_formulir']) ? trim($_GET['search_no_formulir']) : '';
 $search_nama = isset($_GET['search_nama']) ? trim($_GET['search_nama']) : '';
+
+$years = [];
+$resYears = $conn->query("SELECT DISTINCT tahun_pelajaran FROM pembayaran ORDER BY tahun_pelajaran DESC");
+while ($r = $resYears->fetch_assoc()) {
+    $years[] = $r['tahun_pelajaran'];
+}
 
 // Pagination setup
 $limit = 10; // Jumlah data per halaman
@@ -211,7 +205,25 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
     }
 }
 
-$conn->close();
+
+// 1) Tentukan $tahun_cetak setelah data siswa & pembayaran terisi
+    if (isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran'] !== '') {
+        $tahun_cetak = htmlspecialchars($_GET['tahun_pelajaran']);
+    }
+    elseif (!empty($siswa_data)) {
+        // Ambil siswa pertama
+        $firstSiswa  = reset($siswa_data);
+        // Ambil pembayaran pertama dari siswa pertama
+        $firstPemb   = reset($firstSiswa['pembayaran']);
+        $tahun_cetak = $firstPemb['tahun_pelajaran'];
+    }
+    else {
+        $tahun_cetak = '-';
+    }
+
+    // 2) Tutup koneksi setelah $tahun_cetak sudah benar
+    $conn->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -295,6 +307,16 @@ $conn->close();
         <div class="card-body">
             <form class="row g-3" method="GET" action="daftar_siswa_keuangan.php">
                 <div class="col-md-3">
+                     <label for="tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
+    <select class="form-select" id="tahun_pelajaran" name="tahun_pelajaran">
+      <option value="">— Semua —</option>
+      <?php foreach ($years as $y): ?>
+        <option value="<?= $y; ?>"
+          <?= (isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran']==$y) ? 'selected' : ''; ?>>
+          <?= $y; ?>
+        </option>
+      <?php endforeach; ?>
+    </select>
                     <label for="search_no_formulir" class="form-label">Cari No Formulir</label>
                     <input type="text" class="form-control" id="search_no_formulir" name="search_no_formulir"
                            placeholder="Masukkan No Formulir"
