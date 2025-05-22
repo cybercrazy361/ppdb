@@ -19,17 +19,19 @@ while($row = $result->fetch_assoc()) {
 
 // --- Pilih tahun pelajaran (default tahun berjalan) ---
 if (isset($_GET['tahun_pelajaran']) && in_array($_GET['tahun_pelajaran'], $tahunList)) {
+    // Jika user sudah memilih, pakai pilihan mereka
     $tahun_pelajaran = $_GET['tahun_pelajaran'];
 } else {
-    // Pilih tahun aktif (otomatis sesuai tanggal hari ini)
-    $tahun_now = date('Y');
-    $bulan_now = date('n');
-    if ($bulan_now >= 7) {
-        $tahun_pelajaran = $tahun_now . '/' . ($tahun_now+1);
+    // Kalau belum memilih, default ke 2025/2026 (jika tersedia di $tahunList)
+    $default = '2025/2026';
+    if (in_array($default, $tahunList)) {
+        $tahun_pelajaran = $default;
     } else {
-        $tahun_pelajaran = ($tahun_now-1) . '/' . $tahun_now;
+        // fallback: ambil yang paling atas di daftar
+        $tahun_pelajaran = $tahunList[0];
     }
 }
+
 list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
 
 // --- Daftar bulan SPP urut ---
