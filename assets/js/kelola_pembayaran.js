@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return options;
         }
 
-        function addPayment(selectedId = '', selectedBulan = '', selectedCashback = '') {
+        function addPayment(selectedId = '', selectedBulan = '', selectedJumlah = '', selectedCashback = '') {
             const paymentItem = document.createElement('div');
             paymentItem.className = 'payment-item mb-3';
             paymentItem.innerHTML = `
@@ -135,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div class="col-md-2">
                     <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" value="${selectedJumlah ? formatNumber(selectedJumlah) : ''}" required>
+
                 </div>
                 <div class="col-md-2">
                     <input type="text" min="0" step="100" name="cashback[]" class="form-control cashback-input" placeholder="Cashback (Rp)" style="display:none;" value="${selectedCashback !== undefined && selectedCashback !== null ? String(selectedCashback) : ''}">
