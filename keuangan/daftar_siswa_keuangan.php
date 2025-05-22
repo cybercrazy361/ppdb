@@ -121,28 +121,30 @@ if (empty($student_ids)) {
     // MySQLi does not support binding an array directly, so we'll build the placeholders
     $placeholders = implode(',', array_fill(0, count($student_ids), '?'));
     $select_query = "SELECT 
-                        s.id AS siswa_id,
-                        s.no_formulir,
-                        s.nama,
-                        s.unit,
-                        p.id AS pembayaran_id,
-                        p.jumlah AS pembayaran_jumlah,
-                        p.metode_pembayaran AS pembayaran_metode,
-                        p.tahun_pelajaran,
-                        p.tanggal_pembayaran,
-                        p.keterangan AS pembayaran_keterangan,
-                        pd.id AS pembayaran_detail_id,
-                        jp.nama AS jenis_pembayaran,
-                        pd.jumlah AS detail_jumlah,
-                        pd.bulan,
-                        pd.status_pembayaran AS detail_status,
-                        pd.angsuran_ke
-                     FROM siswa s
-                     INNER JOIN pembayaran p ON s.id = p.siswa_id
-                     INNER JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-                     INNER JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
-                     WHERE s.id IN ($placeholders)
-                     ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
+    s.id AS siswa_id,
+    s.no_formulir,
+    s.nama,
+    s.unit,
+    p.id AS pembayaran_id,
+    p.jumlah AS pembayaran_jumlah,
+    p.metode_pembayaran AS pembayaran_metode,
+    p.tahun_pelajaran,
+    p.tanggal_pembayaran,
+    p.keterangan AS pembayaran_keterangan,
+    pd.id AS pembayaran_detail_id,
+    jp.nama AS jenis_pembayaran,
+    pd.jumlah AS detail_jumlah,
+    pd.bulan,
+    pd.status_pembayaran AS detail_status,
+    pd.angsuran_ke,
+    pd.cashback AS detail_cashback   -- << tambahkan ini
+FROM siswa s
+INNER JOIN pembayaran p ON s.id = p.siswa_id
+INNER JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
+INNER JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
+WHERE s.id IN ($placeholders)
+ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
+
 
     $stmt = $conn->prepare($select_query);
     if ($stmt) {
@@ -184,7 +186,9 @@ if (empty($student_ids)) {
                         'jumlah' => $row['detail_jumlah'],
                         'bulan' => $row['bulan'],
                         'status_pembayaran' => $row['detail_status'],
-                        'angsuran_ke' => $row['angsuran_ke']
+                        'angsuran_ke'        => $row['angsuran_ke'],
+                        'cashback'           => $row['detail_cashback']
+                        
                     ];
                 }
             }
