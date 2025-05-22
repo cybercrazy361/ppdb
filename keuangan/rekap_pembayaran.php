@@ -2,6 +2,7 @@
 session_start();
 include '../database_connection.php';
 
+// Pastikan pengguna sudah login
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
     header('Location: login_keuangan.php');
     exit();
@@ -92,21 +93,43 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Rekap Pembayaran Siswa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../assets/css/dashboard_keuangan_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-      @media print {
-        body * { visibility: hidden; }
-        .printable-area, .printable-area * { visibility: visible; box-shadow: none !important; }
-        .printable-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; }
-        .no-print { display: none; }
-        .table-responsive { overflow: visible !important; }
-      }
+        @media print {
+            body * { visibility: hidden; }
+            .printable-area, .printable-area * { visibility: visible; box-shadow: none !important; }
+            .printable-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; }
+            .no-print { display: none; }
+            .table-responsive { overflow: visible !important; }
+        }
+        /* Table head stick (optional, biar tabel tetap rapi pas scroll banyak kolom) */
+        .table thead th { vertical-align: middle; text-align: center; }
+        .table tfoot td { vertical-align: middle; text-align: center; }
+        .table tbody td { vertical-align: middle; text-align: center; }
     </style>
 </head>
 <body>
 <?php include '../includes/sidebar.php'; ?>
+
 <div class="main-content p-4">
+    <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
+        <button id="sidebarToggle" class="btn btn-link d-md-inline rounded-circle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+                <a class="nav-link text-dark" href="#">
+                    <span class="me-2"><?= htmlspecialchars($_SESSION['nama']); ?></span>
+                    <i class="fas fa-user-circle fa-lg"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0 text-gray-800">
@@ -136,7 +159,7 @@ $conn->close();
                             <tr>
                                 <td><?= $no++ ?></td>
                                 <td><?= htmlspecialchars($sis['no_formulir']) ?></td>
-                                <td><?= htmlspecialchars($sis['nama']) ?></td>
+                                <td style="text-align:left;"><?= htmlspecialchars($sis['nama']) ?></td>
                                 <?php foreach ($kolom_list as $k): ?>
                                     <td><?= $sis['pembayaran'][$k] > 0 ? 'Rp '.number_format($sis['pembayaran'][$k],0,',','.') : '-' ?></td>
                                 <?php endforeach; ?>
