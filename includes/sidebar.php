@@ -68,6 +68,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </ul>
             </div>
         </li>
+        <!-- Rekap Pembayaran Menu -->
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'rekap_pembayaran.php') ? 'active' : ''; ?>"
+            href="rekap_pembayaran.php">
+                <i class="fas fa-chart-bar"></i>
+                <span>Rekap Pembayaran</span>
+            </a>
+        </li>
 
         <!-- Pengaturan Layout Kuitansi Menu -->
         <li class="nav-item">
