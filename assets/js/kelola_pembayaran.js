@@ -137,8 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" required>
                 </div>
                 <div class="col-md-2">
-                    <input type="text" min="0" step="100" name="cashback[]" class="form-control cashback-input" placeholder="Cashback (Rp)" style="display:none;" value="${selectedCashback !== undefined && selectedCashback !== null ? String(selectedCashback) : ''}">
-
+                    <input type="text" min="0" step="100" name="cashback[]" class="form-control cashback-input" placeholder="Cashback (Rp)" style="display:none;" value="${selectedCashback ? selectedCashback : ''}">
                 </div>
                 <div class="col-md-3">
                     <select name="bulan[]" class="form-select bulan-pembayaran" style="display: none;">
