@@ -766,8 +766,9 @@ document.addEventListener('DOMContentLoaded', function () {
             newJumlahInput.value = formatNumber(selectedJumlah);
         }
         if (selectedCashback !== undefined && selectedCashback !== '') {
-            cashbackInput.value = selectedCashback;
+            cashbackInput.value = formatNumber(selectedCashback);
         }
+
         if (selectedId !== '' && isSPP(selectedId) && selectedBulan) {
             bulanPembayaranSelect.style.display = 'block';
             bulanPembayaranSelect.value = selectedBulan;
