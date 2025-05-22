@@ -123,11 +123,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return options;
         }
 
-        function addPayment(selectedId = '', selectedBulan = '', selectedJumlah = '', selectedCashback = '') {
+        function addPayment(selectedId = '', selectedBulan = '', selectedCashback = '') {
             const paymentItem = document.createElement('div');
             paymentItem.className = 'payment-item mb-3';
-            let jumlahVal = selectedJumlah;
-            if (typeof jumlahVal === 'string') jumlahVal = jumlahVal.replace(/\./g, '');
             paymentItem.innerHTML = `
             <div class="row g-2">
                 <div class="col-md-3">
@@ -136,8 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" value="${selectedJumlah ? formatNumber(selectedJumlah) : ''}" required>
-
+                    <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" required>
                 </div>
                 <div class="col-md-2">
                     <input type="text" min="0" step="100" name="cashback[]" class="form-control cashback-input" placeholder="Cashback (Rp)" style="display:none;" value="${selectedCashback !== undefined && selectedCashback !== null ? String(selectedCashback) : ''}">
@@ -652,16 +649,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // ========================
 
     function formatNumber(number) {
-        // Handle baik string ("200000") maupun angka
-        number = typeof number === 'string' ? parseFloat(number.replace(/\./g, '')) : number;
-        if (!number || isNaN(number)) return '';
         return new Intl.NumberFormat('id-ID').format(number);
     }
 
     // ========================
     // 11. Tambah Jenis Pembayaran di Modal Edit
     // ========================
-
+    // 11. Tambah Jenis Pembayaran di Modal Edit
     const addEditPaymentBtn = document.getElementById('add-edit-payment-btn');
     if (addEditPaymentBtn) {
         const editPaymentWrapper = document.getElementById('edit-payment-wrapper');
@@ -685,8 +679,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const editPaymentWrapper = document.getElementById('edit-payment-wrapper');
         const paymentItem = document.createElement('div');
         paymentItem.className = 'payment-item mb-3';
-        let jumlahVal = selectedJumlah;
-        if (typeof jumlahVal === 'string') jumlahVal = jumlahVal.replace(/\./g, '');
         paymentItem.innerHTML = `
     <div class="row g-2">
         <div class="col-md-3">
@@ -698,8 +690,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" value="${selectedJumlah ? formatNumber(selectedJumlah) : ''}" required>
         </div>
         <div class="col-md-2">
-            <input type="text" min="0" step="100" name="cashback[]" class="form-control cashback-input" placeholder="Cashback (Rp)" style="display:none;" value="${selectedCashback !== undefined && selectedCashback !== null ? String(selectedCashback) : ''}">
-
+            <input type="text" min="0" step="100" name="cashback[]" class="form-control cashback-input" placeholder="Cashback (Rp)" style="display:none;" value="${selectedCashback ? selectedCashback : ''}">
         </div>
         <div class="col-md-3">
             <select name="bulan[]" class="form-select bulan-pembayaran" style="display: none;">
