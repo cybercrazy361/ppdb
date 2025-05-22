@@ -326,10 +326,11 @@ $csrf_token = $_SESSION['csrf_token'];
         <td><?= htmlspecialchars($detail['bulan'] ?? ''); ?></td>
         <td><?= htmlspecialchars($detail['status_pembayaran'] ?? ''); ?></td>
         <td>
-            <?= ($detail['cashback'] ?? 0) > 0 
-                ? number_format($detail['cashback'], 0, ',', '.') 
-                : '-'; ?>
-        </td>
+    <?= ($detail['cashback'] ?? 0) > 0
+        ? number_format($detail['cashback'], 0, ',', '.')
+        : '-'; ?>
+</td>
+
     </tr>
 <?php endforeach; ?>
 </tbody>
