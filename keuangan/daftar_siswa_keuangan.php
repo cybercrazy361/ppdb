@@ -438,7 +438,7 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
                                                     <?= htmlspecialchars($jp['jenis_pembayaran']); ?><br>
                                                 <?php endforeach; ?>
                                             </td>
-                                            <td>
+                                            <td style="text-align: left;">
                                                 <?php foreach ($jenis_pembayaran_list as $jp) : ?>
                                                     <?php 
                                                         // Format jumlah sebagai mata uang jika bukan '-', misalnya: 2000000 menjadi Rp. 2.000.000
