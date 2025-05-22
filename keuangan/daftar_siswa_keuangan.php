@@ -323,7 +323,7 @@ $conn->close();
                                     <tr>
                                         <th>No</th>
                                         <th>No Formulir</th>
-                                        <th>Nama Siswa</th>
+                                        <th style="width: 250px; text-align: left;">Nama Siswa</th>
                                         <th>Jenis Pembayaran</th>
                                         <th>Nominal Pembayaran</th> <!-- Kolom Baru -->
                                         <th style="width: 150px; text-align: center;">Cashback</th>
