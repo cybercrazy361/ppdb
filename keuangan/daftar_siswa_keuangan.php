@@ -432,13 +432,13 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
                                         <tr>
                                             <td><?= $no++; ?></td>
                                             <td><?= htmlspecialchars($siswa['no_formulir']); ?></td>
-                                            <td style="text-align: left;"><?= htmlspecialchars($siswa['nama']); ?></td>
+                                            <td><?= htmlspecialchars($siswa['nama']); ?></td>
                                             <td>
                                                 <?php foreach ($jenis_pembayaran_list as $jp) : ?>
                                                     <?= htmlspecialchars($jp['jenis_pembayaran']); ?><br>
                                                 <?php endforeach; ?>
                                             </td>
-                                            <td style="text-align: left;">
+                                            <td>
                                                 <?php foreach ($jenis_pembayaran_list as $jp) : ?>
                                                     <?php 
                                                         // Format jumlah sebagai mata uang jika bukan '-', misalnya: 2000000 menjadi Rp. 2.000.000
