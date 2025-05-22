@@ -49,6 +49,7 @@ $tahun_pelajaran = isset($input['tahun_pelajaran']) ? sanitize($input['tahun_pel
 $jenis_pembayaran = isset($input['jenis_pembayaran']) && is_array($input['jenis_pembayaran']) ? $input['jenis_pembayaran'] : [];
 $jumlah_pembayaran = isset($input['jumlah_pembayaran']) && is_array($input['jumlah_pembayaran']) ? $input['jumlah_pembayaran'] : [];
 $bulan_pembayaran = isset($input['bulan_pembayaran']) && is_array($input['bulan_pembayaran']) ? $input['bulan_pembayaran'] : [];
+$cashback_pembayaran = isset($input['cashback']) && is_array($input['cashback']) ? $input['cashback'] : [];
 
 $errors = [];
 
@@ -56,15 +57,12 @@ $errors = [];
 if ($pembayaran_id <= 0) {
     $errors[] = 'ID Pembayaran tidak valid.';
 }
-
 if ($metode_pembayaran === '') {
     $errors[] = 'Metode Pembayaran harus dipilih.';
 }
-
 if ($tahun_pelajaran === '') {
     $errors[] = 'Tahun Pelajaran harus diisi.';
 }
-
 if (count($jenis_pembayaran) === 0) {
     $errors[] = 'Setidaknya satu Jenis Pembayaran harus dipilih.';
 }
@@ -77,11 +75,11 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
     $jumlah_str = $jumlah_pembayaran[$i];
     $jumlah = floatval(str_replace('.', '', $jumlah_str));
     $bulan_val = isset($bulan_pembayaran[$i]) ? $bulan_pembayaran[$i] : '';
+    $cashback = isset($cashback_pembayaran[$i]) && $cashback_pembayaran[$i] !== '' ? intval(str_replace('.', '', $cashback_pembayaran[$i])) : 0;
 
     if ($jenis_id === '') {
         $errors[] = "Jenis Pembayaran pada item " . ($i + 1) . " harus dipilih.";
     }
-
     if ($jumlah <= 0) {
         $errors[] = "Jumlah Pembayaran pada item " . ($i + 1) . " harus lebih dari 0.";
     }
@@ -107,13 +105,18 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
                 if ($current_month_index === false) {
                     $errors[] = "Bulan pada item " . ($i + 1) . " tidak valid.";
                 }
-                // Validasi urutan bulan akan dilakukan saat insert detail
             }
         } else {
-            // Non SPP → bulan harus kosong
             if ($bulan_val !== '') {
                 $errors[] = "Bulan hanya boleh diisi untuk pembayaran jenis SPP pada item " . ($i + 1) . ".";
             }
+            // Validasi: cashback hanya untuk Uang Pangkal (opsional)
+            if ($jenis_nama !== 'uang pangkal' && $cashback > 0) {
+                $errors[] = "Cashback hanya boleh diisi untuk Uang Pangkal pada item " . ($i + 1) . ".";
+            }
+        }
+        if ($jenis_nama === 'uang pangkal' && $cashback < 0) {
+            $errors[] = "Cashback untuk Uang Pangkal harus 0 atau lebih.";
         }
     } else {
         $errors[] = "Jenis Pembayaran pada item " . ($i + 1) . " tidak ditemukan atau tidak sesuai unit.";
@@ -192,8 +195,8 @@ try {
     }
     $stmt_hapus_detail->close();
 
-    // Insert detail pembayaran baru
-    $stmt_insert_detail = $conn->prepare("INSERT INTO pembayaran_detail (pembayaran_id, jenis_pembayaran_id, jumlah, bulan, status_pembayaran, angsuran_ke) VALUES (?, ?, ?, ?, ?, ?)");
+    // Insert detail pembayaran baru, tambahkan kolom cashback
+    $stmt_insert_detail = $conn->prepare("INSERT INTO pembayaran_detail (pembayaran_id, jenis_pembayaran_id, jumlah, bulan, status_pembayaran, angsuran_ke, cashback) VALUES (?, ?, ?, ?, ?, ?, ?)");
     if (!$stmt_insert_detail) {
         throw new Exception("Error preparing insert_detail statement: " . $conn->error);
     }
@@ -202,6 +205,7 @@ try {
         $jenis_id = $jenis_pembayaran[$i];
         $jumlah = floatval(str_replace('.', '', $jumlah_pembayaran[$i]));
         $bulan_val = isset($bulan_pembayaran[$i]) && $bulan_pembayaran[$i] !== '' ? $bulan_pembayaran[$i] : null;
+        $cashback = isset($cashback_pembayaran[$i]) && $cashback_pembayaran[$i] !== '' ? intval(str_replace('.', '', $cashback_pembayaran[$i])) : 0;
 
         // Ambil nominal_max (sudah diverifikasi sebelumnya)
         $stmt_nom = $conn->prepare("SELECT nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id = ?");
@@ -224,9 +228,7 @@ try {
             if ($current_month_index === false) {
                 throw new Exception("Bulan pada item " . ($i + 1) . " tidak valid.");
             }
-
             if ($current_month_index > 0) {
-                // Periksa semua bulan sebelumnya harus lunas
                 for ($m = 0; $m < $current_month_index; $m++) {
                     $prev_bulan = $bulan_order[$m];
                     $stmt_prev = $conn->prepare("
@@ -311,7 +313,7 @@ try {
         if ($jumlah > $sisa_harus_bayar) {
             throw new Exception(
                 "Pembayaran pada item " . ($i+1) . " melebihi sisa yang harus dibayar. " .
-                "Sisa: " . number_format($sisa_harus_bayar, 0, ',', '.') . 
+                "Sisa: " . number_format($sisa_harus_bayar, 0, ',', '.') .
                 ", Anda membayar: " . number_format($jumlah, 0, ',', '.')
             );
         }
@@ -325,8 +327,8 @@ try {
             $status_pembayaran = 'Angsuran ke-' . $angsuran_ke;
         }
 
-        // Bind parameter dan eksekusi insert_detail
-        $stmt_insert_detail->bind_param('iidssi', $pembayaran_id, $jenis_id, $jumlah, $bulan_val, $status_pembayaran, $angsuran_ke);
+        // Bind parameter dan eksekusi insert_detail (tambahkan cashback)
+        $stmt_insert_detail->bind_param('iidssii', $pembayaran_id, $jenis_id, $jumlah, $bulan_val, $status_pembayaran, $angsuran_ke, $cashback);
         if (!$stmt_insert_detail->execute()) {
             throw new Exception('Gagal menambahkan pembayaran detail: ' . $stmt_insert_detail->error);
         }

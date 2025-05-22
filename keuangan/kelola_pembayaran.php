@@ -1,65 +1,84 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) session_start();
+// kelola_pembayaran.php
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 include '../database_connection.php';
 
-// Cek login & role
+// Pastikan pengguna sudah login dan memiliki peran yang sesuai
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
     header('Location: login_keuangan.php');
     exit();
 }
+
 $unit_petugas = $_SESSION['unit'];
 
-// Tahun pelajaran
+// Fetch tahun_pelajaran list
 $tahun_pelajaran_list = [];
 $stmt_tahun = $conn->prepare("SELECT tahun FROM tahun_pelajaran ORDER BY tahun DESC");
 if ($stmt_tahun) {
     $stmt_tahun->execute();
     $result_tahun = $stmt_tahun->get_result();
-    while ($row = $result_tahun->fetch_assoc()) $tahun_pelajaran_list[] = $row['tahun'];
+    while ($row = $result_tahun->fetch_assoc()) {
+        $tahun_pelajaran_list[] = $row['tahun'];
+    }
     $stmt_tahun->close();
-} else die("Error preparing statement: " . $conn->error);
+} else {
+    die("Error preparing statement: " . $conn->error);
+}
 
-// Jenis pembayaran
+// Fetch jenis_pembayaran_list sesuai dengan unit petugas
 $jenis_pembayaran_list = [];
 $stmt_jenis = $conn->prepare("SELECT id, nama FROM jenis_pembayaran WHERE unit = ? ORDER BY nama ASC");
 if ($stmt_jenis) {
     $stmt_jenis->bind_param("s", $unit_petugas);
     $stmt_jenis->execute();
     $result_jenis = $stmt_jenis->get_result();
-    while ($row = $result_jenis->fetch_assoc())
-        $jenis_pembayaran_list[] = ['id' => $row['id'], 'nama' => $row['nama']];
+    while ($row = $result_jenis->fetch_assoc()) {
+        $jenis_pembayaran_list[] = [
+            'id' => $row['id'],
+            'nama' => $row['nama']
+        ];
+    }
     $stmt_jenis->close();
-} else die("Error preparing statement: " . $conn->error);
+} else {
+    die("Error preparing statement: " . $conn->error);
+}
 
-// Pencarian
+// Ambil parameter pencarian
 $search_no_formulir = isset($_GET['search_no_formulir']) ? trim($_GET['search_no_formulir']) : '';
 $search_nama = isset($_GET['search_nama']) ? trim($_GET['search_nama']) : '';
 
-// Pagination
+// Pagination setup
 $limit = 5; 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $start = ($page - 1) * $limit;
 
-// Query dasar
+// Initialize query parameters
 $query_params = [];
-$param_types = 's';
+$param_types = 's'; // 's' for $unit_petugas
 $query = "FROM pembayaran 
           INNER JOIN siswa ON pembayaran.no_formulir = siswa.no_formulir
           WHERE siswa.unit = ?";
 $query_params[] = $unit_petugas;
+
+// Tambahkan filter pencarian jika ada
 if ($search_no_formulir !== '') {
     $query .= " AND siswa.no_formulir LIKE ?";
     $param_types .= 's';
     $query_params[] = '%' . $search_no_formulir . '%';
 }
+
 if ($search_nama !== '') {
     $query .= " AND siswa.nama LIKE ?";
     $param_types .= 's';
     $query_params[] = '%' . $search_nama . '%';
 }
 
-// Hitung total
+// Hitung total pembayaran
 $total_query = "SELECT COUNT(*) AS total " . $query;
 $stmt_total = $conn->prepare($total_query);
 if ($stmt_total) {
@@ -69,9 +88,11 @@ if ($stmt_total) {
     $total = $total_result->fetch_assoc()['total'];
     $total_pages = ceil($total / $limit);
     $stmt_total->close();
-} else die("Error preparing statement: " . $conn->error);
+} else {
+    die("Error preparing statement: " . $conn->error);
+}
 
-// Data pembayaran
+// Ambil data pembayaran dengan limit dan offset
 $select_query = "SELECT 
                 pembayaran.id AS pembayaran_id,
                 siswa.no_formulir,
@@ -85,7 +106,8 @@ $select_query = "SELECT
               " . $query . "
               ORDER BY pembayaran.tanggal_pembayaran DESC, pembayaran.id DESC
               LIMIT ?, ?";
-$param_types_limit = $param_types . 'ii';
+
+$param_types_limit = $param_types . 'ii'; // Tambahkan 'i' untuk $start dan $limit
 $query_params_limit = array_merge($query_params, [$start, $limit]);
 
 $stmt = $conn->prepare($select_query);
@@ -110,58 +132,70 @@ if ($stmt) {
         ];
     }
     $stmt->close();
-} else die("Error preparing statement: " . $conn->error);
+} else {
+    die("Error preparing statement: " . $conn->error);
+}
 
-// Detail pembayaran (+cashback)
+// Jika ada pembayaran, ambil detailnya
 if (!empty($pembayaran_data)) {
     $pembayaran_ids = array_keys($pembayaran_data);
     $placeholders = implode(',', array_fill(0, count($pembayaran_ids), '?'));
     $stmt_detail = $conn->prepare("
-        SELECT 
-            pembayaran_detail.pembayaran_id,
-            jenis_pembayaran.nama AS jenis_pembayaran_nama,
-            pembayaran_detail.jumlah AS detail_jumlah,
-            pembayaran_detail.bulan,
-            pembayaran_detail.status_pembayaran,
-            pembayaran_detail.cashback
-        FROM pembayaran_detail
-        INNER JOIN jenis_pembayaran ON pembayaran_detail.jenis_pembayaran_id = jenis_pembayaran.id
-        WHERE pembayaran_detail.pembayaran_id IN ($placeholders)
-        ORDER BY pembayaran_detail.bulan ASC
-    ");
+    SELECT 
+        pembayaran_detail.pembayaran_id,
+        jenis_pembayaran.nama AS jenis_pembayaran_nama,
+        pembayaran_detail.jumlah AS detail_jumlah,
+        pembayaran_detail.bulan,
+        pembayaran_detail.status_pembayaran,
+        pembayaran_detail.cashback
+    FROM pembayaran_detail
+    INNER JOIN jenis_pembayaran ON pembayaran_detail.jenis_pembayaran_id = jenis_pembayaran.id
+    WHERE pembayaran_detail.pembayaran_id IN ($placeholders)
+    ORDER BY pembayaran_detail.bulan ASC
+");
+
     if ($stmt_detail) {
+        // Buat tipe parameter untuk pembayaran_id
         $types_detail = str_repeat('i', count($pembayaran_ids));
         $stmt_detail->bind_param($types_detail, ...$pembayaran_ids);
         $stmt_detail->execute();
         $result_detail = $stmt_detail->get_result();
+
         while ($row = $result_detail->fetch_assoc()) {
             $pembayaran_id = $row['pembayaran_id'];
             if (isset($pembayaran_data[$pembayaran_id])) {
                 $pembayaran_data[$pembayaran_id]['details'][] = [
-                    'jenis_pembayaran_nama' => $row['jenis_pembayaran_nama'],
-                    'jumlah' => $row['detail_jumlah'],
-                    'bulan' => $row['bulan'] ?? '',
-                    'status_pembayaran' => $row['status_pembayaran'] ?? '',
-                    'cashback' => $row['cashback'] ?? 0
-                ];
+    'jenis_pembayaran_nama' => $row['jenis_pembayaran_nama'],
+    'jumlah' => $row['detail_jumlah'],
+    'bulan' => $row['bulan'] ?? '',
+    'status_pembayaran' => $row['status_pembayaran'] ?? '',
+    'cashback' => $row['cashback'] ?? 0
+];
+
             }
         }
         $stmt_detail->close();
-    } else die("Error preparing detail statement: " . $conn->error);
+    } else {
+        die("Error preparing detail statement: " . $conn->error);
+    }
 }
 
-// Autocomplete siswa
+// Fetch list of siswa untuk autocomplete (opsional)
 $siswa_list = [];
 $stmt_siswa = $conn->prepare("SELECT no_formulir, nama FROM siswa WHERE unit = ? ORDER BY nama ASC");
 if ($stmt_siswa) {
     $stmt_siswa->bind_param('s', $unit_petugas);
     $stmt_siswa->execute();
     $result_siswa = $stmt_siswa->get_result();
-    while ($row = $result_siswa->fetch_assoc()) $siswa_list[] = $row;
+    while ($row = $result_siswa->fetch_assoc()) {
+        $siswa_list[] = $row;
+    }
     $stmt_siswa->close();
-} else die("Error preparing statement: " . $conn->error);
+} else {
+    die("Error preparing statement: " . $conn->error);
+}
 
-// CSRF
+// Generate CSRF token
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -178,7 +212,8 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="stylesheet" href="../assets/css/sidebar.css">
     <link rel="stylesheet" href="../assets/css/kelola_pembayaran_styles.css">
     <script>
-        var jenisPembayaranList = <?= json_encode($jenis_pembayaran_list); ?>;
+        var jenisPembayaranList = <?php echo json_encode($jenis_pembayaran_list); ?>;
+        console.log('jenisPembayaranList:', jenisPembayaranList);
     </script>
     <script src="../assets/js/kelola_pembayaran.js" defer></script>
 </head>
@@ -192,7 +227,7 @@ $csrf_token = $_SESSION['csrf_token'];
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link" href="#">
-                        <span class="me-2 d-none d-lg-inline text-gray-600 small"><?= htmlspecialchars($_SESSION['nama']); ?></span>
+                        <span class="me-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['nama']); ?></span>
                         <i class="fas fa-user-circle fa-lg"></i>
                     </a>
                 </li>
@@ -275,29 +310,30 @@ $csrf_token = $_SESSION['csrf_token'];
                                                 <?php if (!empty($pembayaran['details'])) : ?>
                                                     <table class="table table-sm table-bordered">
                                                         <thead>
-                                                            <tr>
-                                                                <th>Jenis Pembayaran</th>
-                                                                <th>Jumlah</th>
-                                                                <th>Bulan</th>
-                                                                <th>Status Pembayaran</th>
-                                                                <th>Cashback</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php foreach ($pembayaran['details'] as $detail) : ?>
-                                                                <tr>
-                                                                    <td><?= htmlspecialchars($detail['jenis_pembayaran_nama']); ?></td>
-                                                                    <td><?= number_format($detail['jumlah'], 0, ',', '.'); ?></td>
-                                                                    <td><?= htmlspecialchars($detail['bulan'] ?? ''); ?></td>
-                                                                    <td><?= htmlspecialchars($detail['status_pembayaran'] ?? ''); ?></td>
-                                                                    <td>
-                                                                        <?= ($detail['jenis_pembayaran_nama'] == 'Uang Pangkal' && $detail['cashback'] > 0)
-                                                                            ? 'Rp ' . number_format($detail['cashback'], 0, ',', '.')
-                                                                            : '-'; ?>
-                                                                    </td>
-                                                                </tr>
-                                                            <?php endforeach; ?>
-                                                        </tbody>
+    <tr>
+        <th>Jenis Pembayaran</th>
+        <th>Jumlah</th>
+        <th>Bulan</th>
+        <th>Status Pembayaran</th>
+        <th>Cashback</th> <!-- Tambahan -->
+    </tr>
+</thead>
+<tbody>
+<?php foreach ($pembayaran['details'] as $detail) : ?>
+    <tr>
+        <td><?= htmlspecialchars($detail['jenis_pembayaran_nama']); ?></td>
+        <td><?= number_format($detail['jumlah'], 0, ',', '.'); ?></td>
+        <td><?= htmlspecialchars($detail['bulan'] ?? ''); ?></td>
+        <td><?= htmlspecialchars($detail['status_pembayaran'] ?? ''); ?></td>
+        <td>
+            <?= ($detail['cashback'] ?? 0) > 0 
+                ? number_format($detail['cashback'], 0, ',', '.') 
+                : '-'; ?>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</tbody>
+
                                                     </table>
                                                 <?php else : ?>
                                                     <p>Tidak ada rincian pembayaran.</p>
@@ -312,12 +348,13 @@ $csrf_token = $_SESSION['csrf_token'];
                             <nav>
                                 <ul class="pagination justify-content-center">
                                     <?php
-                                    $query_params_pagination = $query_params;
+                                    $query_params_pagination = $query_params; // Salin parameter pencarian
                                     function buildPageUrl($page, $params) {
                                         $params['page'] = $page;
                                         return '?' . http_build_query($params);
                                     }
                                     ?>
+
                                     <?php if ($page > 1) : ?>
                                         <li class="page-item">
                                             <a class="page-link" href="<?= buildPageUrl($page - 1, $query_params_pagination); ?>" aria-label="Previous">
@@ -325,18 +362,24 @@ $csrf_token = $_SESSION['csrf_token'];
                                             </a>
                                         </li>
                                     <?php endif; ?>
+
                                     <?php 
-                                    $max_links = 5;
+                                    // Tampilkan pagination dengan rentang yang lebih baik
+                                    $max_links = 5; // Maksimal link pagination yang ditampilkan
                                     $start_link = max(1, $page - floor($max_links / 2));
                                     $end_link = min($total_pages, $start_link + $max_links - 1);
+                                    
+                                    // Adjust start_link jika end_link mendekati total_pages
                                     if (($end_link - $start_link) < ($max_links - 1)) {
                                         $start_link = max(1, $end_link - $max_links + 1);
                                     }
+
                                     for ($i = $start_link; $i <= $end_link; $i++) : ?>
                                         <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
                                             <a class="page-link" href="<?= buildPageUrl($i, $query_params_pagination); ?>"><?= $i; ?></a>
                                         </li>
                                     <?php endfor; ?>
+
                                     <?php if ($page < $total_pages) : ?>
                                         <li class="page-item">
                                             <a class="page-link" href="<?= buildPageUrl($page + 1, $query_params_pagination); ?>" aria-label="Next">
@@ -352,10 +395,12 @@ $csrf_token = $_SESSION['csrf_token'];
             </div>
         </div>
     </div>
+
     <footer class="footer bg-white text-center py-3">
-        &copy; <?= date('Y'); ?> Sistem Keuangan PPDB
+        &copy; <?php echo date('Y'); ?> Sistem Keuangan PPDB
     </footer>
-    <!-- Modal Tambah & Edit (form sama, JS dinamis tampilkan field cashback jika Uang Pangkal) -->
+
+    <!-- Modal Tambah Pembayaran -->
     <div class="modal fade" id="modalTambahPembayaran" tabindex="-1" aria-labelledby="modalTambahPembayaranLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -411,7 +456,8 @@ $csrf_token = $_SESSION['csrf_token'];
             </div>
         </div>
     </div>
-    <!-- Modal Edit -->
+
+    <!-- Modal Edit Pembayaran -->
     <div class="modal fade" id="modalEditPembayaran" tabindex="-1" aria-labelledby="modalEditPembayaranLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -462,7 +508,8 @@ $csrf_token = $_SESSION['csrf_token'];
             </div>
         </div>
     </div>
-    <!-- Modal Hapus -->
+
+    <!-- Modal Konfirmasi Hapus -->
     <div class="modal fade" id="modalHapusPembayaran" tabindex="-1" aria-labelledby="modalHapusPembayaranLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -488,98 +535,10 @@ $csrf_token = $_SESSION['csrf_token'];
             </div>
         </div>
     </div>
+
+    <!-- Library JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../assets/js/sidebar.js"></script>
-    <script>
-    // --- Tambah field cashback hanya untuk Uang Pangkal pada JS frontend ---
-    function createPaymentRow(isEdit = false, selected = {}) {
-        const paymentRow = document.createElement('div');
-        paymentRow.className = 'row g-2 align-items-end payment-row mb-2';
-
-        // Jenis pembayaran select
-        const jenisSelect = document.createElement('select');
-        jenisSelect.className = 'form-select col';
-        jenisSelect.name = (isEdit ? 'edit_' : '') + 'jenis_pembayaran[]';
-        jenisPembayaranList.forEach(jp => {
-            const option = document.createElement('option');
-            option.value = jp.id;
-            option.text = jp.nama;
-            if (selected.jenis_pembayaran_id && jp.id == selected.jenis_pembayaran_id) option.selected = true;
-            option.dataset.nama = jp.nama;
-            jenisSelect.appendChild(option);
-        });
-        paymentRow.appendChild(jenisSelect);
-
-        // Jumlah pembayaran input
-        const jumlahInput = document.createElement('input');
-        jumlahInput.type = 'number';
-        jumlahInput.className = 'form-control col ms-2';
-        jumlahInput.name = (isEdit ? 'edit_' : '') + 'jumlah_pembayaran[]';
-        jumlahInput.placeholder = 'Jumlah';
-        if (selected.jumlah) jumlahInput.value = selected.jumlah;
-        paymentRow.appendChild(jumlahInput);
-
-        // Bulan (jika spp)
-        const bulanInput = document.createElement('input');
-        bulanInput.type = 'text';
-        bulanInput.className = 'form-control col ms-2';
-        bulanInput.name = (isEdit ? 'edit_' : '') + 'bulan[]';
-        bulanInput.placeholder = 'Bulan';
-        if (selected.bulan) bulanInput.value = selected.bulan;
-        paymentRow.appendChild(bulanInput);
-
-        // Status pembayaran
-        const statusInput = document.createElement('input');
-        statusInput.type = 'text';
-        statusInput.className = 'form-control col ms-2';
-        statusInput.name = (isEdit ? 'edit_' : '') + 'status_pembayaran[]';
-        statusInput.placeholder = 'Status';
-        if (selected.status_pembayaran) statusInput.value = selected.status_pembayaran;
-        paymentRow.appendChild(statusInput);
-
-        // Cashback (khusus Uang Pangkal)
-        const cashbackInput = document.createElement('input');
-        cashbackInput.type = 'number';
-        cashbackInput.className = 'form-control col ms-2 cashback-input';
-        cashbackInput.name = (isEdit ? 'edit_' : '') + 'cashback[]';
-        cashbackInput.placeholder = 'Cashback (khusus Uang Pangkal)';
-        cashbackInput.style.display = 'none';
-        if (selected.cashback) cashbackInput.value = selected.cashback;
-
-        paymentRow.appendChild(cashbackInput);
-
-        // Hapus row
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'btn btn-danger btn-sm ms-2';
-        removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-        removeBtn.onclick = function() { paymentRow.remove(); };
-        paymentRow.appendChild(removeBtn);
-
-        // --- Show/hide cashback field sesuai pilihan jenis pembayaran ---
-        function updateCashbackVisibility() {
-            const selectedOption = jenisSelect.options[jenisSelect.selectedIndex];
-            cashbackInput.style.display = (selectedOption.text == "Uang Pangkal") ? '' : 'none';
-        }
-        jenisSelect.addEventListener('change', updateCashbackVisibility);
-        updateCashbackVisibility();
-
-        return paymentRow;
-    }
-    // Tambah row baru pada klik
-    document.addEventListener('DOMContentLoaded', function() {
-        function addPaymentRow(wrapperSelector, isEdit = false) {
-            const wrapper = document.querySelector(wrapperSelector);
-            if (wrapper) wrapper.appendChild(createPaymentRow(isEdit));
-        }
-        document.getElementById('add-payment-btn')?.addEventListener('click', function() {
-            addPaymentRow('#payment-wrapper');
-        });
-        document.getElementById('add-edit-payment-btn')?.addEventListener('click', function() {
-            addPaymentRow('#edit-payment-wrapper', true);
-        });
-    });
-    </script>
 </body>
 </html>
