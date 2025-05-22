@@ -720,7 +720,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const newCashbackInput = paymentItem.querySelector('.cashback-input');
         formatCurrencyInput(newCashbackInput);
-
+        if (selectedCashback) {
+            // ambil hanya digit
+            const raw = selectedCashback.toString().replace(/\D/g, '');
+            // format dengan titik ribuan
+            newCashbackInput.value = new Intl.NumberFormat('id-ID').format(raw);
+        }
 
         const jenisPembayaranSelect = paymentItem.querySelector('.jenis-pembayaran');
         const cashbackInput = paymentItem.querySelector('.cashback-input');
