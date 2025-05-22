@@ -326,7 +326,7 @@ $conn->close();
                                         <th>Nama Siswa</th>
                                         <th>Jenis Pembayaran</th>
                                         <th>Nominal Pembayaran</th> <!-- Kolom Baru -->
-                                        <th>Cashback</th>
+                                        <th style="width: 150px; text-align: center;">Cashback</th>
                                         <th>Tanggal Pembayaran</th>
                                         <th>Keterangan</th>
                                         <th>Metode Pembayaran</th>
