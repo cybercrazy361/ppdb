@@ -359,7 +359,8 @@ $conn->close();
                                                         'metode_pembayaran' => $metode_pembayaran,
                                                         'status_pembayaran' => $status,
                                                         'tanggal_pembayaran' => $tanggal_pembayaran,
-                                                        'keterangan' => $keterangan
+                                                        'keterangan'         => $keterangan,
+                                                        'cashback'           => $detail['cashback']
                                                     ];
                                                 } else {
                                                     $jenis_pembayaran_list[] = [
@@ -369,7 +370,8 @@ $conn->close();
                                                         'metode_pembayaran' => $metode_pembayaran,
                                                         'status_pembayaran' => ucfirst($status_pembayaran),
                                                         'tanggal_pembayaran' => $tanggal_pembayaran,
-                                                        'keterangan' => $keterangan
+                                                        'keterangan'         => $keterangan,
+                                                        'cashback'           => $detail['cashback']
                                                     ];
                                                 }
                                             }
@@ -410,18 +412,15 @@ $conn->close();
                                                     <?= htmlspecialchars($jumlah_formatted); ?><br>
                                                 <?php endforeach; ?>
                                             </td>
-                                            <td>
+<td>
   <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-    <?php
-      if (strtolower($jp['jenis_pembayaran']) === 'uang pangkal') {
-        echo 'Rp. ' . number_format($jp['cashback'], 0, ',', '.');
-      } else {
-        echo '-';
-      }
-    ?>
+    <?= strtolower($jp['jenis_pembayaran'])==='uang pangkal'
+         ? 'Rp. '.number_format($jp['cashback'],0,',','.')
+         : '-'; ?>
     <br>
   <?php endforeach; ?>
 </td>
+
 
                                             <td>
                                                 <?php foreach ($jenis_pembayaran_list as $jp) : ?>
