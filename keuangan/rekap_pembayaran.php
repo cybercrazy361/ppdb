@@ -10,17 +10,66 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 
 $unit = $_SESSION['unit'];
 
-// --- 1. Ambil semua jenis pembayaran (non-SPP) ---
+// --- Ambil daftar tahun pelajaran ---
+$tahunList = [];
+$result = $conn->query("SELECT tahun FROM tahun_pelajaran ORDER BY tahun DESC");
+while($row = $result->fetch_assoc()) {
+    $tahunList[] = $row['tahun'];
+}
+
+// --- Pilih tahun pelajaran (default tahun berjalan) ---
+if (isset($_GET['tahun_pelajaran']) && in_array($_GET['tahun_pelajaran'], $tahunList)) {
+    $tahun_pelajaran = $_GET['tahun_pelajaran'];
+} else {
+    // Pilih tahun aktif (otomatis sesuai tanggal hari ini)
+    $tahun_now = date('Y');
+    $bulan_now = date('n');
+    if ($bulan_now >= 7) {
+        $tahun_pelajaran = $tahun_now . '/' . ($tahun_now+1);
+    } else {
+        $tahun_pelajaran = ($tahun_now-1) . '/' . $tahun_now;
+    }
+}
+list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
+
+// --- Daftar bulan SPP urut ---
+$bulan_spp = [
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'
+];
+
+// --- Hitung index bulan SPP terakhir yang harus tampil (dinamis sesuai bulan & tahun berjalan) ---
+$bulan_now = date('n');
+$tahun_now = date('Y');
+$idx_terakhir = 11; // default semua bulan
+
+if ($tahun_now == $awal_tahun) {
+    // Tahun ajaran baru mulai Juli-Desember tahun awal
+    if ($bulan_now >= 7 && $bulan_now <= 12) {
+        $idx_terakhir = $bulan_now - 7;
+    } else {
+        $idx_terakhir = 0; // kalau bulan < 7, berarti belum ada SPP tahun ajaran baru
+    }
+} elseif ($tahun_now == $akhir_tahun) {
+    // Januari-Juni tahun kedua
+    if ($bulan_now >= 1 && $bulan_now <= 6) {
+        $idx_terakhir = $bulan_now + 5;
+    } else {
+        $idx_terakhir = 11;
+    }
+} else {
+    $idx_terakhir = 11;
+}
+$bulan_spp_dinamis = array_slice($bulan_spp, 0, $idx_terakhir+1);
+
+// --- 1. Ambil semua jenis pembayaran (non-SPP) untuk unit ini ---
 $jenis_pembayaran = [];
 $result = $conn->query("SELECT id, nama FROM jenis_pembayaran WHERE unit='$unit' AND nama != 'SPP' ORDER BY id");
 while ($row = $result->fetch_assoc()) {
     $jenis_pembayaran[] = $row;
 }
 
-// --- 2. Daftar Bulan SPP ---
-$bulan_spp = ['Juli','Agustus','September','Oktober','November','Desember','Januari','Februari','Maret','April','Mei','Juni'];
-
-// --- 3. Ambil semua siswa di unit ini ---
+// --- 2. Ambil semua siswa di unit ini ---
 $siswa = [];
 $result = $conn->query("SELECT id, no_formulir, nama FROM siswa WHERE unit='$unit' ORDER BY nama");
 while ($row = $result->fetch_assoc()) {
@@ -31,18 +80,18 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
-// --- 4. Inisialisasi pembayaran tiap kolom ke 0 ---
+// --- 3. Inisialisasi pembayaran tiap kolom ke 0 ---
 foreach ($siswa as &$sis) {
     foreach ($jenis_pembayaran as $jp) {
         $sis['pembayaran'][$jp['nama']] = 0;
     }
-    foreach ($bulan_spp as $bln) {
+    foreach ($bulan_spp_dinamis as $bln) {
         $sis['pembayaran']["SPP $bln"] = 0;
     }
 }
 unset($sis);
 
-// --- 5. Query rekap semua pembayaran (group by siswa, jenis, bulan) ---
+// --- 4. Query rekap pembayaran sesuai tahun pelajaran (group by siswa, jenis, bulan) ---
 $sql = "
     SELECT s.id AS siswa_id, jp.nama AS jenis, pd.bulan, SUM(pd.jumlah) AS total
     FROM siswa s
@@ -50,6 +99,7 @@ $sql = "
     JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
     JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
     WHERE s.unit='$unit'
+      AND p.tahun_pelajaran = '$tahun_pelajaran'
     GROUP BY s.id, jp.nama, pd.bulan
 ";
 $result = $conn->query($sql);
@@ -59,7 +109,7 @@ if ($result) {
         $jenis = $row['jenis'];
         $bulan = $row['bulan'];
         $total = $row['total'];
-        if ($jenis == 'SPP' && $bulan) {
+        if ($jenis == 'SPP' && $bulan && in_array($bulan, $bulan_spp_dinamis)) {
             $siswa[$sid]['pembayaran']["SPP $bulan"] += $total;
         } elseif ($jenis != 'SPP') {
             $siswa[$sid]['pembayaran'][$jenis] += $total;
@@ -67,10 +117,10 @@ if ($result) {
     }
 }
 
-// --- 6. Susun daftar kolom dan total per kolom ---
+// --- 5. Susun daftar kolom dan total per kolom ---
 $kolom_list = [];
 foreach ($jenis_pembayaran as $jp) $kolom_list[] = $jp['nama'];
-foreach ($bulan_spp as $bln) $kolom_list[] = "SPP $bln";
+foreach ($bulan_spp_dinamis as $bln) $kolom_list[] = "SPP $bln";
 
 $total_kolom = [];
 foreach ($kolom_list as $k) $total_kolom[$k] = 0;
@@ -106,7 +156,6 @@ $conn->close();
             .no-print { display: none; }
             .table-responsive { overflow: visible !important; }
         }
-        /* Table head stick (optional, biar tabel tetap rapi pas scroll banyak kolom) */
         .table thead th { vertical-align: middle; text-align: center; }
         .table tfoot td { vertical-align: middle; text-align: center; }
         .table tbody td { vertical-align: middle; text-align: center; }
@@ -139,6 +188,15 @@ $conn->close();
                 <i class="fas fa-print"></i> Cetak
             </button>
         </div>
+        <!-- Dropdown Tahun Pelajaran -->
+        <form method="get" class="mb-3">
+            <label for="tahun_pelajaran"><b>Tahun Pelajaran:</b></label>
+            <select name="tahun_pelajaran" id="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+                <?php foreach ($tahunList as $tp): ?>
+                    <option value="<?= htmlspecialchars($tp) ?>" <?= ($tp == $tahun_pelajaran ? "selected" : "") ?>><?= htmlspecialchars($tp) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </form>
         <div class="card shadow mb-4 printable-area">
             <div class="card-body">
                 <div class="table-responsive">
