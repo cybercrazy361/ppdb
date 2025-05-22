@@ -35,7 +35,7 @@ if ($result_pembayaran->num_rows === 0) {
 $pembayaran = $result_pembayaran->fetch_assoc();
 $stmt_pembayaran->close();
 
-$stmt_detail = $conn->prepare("SELECT jenis_pembayaran_id, jumlah, bulan, status_pembayaran FROM pembayaran_detail WHERE pembayaran_id = ?");
+$stmt_detail = $conn->prepare("SELECT jenis_pembayaran_id, jumlah, bulan, status_pembayaran, cashback FROM pembayaran_detail WHERE pembayaran_id = ?");
 $stmt_detail->bind_param('i', $pembayaran_id);
 $stmt_detail->execute();
 $result_detail = $stmt_detail->get_result();
@@ -43,11 +43,13 @@ $result_detail = $stmt_detail->get_result();
 $details = [];
 while ($row = $result_detail->fetch_assoc()) {
     $details[] = [
-        'jenis_pembayaran_id' => $row['jenis_pembayaran_id'],
-        'jumlah' => $row['jumlah'],
-        'bulan' => $row['bulan'],
-        'status_pembayaran' => $row['status_pembayaran']
-    ];
+    'jenis_pembayaran_id' => $row['jenis_pembayaran_id'],
+    'jumlah' => $row['jumlah'],
+    'bulan' => $row['bulan'],
+    'status_pembayaran' => $row['status_pembayaran'],
+    'cashback' => $row['cashback'] // ini WAJIB ADA!
+];
+
 }
 $stmt_detail->close();
 
