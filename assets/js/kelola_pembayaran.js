@@ -178,19 +178,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const jenisPembayaranSelect = paymentItem.querySelector('.jenis-pembayaran');
             const cashbackInput = paymentItem.querySelector('.cashback-input');
+            const cashbackLabel = paymentItem.querySelector('.cashback-label');
             const bulanPembayaranSelect = paymentItem.querySelector('.bulan-pembayaran');
 
             function toggleCashbackInput() {
                 const selectedOption = jenisPembayaranSelect.options[jenisPembayaranSelect.selectedIndex];
                 const jenisNama = selectedOption ? selectedOption.text.toLowerCase() : '';
                 if (jenisNama.includes("uang pangkal")) {
+                    cashbackLabel.style.display = 'block';
                     cashbackInput.style.display = 'block';
                     cashbackInput.required = true;
                 } else {
+                    cashbackLabel.style.display = 'none';
                     cashbackInput.style.display = 'none';
                     cashbackInput.value = '';
                     cashbackInput.required = false;
                 }
+
             }
 
             function toggleBulanInput() {
@@ -745,19 +749,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const jenisPembayaranSelect = paymentItem.querySelector('.jenis-pembayaran');
         const cashbackInput = paymentItem.querySelector('.cashback-input');
+        const cashbackLabel = paymentItem.querySelector('.cashback-label');
         const bulanPembayaranSelect = paymentItem.querySelector('.bulan-pembayaran');
 
         function toggleCashbackInput() {
             const selectedOption = jenisPembayaranSelect.options[jenisPembayaranSelect.selectedIndex];
             const jenisNama = selectedOption ? selectedOption.text.toLowerCase() : '';
             if (jenisNama.includes("uang pangkal")) {
+                cashbackLabel.style.display = 'block';
                 cashbackInput.style.display = 'block';
                 cashbackInput.required = true;
             } else {
+                cashbackLabel.style.display = 'none';
                 cashbackInput.style.display = 'none';
                 cashbackInput.value = '';
                 cashbackInput.required = false;
             }
+
         }
 
         function toggleBulanInput() {
