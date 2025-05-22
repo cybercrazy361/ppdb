@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" required>
+                    <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" value="${selectedJumlah ? formatNumber(selectedJumlah) : ''}" required>
                 </div>
                 <div class="col-md-2">
                     <input type="text" min="0" step="100" name="cashback[]" class="form-control cashback-input" placeholder="Cashback (Rp)" style="display:none;" value="${selectedCashback !== undefined && selectedCashback !== null ? String(selectedCashback) : ''}">
@@ -649,13 +649,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // ========================
 
     function formatNumber(number) {
+        // Handle baik string ("200000") maupun angka
+        number = typeof number === 'string' ? parseFloat(number.replace(/\./g, '')) : number;
+        if (!number || isNaN(number)) return '';
         return new Intl.NumberFormat('id-ID').format(number);
     }
 
     // ========================
     // 11. Tambah Jenis Pembayaran di Modal Edit
     // ========================
-    // 11. Tambah Jenis Pembayaran di Modal Edit
+
     const addEditPaymentBtn = document.getElementById('add-edit-payment-btn');
     if (addEditPaymentBtn) {
         const editPaymentWrapper = document.getElementById('edit-payment-wrapper');
