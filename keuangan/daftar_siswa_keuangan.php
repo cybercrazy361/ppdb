@@ -226,19 +226,23 @@ $conn->close();
     <style>
   /* CSS untuk tampilan cetak */
   @media print {
-  .print-header {
-    /* pastikan selalu tampil */
-    display: block;
-    margin-bottom: 1rem;
-  }
-  .printable-area * {
-    visibility: visible;
-  }
-  body * { visibility: hidden; }
-  .printable-area, .printable-area * { visibility: visible; }
-  .printable-area { position: absolute; top: 0; left: 0; width: 100%; background: #fff; }
-}
-
+      body * {
+          visibility: hidden;
+      }
+      .printable-area,
+      .printable-area * {
+          visibility: visible;
+          /* Hapus semua shadow saat print */
+          box-shadow: none !important;
+      }
+      .printable-area {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          /* Pastikan background putih */
+          background: #fff !important;
+      }
       /* Hilangkan scrollbar pada tabel saat dicetak */
       .table-responsive {
           overflow: visible !important;
