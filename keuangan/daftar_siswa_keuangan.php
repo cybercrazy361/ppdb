@@ -226,23 +226,19 @@ $conn->close();
     <style>
   /* CSS untuk tampilan cetak */
   @media print {
-      body * {
-          visibility: hidden;
-      }
-      .printable-area,
-      .printable-area * {
-          visibility: visible;
-          /* Hapus semua shadow saat print */
-          box-shadow: none !important;
-      }
-      .printable-area {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          /* Pastikan background putih */
-          background: #fff !important;
-      }
+  .print-header {
+    /* pastikan selalu tampil */
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .printable-area * {
+    visibility: visible;
+  }
+  body * { visibility: hidden; }
+  .printable-area, .printable-area * { visibility: visible; }
+  .printable-area { position: absolute; top: 0; left: 0; width: 100%; background: #fff; }
+}
+
       /* Hilangkan scrollbar pada tabel saat dicetak */
       .table-responsive {
           overflow: visible !important;
@@ -329,11 +325,11 @@ $conn->close();
                     <?php if (empty($siswa_data)) : ?>
                         <p class="text-center">Tidak ada data siswa ditemukan.</p>
                     <?php else : ?>
-                         <!-- HEADER UNTUK CETAK -->
-            <div class="text-center mb-4">
-                <h2>Daftar Pembayaran Siswa</h2>
-                <h4>Tahun Pelajaran <?= $tahun_cetak; ?></h4>
-            </div>
+                        <div class="printable-area">
+    <div class="text-center mb-4 print-header">
+      <h2>Daftar Pembayaran Siswa</h2>
+      <h4>Tahun Pelajaran <?= $tahun_cetak; ?></h4>
+    </div>
                         <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                             <table class="table table-bordered table-hover" id="siswaTable">
                                 <thead>
