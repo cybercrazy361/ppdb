@@ -411,17 +411,18 @@ $conn->close();
                                                 <?php endforeach; ?>
                                             </td>
                                             <td>
-                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-                                                    <?php
-                                                    if (strtolower($jp['jenis_pembayaran']) === 'uang pangkal') {
-                                                        echo 'Rp. ' . number_format($jp['cashback'] ?? 0, 0, ',', '.');
-                                                    } else {
-                                                        echo '-';
-                                                    }
-                                                    ?>
-                                                    <br>
-                                                <?php endforeach; ?>
-                                                </td>
+  <?php foreach ($jenis_pembayaran_list as $jp) : ?>
+    <?php
+      if (strtolower($jp['jenis_pembayaran']) === 'uang pangkal') {
+        echo 'Rp. ' . number_format($jp['cashback'], 0, ',', '.');
+      } else {
+        echo '-';
+      }
+    ?>
+    <br>
+  <?php endforeach; ?>
+</td>
+
                                             <td>
                                                 <?php foreach ($jenis_pembayaran_list as $jp) : ?>
                                                     <?php 
