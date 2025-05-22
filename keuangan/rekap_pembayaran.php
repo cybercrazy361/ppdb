@@ -199,6 +199,11 @@ $conn->close();
         </form>
         <div class="card shadow mb-4 printable-area">
             <div class="card-body">
+                <!-- Tahun pelajaran tampil (ikut filter/dropdown tahun pelajaran) -->
+            <div class="mb-3 text-center fw-bold printable-area">
+                Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?>
+            </div>
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" id="rekapTable">
                         <thead class="table-primary">
@@ -244,6 +249,8 @@ $conn->close();
     &copy; <?= date('Y'); ?> Sistem Keuangan PPDB
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+
 <script>
     function printTable() {
         window.print();
