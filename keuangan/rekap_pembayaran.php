@@ -199,24 +199,25 @@ $conn->close();
         </form>
         <div class="card shadow mb-4 printable-area">
             <div class="card-body">
-                <!-- Tahun pelajaran tampil (ikut filter/dropdown tahun pelajaran) -->
-            <div class="mb-3 text-center fw-bold printable-area">
-                Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?>
-            </div>
+               <div class="table-responsive">
+    <table class="table table-bordered table-hover" id="rekapTable">
+        <thead class="table-primary">
+            <tr>
+                <th colspan="<?= 3 + count($kolom_list) + 1 ?>" class="text-center fs-5" style="font-weight:bold;">
+                    Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?>
+                </th>
+            </tr>
+            <tr>
+                <th>No</th>
+                <th>No Formulir</th>
+                <th>Nama Siswa</th>
+                <?php foreach ($kolom_list as $k): ?>
+                    <th><?= htmlspecialchars($k) ?></th>
+                <?php endforeach; ?>
+                <th>Total Bayar</th>
+            </tr>
+        </thead>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="rekapTable">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>No</th>
-                                <th>No Formulir</th>
-                                <th>Nama Siswa</th>
-                                <?php foreach ($kolom_list as $k): ?>
-                                    <th><?= htmlspecialchars($k) ?></th>
-                                <?php endforeach; ?>
-                                <th>Total Bayar</th>
-                            </tr>
-                        </thead>
                         <tbody>
                         <?php $no=1; foreach ($siswa as $sis): ?>
                             <tr>
