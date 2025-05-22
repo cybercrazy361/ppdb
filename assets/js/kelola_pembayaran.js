@@ -126,6 +126,8 @@ document.addEventListener('DOMContentLoaded', function () {
         function addPayment(selectedId = '', selectedBulan = '', selectedJumlah = '', selectedCashback = '') {
             const paymentItem = document.createElement('div');
             paymentItem.className = 'payment-item mb-3';
+            let jumlahVal = selectedJumlah;
+            if (typeof jumlahVal === 'string') jumlahVal = jumlahVal.replace(/\./g, '');
             paymentItem.innerHTML = `
             <div class="row g-2">
                 <div class="col-md-3">
@@ -683,6 +685,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const editPaymentWrapper = document.getElementById('edit-payment-wrapper');
         const paymentItem = document.createElement('div');
         paymentItem.className = 'payment-item mb-3';
+        let jumlahVal = selectedJumlah;
+        if (typeof jumlahVal === 'string') jumlahVal = jumlahVal.replace(/\./g, '');
         paymentItem.innerHTML = `
     <div class="row g-2">
         <div class="col-md-3">
