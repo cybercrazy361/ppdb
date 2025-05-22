@@ -322,6 +322,7 @@ $conn->close();
                                         <th>Nama Siswa</th>
                                         <th>Jenis Pembayaran</th>
                                         <th>Nominal Pembayaran</th> <!-- Kolom Baru -->
+                                        <th>Cashback</th>
                                         <th>Tanggal Pembayaran</th>
                                         <th>Keterangan</th>
                                         <th>Metode Pembayaran</th>
@@ -405,6 +406,18 @@ $conn->close();
                                                     <?= htmlspecialchars($jumlah_formatted); ?><br>
                                                 <?php endforeach; ?>
                                             </td>
+                                            <td>
+                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
+                                                    <?php
+                                                    if (strtolower($jp['jenis_pembayaran']) === 'uang pangkal') {
+                                                        echo 'Rp. ' . number_format($jp['cashback'] ?? 0, 0, ',', '.');
+                                                    } else {
+                                                        echo '-';
+                                                    }
+                                                    ?>
+                                                    <br>
+                                                <?php endforeach; ?>
+                                                </td>
                                             <td>
                                                 <?php foreach ($jenis_pembayaran_list as $jp) : ?>
                                                     <?php 
