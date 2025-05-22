@@ -317,7 +317,7 @@ $conn->close();
                     <?php if (empty($siswa_data)) : ?>
                         <p class="text-center">Tidak ada data siswa ditemukan.</p>
                     <?php else : ?>
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                             <table class="table table-bordered table-hover" id="siswaTable">
                                 <thead>
                                     <tr>
