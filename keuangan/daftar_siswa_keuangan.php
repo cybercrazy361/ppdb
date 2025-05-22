@@ -12,6 +12,18 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 // Include koneksi database
 include '../database_connection.php';
 
+// Ambil tahun pelajaran dari parameter GET, atau fallback ke tahun pertama di data
+if (isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran']!=='') {
+    $tahun_cetak = htmlspecialchars($_GET['tahun_pelajaran']);
+} elseif (!empty($siswa_data)) {
+    // ambil tahun_pelajaran dari pembayaran pertama
+    $firstSiswa   = reset($siswa_data);
+    $firstPemb    = reset($firstSiswa['pembayaran']);
+    $tahun_cetak  = $firstPemb['tahun_pelajaran'];
+} else {
+    $tahun_cetak = '-';
+}
+
 // Ambil unit petugas dari sesi
 $petugas_unit = $_SESSION['unit'];
 
@@ -317,6 +329,11 @@ $conn->close();
                     <?php if (empty($siswa_data)) : ?>
                         <p class="text-center">Tidak ada data siswa ditemukan.</p>
                     <?php else : ?>
+                         <!-- HEADER UNTUK CETAK -->
+            <div class="text-center mb-4">
+                <h2>Daftar Pembayaran Siswa</h2>
+                <h4>Tahun Pelajaran <?= $tahun_cetak; ?></h4>
+            </div>
                         <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                             <table class="table table-bordered table-hover" id="siswaTable">
                                 <thead>
