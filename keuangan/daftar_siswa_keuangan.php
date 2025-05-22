@@ -362,7 +362,7 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
                                     <tr>
                                         <th>No</th>
                                         <th>No Formulir</th>
-                                        <th style="width: 250px; text-align: left;">Nama Siswa</th>
+                                        <th style="width: 250px; text-align: center;">Nama Siswa</th>
                                         <th>Jenis Pembayaran</th>
                                         <th>Nominal Pembayaran</th> <!-- Kolom Baru -->
                                         <th style="width: 150px; text-align: center;">Cashback</th>
@@ -432,7 +432,7 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
                                         <tr>
                                             <td><?= $no++; ?></td>
                                             <td><?= htmlspecialchars($siswa['no_formulir']); ?></td>
-                                            <td><?= htmlspecialchars($siswa['nama']); ?></td>
+                                            <td style="text-align: left;"><?= htmlspecialchars($siswa['nama']); ?></td>
                                             <td>
                                                 <?php foreach ($jenis_pembayaran_list as $jp) : ?>
                                                     <?= htmlspecialchars($jp['jenis_pembayaran']); ?><br>
