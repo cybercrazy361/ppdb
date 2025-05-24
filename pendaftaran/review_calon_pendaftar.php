@@ -222,6 +222,16 @@ $(function(){
     }
   });
 
+  // Setelah inisialisasi DataTable:
+table.on('order.dt search.dt draw.dt', function() {
+  // Kolom "No" adalah kolom 0 (paling kiri)
+  table.column(0, { search: 'applied', order: 'applied', page: 'current' })
+    .nodes()
+    .each(function(cell, i) {
+      cell.innerHTML = i + 1;
+    });
+});
+
   // ============ Filter badge status ============
   $('.filter-status-badge').on('click', function(){
     const status = $(this).data('status');
