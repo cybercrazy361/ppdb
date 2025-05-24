@@ -134,6 +134,7 @@ foreach ($calon as $row) {
               <td><?= htmlspecialchars($row['pilihan']) ?></td>
               <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
               <td class="text-center">
+                <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
                 <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
                   <?php foreach ($status_list as $st => $desc): ?>
                   <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $st ?></option>
