@@ -143,6 +143,11 @@ function display_errors() {
             <div class="form-desc">Silakan isi data calon siswa dengan lengkap dan benar.</div>
             <?php display_errors(); ?>
         </div>
+        <div class="mt-4 text-center">
+            <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+            </a>
+        </div>
         <form action="proses_pendaftaran.php" method="POST" novalidate>
             <!-- CSRF Token & Unit -->
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
@@ -224,11 +229,7 @@ function display_errors() {
                 </div>
             </div>
         </form>
-        <div class="mt-4 text-center">
-            <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
-            </a>
-        </div>
+        
     </div>
 </div>
 <!-- Bootstrap JS -->
