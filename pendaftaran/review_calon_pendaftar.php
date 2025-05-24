@@ -211,6 +211,22 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
     </div>
   </div>
 
+  <!-- Modal Notifikasi -->
+<div class="modal fade" id="notifModal" tabindex="-1" aria-labelledby="notifModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="notifModalLabel">Informasi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="notifModalBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <!-- JS: jQuery, Bootstrap, DataTables -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -301,30 +317,34 @@ $(function(){
     }, 'json');
   });
 
-  // Kirim ke siswa (AJAX)
-  $('#calonTable').on('click', '.btn-kirim', function(){
-    const btn = $(this);
-    btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Proses...');
-    $.post('kirim_calon_ke_siswa.php', {
-      id: btn.data('id'),
-      nama: btn.data('nama'),
-      jenis_kelamin: btn.data('jenis_kelamin'),
-      asal_sekolah: btn.data('asal_sekolah'),
-      no_hp: btn.data('no_hp'),
-      alamat: btn.data('alamat'),
-      pendidikan_ortu: btn.data('pendidikan_ortu'),
-      no_hp_ortu: btn.data('no_hp_ortu'),
-      tanggal_daftar: btn.data('tanggal_daftar'),
-      unit: btn.data('unit')
-    }, function(res){
-      if(res.success){
-        btn.parent().html('<span class="badge bg-success">Terkirim</span>');
-      } else {
-        btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Kirim');
-        alert(res.message || 'Gagal mengirim.');
-      }
-    }, 'json');
-  });
+// Kirim ke siswa (AJAX)
+$('#calonTable').on('click', '.btn-kirim', function(){
+  const btn = $(this);
+  btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Proses...');
+  $.post('kirim_calon_ke_siswa.php', {
+    id: btn.data('id'),
+    nama: btn.data('nama'),
+    jenis_kelamin: btn.data('jenis_kelamin'),
+    asal_sekolah: btn.data('asal_sekolah'),
+    no_hp: btn.data('no_hp'),
+    alamat: btn.data('alamat'),
+    pendidikan_ortu: btn.data('pendidikan_ortu'),
+    no_hp_ortu: btn.data('no_hp_ortu'),
+    tanggal_daftar: btn.data('tanggal_daftar'),
+    unit: btn.data('unit')
+  }, function(res){
+    if(res.success){
+      btn.parent().html('<span class="badge bg-success">Terkirim</span>');
+      $('#notifModalLabel').text('Berhasil');
+      $('#notifModalBody').html('Data calon pendaftar berhasil dikirim ke tabel siswa.<br><b>No Formulir:</b> ' + res.no_formulir);
+    } else {
+      btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Kirim');
+      $('#notifModalLabel').text('Gagal Mengirim');
+      $('#notifModalBody').html(res.message || 'Gagal mengirim data. Silakan coba lagi.');
+    }
+    $('#notifModal').modal('show');
+  }, 'json');
+});
 });
 </script>
 </body>
