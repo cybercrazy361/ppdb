@@ -108,15 +108,16 @@ $conn->close();
     <a href="cetak_laporan_pendaftaran.php" class="nav-link"><i class="fas fa-file-alt"></i><span> Cetak</span></a>
     <a href="review_calon_pendaftar.php" class="nav-link"><i class="fas fa-check-circle"></i><span> Review</span></a>
   </nav>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <div class="main">
     <header class="navbar">
-      <button class="toggle-btn"><i class="fas fa-bars"></i></button>
-      <div class="title">Dashboard <?=htmlspecialchars($unit)?></div>
-      <div class="user-menu">
-        <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
-        <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
-      </div>
-    </header>
+  <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="title">Dashboard <?=htmlspecialchars($unit)?></div>
+  <div class="user-menu">
+    <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
+    <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
+  </div>
+</header>
     <section class="dashboard-cards">
       <div class="card">
         <div class="icon text-primary"><i class="fas fa-user-graduate"></i></div>
@@ -225,6 +226,35 @@ $conn->close();
         }
       }
     });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    // Show sidebar overlay
+    function showSidebar() {
+        sidebar.classList.add('active');
+        backdrop.classList.add('active');
+    }
+    // Hide sidebar overlay
+    function hideSidebar() {
+        sidebar.classList.remove('active');
+        backdrop.classList.remove('active');
+    }
+    sidebarToggle.addEventListener('click', function(e){
+        e.preventDefault();
+        showSidebar();
+    });
+    backdrop.addEventListener('click', function() {
+        hideSidebar();
+    });
+    // Hide sidebar if resize >576px
+    window.addEventListener('resize', function() {
+        if(window.innerWidth > 576) hideSidebar();
+    });
+});
+
+
   </script>
 </body>
 </html>

@@ -1,6 +1,3 @@
-/* --------------------------------------------------
-   Variables
--------------------------------------------------- */
 :root {
     --color-primary: #2e59d9;
     --color-secondary: #858796;
@@ -18,9 +15,6 @@
     --font-base: 'Poppins', sans-serif;
 }
 
-/* --------------------------------------------------
-     Reset & Body
-  -------------------------------------------------- */
 *,
 *::before,
 *::after {
@@ -33,13 +27,9 @@ body {
     font-family: var(--font-base);
     background: var(--color-light);
     color: var(--color-dark);
-    display: flex;
     min-height: 100vh;
 }
 
-/* --------------------------------------------------
-     Sidebar
-  -------------------------------------------------- */
 .sidebar {
     position: fixed;
     top: 0;
@@ -48,8 +38,9 @@ body {
     height: 100%;
     background: var(--color-primary);
     padding-top: var(--navbar-height);
-    transition: width var(--transition);
+    transition: left var(--transition), width var(--transition);
     overflow-y: auto;
+    z-index: 1030;
 }
 
 .sidebar .brand {
@@ -79,14 +70,12 @@ body {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* --------------------------------------------------
-     Main Content
-  -------------------------------------------------- */
 .main {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
     display: flex;
     flex-direction: column;
+    transition: margin-left var(--transition), width var(--transition);
 }
 
 .navbar {
@@ -96,7 +85,7 @@ body {
     align-items: center;
     padding: 0 1.5rem;
     box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.1);
-    z-index: 1;
+    z-index: 2;
 }
 
 .navbar .toggle-btn {
@@ -123,7 +112,7 @@ body {
     color: var(--color-secondary);
 }
 
-.navbar .btn-logout {
+.btn-logout {
     background: var(--color-danger);
     color: #fff;
     border: none;
@@ -132,13 +121,10 @@ body {
     transition: background var(--transition);
 }
 
-.navbar .btn-logout:hover {
-    background: darken(var(--color-danger), 5%);
+.btn-logout:hover {
+    background: #c0392b;
 }
 
-/* --------------------------------------------------
-     Dashboard Cards
-  -------------------------------------------------- */
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -201,9 +187,6 @@ body {
     color: var(--color-secondary);
 }
 
-/* --------------------------------------------------
-     Chart Section
-  -------------------------------------------------- */
 .chart-card {
     margin: 0 2rem 2rem;
     background: #fff;
@@ -234,9 +217,17 @@ body {
     margin: 0 auto;
 }
 
-/* --------------------------------------------------
-     Modal Table
-  -------------------------------------------------- */
+.footer {
+    background: #f8f9fc;
+    color: #888;
+    padding: 12px 0;
+    margin-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* Modal Table */
 .modal .modal-header {
     background: var(--color-primary);
     color: #fff;
@@ -247,6 +238,13 @@ body {
 }
 
 /* Responsive improvements */
+@media (max-width: 1200px) {
+    .dashboard-cards {
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+}
+
 @media (max-width: 992px) {
     .sidebar {
         width: 60px;
@@ -259,13 +257,18 @@ body {
         display: none;
     }
 
-    .main-content {
+    .main {
         margin-left: 60px !important;
+        width: calc(100% - 60px) !important;
+    }
+
+    .navbar .toggle-btn {
+        display: block;
     }
 }
 
 @media (max-width: 768px) {
-    .main-content {
+    .main {
         padding: 1rem !important;
     }
 
@@ -299,11 +302,26 @@ body {
 }
 
 @media (max-width: 576px) {
+
+    /* === SIDEBAR OVERLAY MOBILE === */
     .sidebar {
-        display: none;
+        left: -240px;
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
+        max-width: var(--sidebar-width);
+        display: block;
+        transition: left var(--transition);
     }
 
-    .main-content,
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar .brand,
+    .sidebar .nav-link span {
+        display: block;
+    }
+
     .main {
         margin-left: 0 !important;
         width: 100% !important;
@@ -314,6 +332,7 @@ body {
         grid-template-columns: 1fr !important;
         display: grid !important;
         gap: 1rem !important;
+        padding: 0.8rem !important;
     }
 
     .navbar {
@@ -337,14 +356,17 @@ body {
     .card .card-title {
         font-size: 1.05rem !important;
     }
-}
 
-.footer {
-    background: #f8f9fc;
-    color: #888;
-    padding: 12px 0;
-    margin-top: 2rem;
-    border-top: 1px solid #e0e0e0;
-    font-size: 1rem;
-    width: 100%;
+    /* Sidebar backdrop untuk overlay mobile */
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 1029;
+    }
+
+    .sidebar-backdrop.active {
+        display: block;
+    }
 }
