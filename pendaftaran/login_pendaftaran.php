@@ -56,7 +56,7 @@
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </div>
             <div class="text-center mt-3">
-                <a href="../index.html" class="btn btn-link">Kembali ke Halaman Utama</a>
+                <a href="../" class="btn btn-secondary w-100">Kembali</a>
             </div>
         </form>
     </div>
