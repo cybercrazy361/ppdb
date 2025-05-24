@@ -236,11 +236,11 @@ if ($result->num_rows > 0) {
                     <h5 class="modal-title" id="editModalLabel">Edit Data Siswa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mb-3">
-                    <label for="editNoFormulir" class="form-label">No Formulir</label>
-                    <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
-                </div>
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editNoFormulir" class="form-label">No Formulir</label>
+                        <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
+                    </div>
                     <div class="mb-3">
                         <label for="editNama" class="form-label">Nama</label>
                         <input type="text" class="form-control" id="editNama" name="nama" required>
