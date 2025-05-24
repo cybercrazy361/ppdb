@@ -141,7 +141,6 @@ function display_errors() {
         <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-height:42px;">
     <div>
         <div class="form-title mb-0">Form Pendaftaran Siswa Baru</div>
-        <div class="form-desc mb-0">Silakan isi data calon siswa dengan lengkap dan benar.</div>
         <?php display_errors(); ?>
     </div>
     <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary d-flex align-items-center gap-2">
