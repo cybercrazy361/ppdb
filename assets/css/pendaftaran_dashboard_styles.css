@@ -226,6 +226,14 @@ body {
     margin: 0 auto;
 }
 
+.card-body canvas {
+    width: 100% !important;
+    max-width: 350px;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+}
+
 /* --------------------------------------------------
      Modal Table
   -------------------------------------------------- */
@@ -238,38 +246,105 @@ body {
     font-size: .875rem;
 }
 
-/* --------------------------------------------------
-     Responsive
-  -------------------------------------------------- */
+/* Responsive improvements */
 @media (max-width: 992px) {
     .sidebar {
         width: 60px;
+        min-width: 60px;
+        max-width: 60px;
     }
 
-    .sidebar .brand {
-        font-size: 1rem;
-    }
-
+    .sidebar .brand,
     .sidebar .nav-link span {
         display: none;
     }
 
-    .main {
-        margin-left: 60px;
-        width: calc(100% - 60px);
+    .main-content {
+        margin-left: 60px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem !important;
     }
 
-    .navbar .toggle-btn {
-        display: block;
+    .dashboard-cards,
+    .row.g-4 {
+        grid-template-columns: 1fr !important;
+        display: grid !important;
+        gap: 1rem !important;
+    }
+
+    .card {
+        padding: 1.25rem 0.75rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.75rem 1rem !important;
+    }
+
+    .navbar .navbar-nav {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .card .card-icon {
+        font-size: 2.2rem !important;
+        margin-bottom: .5rem !important;
     }
 }
 
 @media (max-width: 576px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content,
+    .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .dashboard-cards,
+    .row.g-4 {
+        grid-template-columns: 1fr !important;
+        display: grid !important;
+        gap: 1rem !important;
+    }
+
+    .navbar {
+        padding: 0.5rem !important;
+        min-height: 44px;
+    }
+
     .navbar .title {
         font-size: 1rem;
     }
 
-    .dashboard-cards {
-        gap: 1rem;
+    .card {
+        padding: 1rem 0.5rem !important;
+        font-size: 1rem;
     }
+
+    .footer {
+        font-size: 0.95rem;
+    }
+
+    .card .card-title {
+        font-size: 1.05rem !important;
+    }
+}
+
+.footer {
+    background: #f8f9fc;
+    color: #888;
+    padding: 12px 0;
+    margin-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 1rem;
+    width: 100%;
 }

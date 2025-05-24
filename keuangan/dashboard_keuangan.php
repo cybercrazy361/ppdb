@@ -70,43 +70,37 @@ $conn->close();
 
         <h1 class="h3 text-dark mb-4">Dashboard Keuangan</h1>
 
-        <div class="row g-4 mb-4">
-            <div class="col-md-4">
-                <div class="card total-card">
+        <div class="row g-4 mb-4 dashboard-cards">
+            <div class="col-12 col-md-4">
+                <div class="card total-card text-center shadow-sm">
                     <div class="card-body">
-                        <div class="card-icon">
+                        <div class="card-icon mb-2">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div>
-                            <h5 class="card-title">Total Siswa</h5>
-                            <p class="card-text"><?= htmlspecialchars($total_siswa); ?></p>
-                        </div>
+                        <h5 class="card-title">Total Siswa</h5>
+                        <p class="card-text fs-4"><?= htmlspecialchars($total_siswa); ?></p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card paid-card">
+            <div class="col-12 col-md-4">
+                <div class="card paid-card text-center shadow-sm">
                     <div class="card-body">
-                        <div class="card-icon">
+                        <div class="card-icon mb-2">
                             <i class="fas fa-user-check"></i>
                         </div>
-                        <div>
-                            <h5 class="card-title">Sudah Membayar</h5>
-                            <p class="card-text"><?= htmlspecialchars($total_sudah_bayar); ?></p>
-                        </div>
+                        <h5 class="card-title">Sudah Membayar</h5>
+                        <p class="card-text fs-4"><?= htmlspecialchars($total_sudah_bayar); ?></p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card unpaid-card">
+            <div class="col-12 col-md-4">
+                <div class="card unpaid-card text-center shadow-sm">
                     <div class="card-body">
-                        <div class="card-icon">
+                        <div class="card-icon mb-2">
                             <i class="fas fa-user-times"></i>
                         </div>
-                        <div>
-                            <h5 class="card-title">Belum Membayar</h5>
-                            <p class="card-text"><?= htmlspecialchars($total_belum_bayar); ?></p>
-                        </div>
+                        <h5 class="card-title">Belum Membayar</h5>
+                        <p class="card-text fs-4"><?= htmlspecialchars($total_belum_bayar); ?></p>
                     </div>
                 </div>
             </div>
