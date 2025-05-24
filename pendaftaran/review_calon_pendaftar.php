@@ -109,7 +109,6 @@ foreach ($calon as $row) {
               <th>Alamat</th>
               <th>Pendidikan Ortu/Wali</th>
               <th>No HP Ortu/Wali</th>
-              <th>Pilihan</th>
               <th>Tanggal Daftar</th>
               <th>Status</th>
               <th>Keterangan</th>
@@ -129,7 +128,6 @@ foreach ($calon as $row) {
               <td><?= htmlspecialchars($row['alamat']) ?></td>
               <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
               <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
-              <td><?= htmlspecialchars($row['pilihan']) ?></td>
               <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
               <td class="text-center">
                 <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
@@ -194,13 +192,11 @@ $(function(){
 // ============ PLUGIN: Custom Search DataTable Kolom Status ============
 $.fn.dataTable.ext.search.push(
   function(settings, data, dataIndex) {
-    // Pastikan hanya untuk tabel calonTable
     if(settings.nTable.id !== 'calonTable') return true;
-    // Ambil filter dari kolom status (kolom index 10)
-    var statusFilter = settings.aoPreSearchCols[10]?.sSearch || "";
+    // Kolom status index 9 setelah "Pilihan" dihapus
+    var statusFilter = settings.aoPreSearchCols[9]?.sSearch || "";
     if(!statusFilter) return true;
-    var td = settings.aoData[dataIndex].anCells[10];
-    // Ambil text status dari span.d-none, fallback ke selected value di select
+    var td = settings.aoData[dataIndex].anCells[9];
     let value = $(td).find('.status-search-text').text().trim();
     if(!value) value = $(td).find('select').val();
     return value === statusFilter;
@@ -233,8 +229,8 @@ table.on('order.dt search.dt draw.dt', function() {
 // ============ Filter badge status ============
 $('.filter-status-badge').on('click', function(){
   const status = $(this).data('status');
-  // Kolom status index 10
-  table.column(10).search(status).draw();
+  // Kolom status index 9 setelah kolom "Pilihan" dihapus
+  table.column(9).search(status).draw();
 });
 
 // ============ Modal notes ============
