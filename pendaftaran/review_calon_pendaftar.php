@@ -1,5 +1,4 @@
 <?php
-// File: review_calon_pendaftar.php
 session_start();
 include '../database_connection.php';
 
@@ -47,6 +46,17 @@ $rekap = array_fill_keys(array_keys($status_list), 0);
 foreach ($calon as $row) {
     $st = $row['status'];
     if (isset($rekap[$st])) $rekap[$st]++;
+}
+
+// Fungsi cek sudah terkirim
+function sudah_terkirim($conn, $nama, $tanggal_daftar) {
+    $stmt = $conn->prepare("SELECT COUNT(*) as jml FROM siswa WHERE nama=? AND tanggal_pendaftaran=?");
+    $stmt->bind_param("ss", $nama, $tanggal_daftar);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $jml = $result->fetch_assoc()['jml'];
+    $stmt->close();
+    return $jml > 0;
 }
 ?>
 <!DOCTYPE html>
@@ -112,12 +122,14 @@ foreach ($calon as $row) {
               <th>Tanggal Daftar</th>
               <th>Status</th>
               <th>Keterangan</th>
+              <th>Kirim</th>
             </tr>
           </thead>
           <tbody>
           <?php $no=1; foreach ($calon as $row):
               $current = $row['status'];
               $notes   = $row['notes'];
+              $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
           ?>
             <tr data-id="<?= $row['id'] ?>">
               <td><?= $no++ ?></td>
@@ -145,6 +157,24 @@ foreach ($calon as $row) {
                   data-notes="<?= htmlspecialchars($notes) ?>">
                   <i class="fas fa-sticky-note"></i> Lihat/Edit
                 </button>
+              </td>
+              <td class="text-center">
+                <?php if ($terkirim): ?>
+                  <span class="badge bg-success">Terkirim</span>
+                <?php else: ?>
+                  <button class="btn btn-sm btn-success btn-kirim"
+                    data-id="<?= $row['id'] ?>"
+                    data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                    data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin']) ?>"
+                    data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah']) ?>"
+                    data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
+                    data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
+                    data-pendidikan_ortu="<?= htmlspecialchars($row['pendidikan_ortu']) ?>"
+                    data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
+                    data-tanggal_daftar="<?= htmlspecialchars($row['tanggal_daftar']) ?>"
+                    data-unit="<?= htmlspecialchars($unit) ?>"
+                  ><i class="fas fa-paper-plane"></i> Kirim</button>
+                <?php endif; ?>
               </td>
             </tr>
           <?php endforeach; ?>
@@ -189,102 +219,113 @@ foreach ($calon as $row) {
 
 <script>
 $(function(){
-// ============ PLUGIN: Custom Search DataTable Kolom Status ============
-$.fn.dataTable.ext.search.push(
-  function(settings, data, dataIndex) {
-    if(settings.nTable.id !== 'calonTable') return true;
-    // Kolom status index 9 setelah "Pilihan" dihapus
-    var statusFilter = settings.aoPreSearchCols[9]?.sSearch || "";
-    if(!statusFilter) return true;
-    var td = settings.aoData[dataIndex].anCells[9];
-    let value = $(td).find('.status-search-text').text().trim();
-    if(!value) value = $(td).find('select').val();
-    return value === statusFilter;
-  }
-);
-
-// ============ DataTable init ============
-const table = $('#calonTable').DataTable({
-  pageLength: 10,
-  lengthMenu: [5,10,25,50],
-  order: [[0,'asc']],
-  language:{
-    search:     "Cari:",
-    lengthMenu: "_MENU_ entri per halaman",
-    info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-    paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
-  }
-});
-
-// Setelah inisialisasi DataTable:
-table.on('order.dt search.dt draw.dt', function() {
-  // Kolom "No" adalah kolom 0 (paling kiri)
-  table.column(0, { search: 'applied', order: 'applied', page: 'current' })
-    .nodes()
-    .each(function(cell, i) {
-      cell.innerHTML = i + 1;
-    });
-});
-
-// ============ Filter badge status ============
-$('.filter-status-badge').on('click', function(){
-  const status = $(this).data('status');
-  // Kolom status index 9 setelah kolom "Pilihan" dihapus
-  table.column(9).search(status).draw();
-});
-
-// ============ Modal notes ============
-let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
-$('#calonTable').on('click', '.btn-notes', function(){
-  const id   = $(this).data('id');
-  const nama = $(this).data('nama');
-  const notes= $(this).data('notes');
-  $('#notes_id').val(id);
-  $('#notes_nama').text(nama);
-  $('#notes_text').val(notes);
-  notesModal.show();
-});
-
-// ============ Simpan notes dari modal ============
-$('#formNotesModal').on('submit', function(e){
-  e.preventDefault();
-  const id = $('#notes_id').val();
-  const notes = $('#notes_text').val();
-  $.post('update_status.php', {id, notes}, function(res){
-    if(!res.success){
-      alert('Gagal menyimpan keterangan');
-    } else {
-      $(`tr[data-id="${id}"] .btn-notes`).data('notes', notes);
-      notesModal.hide();
+  // DataTable dan event badge filter tetap
+  $.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex) {
+      if(settings.nTable.id !== 'calonTable') return true;
+      var statusFilter = settings.aoPreSearchCols[9]?.sSearch || "";
+      if(!statusFilter) return true;
+      var td = settings.aoData[dataIndex].anCells[9];
+      let value = $(td).find('.status-search-text').text().trim();
+      if(!value) value = $(td).find('select').val();
+      return value === statusFilter;
     }
-  }, 'json');
-});
-
-// ============ Status select update ============
-const classes = {
-  'PPDB Bersama':'status-ppdb-bersama',
-  'Uang Titipan':'status-uang-titipan',
-  'Akan Bayar':'status-akan-bayar',
-  'Menunggu Negeri':'status-menunggu-negeri',
-  'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
-  'Tidak Jadi':'status-tidak-jadi'
-};
-$('#calonTable').on('change', '.status-select', function(){
-  const $sel = $(this),
-        $row = $sel.closest('tr'),
-        id   = $row.data('id'),
-        status = $sel.val();
-  $.post('update_status.php', {id, status}, function(res){
-    if(res.success){
-      $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
-      location.reload();
-    } else {
-      alert('Error menyimpan status');
+  );
+  const table = $('#calonTable').DataTable({
+    pageLength: 10,
+    lengthMenu: [5,10,25,50],
+    order: [[0,'asc']],
+    language:{
+      search:     "Cari:",
+      lengthMenu: "_MENU_ entri per halaman",
+      info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+      paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
     }
-  }, 'json');
-});
+  });
+  table.on('order.dt search.dt draw.dt', function() {
+    table.column(0, { search: 'applied', order: 'applied', page: 'current' })
+      .nodes()
+      .each(function(cell, i) { cell.innerHTML = i + 1; });
+  });
+  $('.filter-status-badge').on('click', function(){
+    const status = $(this).data('status');
+    table.column(9).search(status).draw();
+  });
+
+  // Notes modal
+  let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
+  $('#calonTable').on('click', '.btn-notes', function(){
+    const id   = $(this).data('id');
+    const nama = $(this).data('nama');
+    const notes= $(this).data('notes');
+    $('#notes_id').val(id);
+    $('#notes_nama').text(nama);
+    $('#notes_text').val(notes);
+    notesModal.show();
+  });
+  $('#formNotesModal').on('submit', function(e){
+    e.preventDefault();
+    const id = $('#notes_id').val();
+    const notes = $('#notes_text').val();
+    $.post('update_status.php', {id, notes}, function(res){
+      if(!res.success){
+        alert('Gagal menyimpan keterangan');
+      } else {
+        $(`tr[data-id="${id}"] .btn-notes`).data('notes', notes);
+        notesModal.hide();
+      }
+    }, 'json');
+  });
+
+  // Status select update
+  const classes = {
+    'PPDB Bersama':'status-ppdb-bersama',
+    'Uang Titipan':'status-uang-titipan',
+    'Akan Bayar':'status-akan-bayar',
+    'Menunggu Negeri':'status-menunggu-negeri',
+    'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
+    'Tidak Jadi':'status-tidak-jadi'
+  };
+  $('#calonTable').on('change', '.status-select', function(){
+    const $sel = $(this),
+          $row = $sel.closest('tr'),
+          id   = $row.data('id'),
+          status = $sel.val();
+    $.post('update_status.php', {id, status}, function(res){
+      if(res.success){
+        $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
+        location.reload();
+      } else {
+        alert('Error menyimpan status');
+      }
+    }, 'json');
+  });
+
+  // Kirim ke siswa (AJAX)
+  $('#calonTable').on('click', '.btn-kirim', function(){
+    const btn = $(this);
+    btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Proses...');
+    $.post('kirim_calon_ke_siswa.php', {
+      id: btn.data('id'),
+      nama: btn.data('nama'),
+      jenis_kelamin: btn.data('jenis_kelamin'),
+      asal_sekolah: btn.data('asal_sekolah'),
+      no_hp: btn.data('no_hp'),
+      alamat: btn.data('alamat'),
+      pendidikan_ortu: btn.data('pendidikan_ortu'),
+      no_hp_ortu: btn.data('no_hp_ortu'),
+      tanggal_daftar: btn.data('tanggal_daftar'),
+      unit: btn.data('unit')
+    }, function(res){
+      if(res.success){
+        btn.parent().html('<span class="badge bg-success">Terkirim</span>');
+      } else {
+        btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Kirim');
+        alert(res.message || 'Gagal mengirim.');
+      }
+    }, 'json');
+  });
 });
 </script>
-
 </body>
 </html>
