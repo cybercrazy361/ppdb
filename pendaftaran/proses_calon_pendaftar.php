@@ -1,14 +1,14 @@
 <?php
 // proses_calon_pendaftar.php
 
-// Untuk debugging: (hapus/baris ini di produksi)
+// Untuk debugging (hapus/baris ini di produksi)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
 require_once '../database_connection.php';
 
-// Fungsi untuk membersihkan input
+// Fungsi membersihkan input
 function sanitizeInput($data) {
     return htmlspecialchars(stripslashes(trim($data)));
 }
@@ -20,16 +20,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Permintaan tidak valid (CSRF token salah).");
     }
 
-    // Ambil & bersihkan semua field baru
-    $nama           = sanitizeInput($_POST['nama'] ?? '');
-    $jenis_kelamin  = sanitizeInput($_POST['jenis_kelamin'] ?? '');
-    $asal_sekolah   = sanitizeInput($_POST['asal_sekolah'] ?? '');
-    $email          = sanitizeInput($_POST['email'] ?? '');
-    $no_hp          = sanitizeInput($_POST['no_hp'] ?? '');
-    $alamat         = sanitizeInput($_POST['alamat'] ?? '');
-    $pendidikan_ortu= sanitizeInput($_POST['pendidikan_ortu'] ?? '');
-    $no_hp_ortu     = sanitizeInput($_POST['no_hp_ortu'] ?? '');
-    $pilihan        = sanitizeInput($_POST['pilihan'] ?? '');
+    // Ambil & bersihkan semua field (TIDAK ADA EMAIL)
+    $nama            = sanitizeInput($_POST['nama'] ?? '');
+    $jenis_kelamin   = sanitizeInput($_POST['jenis_kelamin'] ?? '');
+    $asal_sekolah    = sanitizeInput($_POST['asal_sekolah'] ?? '');
+    $no_hp           = sanitizeInput($_POST['no_hp'] ?? '');
+    $alamat          = sanitizeInput($_POST['alamat'] ?? '');
+    $pendidikan_ortu = sanitizeInput($_POST['pendidikan_ortu'] ?? '');
+    $no_hp_ortu      = sanitizeInput($_POST['no_hp_ortu'] ?? '');
+    $pilihan         = sanitizeInput($_POST['pilihan'] ?? '');
 
     $errors = [];
 
@@ -37,7 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($nama)) $errors[] = "Nama lengkap harus diisi.";
     if (empty($jenis_kelamin) || !in_array($jenis_kelamin, ['Laki-laki','Perempuan'])) $errors[] = "Jenis kelamin harus diisi.";
     if (empty($asal_sekolah)) $errors[] = "Asal sekolah harus diisi.";
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Format email tidak valid.";
     if (empty($no_hp) || !preg_match("/^[0-9]{10,13}$/", $no_hp)) $errors[] = "No HP calon peserta didik wajib diisi & 10-13 digit.";
     if (empty($alamat)) $errors[] = "Alamat harus diisi.";
     if (empty($pendidikan_ortu)) $errors[] = "Pendidikan orang tua/wali harus diisi.";
@@ -45,14 +43,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($pilihan) || !in_array($pilihan, ['SMA','SMK'])) $errors[] = "Pilihan sekolah harus diisi.";
 
     if (empty($errors)) {
-        // INSERT ke database (harus sudah tambah kolom baru di tabel calon_pendaftar)
+        // INSERT ke database (TIDAK ADA KOLOM EMAIL)
         $sql = "INSERT INTO calon_pendaftar 
-            (nama, jenis_kelamin, asal_sekolah, email, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            (nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
 
         if ($stmt) {
-            $stmt->bind_param("sssssssss", $nama, $jenis_kelamin, $asal_sekolah, $email, $no_hp, $alamat, $pendidikan_ortu, $no_hp_ortu, $pilihan);
+            $stmt->bind_param("ssssssss", $nama, $jenis_kelamin, $asal_sekolah, $no_hp, $alamat, $pendidikan_ortu, $no_hp_ortu, $pilihan);
             if ($stmt->execute()) {
                 // Sukses: redirect ke halaman sukses
                 header("Location: sukses_pendaftaran.php");
