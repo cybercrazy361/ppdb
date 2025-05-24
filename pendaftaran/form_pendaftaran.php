@@ -138,16 +138,18 @@ function display_errors() {
 
 <div class="container py-4">
     <div class="card shadow-sm form-card">
-        <div class="mb-4">
-            <div class="form-title">Form Pendaftaran Siswa Baru</div>
-            <div class="form-desc">Silakan isi data calon siswa dengan lengkap dan benar.</div>
-            <?php display_errors(); ?>
-        </div>
-        <div class="mt-4 text-center">
-            <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
-            </a>
-        </div>
+        <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-height:42px;">
+    <div>
+        <div class="form-title mb-0">Form Pendaftaran Siswa Baru</div>
+        <div class="form-desc mb-0">Silakan isi data calon siswa dengan lengkap dan benar.</div>
+        <?php display_errors(); ?>
+    </div>
+    <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+        <i class="fas fa-arrow-left"></i>
+        <span class="d-none d-md-inline">Kembali ke Dashboard</span>
+    </a>
+</div>
+
         <form action="proses_pendaftaran.php" method="POST" novalidate>
             <!-- CSRF Token & Unit -->
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
