@@ -132,6 +132,27 @@ function display_errors() {
             .card.form-card { padding: 1.1rem 0.3rem; }
             .d-grid .btn, .d-flex .btn { width: 100%; min-width: unset; font-size: .97rem;}
         }
+
+        .btn-gradient-outline {
+    border: 2px solid #2e59d9;
+    background: linear-gradient(90deg, #f8fbff 80%, #eaf3fe 100%);
+    color: #2e59d9;
+    font-weight: 500;
+    border-radius: 1.2rem;
+    transition: all .18s;
+    padding: 0.65rem 1.7rem;
+    box-shadow: 0 2px 8px rgba(46, 89, 217, 0.07);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+.btn-gradient-outline:hover, .btn-gradient-outline:focus {
+    background: linear-gradient(90deg, #2e59d9 85%, #13afe0 100%);
+    color: #fff;
+    border-color: #2e59d9;
+    box-shadow: 0 3px 14px rgba(46, 89, 217, 0.13);
+    transform: translateY(-2px) scale(1.022);
+}
     </style>
 </head>
 <body style="background: linear-gradient(110deg, #f0f4ff 0%, #f5f8ff 30%, #e8eeff 100%);">
@@ -143,10 +164,10 @@ function display_errors() {
         <div class="form-title mb-0">Form Pendaftaran Siswa Baru</div>
         <?php display_errors(); ?>
     </div>
-    <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-        <i class="fas fa-arrow-left"></i>
-        <span class="d-none d-md-inline">Kembali ke Dashboard</span>
-    </a>
+    <a href="dashboard_pendaftaran.php" class="btn btn-gradient-outline d-flex align-items-center gap-2">
+    <i class="fas fa-arrow-left"></i>
+    <span class="d-none d-md-inline">Kembali ke Dashboard</span>
+</a>
 </div>
 
         <form action="proses_pendaftaran.php" method="POST" novalidate>
