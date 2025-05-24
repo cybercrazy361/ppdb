@@ -79,10 +79,9 @@ if (empty($_SESSION['csrf_token'])) {
                 <img src="../assets/images/logo_trans.png" alt="Logo YPDK" onerror="this.style.display='none'">
                 <h2>SMA/SMK Dharma Karya</h2>
                 <p>Sekolah Menengah berbasis Islami & berprestasi di Jakarta Selatan.<br>Terakreditasi & fasilitas lengkap.</p>
-                <a href="#form-daftar" class="btn-daftar"><i class="fa fa-paper-plane me-1"></i>DAFTAR-SPMB-2025</a>
                 <div style="margin-top:18px; font-size:0.99rem; color:#eaf5fd99;">
                     <i class="fa fa-phone me-1"></i>
-                    Hotline: <b>0815-1151-9271</b>
+                    Hotline-Bu Puji: <b>0815-1151-9271</b>
                 </div>
             </div>
             <!-- RIGHT PANEL: Formulir -->
