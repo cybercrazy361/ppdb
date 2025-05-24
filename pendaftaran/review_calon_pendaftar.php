@@ -191,80 +191,96 @@ foreach ($calon as $row) {
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
-  <script>
-  $(function(){
-    // Inisialisasi DataTable
-    const table = $('#calonTable').DataTable({
-      pageLength: 10,
-      lengthMenu: [5,10,25,50],
-      order: [[0,'asc']],
-      language:{
-        search:     "Cari:",
-        lengthMenu: "_MENU_ entri per halaman",
-        info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-        paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
-      }
-    });
+<script>
+$(function(){
+  // ============ PLUGIN: Custom Search DataTable Kolom Status ============
+  $.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex) {
+      // Pastikan hanya untuk tabel calonTable
+      if(settings.nTable.id !== 'calonTable') return true;
+      // Ambil filter dari kolom status (kolom index 11)
+      var statusFilter = settings.aoPreSearchCols[11]?.sSearch || "";
+      if(!statusFilter) return true;
+      var td = settings.aoData[dataIndex].anCells[11];
+      // Ambil text status dari span.d-none, fallback ke selected value di select
+      let value = $(td).find('.status-search-text').text().trim();
+      if(!value) value = $(td).find('select').val();
+      return value === statusFilter;
+    }
+  );
 
-    // 1. Filter DataTable by status badge
-    $('.filter-status-badge').on('click', function(){
-      const status = $(this).data('status');
-      table.column(11).search(status).draw(); // Kolom status ke-12, index = 11
-    });
-
-    // 2. Modal notes
-    let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
-
-    $('#calonTable').on('click', '.btn-notes', function(){
-      const id   = $(this).data('id');
-      const nama = $(this).data('nama');
-      const notes= $(this).data('notes');
-      $('#notes_id').val(id);
-      $('#notes_nama').text(nama);
-      $('#notes_text').val(notes);
-      notesModal.show();
-    });
-
-    // 3. Simpan notes dari modal
-    $('#formNotesModal').on('submit', function(e){
-      e.preventDefault();
-      const id = $('#notes_id').val();
-      const notes = $('#notes_text').val();
-      $.post('update_status.php', {id, notes}, function(res){
-        if(!res.success){
-          alert('Gagal menyimpan keterangan');
-        } else {
-          // Update langsung di tabel tanpa reload:
-          $(`tr[data-id="${id}"] .btn-notes`).data('notes', notes);
-          notesModal.hide();
-        }
-      }, 'json');
-    });
-
-    // Status select (sama seperti sebelumnya)
-    const classes = {
-      'PPDB Bersama':'status-ppdb-bersama',
-      'Uang Titipan':'status-uang-titipan',
-      'Akan Bayar':'status-akan-bayar',
-      'Menunggu Negeri':'status-menunggu-negeri',
-      'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
-      'Tidak Jadi':'status-tidak-jadi'
-    };
-    $('#calonTable').on('change', '.status-select', function(){
-      const $sel = $(this),
-            $row = $sel.closest('tr'),
-            id   = $row.data('id'),
-            status = $sel.val();
-      $.post('update_status.php', {id, status}, function(res){
-        if(res.success){
-          $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
-          location.reload();
-        } else {
-          alert('Error menyimpan status');
-        }
-      }, 'json');
-    });
+  // ============ DataTable init ============
+  const table = $('#calonTable').DataTable({
+    pageLength: 10,
+    lengthMenu: [5,10,25,50],
+    order: [[0,'asc']],
+    language:{
+      search:     "Cari:",
+      lengthMenu: "_MENU_ entri per halaman",
+      info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+      paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
+    }
   });
-  </script>
+
+  // ============ Filter badge status ============
+  $('.filter-status-badge').on('click', function(){
+    const status = $(this).data('status');
+    // Kolom status index 11
+    table.column(11).search(status).draw();
+  });
+
+  // ============ Modal notes ============
+  let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
+  $('#calonTable').on('click', '.btn-notes', function(){
+    const id   = $(this).data('id');
+    const nama = $(this).data('nama');
+    const notes= $(this).data('notes');
+    $('#notes_id').val(id);
+    $('#notes_nama').text(nama);
+    $('#notes_text').val(notes);
+    notesModal.show();
+  });
+
+  // ============ Simpan notes dari modal ============
+  $('#formNotesModal').on('submit', function(e){
+    e.preventDefault();
+    const id = $('#notes_id').val();
+    const notes = $('#notes_text').val();
+    $.post('update_status.php', {id, notes}, function(res){
+      if(!res.success){
+        alert('Gagal menyimpan keterangan');
+      } else {
+        $(`tr[data-id="${id}"] .btn-notes`).data('notes', notes);
+        notesModal.hide();
+      }
+    }, 'json');
+  });
+
+  // ============ Status select update ============
+  const classes = {
+    'PPDB Bersama':'status-ppdb-bersama',
+    'Uang Titipan':'status-uang-titipan',
+    'Akan Bayar':'status-akan-bayar',
+    'Menunggu Negeri':'status-menunggu-negeri',
+    'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
+    'Tidak Jadi':'status-tidak-jadi'
+  };
+  $('#calonTable').on('change', '.status-select', function(){
+    const $sel = $(this),
+          $row = $sel.closest('tr'),
+          id   = $row.data('id'),
+          status = $sel.val();
+    $.post('update_status.php', {id, status}, function(res){
+      if(res.success){
+        $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
+        location.reload();
+      } else {
+        alert('Error menyimpan status');
+      }
+    }, 'json');
+  });
+});
+</script>
+
 </body>
 </html>
