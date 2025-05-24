@@ -78,7 +78,7 @@ if (empty($_SESSION['csrf_token'])) {
             <div class="info-panel text-center">
                 <img src="../assets/images/logo_trans.png" alt="Logo YPDK" onerror="this.style.display='none'">
                 <h2>SMA/SMK Dharma Karya</h2>
-                <p>Sekolah Menengah berbasis Islami & berprestasi di Jakarta Selatan.<br>Terakreditasi & fasilitas lengkap.</p>
+                <p>Sekolah Menengah berbasis Islami & berprestasi di Jakarta Selatan.<br>Terakreditasi "A" & fasilitas lengkap.</p>
                 <div style="margin-top:18px; font-size:0.99rem; color:#eaf5fd99;">
                     <i class="fa fa-phone me-1"></i>
                     Hotline-Bu Puji: <b>0815-1151-9271</b>
