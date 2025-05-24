@@ -169,6 +169,7 @@ if ($result->num_rows > 0) {
                 </a><br>
                 <button class='btn btn-warning btn-sm editBtn' 
                         data-id='" . htmlspecialchars($row['id'] ?? '') . "' 
+                        data-no_formulir='" . htmlspecialchars($row['no_formulir'] ?? '') . "'
                         data-nama='" . htmlspecialchars($row['nama'] ?? '') . "' 
                         data-jenis_kelamin='" . htmlspecialchars($row['jenis_kelamin'] ?? '') . "' 
                         data-tempat_lahir='" . htmlspecialchars($row['tempat_lahir'] ?? '') . "' 
@@ -234,6 +235,10 @@ if ($result->num_rows > 0) {
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModalLabel">Edit Data Siswa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="mb-3">
+                    <label for="editNoFormulir" class="form-label">No Formulir</label>
+                    <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -309,6 +314,7 @@ if ($result->num_rows > 0) {
     document.querySelectorAll('.editBtn').forEach(button => {
         button.addEventListener('click', () => {
             document.getElementById('editId').value = button.getAttribute('data-id');
+            document.getElementById('editNoFormulir').value = button.getAttribute('data-no_formulir');
             document.getElementById('editNama').value = button.getAttribute('data-nama');
             document.getElementById('editJenisKelamin').value = button.getAttribute('data-jenis_kelamin');
             document.getElementById('editTempatLahir').value = button.getAttribute('data-tempat_lahir');

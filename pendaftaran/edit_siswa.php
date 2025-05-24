@@ -3,6 +3,7 @@ include '../database_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
+    $no_formulir = $_POST['no_formulir']; // Tambah ini!
     $nama = $_POST['nama'];
     $jenis_kelamin = $_POST['jenis_kelamin'];
     $tempat_lahir = $_POST['tempat_lahir'];
@@ -10,10 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $asal_sekolah = $_POST['asal_sekolah'];
     $alamat = $_POST['alamat'];
     $no_hp = $_POST['no_hp'];
-    $no_hp_ortu = $_POST['no_hp_ortu'] ?? null; // <-- pastikan nama input di form sama
+    $no_hp_ortu = $_POST['no_hp_ortu'] ?? null;
 
-    // Gunakan prepared statement untuk keamanan
+    // Tambahkan update no_formulir juga
     $query = "UPDATE siswa SET 
+                no_formulir = ?,
                 nama = ?, 
                 jenis_kelamin = ?,
                 tempat_lahir = ?,
@@ -25,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param(
-        'ssssssssi',
+        'sssssssssi',
+        $no_formulir,
         $nama,
         $jenis_kelamin,
         $tempat_lahir,
