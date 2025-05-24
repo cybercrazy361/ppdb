@@ -67,7 +67,8 @@ foreach ($calon as $row) {
     .status-tidak-ada-konfirmasi { background:#6c757d !important; color:#fff !important; }
     .status-tidak-jadi { background:#dc3545 !important; color:#fff !important; }
     .rekap-box { margin-bottom:16px; }
-    .rekap-box .badge { font-size:1rem; padding:.5em 1em; }
+    .rekap-box .badge { font-size:1rem; padding:.5em 1em; cursor:pointer;}
+    .rekap-box .badge.bg-dark { background: #343a40 !important; }
     .btn-back { float:right; }
     @media (max-width:600px){
       .rekap-box{ font-size:.9rem;}
@@ -88,11 +89,12 @@ foreach ($calon as $row) {
 
       <!-- Box Rekap Status -->
       <div class="rekap-box mb-3">
-        <?php foreach($rekap as $key => $count): 
+        <?php foreach($rekap as $key => $count):
           $cls = 'status-'.strtolower(str_replace(' ', '-', $key));
         ?>
-          <span class="badge <?= $cls ?>"><?= $key ?>: <?= $count ?></span>
+          <span class="badge <?= $cls ?> filter-status-badge" data-status="<?= $key ?>"><?= $key ?>: <?= $count ?></span>
         <?php endforeach; ?>
+        <span class="badge bg-dark filter-status-badge" data-status="">Semua</span>
       </div>
 
       <div class="table-responsive">
@@ -139,15 +141,46 @@ foreach ($calon as $row) {
                 </select>
               </td>
               <td>
-                <input type="text" class="desc-input form-control form-control-sm"
-                       value="<?= htmlspecialchars($notes) ?>"
-                       placeholder="Keterangan..." />
+                <button type="button"
+                  class="btn btn-sm btn-outline-primary btn-notes"
+                  data-id="<?= $row['id'] ?>"
+                  data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                  data-notes="<?= htmlspecialchars($notes) ?>">
+                  <i class="fas fa-sticky-note"></i> Lihat/Edit
+                </button>
               </td>
             </tr>
           <?php endforeach; ?>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal untuk Notes -->
+  <div class="modal fade" id="notesModal" tabindex="-1" aria-labelledby="notesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="formNotesModal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="notesModalLabel">Edit Keterangan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="notes_id">
+          <div class="mb-2">
+            <label class="form-label">Nama Siswa:</label>
+            <div class="fw-bold" id="notes_nama"></div>
+          </div>
+          <div>
+            <label for="notes_text" class="form-label">Keterangan</label>
+            <textarea id="notes_text" class="form-control" rows="5" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-gradient">Simpan</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -172,7 +205,42 @@ foreach ($calon as $row) {
       }
     });
 
-    // Mapping kelas warna
+    // 1. Filter DataTable by status badge
+    $('.filter-status-badge').on('click', function(){
+      const status = $(this).data('status');
+      table.column(11).search(status).draw(); // Kolom status ke-12, index = 11
+    });
+
+    // 2. Modal notes
+    let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
+
+    $('#calonTable').on('click', '.btn-notes', function(){
+      const id   = $(this).data('id');
+      const nama = $(this).data('nama');
+      const notes= $(this).data('notes');
+      $('#notes_id').val(id);
+      $('#notes_nama').text(nama);
+      $('#notes_text').val(notes);
+      notesModal.show();
+    });
+
+    // 3. Simpan notes dari modal
+    $('#formNotesModal').on('submit', function(e){
+      e.preventDefault();
+      const id = $('#notes_id').val();
+      const notes = $('#notes_text').val();
+      $.post('update_status.php', {id, notes}, function(res){
+        if(!res.success){
+          alert('Gagal menyimpan keterangan');
+        } else {
+          // Update langsung di tabel tanpa reload:
+          $(`tr[data-id="${id}"] .btn-notes`).data('notes', notes);
+          notesModal.hide();
+        }
+      }, 'json');
+    });
+
+    // Status select (sama seperti sebelumnya)
     const classes = {
       'PPDB Bersama':'status-ppdb-bersama',
       'Uang Titipan':'status-uang-titipan',
@@ -181,32 +249,18 @@ foreach ($calon as $row) {
       'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
       'Tidak Jadi':'status-tidak-jadi'
     };
-
-    // Update status ke server & update warna
     $('#calonTable').on('change', '.status-select', function(){
       const $sel = $(this),
             $row = $sel.closest('tr'),
             id   = $row.data('id'),
             status = $sel.val();
-      // AJAX post ke update_status.php (wajib Anda buat juga!)
       $.post('update_status.php', {id, status}, function(res){
         if(res.success){
           $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
-          location.reload(); // Reload page untuk update rekap
+          location.reload();
         } else {
           alert('Error menyimpan status');
         }
-      }, 'json');
-    });
-
-    // Update notes ke server
-    $('#calonTable').on('blur', '.desc-input', function(){
-      const $inp = $(this),
-            $row = $inp.closest('tr'),
-            id   = $row.data('id'),
-            notes = $inp.val();
-      $.post('update_status.php', {id, notes}, function(res){
-        if(!res.success) alert('Error menyimpan keterangan');
       }, 'json');
     });
   });
