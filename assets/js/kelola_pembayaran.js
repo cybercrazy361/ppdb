@@ -29,8 +29,38 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // =============================================
+    // 2. Inisialisasi untuk mem-fetch bulan yang lunas
+    // =============================================
+    let paidMonths = [];  // array nama bulan yang sudah lunas
+    const tahunSelect = document.getElementById('tahun_pelajaran');
+
+    function fetchPaidMonths() {
+        const no = document.getElementById('no_formulir').value.trim();
+        const th = tahunSelect.value;
+        if (!no || !th) {
+            paidMonths = [];
+            return;
+        }
+        fetch(`get_paid_months.php?no_formulir=${encodeURIComponent(no)}&tahun=${encodeURIComponent(th)}`)
+            .then(r => r.json())
+            .then(d => {
+                if (d.success && Array.isArray(d.paid_months)) {
+                    paidMonths = d.paid_months;
+                } else {
+                    paidMonths = [];
+                }
+            })
+            .catch(() => {
+                paidMonths = [];
+            });
+    }
+    // Panggil setiap kali No Formulir atau Tahun berubah
+    document.getElementById('no_formulir').addEventListener('change', fetchPaidMonths);
+    tahunSelect.addEventListener('change', fetchPaidMonths);
+
     // ========================
-    // 2. Pencarian No Formulir (Autocomplete)
+    // 3. Pencarian No Formulir (Autocomplete)
     // ========================
     const noFormulirInput = document.getElementById('no_formulir');
     const namaInput = document.getElementById('nama');
@@ -43,9 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         fetch(`search_student.php?query=${encodeURIComponent(query)}`)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
+                if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
             })
             .then(data => {
@@ -73,9 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
         noFormulirInput.value = student.no_formulir;
         namaInput.value = student.nama;
         document.getElementById('siswa-suggestions').style.display = 'none';
+        fetchPaidMonths(); // update bulan lunas
     }
 
-    // Implementasi Debounce untuk Pencarian
     function debounce(func, delay) {
         let debounceTimer;
         return function () {
@@ -86,39 +114,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    if (noFormulirInput) {
-        noFormulirInput.addEventListener('input', debounce(function () {
-            searchStudent(noFormulirInput.value.trim());
-        }, 300)); // 300ms delay
-    }
+    noFormulirInput.addEventListener('input', debounce(function () {
+        searchStudent(noFormulirInput.value.trim());
+    }, 300));
 
     // ========================
-    // 3. Menutup Suggestion saat Klik di Luar Dropdown
+    // 4. Menutup Suggestion saat klik di luar
     // ========================
     document.addEventListener('click', function (e) {
-        if (!noFormulirInput.contains(e.target) && !document.getElementById('siswa-suggestions').contains(e.target)) {
-            document.getElementById('siswa-suggestions').style.display = 'none';
+        const sug = document.getElementById('siswa-suggestions');
+        if (!noFormulirInput.contains(e.target) && sug && !sug.contains(e.target)) {
+            sug.style.display = 'none';
         }
     });
 
-    // ========================
-    // 4. Menambah Jenis Pembayaran Dinamis
-    // ========================
-
+    // ===============================================
+    // 5. Menambah Jenis Pembayaran Dinamis dengan blokir
+    // ===============================================
     const paymentWrapper = document.getElementById('payment-wrapper');
     const addPaymentBtn = document.getElementById('add-payment-btn');
 
     if (typeof jenisPembayaranList === 'undefined' || !Array.isArray(jenisPembayaranList)) {
-        console.error('jenisPembayaranList tidak didefinisikan atau bukan array. Pastikan variabel tersebut telah didefinisikan di PHP.');
+        console.error('jenisPembayaranList tidak didefinisikan atau bukan array.');
     } else {
         function getJenisPembayaranOptions(selectedId = '') {
             let options = '<option value="" disabled>Pilih Jenis Pembayaran</option>';
             jenisPembayaranList.forEach(jenis => {
-                if (jenis.id == selectedId) {
-                    options += `<option value="${jenis.id}" selected>${jenis.nama}</option>`;
-                } else {
-                    options += `<option value="${jenis.id}">${jenis.nama}</option>`;
-                }
+                options += `<option value="${jenis.id}"${jenis.id == selectedId ? ' selected' : ''}>${jenis.nama}</option>`;
             });
             return options;
         }
@@ -127,64 +149,55 @@ document.addEventListener('DOMContentLoaded', function () {
             const paymentItem = document.createElement('div');
             paymentItem.className = 'payment-item mb-3';
             paymentItem.innerHTML = `
-            <div class="row g-2">
-                <div class="col-md-3">
-                    <select name="jenis_pembayaran[]" class="form-select jenis-pembayaran" required>
-                        ${getJenisPembayaranOptions(selectedId)}
-                    </select>
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <select name="jenis_pembayaran[]" class="form-select jenis-pembayaran" required>
+                            ${getJenisPembayaranOptions(selectedId)}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label cashback-label" style="display:none;">Cashback (Rp)</label>
+                        <input type="text" name="cashback[]" class="form-control cashback-input" placeholder="Cashback" style="display:none;">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="bulan[]" class="form-select bulan-pembayaran" style="display: none;">
+                            <option value="" disabled selected>Pilih Bulan</option>
+                            <option value="Juli">Juli</option>
+                            <option value="Agustus">Agustus</option>
+                            <option value="September">September</option>
+                            <option value="Oktober">Oktober</option>
+                            <option value="November">November</option>
+                            <option value="Desember">Desember</option>
+                            <option value="Januari">Januari</option>
+                            <option value="Februari">Februari</option>
+                            <option value="Maret">Maret</option>
+                            <option value="April">April</option>
+                            <option value="Mei">Mei</option>
+                            <option value="Juni">Juni</option>
+                        </select>
+                        <button type="button" class="btn btn-danger remove-payment-btn mt-2">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    <input type="text" name="jumlah[]" class="form-control jumlah-input" placeholder="Jumlah (Rp)" required>
-                </div>
-                <div class="col-md-2">
-    <label class="form-label cashback-label" style="display:none;">Cashback (Rp)</label>
-    <input type="text"
-           min="0" step="100"
-           name="cashback[]"
-           class="form-control cashback-input"
-           placeholder="Masukkan Cashback"
-           style="display:none;"
-           value="${selectedCashback ? selectedCashback : ''}">
-</div>
-
-                <div class="col-md-3">
-                    <select name="bulan[]" class="form-select bulan-pembayaran" style="display: none;">
-                        <option value="" disabled selected>Pilih Bulan</option>
-                        <option value="Juli">Juli</option>
-                        <option value="Agustus">Agustus</option>
-                        <option value="September">September</option>
-                        <option value="Oktober">Oktober</option>
-                        <option value="November">November</option>
-                        <option value="Desember">Desember</option>
-                        <option value="Januari">Januari</option>
-                        <option value="Februari">Februari</option>
-                        <option value="Maret">Maret</option>
-                        <option value="April">April</option>
-                        <option value="Mei">Mei</option>
-                        <option value="Juni">Juni</option>
-                    </select>
-                    <button type="button" class="btn btn-danger remove-payment-btn mt-2"><i class="fas fa-minus"></i></button>
-                </div>
-            </div>
-        `;
+            `;
             paymentWrapper.appendChild(paymentItem);
 
-            const newJumlahInput = paymentItem.querySelector('.jumlah-input');
-            formatCurrencyInput(newJumlahInput);
+            // format currency
+            formatCurrencyInput(paymentItem.querySelector('.jumlah-input'));
+            formatCurrencyInput(paymentItem.querySelector('.cashback-input'));
 
-            const newCashbackInput = paymentItem.querySelector('.cashback-input');
-            formatCurrencyInput(newCashbackInput);
-
-
-            const jenisPembayaranSelect = paymentItem.querySelector('.jenis-pembayaran');
+            const jenisSelect = paymentItem.querySelector('.jenis-pembayaran');
             const cashbackInput = paymentItem.querySelector('.cashback-input');
             const cashbackLabel = paymentItem.querySelector('.cashback-label');
-            const bulanPembayaranSelect = paymentItem.querySelector('.bulan-pembayaran');
+            const bulanSelect = paymentItem.querySelector('.bulan-pembayaran');
 
             function toggleCashbackInput() {
-                const selectedOption = jenisPembayaranSelect.options[jenisPembayaranSelect.selectedIndex];
-                const jenisNama = selectedOption ? selectedOption.text.toLowerCase() : '';
-                if (jenisNama.includes("uang pangkal")) {
+                const nama = jenisSelect.options[jenisSelect.selectedIndex].text.toLowerCase();
+                if (nama.includes('uang pangkal')) {
                     cashbackLabel.style.display = 'block';
                     cashbackInput.style.display = 'block';
                     cashbackInput.required = true;
@@ -194,173 +207,44 @@ document.addEventListener('DOMContentLoaded', function () {
                     cashbackInput.value = '';
                     cashbackInput.required = false;
                 }
-
             }
 
             function toggleBulanInput() {
-                if (isSPP(jenisPembayaranSelect.value)) {
-                    bulanPembayaranSelect.style.display = 'block';
-                    if (selectedBulan) bulanPembayaranSelect.value = selectedBulan;
+                const isSpp = jenisPembayaranList.find(j => j.id == jenisSelect.value)?.nama.toLowerCase() === 'spp';
+                if (isSpp) {
+                    bulanSelect.style.display = 'block';
+                    // disable yang sudah lunas
+                    Array.from(bulanSelect.options).forEach(opt => {
+                        if (paidMonths.includes(opt.value)) {
+                            opt.disabled = true;
+                            if (!opt.text.includes('(Lunas)')) opt.text += ' (Lunas)';
+                        } else {
+                            opt.disabled = false;
+                            opt.text = opt.text.replace(' (Lunas)', '');
+                        }
+                    });
+                    if (selectedBulan) bulanSelect.value = selectedBulan;
                 } else {
-                    bulanPembayaranSelect.style.display = 'none';
-                    bulanPembayaranSelect.value = '';
+                    bulanSelect.style.display = 'none';
+                    bulanSelect.value = '';
                 }
             }
 
             toggleCashbackInput();
             toggleBulanInput();
 
-            jenisPembayaranSelect.addEventListener('change', function () {
+            jenisSelect.addEventListener('change', function () {
                 toggleCashbackInput();
                 toggleBulanInput();
             });
-        }
 
-        function isSPP(jenis_pembayaran_id) {
-            return jenisPembayaranList.some(jenis => jenis.id == jenis_pembayaran_id && jenis.nama.toLowerCase() === 'spp');
-        }
-
-        if (addPaymentBtn) {
-            addPaymentBtn.addEventListener('click', function () {
-                addPayment();
+            // hapus item
+            paymentItem.querySelector('.remove-payment-btn').addEventListener('click', function () {
+                paymentItem.remove();
             });
         }
 
-        if (paymentWrapper) {
-            paymentWrapper.addEventListener('click', function (event) {
-                if (event.target.classList.contains('remove-payment-btn') || event.target.closest('.remove-payment-btn')) {
-                    const button = event.target.closest('.remove-payment-btn');
-                    const paymentItem = button.closest('.payment-item');
-                    if (paymentItem) {
-                        paymentItem.remove();
-                    }
-                }
-            });
-        }
-    }
-
-    // ========================
-    // 5. Validasi dan AJAX Formulir Tambah Pembayaran
-    // ========================
-
-    const addPaymentForm = document.getElementById('tambahPembayaranForm');
-
-    if (addPaymentForm) {
-        addPaymentForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            // Reset error messages
-            const errorContainer = document.getElementById('form-errors');
-            errorContainer.style.display = 'none';
-            errorContainer.innerHTML = '';
-
-            const no_formulir = document.getElementById('no_formulir').value.trim();
-            const nama = document.getElementById('nama').value.trim();
-            const tahun_pelajaran = document.getElementById('tahun_pelajaran').value.trim();
-            const metode_pembayaran = document.getElementById('metode_pembayaran').value.trim();
-            const keterangan = document.getElementById('keterangan').value.trim();
-
-            const jenis_pembayaran = Array.from(document.querySelectorAll('select[name="jenis_pembayaran[]"]')).map(el => el.value);
-            const jumlah_pembayaran = Array.from(document.querySelectorAll('input[name="jumlah[]"]')).map(el => el.value);
-            const bulan_pembayaran = Array.from(document.querySelectorAll('select[name="bulan[]"]')).map(el => el.value);
-            const cashback = Array.from(document.querySelectorAll('input[name="cashback[]"]')).map(el => el.value);
-
-            let isValid = true;
-            let errorMessages = [];
-
-            if (no_formulir === '') {
-                errorMessages.push('No Formulir harus diisi.');
-                isValid = false;
-            }
-            if (nama === '') {
-                errorMessages.push('Nama siswa tidak valid.');
-                isValid = false;
-            }
-            if (tahun_pelajaran === '') {
-                errorMessages.push('Tahun Pelajaran harus diisi.');
-                isValid = false;
-            }
-            if (metode_pembayaran === '') {
-                errorMessages.push('Metode Pembayaran harus dipilih.');
-                isValid = false;
-            }
-
-            jenis_pembayaran.forEach((jenis, index) => {
-                const jumlah = parseFloat(jumlah_pembayaran[index].replace(/\./g, '')) || 0;
-                if (jenis === '') {
-                    errorMessages.push(`Jenis Pembayaran pada item ${index + 1} harus dipilih.`);
-                    isValid = false;
-                }
-                if (jumlah <= 0) {
-                    errorMessages.push(`Jumlah Pembayaran pada item ${index + 1} harus lebih dari 0.`);
-                    isValid = false;
-                }
-                if (isSPP(jenis) && (bulan_pembayaran[index] === '' || bulan_pembayaran[index] === undefined)) {
-                    errorMessages.push(`Bulan Pembayaran pada item ${index + 1} harus dipilih karena jenis pembayaran adalah SPP.`);
-                    isValid = false;
-                }
-            });
-
-            // Hitung total jumlah pembayaran
-            let total_jumlah = 0;
-            jumlah_pembayaran.forEach(jml => {
-                const jumlah = parseFloat(jml.replace(/\./g, '')) || 0;
-                total_jumlah += jumlah;
-            });
-
-            if (total_jumlah <= 0) {
-                errorMessages.push('Total Pembayaran harus lebih dari 0.');
-                isValid = false;
-            }
-
-            if (!isValid) {
-                if (errorContainer) {
-                    errorContainer.innerHTML = errorMessages.join('<br>');
-                    errorContainer.style.display = 'block';
-                } else {
-                    alert(errorMessages.join('\n'));
-                }
-                return;
-            } else {
-                if (errorContainer) {
-                    errorContainer.style.display = 'none';
-                }
-            }
-
-            // Kirim data dengan FormData (dukung file & array)
-            const formData = new FormData(addPaymentForm);
-            // manual append cashback
-            document.querySelectorAll('input[name="cashback[]"]').forEach((el, idx) => {
-                formData.set('cashback[]', el.value);
-            });
-
-            fetch('tambah_pembayaran.php', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        window.location.reload();
-                    } else {
-                        if (errorContainer) {
-                            errorContainer.innerHTML = data.message;
-                            errorContainer.style.display = 'block';
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    }
-                })
-                .catch(error => {
-                    if (errorContainer) {
-                        errorContainer.innerHTML = 'Terjadi kesalahan saat menambahkan pembayaran.';
-                        errorContainer.style.display = 'block';
-                    } else {
-                        alert('Terjadi kesalahan saat menambahkan pembayaran.');
-                    }
-                });
-        });
+        addPaymentBtn.addEventListener('click', () => addPayment());
     }
 
     // ========================
