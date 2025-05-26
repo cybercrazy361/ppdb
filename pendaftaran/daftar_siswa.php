@@ -138,6 +138,17 @@ function getStatusPembayaranLabel($status) {
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
       </div>
     </header>
+    
+        <?php if (!empty($_SESSION['flash_message'])): ?>
+        <div class="alert alert-<?= $_SESSION['flash_type'] ?> alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($_SESSION['flash_message']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php 
+        // Hapus setelah ditampilkan
+        unset($_SESSION['flash_message'], $_SESSION['flash_type']);
+        endif;
+        ?>
 
     <div class="container mt-5">
       <div class="table-responsive">
