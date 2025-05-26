@@ -76,7 +76,7 @@
     color: #13afe0;
 }
 
-/* Responsive: Hide sidebar on mobile, show overlay toggle */
+/* Responsive Sidebar */
 @media (max-width: 992px) {
     .sidebar {
         width: 60px;
@@ -131,7 +131,7 @@ body {
     min-height: 100vh;
 }
 
-/* HEADER MENTOK ATAS */
+/* === HEADER (NAVBAR) MENTOK ATAS === */
 .main {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
@@ -141,7 +141,6 @@ body {
     transition: margin-left var(--transition), width var(--transition);
     background: transparent;
     padding-top: 0 !important;
-    /* <--- pastikan tidak ada padding top */
 }
 
 .navbar {
@@ -150,14 +149,12 @@ body {
     display: flex;
     align-items: center;
     padding: 0 1.5rem;
-    box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 12px 0 rgba(30, 45, 100, 0.07);
     z-index: 2;
     margin: 0;
-    /* <--- pastikan tidak ada margin */
     border: none;
-    /* <--- hilangkan border atas kalau ada */
     border-radius: 0;
-    /* <--- mentok sudut */
+    position: relative;
 }
 
 .navbar .toggle-btn {
@@ -166,12 +163,16 @@ body {
     color: var(--color-secondary);
     background: none;
     border: none;
+    margin-right: 1rem;
 }
 
 .navbar .title {
     flex: 1;
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #4a5476;
+    margin: 0;
+    letter-spacing: 0.01em;
 }
 
 .navbar .user-menu {
@@ -182,30 +183,191 @@ body {
 .navbar .user-menu small {
     margin-right: 1rem;
     color: var(--color-secondary);
+    font-size: 1.07rem;
 }
 
 .btn-logout {
     background: var(--color-danger);
     color: #fff;
     border: none;
-    padding: .5rem 1rem;
+    padding: .5rem 1.2rem;
     border-radius: var(--border-radius);
     transition: background var(--transition);
+    font-size: 1.04rem;
+    font-weight: 500;
 }
 
 .btn-logout:hover {
     background: #c0392b;
 }
 
-/* RESPONSIVE HEADER */
+/* ==== DASHBOARD CARD ==== */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.card {
+    background: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 .125rem .375rem rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition), box-shadow var(--transition);
+    text-align: center;
+    padding: 1.75rem 1rem;
+}
+
+.card:hover {
+    transform: translateY(-.25rem);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card .icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.card .icon.text-primary {
+    color: var(--color-primary);
+}
+
+.card .icon.text-success {
+    color: var(--color-success);
+}
+
+.card .icon.text-info {
+    color: var(--color-info);
+}
+
+.card .icon.text-warning {
+    color: var(--color-warning);
+}
+
+.card .icon.text-danger {
+    color: var(--color-danger);
+}
+
+.card .title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.card .count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: .5rem 0;
+}
+
+.card .subtext {
+    font-size: .875rem;
+    color: var(--color-secondary);
+}
+
+.chart-card {
+    margin: 0 2rem 2rem;
+    background: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 .125rem .375rem rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.chart-card h6 {
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 350px;
+    height: 350px;
+    margin: 0 auto;
+}
+
+.card-body canvas {
+    width: 100% !important;
+    max-width: 350px;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+}
+
+.footer {
+    background: #f8f9fc;
+    color: #888;
+    padding: 12px 0;
+    margin-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* Modal Table */
+.modal .modal-header {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.modal .table {
+    font-size: .875rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 1200px) {
+    .dashboard-cards {
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+}
+
 @media (max-width: 992px) {
     .main {
         margin-left: 60px !important;
         width: calc(100% - 60px) !important;
     }
 
+    .dashboard-cards {
+        gap: 1rem;
+    }
+
     .navbar .toggle-btn {
         display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .main {
+        padding: 1rem !important;
+    }
+
+    .dashboard-cards,
+    .row.g-4 {
+        grid-template-columns: 1fr !important;
+        display: grid !important;
+        gap: 1rem !important;
+    }
+
+    .card {
+        padding: 1.25rem 0.75rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.75rem 1rem !important;
+    }
+
+    .navbar .navbar-nav {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .card .card-icon {
+        font-size: 2.2rem !important;
+        margin-bottom: .5rem !important;
     }
 }
 
@@ -215,6 +377,14 @@ body {
         width: 100% !important;
     }
 
+    .dashboard-cards,
+    .row.g-4 {
+        grid-template-columns: 1fr !important;
+        display: grid !important;
+        gap: 1rem !important;
+        padding: 0.8rem !important;
+    }
+
     .navbar {
         padding: 0.5rem !important;
         min-height: 44px;
@@ -222,5 +392,18 @@ body {
 
     .navbar .title {
         font-size: 1rem;
+    }
+
+    .card {
+        padding: 1rem 0.5rem !important;
+        font-size: 1rem;
+    }
+
+    .footer {
+        font-size: 0.95rem;
+    }
+
+    .card .card-title {
+        font-size: 1.05rem !important;
     }
 }
