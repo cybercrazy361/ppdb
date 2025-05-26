@@ -277,6 +277,20 @@ body {
     overflow: hidden;
 }
 
+/* Pastikan modal di atas header dan tidak tertutup */
+.modal-backdrop {
+    z-index: 2000 !important;
+}
+
+.modal {
+    position: relative;
+    z-index: 2002 !important;
+}
+
+.modal-dialog {
+    margin-top: calc(var(--navbar-height) + 1rem) !important;
+}
+
 .modal-header {
     background: var(--color-primary);
     color: #fff;
