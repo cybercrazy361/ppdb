@@ -688,3 +688,29 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+// ========================
+// 12. Submit Tambah Pembayaran via AJAX
+// ========================
+const tambahPembayaranForm = document.getElementById('tambahPembayaranForm');
+if (tambahPembayaranForm) {
+    tambahPembayaranForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        fetch('tambah_pembayaran.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    alert('Pembayaran berhasil!');
+                    window.location.reload();
+                } else {
+                    document.getElementById('form-errors').innerHTML = d.message;
+                    document.getElementById('form-errors').style.display = 'block';
+                }
+            })
+            .catch(() => alert('Error server!'));
+    });
+}
