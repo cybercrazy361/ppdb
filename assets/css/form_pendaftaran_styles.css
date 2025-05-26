@@ -310,3 +310,18 @@ textarea {
     color: #b4bedb !important;
     opacity: 1;
 }
+
+.main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    transition: margin-left 0.22s;
+    background: transparent;
+}
+
+@media (max-width: 992px) {
+    .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
