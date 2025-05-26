@@ -42,7 +42,7 @@ function display_errors() {
     <!-- HEADER NAVBAR -->
       <header class="navbar">
         <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-        <div class="title">Formulir Pendaftaran Siswa Baru <?=htmlspecialchars($unit)?></div>
+        <div class="title">Progres Pendaftaran Murid baru <?=htmlspecialchars($unit)?></div>
         <div class="user-menu">
         <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
@@ -50,11 +50,6 @@ function display_errors() {
     </header>
     <div class="container py-2">
         <div class="card shadow-sm form-card">
-            <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-height:42px;">                
-                    <div class="form-title mb-0">Formulir Pendaftaran Siswa Baru</div>
-                    <?php display_errors(); ?>
-            </div>
-
             <form action="proses_pendaftaran.php" method="POST" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <input type="hidden" name="unit" value="<?= htmlspecialchars($unit) ?>">
