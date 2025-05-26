@@ -397,9 +397,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         details.forEach(detail => {
                             addEditPayment(
                                 detail.jenis_pembayaran_id,
-                                detail.bulan,
-                                detail.jumlah,
-                                detail.cashback
+                                detail.bulan === null ? '' : detail.bulan,
+                                detail.jumlah === null ? '' : detail.jumlah,
+                                detail.cashback === null ? '' : detail.cashback
                             );
                         });
                         const modalEdit = new bootstrap.Modal(document.getElementById('modalEditPembayaran'));
