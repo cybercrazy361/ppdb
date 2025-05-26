@@ -26,8 +26,12 @@ body {
     font-family: var(--font-base);
 }
 
-/* Navbar Header (sama dengan dashboard) */
+/* Navbar Header (sama dengan dashboard), fixed di atas */
 .navbar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
     height: var(--navbar-height);
     background: #fff;
     display: flex;
@@ -35,6 +39,19 @@ body {
     padding: 0 1.5rem;
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
     z-index: 2001;
+    margin: 0;
+}
+
+@media (max-width: 992px) {
+    .navbar {
+        left: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar {
+        left: 0;
+    }
 }
 
 .navbar .toggle-btn {
@@ -70,9 +87,9 @@ body {
     align-items: center;
 }
 
-.navbar .user-menu small {
-    margin-right: 1rem;
-    color: var(--color-secondary);
+.navbar .user-menu small,
+.navbar .user-menu a {
+    color: var(--color-dark);
 }
 
 .btn-logout {
@@ -88,12 +105,14 @@ body {
     background: #c0392b;
 }
 
-/* Wrapper .main */
+/* Wrapper .main — beri padding-top untuk tidak tertutup navbar */
 .main {
     margin-left: var(--sidebar-width);
+    padding-top: var(--navbar-height);
     width: calc(100% - var(--sidebar-width));
     transition: margin-left var(--transition), width var(--transition);
-    padding: 2rem 1rem;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
 }
 
 @media (max-width: 992px) {
