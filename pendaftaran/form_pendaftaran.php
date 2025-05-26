@@ -50,15 +50,9 @@ function display_errors() {
     </header>
     <div class="container py-2">
         <div class="card shadow-sm form-card">
-            <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-height:42px;">
-                <div>
+            <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-height:42px;">                
                     <div class="form-title mb-0">Formulir Pendaftaran Siswa Baru</div>
                     <?php display_errors(); ?>
-                </div>
-                <a href="dashboard_pendaftaran.php" class="btn btn-gradient-outline d-flex align-items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span class="d-none d-md-inline">Kembali ke Dashboard</span>
-                </a>
             </div>
 
             <form action="proses_pendaftaran.php" method="POST" novalidate>
