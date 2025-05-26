@@ -14,6 +14,14 @@
     --font-base: 'Poppins', sans-serif;
 }
 
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+}
+
+
 /* ==== SIDEBAR ==== */
 .sidebar {
     position: fixed;
