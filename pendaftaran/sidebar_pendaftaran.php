@@ -9,7 +9,7 @@
 
   <a href="form_pendaftaran.php"
      class="nav-link <?= ($active=='form'?'active':'') ?>">
-    <i class="fas fa-user-plus"></i><span> Input</span>
+    <i class="fas fa-user-plus"></i><span> Input Progress</span>
   </a>
 
   <a href="daftar_siswa.php"
