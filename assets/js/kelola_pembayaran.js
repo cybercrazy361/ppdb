@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ===============================================
-    // 5. Menambah Jenis Pembayaran Dinamis dengan blokir
+    // 5. Menambah Jenis Pembayaran Dinamis dengan Blokir
     // ===============================================
     const paymentWrapper = document.getElementById('payment-wrapper');
     const addPaymentBtn = document.getElementById('add-payment-btn');
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
             paymentWrapper.appendChild(paymentItem);
 
-            // format currency
+            // format currency pada input jumlah & cashback
             formatCurrencyInput(paymentItem.querySelector('.jumlah-input'));
             formatCurrencyInput(paymentItem.querySelector('.cashback-input'));
 
@@ -210,26 +210,28 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             function toggleBulanInput() {
-                const isSpp = jenisPembayaranList.find(j => j.id == jenisSelect.value)?.nama.toLowerCase() === 'spp';
-                if (isSpp) {
-                    bulanSelect.style.display = 'block';
-                    // disable yang sudah lunas
-                    Array.from(bulanSelect.options).forEach(opt => {
-                        if (paidMonths.includes(opt.value)) {
-                            opt.disabled = true;
-                            if (!opt.text.includes('(Lunas)')) opt.text += ' (Lunas)';
-                        } else {
-                            opt.disabled = false;
-                            opt.text = opt.text.replace(' (Lunas)', '');
-                        }
-                    });
-                    if (selectedBulan) bulanSelect.value = selectedBulan;
-                } else {
+                const namaJenis = jenisPembayaranList.find(j => j.id == jenisSelect.value)?.nama.toLowerCase();
+                const isSpp = namaJenis === 'spp';
+                if (!isSpp) {
                     bulanSelect.style.display = 'none';
                     bulanSelect.value = '';
+                    return;
                 }
+                bulanSelect.style.display = 'block';
+                // disable opsi bulan yang sudah lunas
+                Array.from(bulanSelect.options).forEach(opt => {
+                    if (paidMonths.includes(opt.value)) {
+                        opt.disabled = true;
+                        if (!opt.text.includes(' (Lunas)')) opt.text += ' (Lunas)';
+                    } else {
+                        opt.disabled = false;
+                        opt.text = opt.text.replace(' (Lunas)', '');
+                    }
+                });
+                if (selectedBulan) bulanSelect.value = selectedBulan;
             }
 
+            // Inisialisasi tampilan
             toggleCashbackInput();
             toggleBulanInput();
 
@@ -238,12 +240,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 toggleBulanInput();
             });
 
-            // hapus item
+            // tombol hapus baris
             paymentItem.querySelector('.remove-payment-btn').addEventListener('click', function () {
                 paymentItem.remove();
             });
         }
 
+        // tombol tambah baris pembayaran
         addPaymentBtn.addEventListener('click', () => addPayment());
     }
 
