@@ -46,6 +46,7 @@ function display_errors() {
 <body style="background: linear-gradient(110deg, #f0f4ff 0%, #f5f8ff 30%, #e8eeff 100%);">
 
 <?php include 'sidebar_pendaftaran.php'; ?>
+
 <div class="container py-4">
     <div class="card shadow-sm form-card">
         <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-height:42px;">
