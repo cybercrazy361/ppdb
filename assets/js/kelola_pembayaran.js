@@ -596,12 +596,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const csrf_token = hapusPembayaranForm.querySelector('input[name="csrf_token"]').value.trim();
 
             // Kirim permintaan hapus via AJAX
-            fetch(`delete_pembayaran.php?id=${encodeURIComponent(pembayaran_id)}`, {
+            // → Ubah menjadi:
+            fetch('delete_pembayaran.php', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    id: pembayaran_id,
                     csrf_token: csrf_token
                 })
             })
