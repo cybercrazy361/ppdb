@@ -39,26 +39,36 @@
     background: none;
 }
 
+/* Menu item: icon + text always inline, gap for spacing, align center */
 .sidebar .nav-link {
     display: flex;
     align-items: center;
-    gap: 13px;
-    font-size: 1.01rem;
+    gap: 12px;
+    font-size: 1.03rem;
     color: var(--color-sidebar-text);
-    padding: 17px 30px 17px 34px;
+    padding: 15px 30px 15px 30px;
     text-decoration: none;
     border-left: 4px solid transparent;
     font-weight: 500;
     transition: background 0.17s, color 0.18s, border-left 0.15s;
     background: none;
+    line-height: 1.2;
 }
 
 .sidebar .nav-link i {
+    width: 22px;
     min-width: 22px;
     text-align: center;
-    font-size: 1.14em;
+    font-size: 1.19em;
+    display: inline-block;
 }
 
+.sidebar .nav-link span {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Active/highlight style */
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
     background: rgba(255, 255, 255, 0.11);
@@ -70,7 +80,7 @@
     color: var(--color-sidebar-active);
 }
 
-/* --- Responsive: Sidebar overlay for mobile --- */
+/* Responsive: Sidebar overlay for mobile */
 @media (max-width: 900px) {
     .sidebar {
         transform: translateX(-101%);
@@ -103,7 +113,7 @@
     }
 }
 
-/* --- Desktop: Push content right --- */
+/* Desktop: Sidebar push content right */
 @media (min-width: 901px) {
     .sidebar {
         transform: none !important;
@@ -119,7 +129,7 @@
     }
 }
 
-/* --- Sidebar toggle button (hamburger) --- */
+/* Sidebar toggle button (hamburger) */
 .toggle-btn {
     background: none;
     border: none;

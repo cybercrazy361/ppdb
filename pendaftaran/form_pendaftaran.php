@@ -45,6 +45,7 @@ function display_errors() {
 </head>
 <body style="background: linear-gradient(110deg, #f0f4ff 0%, #f5f8ff 30%, #e8eeff 100%);">
 
+<?php $active = 'form'; ?>
 <?php include 'sidebar_pendaftaran.php'; ?>
 
 <div class="container py-4">

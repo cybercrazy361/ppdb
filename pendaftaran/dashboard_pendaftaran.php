@@ -101,7 +101,9 @@ $conn->close();
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<?php $active = 'dashboard'; ?>
 <?php include 'sidebar_pendaftaran.php'; ?>
+
 
   <div class="main">
     <header class="navbar">

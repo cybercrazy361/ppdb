@@ -15,59 +15,11 @@
     --font-base: 'Poppins', sans-serif;
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
     font-family: var(--font-base);
     background: var(--color-light);
     color: var(--color-dark);
     min-height: 100vh;
-}
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--sidebar-width);
-    height: 100%;
-    background: var(--color-primary);
-    padding-top: var(--navbar-height);
-    transition: left var(--transition), width var(--transition);
-    overflow-y: auto;
-    z-index: 1030;
-}
-
-.sidebar .brand {
-    display: block;
-    padding: 1.25rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #fff;
-    text-align: center;
-}
-
-.sidebar .nav-link {
-    display: flex;
-    align-items: center;
-    padding: .75rem 1rem;
-    color: #fff;
-    text-decoration: none;
-    transition: background var(--transition);
-}
-
-.sidebar .nav-link i {
-    margin-right: .75rem;
-    font-size: 1.1rem;
-}
-
-.sidebar .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
 }
 
 .main {
@@ -246,20 +198,13 @@ body {
 }
 
 @media (max-width: 992px) {
-    .sidebar {
-        width: 60px;
-        min-width: 60px;
-        max-width: 60px;
-    }
-
-    .sidebar .brand,
-    .sidebar .nav-link span {
-        display: none;
-    }
-
     .main {
         margin-left: 60px !important;
         width: calc(100% - 60px) !important;
+    }
+
+    .dashboard-cards {
+        gap: 1rem;
     }
 
     .navbar .toggle-btn {
@@ -302,26 +247,6 @@ body {
 }
 
 @media (max-width: 576px) {
-
-    /* === SIDEBAR OVERLAY MOBILE === */
-    .sidebar {
-        left: -240px;
-        width: var(--sidebar-width);
-        min-width: var(--sidebar-width);
-        max-width: var(--sidebar-width);
-        display: block;
-        transition: left var(--transition);
-    }
-
-    .sidebar.active {
-        left: 0;
-    }
-
-    .sidebar .brand,
-    .sidebar .nav-link span {
-        display: block;
-    }
-
     .main {
         margin-left: 0 !important;
         width: 100% !important;
@@ -355,18 +280,5 @@ body {
 
     .card .card-title {
         font-size: 1.05rem !important;
-    }
-
-    /* Sidebar backdrop untuk overlay mobile */
-    .sidebar-backdrop {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.3);
-        z-index: 1029;
-    }
-
-    .sidebar-backdrop.active {
-        display: block;
     }
 }
