@@ -97,6 +97,7 @@ $conn->close();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css">
+  <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -219,35 +220,8 @@ $conn->close();
         }
       }
     });
-
-document.addEventListener("DOMContentLoaded", function() {
-    const sidebar = document.querySelector('.sidebar');
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const backdrop = document.getElementById('sidebarBackdrop');
-    // Show sidebar overlay
-    function showSidebar() {
-        sidebar.classList.add('active');
-        backdrop.classList.add('active');
-    }
-    // Hide sidebar overlay
-    function hideSidebar() {
-        sidebar.classList.remove('active');
-        backdrop.classList.remove('active');
-    }
-    sidebarToggle.addEventListener('click', function(e){
-        e.preventDefault();
-        showSidebar();
-    });
-    backdrop.addEventListener('click', function() {
-        hideSidebar();
-    });
-    // Hide sidebar if resize >576px
-    window.addEventListener('resize', function() {
-        if(window.innerWidth > 576) hideSidebar();
-    });
-});
-
-
-  </script>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/sidebar_pendaftaran.js"></script>
 </body>
 </html>
