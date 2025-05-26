@@ -138,7 +138,7 @@ function getStatusPembayaranLabel($status) {
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
       </div>
     </header>
-    
+
         <?php if (!empty($_SESSION['flash_message'])): ?>
         <div class="alert alert-<?= $_SESSION['flash_type'] ?> alert-dismissible fade show" role="alert">
             <?= htmlspecialchars($_SESSION['flash_message']) ?>
@@ -149,6 +149,11 @@ function getStatusPembayaranLabel($status) {
         unset($_SESSION['flash_message'], $_SESSION['flash_type']);
         endif;
         ?>
+<div class="mb-3">
+  <a href="cetak_daftar_siswa.php" target="_blank" class="btn btn-primary">
+    <i class="fas fa-print"></i> Cetak Daftar Lengkap
+  </a>
+</div>
 
     <div class="container mt-5">
       <div class="table-responsive">
