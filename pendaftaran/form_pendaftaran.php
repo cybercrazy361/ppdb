@@ -36,7 +36,6 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <!-- CSS dasar dashboard (reset, root vars, layout) -->
-  <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css"/>
   <!-- CSS sidebar dan form -->
   <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css"/>
   <link rel="stylesheet" href="../assets/css/form_pendaftaran_styles.css"/>
