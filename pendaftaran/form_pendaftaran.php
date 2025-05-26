@@ -41,7 +41,6 @@ function display_errors() {
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
     <link rel="stylesheet" href="../assets/css/form_pendaftaran_styles.css">
-    <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
     
 </head>
 <body style="background: linear-gradient(110deg, #f0f4ff 0%, #f5f8ff 30%, #e8eeff 100%);">
