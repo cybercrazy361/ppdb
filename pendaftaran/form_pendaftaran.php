@@ -56,7 +56,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
     </div>
   </header>
 
-  <div class="container py-4">
+  <div class="container py-1">
     <?php display_errors(); ?>
     <div class="card shadow-sm form-card">
       <form action="proses_pendaftaran.php" method="POST">
