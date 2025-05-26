@@ -48,7 +48,7 @@ function display_errors() {
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
         </div>
     </header>
-    <div class="container py-4">
+    <div class="container py-2">
         <div class="card shadow-sm form-card">
             <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-height:42px;">
                 <div>
