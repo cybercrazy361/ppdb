@@ -1,4 +1,6 @@
-/* root variables sama dengan dashboard */
+/* daftar_siswa_styles.css */
+
+/* Root variables sama dengan dashboard */
 :root {
     --color-primary: #2e59d9;
     --color-accent: #13afe0;
@@ -11,7 +13,7 @@
     --font-base: 'Poppins', sans-serif;
 }
 
-/* reset */
+/* Reset dasar */
 html,
 body {
     margin: 0;
@@ -23,7 +25,7 @@ body {
     font-family: var(--font-base);
 }
 
-/* main wrapper */
+/* Wrapper .main */
 .main {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
@@ -45,7 +47,7 @@ body {
     }
 }
 
-/* container styling */
+/* Container styling */
 .main .container {
     background: #fff;
     border-radius: var(--border-radius);
@@ -54,7 +56,7 @@ body {
     margin-top: 1.5rem;
 }
 
-/* page title */
+/* Judul halaman */
 .main .container h2 {
     color: var(--color-primary);
     text-transform: uppercase;
@@ -62,8 +64,9 @@ body {
     margin-bottom: 1.5rem;
 }
 
-/* table */
+/* Tabel utama */
 .main .table {
+    width: 100%;
     border-collapse: collapse;
 }
 
@@ -90,32 +93,39 @@ body {
     transition: background var(--transition);
 }
 
-/* status badges */
-.status-pending {
-    background: #f8d7da;
-    color: #721c24;
+/* Badge status */
+.status-pending,
+.status-cicilan,
+.status-lunas {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
     padding: 0.25rem 0.5rem;
     border-radius: var(--border-radius);
     font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.status-pending {
+    background: #f8d7da;
+    color: #721c24;
 }
 
 .status-cicilan {
     background: #fff3cd;
     color: #856404;
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--border-radius);
-    font-weight: 600;
 }
 
 .status-lunas {
     background: #d4edda;
     color: #155724;
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--border-radius);
-    font-weight: 600;
 }
 
-/* pagination */
+/* Pagination */
+.main .pagination {
+    margin-top: 1.5rem;
+}
+
 .main .pagination .page-link {
     color: var(--color-primary);
     border-radius: var(--border-radius);
@@ -133,35 +143,98 @@ body {
     border: 1px solid var(--color-primary);
 }
 
-/* buttons */
+/* Tombol */
+.main .btn-secondary,
+.main .btn-success,
+.main .btn-warning,
+.main .btn-danger {
+    border-radius: var(--border-radius);
+    transition: transform var(--transition);
+}
+
 .main .btn-secondary {
     background: var(--color-secondary);
     color: #fff;
     border: none;
-    border-radius: var(--border-radius);
-    transition: background var(--transition), transform var(--transition);
 }
 
 .main .btn-secondary:hover {
-    background: darken(var(--color-secondary), 10%);
+    background: #6c757d;
     transform: translateY(-2px);
+}
+
+.main .btn-secondary:active {
+    transform: translateY(1px);
 }
 
 .main .btn-success {
     background: #198754;
-    border-radius: var(--border-radius);
+    color: #fff;
+    border: none;
 }
 
 .main .btn-warning {
     background: #ffc107;
-    border-radius: var(--border-radius);
+    color: #000;
+    border: none;
 }
 
 .main .btn-danger {
     background: #dc3545;
-    border-radius: var(--border-radius);
+    color: #fff;
+    border: none;
 }
 
 .main .btn i {
     margin-right: 0.3rem;
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: var(--color-primary);
+    color: #fff;
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1rem;
+}
+
+/* Form dalam modal */
+.modal-body .form-label {
+    font-weight: 500;
+}
+
+.modal-body .form-control,
+.modal-body .form-select,
+.modal-body textarea {
+    border-radius: var(--border-radius);
+    box-shadow: none;
+    border: 1px solid #ced4da;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus,
+.modal-body textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(46, 89, 217, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main .table-responsive {
+        font-size: 0.85rem;
+    }
+
+    .main .btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
 }
