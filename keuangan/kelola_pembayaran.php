@@ -458,57 +458,59 @@ $csrf_token = $_SESSION['csrf_token'];
         </div>
     </div>
 
-    <!-- Modal Edit Pembayaran -->
-    <div class="modal fade" id="modalEditPembayaran" tabindex="-1" aria-labelledby="modalEditPembayaranLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <form method="POST" id="editPembayaranForm">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalEditPembayaranLabel">Edit Pembayaran</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal Edit Pembayaran -->
+<div class="modal fade" id="modalEditPembayaran" tabindex="-1" aria-labelledby="modalEditPembayaranLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="editPembayaranForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditPembayaranLabel">Edit Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="edit-form-errors" class="alert alert-danger" style="display: none;"></div>
+                    <input type="hidden" id="editPembayaranId" name="pembayaran_id">
+                    <input type="hidden" id="editCsrfToken" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                    <div class="mb-3">
+                        <label for="edit_no_formulir" class="form-label">No Formulir</label>
+                        <input type="text" id="edit_no_formulir" name="edit_no_formulir" class="form-control" readonly>
                     </div>
-                    <div class="modal-body">
-                        <div id="edit-form-errors" class="alert alert-danger" style="display: none;"></div>
-                        <input type="hidden" id="editPembayaranId" name="pembayaran_id">
-                        <div class="mb-3">
-                            <label for="edit_no_formulir" class="form-label">No Formulir</label>
-                            <input type="text" name="edit_no_formulir" id="edit_no_formulir" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_nama" class="form-label">Nama Siswa</label>
-                            <input type="text" name="edit_nama" id="edit_nama" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
-                            <input type="text" name="edit_tahun_pelajaran" id="edit_tahun_pelajaran" class="form-control" placeholder="Contoh: 2024/2025" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_metode_pembayaran" class="form-label">Metode Pembayaran</label>
-                            <select name="edit_metode_pembayaran" id="edit_metode_pembayaran" class="form-select" required>
-                                <option value="" disabled>Pilih Metode Pembayaran</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Transfer">Transfer</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Jenis Pembayaran</label>
-                            <div id="edit-payment-wrapper"></div>
-                            <button type="button" id="add-edit-payment-btn" class="btn btn-info mt-2"><i class="fas fa-plus"></i> Tambah Jenis Pembayaran</button>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_keterangan" class="form-label">Keterangan</label>
-                            <textarea name="edit_keterangan" id="edit_keterangan" class="form-control" placeholder="Opsional"></textarea>
-                        </div>
-                        <input type="hidden" id="editCsrfToken" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                    <div class="mb-3">
+                        <label for="edit_nama" class="form-label">Nama Siswa</label>
+                        <input type="text" id="edit_nama" name="edit_nama" class="form-control" readonly>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Perbarui</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <div class="mb-3">
+                        <label for="edit_tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
+                        <input type="text" id="edit_tahun_pelajaran" name="edit_tahun_pelajaran" class="form-control" required>
                     </div>
-                </form>
-            </div>
+                    <div class="mb-3">
+                        <label for="edit_metode_pembayaran" class="form-label">Metode Pembayaran</label>
+                        <select id="edit_metode_pembayaran" name="edit_metode_pembayaran" class="form-select" required>
+                            <option value="" disabled>Pilih Metode Pembayaran</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Transfer">Transfer</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jenis Pembayaran</label>
+                        <div id="edit-payment-wrapper"></div>
+                        <button type="button" id="add-edit-payment-btn" class="btn btn-info mt-2">
+                            <i class="fas fa-plus"></i> Tambah Jenis Pembayaran
+                        </button>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_keterangan" class="form-label">Keterangan</label>
+                        <textarea id="edit_keterangan" name="edit_keterangan" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Perbarui</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- Modal Konfirmasi Hapus -->
     <div class="modal fade" id="modalHapusPembayaran" tabindex="-1" aria-labelledby="modalHapusPembayaranLabel" aria-hidden="true">

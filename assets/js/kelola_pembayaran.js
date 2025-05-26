@@ -386,26 +386,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (data.success) {
                         const pembayaran = data.data;
                         const details = data.details;
-
                         document.getElementById('editPembayaranId').value = pembayaran.id;
                         document.getElementById('edit_no_formulir').value = pembayaran.no_formulir;
                         document.getElementById('edit_nama').value = pembayaran.nama;
                         document.getElementById('edit_tahun_pelajaran').value = pembayaran.tahun_pelajaran;
                         document.getElementById('edit_metode_pembayaran').value = pembayaran.metode_pembayaran;
                         document.getElementById('edit_keterangan').value = pembayaran.keterangan;
-
                         const editPaymentWrapper = document.getElementById('edit-payment-wrapper');
                         editPaymentWrapper.innerHTML = '';
-
                         details.forEach(detail => {
                             addEditPayment(
                                 detail.jenis_pembayaran_id,
                                 detail.bulan,
                                 detail.jumlah,
-                                detail.cashback // Pastikan ini dikirim dari server
+                                detail.cashback
                             );
                         });
-
                         const modalEdit = new bootstrap.Modal(document.getElementById('modalEditPembayaran'));
                         modalEdit.show();
                     } else {
