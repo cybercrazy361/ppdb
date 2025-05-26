@@ -8,6 +8,7 @@
     --color-light: #f8f9fc;
     --color-dark: #5a5c69;
     --sidebar-width: 240px;
+    --navbar-height: 56px;
     --border-radius: 0.75rem;
     --transition: 0.3s;
     --font-base: 'Poppins', sans-serif;
@@ -23,6 +24,68 @@ body {
     width: 100%;
     background: var(--color-light);
     font-family: var(--font-base);
+}
+
+/* Navbar Header (sama dengan dashboard) */
+.navbar {
+    height: var(--navbar-height);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+    z-index: 2001;
+}
+
+.navbar .toggle-btn {
+    display: none;
+    font-size: 1.25rem;
+    color: var(--color-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--border-radius);
+    transition: background var(--transition);
+}
+
+.navbar .toggle-btn:hover {
+    background: #f3f6ff;
+}
+
+@media (max-width: 992px) {
+    .navbar .toggle-btn {
+        display: inline-flex;
+    }
+}
+
+.navbar .title {
+    flex: 1;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.navbar .user-menu {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .user-menu small {
+    margin-right: 1rem;
+    color: var(--color-secondary);
+}
+
+.btn-logout {
+    background: var(--color-danger);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: background var(--transition);
+}
+
+.btn-logout:hover {
+    background: #c0392b;
 }
 
 /* Wrapper .main */
