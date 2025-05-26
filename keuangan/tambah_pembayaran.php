@@ -31,7 +31,7 @@ $bulan_order = ["Juli","Agustus","September","Oktober","November","Desember",
 
 $no_formulir         = isset($_POST['no_formulir'])        ? sanitize($_POST['no_formulir'])        : '';
 $nama                = isset($_POST['nama'])               ? sanitize($_POST['nama'])               : '';
-$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])    ? sanitize($_POST['tahun_pelajaran'])    : '';
+$tahun_pelajaran     = isset($_POST['tahun_pembelajaran']) ? sanitize($_POST['tahun_pembelajaran']) : '';
 $metode_pembayaran   = isset($_POST['metode_pembayaran'])  ? sanitize($_POST['metode_pembayaran'])  : '';
 $keterangan          = isset($_POST['keterangan'])         ? sanitize($_POST['keterangan'])         : '';
 $jenis_pembayaran    = isset($_POST['jenis_pembayaran'])   && is_array($_POST['jenis_pembayaran'])   ? $_POST['jenis_pembayaran']   : [];
@@ -42,14 +42,14 @@ $cashback_pembayaran = isset($_POST['cashback'])           && is_array($_POST['c
 $errors = [];
 $total_effective = 0;
 
-// Basic validation
+// Validasi dasar
 if ($no_formulir === '')        $errors[] = 'No Formulir harus diisi.';
 if ($nama === '')               $errors[] = 'Nama siswa tidak valid.';
 if ($tahun_pelajaran === '')    $errors[] = 'Tahun Pelajaran harus diisi.';
 if ($metode_pembayaran === '')  $errors[] = 'Metode Pembayaran harus dipilih.';
 if (count($jenis_pembayaran) === 0) $errors[] = 'Setidaknya satu Jenis Pembayaran harus dipilih.';
 
-// Validate each payment item and accumulate total_effective
+// Validasi tiap item dan akumulasi total
 for ($i = 0; $i < count($jenis_pembayaran); $i++) {
     $jenis_id   = $jenis_pembayaran[$i];
     $j_str      = $jumlah_pembayaran[$i] ?? '0';
@@ -70,7 +70,7 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
         $errors[] = "Item ".($i+1).": (jumlah + cashback) harus lebih dari 0.";
     }
 
-    // Ambil nama jenis dan cek kepemilikan
+    // Ambil nama jenis & cek unit
     $stmt = $conn->prepare("SELECT nama FROM jenis_pembayaran WHERE id=? AND unit=?");
     $stmt->bind_param('is', $jenis_id, $unit_petugas);
     $stmt->execute();
@@ -100,7 +100,7 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
         }
     }
 
-    // — Ambil nominal_max berdasarkan bulan & unit —
+    // Ambil nominal_max berdasar bulan & unit
     if ($jenis_nama === 'spp') {
         $stmt = $conn->prepare("
           SELECT nominal_max
@@ -130,7 +130,7 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
     $nominal_max = floatval($res2->fetch_assoc()['nominal_max']);
     $stmt->close();
 
-    // — Hitung prev (total sebelum) —
+    // Hitung prev (total sebelumnya)
     if ($jenis_nama === 'spp') {
         $sql = "
           SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev
@@ -162,7 +162,7 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
 
     $sisa = $nominal_max - $prev;
 
-    // Blokir input ulang & cek sisa untuk SPP
+    // Blokir insert jika SPP sudah lunas atau melebihi sisa
     if ($jenis_nama === 'spp') {
         if ($prev >= $nominal_max) {
             $errors[] = "Item ".($i+1).": SPP bulan $bulan_val sudah lunas, tidak bisa bayar lagi.";
@@ -186,8 +186,9 @@ if ($errors) {
 
 // Begin transaction
 $conn->begin_transaction();
+
 try {
-    // Fetch siswa_id
+    // Ambil siswa_id
     $stmt = $conn->prepare("SELECT id FROM siswa WHERE no_formulir=? AND unit=?");
     $stmt->bind_param('ss', $no_formulir, $unit_petugas);
     $stmt->execute();
@@ -198,7 +199,7 @@ try {
     $siswa_id = $res->fetch_assoc()['id'];
     $stmt->close();
 
-    // Insert into pembayaran
+    // Insert ke tabel pembayaran
     $tgl = date('Y-m-d');
     $stmt = $conn->prepare("
         INSERT INTO pembayaran
@@ -221,14 +222,14 @@ try {
     $pembayaran_id = $stmt->insert_id;
     $stmt->close();
 
-    // Prepare detail insert
+    // Siapkan insert detail
     $stmt = $conn->prepare("
         INSERT INTO pembayaran_detail
         (pembayaran_id,jenis_pembayaran_id,jumlah,bulan,status_pembayaran,angsuran_ke,cashback)
         VALUES(?,?,?,?,?,?,?)
     ");
 
-    // Loop and insert each detail
+    // Loop insert detail
     for ($i = 0; $i < count($jenis_pembayaran); $i++) {
         $jenis_id   = $jenis_pembayaran[$i];
         $j_str      = $jumlah_pembayaran[$i] ?? '0';
@@ -237,18 +238,18 @@ try {
                       ? intval(str_replace('.', '', $cashback_pembayaran[$i]))
                       : 0;
         $bulan_val  = isset($bulan_pembayaran[$i]) && $bulan_pembayaran[$i] !== ''
-                      ? $bulan_pembayaran[$i] 
+                      ? $bulan_pembayaran[$i]
                       : null;
         $effective  = $jumlah + $cb_val;
 
         // Ambil nama jenis
         $stm2 = $conn->prepare("SELECT nama FROM jenis_pembayaran WHERE id=?");
-        $stm2->bind_param('i',$jenis_id);
+        $stm2->bind_param('i', $jenis_id);
         $stm2->execute();
         $jn = strtolower($stm2->get_result()->fetch_assoc()['nama']);
         $stm2->close();
 
-        // Hitung prev & cnt
+        // Hitung prev & count untuk menentukan status/angsuran
         if ($jn === 'spp' && $bulan_val) {
             $sql2 = "
                 SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev,
@@ -277,11 +278,23 @@ try {
         $stm3->close();
 
         // Ambil nominal_max lagi
-        $stm4 = $conn->prepare("SELECT nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id=? "
-                             . ($jn==='spp' ? "AND bulan=? AND unit=?" : "AND bulan IS NULL AND unit=?"));
-        if ($jn==='spp') {
+        if ($jn === 'spp') {
+            $stm4 = $conn->prepare("
+                SELECT nominal_max
+                FROM pengaturan_nominal
+                WHERE jenis_pembayaran_id = ?
+                  AND bulan               = ?
+                  AND unit                = ?
+            ");
             $stm4->bind_param('iss', $jenis_id, $bulan_val, $unit_petugas);
         } else {
+            $stm4 = $conn->prepare("
+                SELECT nominal_max
+                FROM pengaturan_nominal
+                WHERE jenis_pembayaran_id = ?
+                  AND bulan               IS NULL
+                  AND unit                = ?
+            ");
             $stm4->bind_param('is', $jenis_id, $unit_petugas);
         }
         $stm4->execute();
@@ -301,11 +314,10 @@ try {
             if ($prev + $effective >= $nom) {
                 $status = 'Lunas';
             } else {
-                $status = 'Angsuran ke-'.($cnt+1);
+                $status = 'Angsuran ke-'.($cnt + 1);
             }
             $angs = null;
         } else {
-            // Untuk jenis lain jika ada
             $status = ($effective >= $nom) ? 'Lunas' : 'Belum Lunas';
             $angs   = null;
         }
