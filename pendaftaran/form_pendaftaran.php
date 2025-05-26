@@ -48,7 +48,7 @@ function display_errors() {
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
         </div>
     </header>
-    <div class="container py-2">
+    <div class="container py-1">
         <div class="card shadow-sm form-card">
             <form action="proses_pendaftaran.php" method="POST" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
