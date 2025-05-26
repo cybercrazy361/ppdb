@@ -40,6 +40,7 @@ function display_errors() {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../assets/css/form_pendaftaran_styles.css">
+    <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
     <style>
         /* CARD CONTAINER LAYOUT SAMA DENGAN DASHBOARD */
         .card.form-card {
@@ -257,5 +258,7 @@ function display_errors() {
 </div>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/sidebar_pendaftaran.js"></script>
+
 </body>
 </html>
