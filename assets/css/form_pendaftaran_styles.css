@@ -1,37 +1,46 @@
+/* ================================
+   FORM PENDAFTARAN STYLESHEET
+   file: form_pendaftaran_styles.css
+   ================================ */
+
+/* -------------------------------
+   ROOT VARIABLES
+---------------------------------*/
 :root {
+    /* Color palette */
     --color-primary: #2e59d9;
     --color-accent: #13afe0;
     --color-secondary: #858796;
     --color-light: #f8f9fc;
     --color-dark: #27304a;
+
+    /* Typography & spacing */
+    --font-base: 'Poppins', 'Segoe UI', Arial, sans-serif;
     --border-radius: 1.2rem;
     --transition: 0.23s cubic-bezier(.4, 2, .6, 1);
-    --font-base: 'Poppins', 'Segoe UI', Arial, sans-serif;
+
+    /* Layout */
     --sidebar-width: 240px;
+
+    /* Form-specific font sizes */
+    --fs-form-title: 2rem;
+    --fs-form-desc: 1.07rem;
 }
 
 /* -------------------------------
-    MAIN WRAPPER
+   MAIN LAYOUT
 ---------------------------------*/
 .main {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
     min-height: 100vh;
-    transition: margin-left 0.22s;
-    background: transparent;
     display: flex;
     flex-direction: column;
-}
-
-@media (max-width: 992px) {
-    .main {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
+    transition: margin-left var(--transition);
 }
 
 /* -------------------------------
-    NAVBAR (HEADER)
+   NAVBAR
 ---------------------------------*/
 .navbar {
     height: 56px;
@@ -40,10 +49,8 @@
     align-items: center;
     padding: 0 1.5rem;
     box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.08);
-    z-index: 2;
     position: relative;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    z-index: 2;
 }
 
 .navbar .toggle-btn {
@@ -55,7 +62,6 @@
     font-size: 1.16rem;
     font-weight: 600;
     color: var(--color-dark);
-    letter-spacing: .01em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -77,7 +83,7 @@
     color: #fff;
     border: none;
     padding: .46rem 1.08rem;
-    border-radius: var(--border-radius, .75rem);
+    border-radius: var(--border-radius);
     font-weight: 500;
     font-size: .97rem;
     transition: background .16s;
@@ -87,22 +93,8 @@
     background: #c0392b;
 }
 
-@media (max-width: 768px) {
-    .navbar {
-        padding: 0 0.7rem;
-    }
-
-    .navbar .title {
-        font-size: 1rem;
-    }
-
-    .navbar .user-menu small {
-        font-size: .97rem;
-    }
-}
-
 /* -------------------------------
-    FORM CONTAINER & LAYOUT
+   FORM CARD
 ---------------------------------*/
 .container.py-4 {
     padding-top: 2.2rem !important;
@@ -112,71 +104,42 @@
 .form-card {
     max-width: 900px;
     margin: 2.5rem auto 0 auto;
-    border-radius: var(--border-radius);
-    box-shadow: 0 8px 40px 0 rgba(46, 89, 217, 0.12), 0 1.5px 4px 0 rgba(133, 135, 150, 0.06);
-    border: none;
     background: #fff;
-    padding: 2.5rem 2.5rem 2rem 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 40px rgba(46, 89, 217, 0.12), 0 1.5px 4px rgba(133, 135, 150, 0.06);
+    padding: 2.5rem;
     transition: box-shadow .26s cubic-bezier(.4, 2, .6, 1), transform var(--transition);
-    position: relative;
-    top: 0;
 }
 
 .form-card:hover {
-    box-shadow: 0 16px 60px 0 rgba(46, 89, 217, 0.16), 0 3px 9px 0 rgba(133, 135, 150, 0.09);
     transform: translateY(-5px) scale(1.012);
-}
-
-@media (max-width: 800px) {
-    .form-card {
-        padding: 1.3rem 0.5rem;
-        max-width: 99vw;
-        margin-top: 1.2rem;
-    }
-}
-
-@media (max-width: 600px) {
-    .form-card {
-        padding: 1.1rem 0.3rem;
-    }
+    box-shadow: 0 16px 60px rgba(46, 89, 217, 0.16), 0 3px 9px rgba(133, 135, 150, 0.09);
 }
 
 /* -------------------------------
-    HEADER/TITLE/INFO
+   FORM HEADER
 ---------------------------------*/
 .form-title {
-    font-size: 2rem;
+    font-size: var(--fs-form-title);
     font-weight: 700;
     color: var(--color-primary);
     text-align: center;
     margin-bottom: .2rem;
-    letter-spacing: 0.01em;
 }
 
 .form-desc {
-    font-size: 1.07rem;
+    font-size: var(--fs-form-desc);
     color: #6c757d;
-    margin-bottom: 2rem;
     text-align: center;
-}
-
-@media (max-width: 600px) {
-    .form-title {
-        font-size: 1.25rem;
-    }
-
-    .form-desc {
-        font-size: .97rem;
-    }
+    margin-bottom: 2rem;
 }
 
 /* -------------------------------
-    FORM ELEMENTS
+   FORM ELEMENTS
 ---------------------------------*/
 .form-label {
     font-weight: 500;
     margin-bottom: .45rem;
-    letter-spacing: .01em;
 }
 
 .input-group-text {
@@ -200,7 +163,7 @@
     background: #f9fbff;
     font-size: 1.06rem;
     color: var(--color-dark);
-    padding: 0.68rem 1.05rem;
+    padding: .68rem 1.05rem;
     transition: border-color .2s, box-shadow .2s;
 }
 
@@ -214,13 +177,13 @@
 
 .form-control,
 textarea {
+    border: 1.3px solid #e3e6f0;
     border-radius: 10px;
+    background: #f9fbff;
     box-shadow: inset 0 1.2px 2.4px rgba(0, 0, 0, 0.07);
     font-size: 1.06rem;
-    background: #f9fbff;
-    border: 1.3px solid #e3e6f0;
-    transition: border-color .2s, box-shadow .2s;
     color: var(--color-dark);
+    transition: border-color .2s, box-shadow .2s;
 }
 
 .form-control:focus,
@@ -235,7 +198,7 @@ textarea:focus {
     border: 1.3px solid #e3e6f0;
     border-radius: 10px;
     background: #f9fbff;
-    padding: 0.68rem 1.05rem;
+    padding: .68rem 1.05rem;
     font-size: 1.07rem;
 }
 
@@ -245,7 +208,7 @@ textarea {
 }
 
 /* -------------------------------
-    BUTTONS
+   BUTTONS
 ---------------------------------*/
 .btn-gradient {
     background: linear-gradient(45deg, var(--color-primary) 70%, var(--color-accent) 100%);
@@ -255,12 +218,12 @@ textarea {
     border-radius: var(--border-radius);
     font-weight: 600;
     font-size: 1.1rem;
-    letter-spacing: 0.01em;
+    letter-spacing: .01em;
     transition: transform .18s, box-shadow .18s, background .22s;
     box-shadow: 0 3px 14px rgba(46, 89, 217, 0.07);
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: .5rem;
 }
 
 .btn-gradient:hover,
@@ -276,12 +239,12 @@ textarea {
     color: var(--color-primary);
     font-weight: 500;
     border-radius: var(--border-radius);
+    padding: .65rem 1.7rem;
     transition: all .18s;
-    padding: 0.65rem 1.7rem;
     box-shadow: 0 2px 8px rgba(46, 89, 217, 0.07);
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: .55rem;
 }
 
 .btn-gradient-outline:hover,
@@ -294,16 +257,16 @@ textarea {
 }
 
 .btn-outline-secondary {
-    border-radius: var(--border-radius);
-    padding: .65rem 1.5rem;
-    font-weight: 500;
+    background: #fff;
     border: 1.6px solid var(--color-secondary);
     color: var(--color-secondary);
-    background: #fff;
-    transition: color .17s, border-color .17s, background .17s, box-shadow .17s;
+    padding: .65rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: .4rem;
+    transition: color .17s, border-color .17s, background .17s, box-shadow .17s;
 }
 
 .btn-outline-secondary:hover,
@@ -314,23 +277,8 @@ textarea {
     box-shadow: 0 2px 8px rgba(46, 89, 217, 0.08);
 }
 
-.d-grid .btn,
-.d-flex .btn {
-    min-width: 150px;
-}
-
-@media (max-width: 600px) {
-
-    .d-grid .btn,
-    .d-flex .btn {
-        width: 100%;
-        min-width: unset;
-        font-size: .97rem;
-    }
-}
-
 /* -------------------------------
-    ALERT/ERROR
+   ALERTS
 ---------------------------------*/
 .alert {
     border-radius: var(--border-radius);
@@ -344,46 +292,8 @@ textarea {
 }
 
 /* -------------------------------
-    RESPONSIVE
+   PLACEHOLDER
 ---------------------------------*/
-@media (max-width: 700px) {
-    .form-card {
-        padding: 1.3rem 0.5rem;
-        max-width: 98vw;
-        margin-top: 1rem;
-    }
-
-    .form-title {
-        font-size: 1.35rem;
-    }
-
-    .form-desc {
-        font-size: 0.97rem;
-    }
-
-    .d-flex .btn {
-        min-width: unset;
-        width: 48%;
-        font-size: .99rem;
-        padding: .57rem .5rem;
-    }
-}
-
-@media (max-width: 400px) {
-    .form-title {
-        font-size: 1.05rem;
-    }
-
-    .form-desc {
-        font-size: .87rem;
-    }
-
-    .form-card {
-        padding: 0.7rem 0.2rem;
-    }
-}
-
-/* Placeholder style */
 ::-webkit-input-placeholder {
     color: #b4bedb !important;
     opacity: 1;
@@ -402,4 +312,85 @@ textarea {
 ::placeholder {
     color: #b4bedb !important;
     opacity: 1;
+}
+
+/* ================================
+   RESPONSIVE (MIRROR DASHBOARD)
+   breakpoints: lg(992px), md(768px), sm(576px)
+   ================================ */
+
+/* ≤ 992px */
+@media (max-width: 992px) {
+
+    /* collapse sidebar */
+    .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* adjust title & desc */
+    :root {
+        --fs-form-title: 1.75rem;
+        --fs-form-desc: 1rem;
+    }
+
+    .container.py-4 {
+        padding: 1.5rem 1rem !important;
+    }
+}
+
+/* ≤ 768px */
+@media (max-width: 768px) {
+    :root {
+        --fs-form-title: 1.5rem;
+        --fs-form-desc: 0.97rem;
+    }
+
+    .form-card {
+        padding: 1.3rem .7rem;
+        max-width: 98vw;
+        margin-top: 1.2rem;
+    }
+
+    .navbar {
+        padding: 0 .7rem;
+    }
+
+    .navbar .title {
+        font-size: 1rem;
+    }
+
+    .navbar .user-menu small {
+        font-size: .97rem;
+    }
+}
+
+/* ≤ 576px */
+@media (max-width: 576px) {
+    :root {
+        --fs-form-title: 1rem;
+        --fs-form-desc: 0.9rem;
+    }
+
+    .form-card {
+        padding: 1rem .5rem;
+        margin-top: 1rem;
+    }
+
+    .form-label {
+        font-size: .95rem;
+    }
+
+    .input-group .form-control,
+    .input-group .form-select {
+        font-size: .95rem;
+        padding: .6rem 1rem;
+    }
+
+    .btn-gradient,
+    .btn-gradient-outline,
+    .btn-outline-secondary {
+        font-size: .97rem;
+        padding: .6rem 1rem;
+    }
 }
