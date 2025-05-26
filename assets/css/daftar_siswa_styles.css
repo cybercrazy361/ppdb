@@ -1,167 +1,167 @@
+/* root variables sama dengan dashboard */
+:root {
+    --color-primary: #2e59d9;
+    --color-accent: #13afe0;
+    --color-secondary: #858796;
+    --color-light: #f8f9fc;
+    --color-dark: #5a5c69;
+    --sidebar-width: 240px;
+    --border-radius: 0.75rem;
+    --transition: 0.3s;
+    --font-base: 'Poppins', sans-serif;
+}
+
+/* reset */
+html,
 body {
-    background: linear-gradient(to right, #ece9e6, #ffffff);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.table-container {
-    max-width: 90%;
-    margin: auto;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-h2 {
-    font-weight: bold;
-    color: #007bff;
-    text-align: center;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-
-.table {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;
     width: 100%;
+    background: var(--color-light);
+    font-family: var(--font-base);
+}
+
+/* main wrapper */
+.main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: margin-left var(--transition), width var(--transition);
+    padding: 2rem 1rem;
+}
+
+@media (max-width: 992px) {
+    .main {
+        margin-left: 60px;
+        width: calc(100% - 60px);
+    }
+}
+
+@media (max-width: 576px) {
+    .main {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* container styling */
+.main .container {
+    background: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 .125rem .375rem rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-top: 1.5rem;
+}
+
+/* page title */
+.main .container h2 {
+    color: var(--color-primary);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* table */
+.main .table {
     border-collapse: collapse;
 }
 
-.table th {
-    background: linear-gradient(45deg, #007bff, #0056b3);
-    color: #ffffff;
-    text-align: center;
-    font-size: 14px;
-    padding: 12px;
-}
-
-.table td {
-    font-size: 14px;
-    padding: 12px;
+.main .table th {
+    background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
+    color: #fff;
+    font-size: 0.95rem;
+    padding: 0.75rem;
     text-align: center;
 }
 
-.table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+.main .table td {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+    vertical-align: middle;
 }
 
-.table tbody tr:hover {
-    background: #f1f1f1;
-    transition: background 0.3s ease;
+.main .table tbody tr:nth-child(even) {
+    background: #f1f3f5;
 }
 
-/* Status Pending */
+.main .table tbody tr:hover {
+    background: #e9ecef;
+    transition: background var(--transition);
+}
+
+/* status badges */
 .status-pending {
-    background-color: #f8d7da;
-    /* Merah muda */
+    background: #f8d7da;
     color: #721c24;
-    /* Merah tua */
-    font-weight: bold;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 8px;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
 }
 
-/* Status Cicilan */
 .status-cicilan {
-    background-color: #fff3cd;
-    /* Kuning muda */
+    background: #fff3cd;
     color: #856404;
-    /* Kuning tua */
-    font-weight: bold;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 8px;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
 }
 
-/* Status Lunas */
 .status-lunas {
-    background-color: #d4edda;
-    /* Hijau muda */
+    background: #d4edda;
     color: #155724;
-    /* Hijau tua */
-    font-weight: bold;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 8px;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
 }
 
-
-/* Pagination */
-.pagination .page-link {
-    color: #007bff;
+/* pagination */
+.main .pagination .page-link {
+    color: var(--color-primary);
+    border-radius: var(--border-radius);
+    transition: background var(--transition), color var(--transition);
 }
 
-.pagination .page-link:hover {
-    background-color: #007bff;
-    color: white;
+.main .pagination .page-link:hover {
+    background: var(--color-primary);
+    color: #fff;
 }
 
-.pagination .active .page-link {
-    background-color: #007bff;
-    color: white;
+.main .pagination .active .page-link {
+    background: var(--color-primary);
+    color: #fff;
+    border: 1px solid var(--color-primary);
 }
 
-.btn-kembali {
-    margin-top: 20px;
-}
-
-.btn-secondary {
-    background: linear-gradient(45deg, #6c757d, #adb5bd);
-    color: white;
-}
-
-.btn-edit {
-    background-color: #ffc107;
-    color: white;
-}
-
-.btn-delete {
-    background-color: #dc3545;
-    color: white;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
+/* buttons */
+.main .btn-secondary {
+    background: var(--color-secondary);
+    color: #fff;
     border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    transition: background var(--transition), transform var(--transition);
 }
 
-.btn-secondary:hover {
-    background-color: #5a6268;
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+.main .btn-secondary:hover {
+    background: darken(var(--color-secondary), 10%);
     transform: translateY(-2px);
 }
 
-.btn-secondary:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.5);
+.main .btn-success {
+    background: #198754;
+    border-radius: var(--border-radius);
 }
 
-.btn-secondary:active {
-    background-color: #545b62;
-    transform: translateY(1px);
-    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+.main .btn-warning {
+    background: #ffc107;
+    border-radius: var(--border-radius);
 }
 
-.btn-secondary i {
-    margin-right: 8px;
-    font-size: 14px;
+.main .btn-danger {
+    background: #dc3545;
+    border-radius: var(--border-radius);
+}
+
+.main .btn i {
+    margin-right: 0.3rem;
 }
