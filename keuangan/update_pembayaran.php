@@ -54,144 +54,10 @@ if ($metode_pembayaran === '')  $errors[] = 'Metode Pembayaran harus dipilih.';
 if ($tahun_pelajaran === '')    $errors[] = 'Tahun Pelajaran harus diisi.';
 if (count($jenis_list) === 0)   $errors[] = 'Setidaknya satu jenis pembayaran harus dipilih.';
 
-// Validasi per‐item
-for ($i = 0; $i < count($jenis_list); $i++) {
-    $jenis_id = $jenis_list[$i];
-    $j_str    = $jumlah_list[$i] ?? '0';
-    $jumlah   = floatval(str_replace('.', '', $j_str));
-    $cb       = isset($cb_list[$i]) && $cb_list[$i] !== '' 
-                ? intval(str_replace('.', '', $cb_list[$i])) 
-                : 0;
-    $bulan    = $bulan_list[$i] ?? '';
-    $effective = $jumlah + $cb;
-    $total_effective += $effective;
-
-    if ($jenis_id === '') {
-        $errors[] = "Item ".($i+1).": Jenis pembayaran harus dipilih.";
-        continue;
-    }
-    if ($effective <= 0) {
-        $errors[] = "Item ".($i+1).": (jumlah+cashback) harus lebih dari 0.";
-    }
-
-    // Ambil nama jenis & cek unit
-    $stmt = $conn->prepare("SELECT nama FROM jenis_pembayaran WHERE id = ? AND unit = ?");
-    $stmt->bind_param('is', $jenis_id, $unit_petugas);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    if ($res->num_rows === 0) {
-        $errors[] = "Item ".($i+1).": Jenis pembayaran tidak ditemukan untuk unit Anda.";
-        $stmt->close();
-        continue;
-    }
-    $nama_jenis = strtolower($res->fetch_assoc()['nama']);
-    $stmt->close();
-
-    // Validasi bulan & cashback
-    if ($nama_jenis === 'spp') {
-        if ($bulan === '' || array_search($bulan, $bulan_order) === false) {
-            $errors[] = "Item ".($i+1).": Bulan harus dipilih dan valid untuk SPP.";
-        }
-    } else {
-        if ($bulan !== '') {
-            $errors[] = "Item ".($i+1).": Bulan hanya boleh diisi untuk SPP.";
-        }
-        if ($nama_jenis !== 'uang pangkal' && $cb > 0) {
-            $errors[] = "Item ".($i+1).": Cashback hanya untuk Uang Pangkal.";
-        }
-        if ($nama_jenis === 'uang pangkal' && $cb < 0) {
-            $errors[] = "Item ".($i+1).": Cashback minimal 0.";
-        }
-    }
-
-    // — Ambil nominal_max berdasar bulan & unit —
-    if ($nama_jenis === 'spp') {
-        $stmt = $conn->prepare("
-            SELECT nominal_max
-            FROM pengaturan_nominal
-            WHERE jenis_pembayaran_id = ?
-              AND bulan               = ?
-              AND unit                = ?
-        ");
-        $stmt->bind_param('iss', $jenis_id, $bulan, $unit_petugas);
-    } else {
-        $stmt = $conn->prepare("
-            SELECT nominal_max
-            FROM pengaturan_nominal
-            WHERE jenis_pembayaran_id = ?
-              AND bulan               IS NULL
-              AND unit                = ?
-        ");
-        $stmt->bind_param('is', $jenis_id, $unit_petugas);
-    }
-    $stmt->execute();
-    $res2 = $stmt->get_result();
-    if ($res2->num_rows === 0) {
-        $errors[] = "Item ".($i+1).": Pengaturan nominal tidak ditemukan.";
-        $stmt->close();
-        continue;
-    }
-    $nominal_max = floatval($res2->fetch_assoc()['nominal_max']);
-    $stmt->close();
-
-    // — Hitung prev (total sebelum) —
-    if ($nama_jenis === 'spp') {
-        $sql = "
-            SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev
-            FROM pembayaran_detail pd
-            JOIN pembayaran p ON p.id=pd.pembayaran_id
-            WHERE p.no_formulir=? 
-              AND pd.jenis_pembayaran_id=? 
-              AND pd.bulan=? 
-              AND p.tahun_pelajaran=?
-        ";
-        $stm = $conn->prepare($sql);
-        $stm->bind_param('siis', $no_formulir, $jenis_id, $bulan, $tahun_pelajaran);
-    } else {
-        $sql = "
-            SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev
-            FROM pembayaran_detail pd
-            JOIN pembayaran p ON p.id=pd.pembayaran_id
-            WHERE p.no_formulir=? 
-              AND pd.jenis_pembayaran_id=? 
-              AND pd.bulan IS NULL 
-              AND p.tahun_pelajaran=?
-        ";
-        $stm = $conn->prepare($sql);
-        $stm->bind_param('sis', $no_formulir, $jenis_id, $tahun_pelajaran);
-    }
-    $stm->execute();
-    $prev = floatval($stm->get_result()->fetch_assoc()['prev']);
-    $stm->close();
-
-    $sisa = $nominal_max - $prev;
-
-    // Blokir input ulang & cek sisa untuk SPP
-    if ($nama_jenis === 'spp') {
-        if ($prev >= $nominal_max) {
-            $errors[] = "Item ".($i+1).": SPP bulan $bulan sudah lunas, tidak bisa bayar lagi.";
-            continue;
-        }
-        if ($effective > $sisa) {
-            $errors[] = "Item ".($i+1).": (jumlah+cashback) melebihi sisa ".number_format($sisa,0,',','.').".";
-            continue;
-        }
-    }
-}
-
-if ($total_effective <= 0) {
-    $errors[] = 'Total (jumlah+cashback) harus lebih dari 0.';
-}
-
-if ($errors) {
-    echo json_encode(['success' => false, 'message' => implode('<br>', $errors)]);
-    exit();
-}
-
-// Proses update
+// PROSES UPDATE DIMULAI
 $conn->begin_transaction();
 try {
-    // Verifikasi ownership & ambil siswa_id
+    // Verifikasi ownership & ambil siswa_id + no_formulir
     $stmt = $conn->prepare("
         SELECT p.siswa_id, s.no_formulir
         FROM pembayaran p
@@ -206,7 +72,144 @@ try {
     }
     $row = $res->fetch_assoc();
     $siswa_id = $row['siswa_id'];
+    $no_formulir = $row['no_formulir'];  // <<< DIBUTUHKAN UNTUK CEK SPP/BLOKIR
+
     $stmt->close();
+
+    // Validasi tiap item pembayaran
+    for ($i = 0; $i < count($jenis_list); $i++) {
+        $jenis_id = $jenis_list[$i];
+        $j_str    = $jumlah_list[$i] ?? '0';
+        $jumlah   = floatval(str_replace('.', '', $j_str));
+        $cb       = isset($cb_list[$i]) && $cb_list[$i] !== '' 
+                    ? intval(str_replace('.', '', $cb_list[$i])) 
+                    : 0;
+        $bulan    = $bulan_list[$i] ?? '';
+        $effective = $jumlah + $cb;
+        $total_effective += $effective;
+
+        if ($jenis_id === '') {
+            $errors[] = "Item ".($i+1).": Jenis pembayaran harus dipilih.";
+            continue;
+        }
+        if ($effective <= 0) {
+            $errors[] = "Item ".($i+1).": (jumlah+cashback) harus lebih dari 0.";
+        }
+
+        // Ambil nama jenis & cek unit
+        $stmt = $conn->prepare("SELECT nama FROM jenis_pembayaran WHERE id = ? AND unit = ?");
+        $stmt->bind_param('is', $jenis_id, $unit_petugas);
+        $stmt->execute();
+        $res_jenis = $stmt->get_result();
+        if ($res_jenis->num_rows === 0) {
+            $errors[] = "Item ".($i+1).": Jenis pembayaran tidak ditemukan untuk unit Anda.";
+            $stmt->close();
+            continue;
+        }
+        $nama_jenis = strtolower($res_jenis->fetch_assoc()['nama']);
+        $stmt->close();
+
+        // Validasi bulan & cashback
+        if ($nama_jenis === 'spp') {
+            if ($bulan === '' || array_search($bulan, $bulan_order) === false) {
+                $errors[] = "Item ".($i+1).": Bulan harus dipilih dan valid untuk SPP.";
+            }
+        } else {
+            if ($bulan !== '') {
+                $errors[] = "Item ".($i+1).": Bulan hanya boleh diisi untuk SPP.";
+            }
+            if ($nama_jenis !== 'uang pangkal' && $cb > 0) {
+                $errors[] = "Item ".($i+1).": Cashback hanya untuk Uang Pangkal.";
+            }
+            if ($nama_jenis === 'uang pangkal' && $cb < 0) {
+                $errors[] = "Item ".($i+1).": Cashback minimal 0.";
+            }
+        }
+
+        // Ambil nominal_max berdasar bulan & unit
+        if ($nama_jenis === 'spp') {
+            $stmt = $conn->prepare("
+                SELECT nominal_max
+                FROM pengaturan_nominal
+                WHERE jenis_pembayaran_id = ?
+                  AND bulan = ?
+                  AND unit = ?
+            ");
+            $stmt->bind_param('iss', $jenis_id, $bulan, $unit_petugas);
+        } else {
+            $stmt = $conn->prepare("
+                SELECT nominal_max
+                FROM pengaturan_nominal
+                WHERE jenis_pembayaran_id = ?
+                  AND bulan IS NULL
+                  AND unit = ?
+            ");
+            $stmt->bind_param('is', $jenis_id, $unit_petugas);
+        }
+        $stmt->execute();
+        $res2 = $stmt->get_result();
+        if ($res2->num_rows === 0) {
+            $errors[] = "Item ".($i+1).": Pengaturan nominal tidak ditemukan.";
+            $stmt->close();
+            continue;
+        }
+        $nominal_max = floatval($res2->fetch_assoc()['nominal_max']);
+        $stmt->close();
+
+        // Hitung prev (total sebelum)
+        if ($nama_jenis === 'spp') {
+            $sql = "
+                SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev
+                FROM pembayaran_detail pd
+                JOIN pembayaran p ON p.id=pd.pembayaran_id
+                WHERE p.no_formulir=? 
+                  AND pd.jenis_pembayaran_id=? 
+                  AND pd.bulan=? 
+                  AND p.tahun_pelajaran=?
+            ";
+            $stm = $conn->prepare($sql);
+            $stm->bind_param('siis', $no_formulir, $jenis_id, $bulan, $tahun_pelajaran);
+        } else {
+            $sql = "
+                SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev
+                FROM pembayaran_detail pd
+                JOIN pembayaran p ON p.id=pd.pembayaran_id
+                WHERE p.no_formulir=? 
+                  AND pd.jenis_pembayaran_id=? 
+                  AND pd.bulan IS NULL 
+                  AND p.tahun_pelajaran=?
+            ";
+            $stm = $conn->prepare($sql);
+            $stm->bind_param('sis', $no_formulir, $jenis_id, $tahun_pelajaran);
+        }
+        $stm->execute();
+        $prev = floatval($stm->get_result()->fetch_assoc()['prev']);
+        $stm->close();
+
+        $sisa = $nominal_max - $prev;
+
+        // Blokir input ulang & cek sisa untuk SPP
+        if ($nama_jenis === 'spp') {
+            if ($prev >= $nominal_max) {
+                $errors[] = "Item ".($i+1).": SPP bulan $bulan sudah lunas, tidak bisa bayar lagi.";
+                continue;
+            }
+            if ($effective > $sisa) {
+                $errors[] = "Item ".($i+1).": (jumlah+cashback) melebihi sisa ".number_format($sisa,0,',','.').".";
+                continue;
+            }
+        }
+    }
+
+    if ($total_effective <= 0) {
+        $errors[] = 'Total (jumlah+cashback) harus lebih dari 0.';
+    }
+
+    if ($errors) {
+        $conn->rollback();
+        echo json_encode(['success' => false, 'message' => implode('<br>', $errors)]);
+        exit();
+    }
 
     // Update header pembayaran
     $stmt = $conn->prepare("
