@@ -13,6 +13,7 @@
     --font-base: 'Poppins', sans-serif;
 }
 
+/* ---- SIDEBAR LAYOUT ---- */
 .sidebar {
     position: fixed;
     top: 0;
@@ -22,13 +23,14 @@
     background: var(--color-sidebar-bg);
     box-shadow: 0 0 24px 0 rgba(46, 89, 217, 0.11);
     z-index: var(--sidebar-z);
-    transition: transform var(--transition);
+    transition: transform var(--transition), width var(--transition);
     display: flex;
     flex-direction: column;
-    padding: 0 0 24px 0;
+    padding-bottom: 24px;
     font-family: var(--font-base);
 }
 
+/* ---- BRAND ---- */
 .sidebar .brand {
     font-size: 1.22rem;
     font-weight: 700;
@@ -37,27 +39,32 @@
     letter-spacing: 0.5px;
     border-bottom: 1.5px solid var(--sidebar-border);
     background: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Menu item: icon + text always inline, gap for spacing, align center */
+/* ---- MENU ITEM: ICON + TEKS ---- */
 .sidebar .nav-link {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 1.03rem;
+    gap: 13px;
+    font-size: 1.04rem;
     color: var(--color-sidebar-text);
-    padding: 15px 30px 15px 30px;
+    padding: 15px 22px 15px 32px;
     text-decoration: none;
     border-left: 4px solid transparent;
     font-weight: 500;
-    transition: background 0.17s, color 0.18s, border-left 0.15s;
     background: none;
     line-height: 1.2;
+    transition: background 0.17s, color 0.18s, border-left 0.15s;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .sidebar .nav-link i {
-    width: 22px;
-    min-width: 22px;
+    width: 24px;
+    min-width: 24px;
     text-align: center;
     font-size: 1.19em;
     display: inline-block;
@@ -66,12 +73,14 @@
 .sidebar .nav-link span {
     display: inline-block;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Active/highlight style */
+/* ---- ACTIVE & HOVER ---- */
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-    background: rgba(255, 255, 255, 0.11);
+    background: rgba(255, 255, 255, 0.13);
     color: var(--color-sidebar-text-active);
     border-left: 4px solid var(--color-sidebar-active);
 }
@@ -80,13 +89,15 @@
     color: var(--color-sidebar-active);
 }
 
-/* Responsive: Sidebar overlay for mobile */
+/* ---- SIDEBAR RESPONSIVE ---- */
 @media (max-width: 900px) {
     .sidebar {
         transform: translateX(-101%);
         width: var(--sidebar-width);
         left: 0;
         box-shadow: 0 0 16px #002f7d17;
+        min-width: unset;
+        max-width: unset;
     }
 
     .sidebar.active {
@@ -113,10 +124,11 @@
     }
 }
 
-/* Desktop: Sidebar push content right */
+/* ---- DESKTOP: CONTENT PUSH ---- */
 @media (min-width: 901px) {
     .sidebar {
         transform: none !important;
+        width: var(--sidebar-width) !important;
     }
 
     .sidebar-backdrop {
@@ -129,7 +141,7 @@
     }
 }
 
-/* Sidebar toggle button (hamburger) */
+/* ---- TOGGLE BUTTON ---- */
 .toggle-btn {
     background: none;
     border: none;
@@ -158,7 +170,9 @@
     }
 }
 
-/* Sidebar backdrop for modal effect */
+/* ---- SIDEBAR BACKDROP ---- */
 .sidebar-backdrop {
     display: none;
 }
+
+/* --- END SIDEBAR --- */
