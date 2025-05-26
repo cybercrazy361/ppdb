@@ -7,19 +7,108 @@
     --border-radius: 1.2rem;
     --transition: 0.23s cubic-bezier(.4, 2, .6, 1);
     --font-base: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    --sidebar-width: 240px;
 }
 
-body {
-    font-family: var(--font-base);
-    background: linear-gradient(110deg, #f0f4ff 0%, #f5f8ff 30%, #e8eeff 100%);
-    color: var(--color-dark);
+/* -------------------------------
+    MAIN WRAPPER
+---------------------------------*/
+.main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
     min-height: 100vh;
-    line-height: 1.6;
+    transition: margin-left 0.22s;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 992px) {
+    .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* -------------------------------
+    NAVBAR (HEADER)
+---------------------------------*/
+.navbar {
+    height: 56px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.08);
+    z-index: 2;
+    position: relative;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.navbar .toggle-btn {
+    margin-right: 1.1rem;
+}
+
+.navbar .title {
+    flex: 1;
+    font-size: 1.16rem;
+    font-weight: 600;
+    color: var(--color-dark);
+    letter-spacing: .01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.navbar .user-menu small {
+    color: #8a98ba;
+    font-size: 1rem;
+}
+
+.btn-logout {
+    background: var(--color-danger, #e74a3b);
+    color: #fff;
+    border: none;
+    padding: .46rem 1.08rem;
+    border-radius: var(--border-radius, .75rem);
+    font-weight: 500;
+    font-size: .97rem;
+    transition: background .16s;
+}
+
+.btn-logout:hover {
+    background: #c0392b;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 0.7rem;
+    }
+
+    .navbar .title {
+        font-size: 1rem;
+    }
+
+    .navbar .user-menu small {
+        font-size: .97rem;
+    }
 }
 
 /* -------------------------------
     FORM CONTAINER & LAYOUT
 ---------------------------------*/
+.container.py-4 {
+    padding-top: 2.2rem !important;
+    padding-bottom: 2.2rem !important;
+}
+
 .form-card {
     max-width: 900px;
     margin: 2.5rem auto 0 auto;
@@ -29,6 +118,8 @@ body {
     background: #fff;
     padding: 2.5rem 2.5rem 2rem 2.5rem;
     transition: box-shadow .26s cubic-bezier(.4, 2, .6, 1), transform var(--transition);
+    position: relative;
+    top: 0;
 }
 
 .form-card:hover {
@@ -40,6 +131,7 @@ body {
     .form-card {
         padding: 1.3rem 0.5rem;
         max-width: 99vw;
+        margin-top: 1.2rem;
     }
 }
 
@@ -258,6 +350,7 @@ textarea {
     .form-card {
         padding: 1.3rem 0.5rem;
         max-width: 98vw;
+        margin-top: 1rem;
     }
 
     .form-title {
@@ -309,19 +402,4 @@ textarea {
 ::placeholder {
     color: #b4bedb !important;
     opacity: 1;
-}
-
-.main {
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    min-height: 100vh;
-    transition: margin-left 0.22s;
-    background: transparent;
-}
-
-@media (max-width: 992px) {
-    .main {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
 }
