@@ -15,6 +15,118 @@
     --font-base: 'Poppins', sans-serif;
 }
 
+/* ==== SIDEBAR ==== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    z-index: 1030;
+    font-family: var(--font-base);
+    box-shadow: 0 0 24px 0 rgba(46, 89, 217, 0.11);
+}
+
+.sidebar .brand {
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #fff;
+    padding: 30px 32px 28px 32px;
+    letter-spacing: 0.5px;
+    border-bottom: 1.5px solid #ffffff22;
+    background: none;
+    margin-bottom: 0.4rem;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    font-size: 1.06rem;
+    /* Pastikan konsisten di semua halaman! */
+    font-weight: 500;
+    color: #e7f0ff;
+    padding: 17px 30px 17px 34px;
+    text-decoration: none;
+    border-left: 4px solid transparent;
+    transition: background 0.17s, color 0.18s, border-left 0.15s;
+    background: none;
+}
+
+.sidebar .nav-link i {
+    min-width: 22px;
+    text-align: center;
+    font-size: 1.14em;
+    /* Agar icon tidak terlalu besar/aneh jika diubah font-size */
+}
+
+.sidebar .nav-link span {
+    display: inline;
+    transition: color .17s;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background: rgba(255, 255, 255, 0.11);
+    color: #fff;
+    border-left: 4px solid #13afe0;
+}
+
+.sidebar .nav-link.active i {
+    color: #13afe0;
+}
+
+/* Responsive: Hide sidebar on mobile, show overlay toggle */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 60px;
+        min-width: 60px;
+        max-width: 60px;
+    }
+
+    .sidebar .brand,
+    .sidebar .nav-link span {
+        display: none;
+    }
+
+    .main {
+        margin-left: 60px !important;
+        width: calc(100% - 60px) !important;
+    }
+
+    .navbar .toggle-btn {
+        display: block;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        left: -240px;
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
+        max-width: var(--sidebar-width);
+        transition: left var(--transition);
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar .brand,
+    .sidebar .nav-link span {
+        display: block;
+    }
+
+    .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* ==== MAIN CONTENT ==== */
 body {
     font-family: var(--font-base);
     background: var(--color-light);
@@ -77,6 +189,7 @@ body {
     background: #c0392b;
 }
 
+/* ==== DASHBOARD CARD ==== */
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
