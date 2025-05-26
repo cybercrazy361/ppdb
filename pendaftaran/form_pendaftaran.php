@@ -49,7 +49,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
   <!-- Navbar Header -->
   <header class="navbar">
     <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-    <div class="title">Form Pendaftaran Baru <?= htmlspecialchars($unit) ?></div>
+    <div class="title">Progres Pendaftaran Murid baru <?= htmlspecialchars($unit) ?></div>
     <div class="user-menu">
       <small>Halo, <?= htmlspecialchars($_SESSION['nama']) ?></small>
       <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
@@ -59,9 +59,6 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
   <div class="container py-4">
     <?php display_errors(); ?>
     <div class="card shadow-sm form-card">
-      <h2 class="form-title">Pendaftaran Siswa Baru</h2>
-      <p class="form-desc">Silakan isi semua kolom sebelum mengirim</p>
-
       <form action="proses_pendaftaran.php" method="POST">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
         <input type="hidden" name="unit" value="<?= htmlspecialchars($unit) ?>">
