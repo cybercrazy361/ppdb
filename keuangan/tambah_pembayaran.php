@@ -30,16 +30,15 @@ $bulan_order = ["Juli","Agustus","September","Oktober","November","Desember",
                 "Januari","Februari","Maret","April","Mei","Juni"];
 
 // Tangkap data dari form
-$no_formulir         = isset($_POST['no_formulir'])        ? sanitize($_POST['no_formulir'])        : '';
-$nama                = isset($_POST['nama'])               ? sanitize($_POST['nama'])               : '';
-// Perbaikan: gunakan 'tahun_pelajaran' sesuai nama <select>
-$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])    ? sanitize($_POST['tahun_pelajaran'])    : '';
-$metode_pembayaran   = isset($_POST['metode_pembayaran'])  ? sanitize($_POST['metode_pembayaran'])  : '';
-$keterangan          = isset($_POST['keterangan'])         ? sanitize($_POST['keterangan'])         : '';
-$jenis_pembayaran    = isset($_POST['jenis_pembayaran'])   && is_array($_POST['jenis_pembayaran'])   ? $_POST['jenis_pembayaran']   : [];
-$jumlah_pembayaran   = isset($_POST['jumlah'])             && is_array($_POST['jumlah'])             ? $_POST['jumlah']             : [];
-$bulan_pembayaran    = isset($_POST['bulan'])              && is_array($_POST['bulan'])              ? $_POST['bulan']              : [];
-$cashback_pembayaran = isset($_POST['cashback'])           && is_array($_POST['cashback'])           ? $_POST['cashback']           : [];
+$no_formulir         = isset($_POST['no_formulir'])      ? sanitize($_POST['no_formulir'])      : '';
+$nama                = isset($_POST['nama'])             ? sanitize($_POST['nama'])             : '';
+$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])  ? sanitize($_POST['tahun_pelajaran'])  : '';  // perbaikan nama index
+$metode_pembayaran   = isset($_POST['metode_pembayaran'])? sanitize($_POST['metode_pembayaran']): '';
+$keterangan          = isset($_POST['keterangan'])       ? sanitize($_POST['keterangan'])       : '';
+$jenis_pembayaran    = isset($_POST['jenis_pembayaran']) && is_array($_POST['jenis_pembayaran']) ? $_POST['jenis_pembayaran'] : [];
+$jumlah_pembayaran   = isset($_POST['jumlah'])           && is_array($_POST['jumlah'])           ? $_POST['jumlah']           : [];
+$bulan_pembayaran    = isset($_POST['bulan'])            && is_array($_POST['bulan'])            ? $_POST['bulan']            : [];
+$cashback_pembayaran = isset($_POST['cashback'])         && is_array($_POST['cashback'])         ? $_POST['cashback']         : [];
 
 $errors = [];
 $total_effective = 0;
