@@ -5,12 +5,15 @@ header('Content-Type: application/json');
 
 if (!isset($_GET['id'])) {
     echo json_encode(['success' => false, 'message' => 'ID tidak ditemukan.']);
-    exit;
+    exit();
 }
 
 $pembayaran_id = intval($_GET['id']);
 
-$query = "SELECT jenis_pembayaran, jumlah, metode_pembayaran FROM pembayaran_detail WHERE pembayaran_id = ?";
+$query = "SELECT 
+    jenis_pembayaran_id, jumlah, bulan, status_pembayaran, cashback 
+    FROM pembayaran_detail 
+    WHERE pembayaran_id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('i', $pembayaran_id);
 $stmt->execute();
@@ -26,4 +29,6 @@ if (!empty($details)) {
 } else {
     echo json_encode(['success' => false, 'message' => 'Detail pembayaran tidak ditemukan.']);
 }
+$conn->close();
+exit();
 ?>
