@@ -1,5 +1,4 @@
 // assets/js/sidebar_pendaftaran.js
-
 document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.querySelector('.sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -25,8 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
             hideSidebar();
         });
     }
-    // Hide sidebar if resize >576px
+    // Hide sidebar if resize >900px
     window.addEventListener('resize', function () {
-        if (window.innerWidth > 576) hideSidebar();
+        if (window.innerWidth > 900) hideSidebar();
     });
 });
