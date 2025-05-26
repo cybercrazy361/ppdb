@@ -149,13 +149,14 @@ function getStatusPembayaranLabel($status) {
         unset($_SESSION['flash_message'], $_SESSION['flash_type']);
         endif;
         ?>
-<div class="mb-3">
-  <a href="cetak_daftar_siswa.php" target="_blank" class="btn btn-primary">
-    <i class="fas fa-print"></i> Cetak Daftar Lengkap
-  </a>
-</div>
 
-    <div class="container mt-5">
+
+    <div class="container mt-1">
+        <div class="mb-1">
+        <a href="cetak_daftar_siswa.php" target="_blank" class="btn btn-primary">
+            <i class="fas fa-print"></i> Cetak Daftar Lengkap
+        </a>
+        </div>
       <div class="table-responsive">
         <table class="table table-hover table-bordered align-middle">
           <thead>
