@@ -29,9 +29,11 @@ $unit_petugas = $_SESSION['unit'];
 $bulan_order = ["Juli","Agustus","September","Oktober","November","Desember",
                 "Januari","Februari","Maret","April","Mei","Juni"];
 
+// Tangkap data dari form
 $no_formulir         = isset($_POST['no_formulir'])        ? sanitize($_POST['no_formulir'])        : '';
 $nama                = isset($_POST['nama'])               ? sanitize($_POST['nama'])               : '';
-$tahun_pelajaran     = isset($_POST['tahun_pembelajaran']) ? sanitize($_POST['tahun_pembelajaran']) : '';
+// Perbaikan: gunakan 'tahun_pelajaran' sesuai nama <select>
+$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])    ? sanitize($_POST['tahun_pelajaran'])    : '';
 $metode_pembayaran   = isset($_POST['metode_pembayaran'])  ? sanitize($_POST['metode_pembayaran'])  : '';
 $keterangan          = isset($_POST['keterangan'])         ? sanitize($_POST['keterangan'])         : '';
 $jenis_pembayaran    = isset($_POST['jenis_pembayaran'])   && is_array($_POST['jenis_pembayaran'])   ? $_POST['jenis_pembayaran']   : [];
