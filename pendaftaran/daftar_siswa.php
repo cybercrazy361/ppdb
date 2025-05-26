@@ -26,7 +26,6 @@ $totalResult = $stmtTotal->get_result();
 $totalSiswa = $totalResult->fetch_assoc()['total'] ?? 0;
 $stmtTotal->close();
 
-// IDs jenis pembayaran
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
@@ -91,7 +90,6 @@ $result = $stmt->get_result();
 
 $totalPages = ceil($totalSiswa / $limit);
 
-// Helper untuk format tanggal
 function formatTanggalIndonesia($tanggal) {
     if (!$tanggal || $tanggal === '0000-00-00') return '-';
     $bulan = [
@@ -106,7 +104,6 @@ function formatTanggalIndonesia($tanggal) {
     return "$d $m $y";
 }
 
-// Helper untuk badge status
 function getStatusPembayaranLabel($status) {
     switch (strtolower($status)) {
         case 'lunas':
@@ -123,7 +120,7 @@ function getStatusPembayaranLabel($status) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Daftar Siswa <?= htmlspecialchars($unit ?? '') ?> – PPDB</title>
+  <title>Daftar Siswa <?= htmlspecialchars($unit) ?> – PPDB</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
@@ -131,23 +128,18 @@ function getStatusPembayaranLabel($status) {
 </head>
 <body>
 
-  <?php 
-    $active = 'progres';
-    include 'sidebar_pendaftaran.php'; 
-  ?>
+  <?php $active = 'progres'; include 'sidebar_pendaftaran.php'; ?>
 
   <div class="main">
-    <!-- Navbar Header -->
     <header class="navbar">
       <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-      <div class="title">Daftar Siswa <?= htmlspecialchars($unit ?? '') ?></div>
+      <div class="title">Daftar Siswa <?= htmlspecialchars($unit) ?></div>
       <div class="user-menu">
         <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
       </div>
     </header>
 
-    <!-- Konten Utama -->
     <div class="container">
       <div class="mb-3">
         <a href="dashboard_pendaftaran.php" class="btn btn-secondary">
@@ -155,10 +147,10 @@ function getStatusPembayaranLabel($status) {
         </a>
       </div>
 
-      <h2 class="text-center">Daftar Siswa <?= htmlspecialchars($unit ?? '') ?></h2>
+      <h2 class="text-center">Daftar Siswa <?= htmlspecialchars($unit) ?></h2>
 
       <div class="table-responsive mt-4">
-        <table class="table table-hover table-bordered">
+        <table class="table table-hover table-bordered align-middle">
           <thead>
             <tr>
               <th>No</th>
@@ -182,11 +174,11 @@ function getStatusPembayaranLabel($status) {
               while ($row = $result->fetch_assoc()): ?>
                 <tr>
                   <td><?= $no++ ?></td>
-                  <td><?= htmlspecialchars($row['no_formulir']   ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['nama']          ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['no_formulir']     ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['nama']            ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['jenis_kelamin']   ?? '') ?></td>
                   <td>
-                    <?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>,
+                    <?= htmlspecialchars($row['tempat_lahir']   ?? '') ?>,
                     <?= formatTanggalIndonesia($row['tanggal_lahir'] ?? '') ?>
                   </td>
                   <td><?= htmlspecialchars($row['asal_sekolah']    ?? '') ?></td>
@@ -203,15 +195,15 @@ function getStatusPembayaranLabel($status) {
                     </a>
                     <button class="btn btn-warning btn-sm editBtn"
                             data-id="<?= $row['id'] ?>"
-                            data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
-                            data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
+                            data-no_formulir="<?= htmlspecialchars($row['no_formulir']   ?? '') ?>"
+                            data-nama="<?= htmlspecialchars($row['nama']            ?? '') ?>"
                             data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
                             data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>"
                             data-tanggal_lahir="<?= htmlspecialchars($row['tanggal_lahir'] ?? '') ?>"
                             data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
-                            data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
-                            data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
-                            data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
+                            data-alamat="<?= htmlspecialchars($row['alamat']         ?? '') ?>"
+                            data-no_hp="<?= htmlspecialchars($row['no_hp']          ?? '') ?>"
+                            data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']   ?? '') ?>"
                             data-bs-toggle="modal" data-bs-target="#editModal">
                       <i class="fas fa-edit"></i> Edit
                     </button>
@@ -341,28 +333,31 @@ function getStatusPembayaranLabel($status) {
   </div>
 
   <script>
-    // Toggle sidebar
-    document.getElementById('sidebarToggle').addEventListener('click', () => {
-      document.querySelector('.sidebar').classList.toggle('active');
+  // Edit button event listener
+  document.querySelectorAll('.editBtn').forEach(button => {
+    button.addEventListener('click', () => {
+      document.getElementById('editId').value = button.getAttribute('data-id');
+      document.getElementById('editNoFormulir').value = button.getAttribute('data-no_formulir');
+      document.getElementById('editNama').value = button.getAttribute('data-nama');
+      document.getElementById('editJenisKelamin').value = button.getAttribute('data-jenis_kelamin');
+      document.getElementById('editTempatLahir').value = button.getAttribute('data-tempat_lahir');
+      document.getElementById('editTanggalLahir').value = button.getAttribute('data-tanggal_lahir');
+      document.getElementById('editAsalSekolah').value = button.getAttribute('data-asal_sekolah');
+      document.getElementById('editAlamat').value = button.getAttribute('data-alamat');
+      document.getElementById('editNoHp').value = button.getAttribute('data-no_hp');
+      document.getElementById('editNoHpOrtu').value = button.getAttribute('data-no_hp_ortu');
     });
-    // Fill edit modal
-    document.querySelectorAll('.editBtn').forEach(btn => {
-      btn.onclick = () => {
-        const fields = ['Id','NoFormulir','Nama','JenisKelamin','TempatLahir','TanggalLahir','AsalSekolah','Alamat','NoHp','NoHpOrtu'];
-        fields.forEach(f => {
-          const el = document.getElementById('edit' + f);
-          if (el) el.value = btn.dataset[f.toLowerCase()] ?? '';
-        });
-      };
+  });
+
+  // Delete button event listener
+  document.querySelectorAll('.deleteBtn').forEach(button => {
+    button.addEventListener('click', () => {
+      document.getElementById('deleteId').value = button.getAttribute('data-id');
+      document.getElementById('deleteNama').innerText = button.getAttribute('data-nama');
     });
-    // Fill delete modal
-    document.querySelectorAll('.deleteBtn').forEach(btn => {
-      btn.onclick = () => {
-        document.getElementById('deleteId').value = btn.dataset.id ?? '';
-        document.getElementById('deleteNama').innerText = btn.dataset.nama ?? '';
-      };
-    });
-  </script>
+  });
+</script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/sidebar_pendaftaran.js"></script>
 </body>
