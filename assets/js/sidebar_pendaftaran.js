@@ -1,4 +1,4 @@
-// assets/js/sidebar_pendaftaran.js
+// Tidak perlu edit, cukup copy-paste di bawah ini (setelah include Bootstrap dan sebelum include sidebar_pendaftaran.js jika JS eksternal)
 document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.querySelector('.sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
             hideSidebar();
         });
     }
-    // Hide sidebar if resize >900px
+    // Hide sidebar if resize >992px
     window.addEventListener('resize', function () {
-        if (window.innerWidth > 900) hideSidebar();
+        if (window.innerWidth > 992) hideSidebar();
     });
 });

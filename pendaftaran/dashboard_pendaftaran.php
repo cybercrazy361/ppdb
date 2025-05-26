@@ -107,13 +107,14 @@ $conn->close();
 
   <div class="main">
     <header class="navbar">
-  <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-  <div class="title">Dashboard <?=htmlspecialchars($unit)?></div>
-  <div class="user-menu">
-    <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
-    <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
-  </div>
-</header>
+      <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+      <div class="title">Dashboard <?=htmlspecialchars($unit)?></div>
+      <div class="user-menu">
+        <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
+        <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
+      </div>
+    </header>
+
     <section class="dashboard-cards">
       <div class="card">
         <div class="icon text-primary"><i class="fas fa-user-graduate"></i></div>
@@ -170,11 +171,7 @@ $conn->close();
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.querySelector('.toggle-btn').addEventListener('click', () => {
-      document.querySelector('.sidebar').classList.toggle('collapsed');
-    });
-
-    function showModal(status) {
+      function showModal(status) {
       const body = document.getElementById('modalBody');
       body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
       fetch(`fetch_siswa.php?status=${status}&unit=<?=urlencode($unit)?>`)
