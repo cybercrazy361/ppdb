@@ -18,8 +18,7 @@ if ($page < 1) $page = 1;
 $offset = ($page > 1) ? ($page * $limit) - $limit : 0;
 
 // Hitung total siswa
-$totalQuery = "SELECT COUNT(*) AS total FROM siswa WHERE unit = ?";
-$stmtTotal = $conn->prepare($totalQuery);
+$stmtTotal = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
 $stmtTotal->bind_param('s', $unit);
 $stmtTotal->execute();
 $totalResult = $stmtTotal->get_result();
@@ -93,10 +92,10 @@ $totalPages = ceil($totalSiswa / $limit);
 function formatTanggalIndonesia($tanggal) {
     if (!$tanggal || $tanggal === '0000-00-00') return '-';
     $bulan = [
-        'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret',
-        'April' => 'April', 'May' => 'Mei', 'June' => 'Juni',
-        'July' => 'Juli', 'August' => 'Agustus', 'September' => 'September',
-        'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
+        'January' => 'Januari','February' => 'Februari','March' => 'Maret',
+        'April'   => 'April',  'May'      => 'Mei',     'June'  => 'Juni',
+        'July'    => 'Juli',   'August'   => 'Agustus', 'September' => 'September',
+        'October' => 'Oktober','November' => 'November','December'  => 'Desember'
     ];
     $d = date('d', strtotime($tanggal));
     $m = $bulan[date('F', strtotime($tanggal))] ?? date('F', strtotime($tanggal));
@@ -140,43 +139,33 @@ function getStatusPembayaranLabel($status) {
       </div>
     </header>
 
-    <div class="container">
+    <div class="container mt-5">
       <div class="mb-3">
         <a href="dashboard_pendaftaran.php" class="btn btn-secondary">
           <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
         </a>
       </div>
 
-      <h2 class="text-center">Daftar Siswa <?= htmlspecialchars($unit) ?></h2>
+      <h2 class="text-center mb-4">Daftar Siswa <?= htmlspecialchars($unit) ?></h2>
 
-      <div class="table-responsive mt-4">
+      <div class="table-responsive">
         <table class="table table-hover table-bordered align-middle">
           <thead>
             <tr>
-              <th>No</th>
-              <th>No Formulir</th>
-              <th>Nama</th>
-              <th>Jenis Kelamin</th>
-              <th>Tempat/Tgl Lahir</th>
-              <th>Asal Sekolah</th>
-              <th>Alamat</th>
-              <th>No HP</th>
-              <th>No HP Ortu</th>
-              <th>Status Pembayaran</th>
-              <th>Metode Pembayaran</th>
-              <th>Tgl Pendaftaran</th>
-              <th>Aksi</th>
+              <th>No</th><th>No Formulir</th><th>Nama</th><th>Jenis Kelamin</th>
+              <th>Tempat/Tgl Lahir</th><th>Asal Sekolah</th><th>Alamat</th>
+              <th>No HP</th><th>No HP Ortu</th><th>Status Pembayaran</th>
+              <th>Metode Pembayaran</th><th>Tgl Pendaftaran</th><th>Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <?php if ($result->num_rows): 
-              $no = $offset + 1;
+            <?php if ($result->num_rows): $no = $offset + 1;
               while ($row = $result->fetch_assoc()): ?>
                 <tr>
                   <td><?= $no++ ?></td>
-                  <td><?= htmlspecialchars($row['no_formulir']     ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['nama']            ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['jenis_kelamin']   ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['no_formulir']   ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['nama']          ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?></td>
                   <td>
                     <?= htmlspecialchars($row['tempat_lahir']   ?? '') ?>,
                     <?= formatTanggalIndonesia($row['tanggal_lahir'] ?? '') ?>
@@ -189,21 +178,21 @@ function getStatusPembayaranLabel($status) {
                   <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '') ?></td>
                   <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') ?></td>
                   <td class="text-center">
-                    <a href="print_siswa.php?id=<?= $row['id'] ?>" target="_blank"
-                       class="btn btn-success btn-sm mb-1">
+                    <a href="print_siswa.php?id=<?= $row['id'] ?>"
+                       class="btn btn-success btn-sm mb-1" target="_blank">
                       <i class="fas fa-print"></i> Print
                     </a>
                     <button class="btn btn-warning btn-sm editBtn"
                             data-id="<?= $row['id'] ?>"
-                            data-no_formulir="<?= htmlspecialchars($row['no_formulir']   ?? '') ?>"
-                            data-nama="<?= htmlspecialchars($row['nama']            ?? '') ?>"
+                            data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
+                            data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
                             data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
                             data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>"
                             data-tanggal_lahir="<?= htmlspecialchars($row['tanggal_lahir'] ?? '') ?>"
                             data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
-                            data-alamat="<?= htmlspecialchars($row['alamat']         ?? '') ?>"
-                            data-no_hp="<?= htmlspecialchars($row['no_hp']          ?? '') ?>"
-                            data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']   ?? '') ?>"
+                            data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
+                            data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
+                            data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
                             data-bs-toggle="modal" data-bs-target="#editModal">
                       <i class="fas fa-edit"></i> Edit
                     </button>
@@ -251,113 +240,104 @@ function getStatusPembayaranLabel($status) {
 
   <!-- Modal Edit -->
   <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form action="edit_siswa.php" method="POST">
-          <input type="hidden" id="editId" name="id">
-          <div class="modal-header">
-            <h5 class="modal-title">Edit Data Siswa</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog"><div class="modal-content">
+      <form action="edit_siswa.php" method="POST">
+        <input type="hidden" id="editId" name="id">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Data Siswa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="form-label">No Formulir</label>
+            <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
           </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">No Formulir</label>
-              <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Nama</label>
-              <input type="text" class="form-control" id="editNama" name="nama" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Jenis Kelamin</label>
-              <select class="form-select" id="editJenisKelamin" name="jenis_kelamin" required>
-                <option value="">-- Pilih --</option>
-                <option value="Laki-laki">Laki-laki</option>
-                <option value="Perempuan">Perempuan</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Tempat Lahir</label>
-              <input type="text" class="form-control" id="editTempatLahir" name="tempat_lahir" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Tanggal Lahir</label>
-              <input type="date" class="form-control" id="editTanggalLahir" name="tanggal_lahir" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Asal Sekolah</label>
-              <input type="text" class="form-control" id="editAsalSekolah" name="asal_sekolah" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Alamat</label>
-              <textarea class="form-control" id="editAlamat" name="alamat" required></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">No HP</label>
-              <input type="text" class="form-control" id="editNoHp" name="no_hp" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">No HP Orang Tua</label>
-              <input type="text" class="form-control" id="editNoHpOrtu" name="no_hp_ortu" required>
-            </div>
+          <div class="mb-3"><label class="form-label">Nama</label>
+            <input type="text" class="form-control" id="editNama" name="nama" required>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+          <div class="mb-3"><label class="form-label">Jenis Kelamin</label>
+            <select class="form-select" id="editJenisKelamin" name="jenis_kelamin" required>
+              <option value="">-- Pilih --</option>
+              <option value="Laki-laki">Laki-laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
           </div>
-        </form>
-      </div>
-    </div>
+          <div class="mb-3"><label class="form-label">Tempat Lahir</label>
+            <input type="text" class="form-control" id="editTempatLahir" name="tempat_lahir" required>
+          </div>
+          <div class="mb-3"><label class="form-label">Tanggal Lahir</label>
+            <input type="date" class="form-control" id="editTanggalLahir" name="tanggal_lahir" required>
+          </div>
+          <div class="mb-3"><label class="form-label">Asal Sekolah</label>
+            <input type="text" class="form-control" id="editAsalSekolah" name="asal_sekolah" required>
+          </div>
+          <div class="mb-3"><label class="form-label">Alamat</label>
+            <textarea class="form-control" id="editAlamat" name="alamat" required></textarea>
+          </div>
+          <div class="mb-3"><label class="form-label">No HP</label>
+            <input type="text" class="form-control" id="editNoHp" name="no_hp" required>
+          </div>
+          <div class="mb-3"><label class="form-label">No HP Orang Tua</label>
+            <input type="text" class="form-control" id="editNoHpOrtu" name="no_hp_ortu" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div></div>
   </div>
 
   <!-- Modal Delete -->
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form action="delete_siswa.php" method="POST">
-          <input type="hidden" id="deleteId" name="id">
-          <div class="modal-header">
-            <h5 class="modal-title">Hapus Data Siswa</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p>Yakin ingin menghapus <strong id="deleteNama"></strong>?</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-danger">Hapus</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <div class="modal-dialog"><div class="modal-content">
+      <form action="delete_siswa.php" method="POST">
+        <input type="hidden" id="deleteId" name="id">
+        <div class="modal-header">
+          <h5 class="modal-title">Hapus Data Siswa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Yakin ingin menghapus <strong id="deleteNama"></strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-danger">Hapus</button>
+        </div>
+      </form>
+    </div></div>
   </div>
 
   <script>
-  // Edit button event listener
-  document.querySelectorAll('.editBtn').forEach(button => {
-    button.addEventListener('click', () => {
-      document.getElementById('editId').value = button.getAttribute('data-id');
-      document.getElementById('editNoFormulir').value = button.getAttribute('data-no_formulir');
-      document.getElementById('editNama').value = button.getAttribute('data-nama');
-      document.getElementById('editJenisKelamin').value = button.getAttribute('data-jenis_kelamin');
-      document.getElementById('editTempatLahir').value = button.getAttribute('data-tempat_lahir');
-      document.getElementById('editTanggalLahir').value = button.getAttribute('data-tanggal_lahir');
-      document.getElementById('editAsalSekolah').value = button.getAttribute('data-asal_sekolah');
-      document.getElementById('editAlamat').value = button.getAttribute('data-alamat');
-      document.getElementById('editNoHp').value = button.getAttribute('data-no_hp');
-      document.getElementById('editNoHpOrtu').value = button.getAttribute('data-no_hp_ortu');
+    // Edit button event listener
+    document.querySelectorAll('.editBtn').forEach(button => {
+      button.addEventListener('click', () => {
+        document.getElementById('editId').value          = button.getAttribute('data-id');
+        document.getElementById('editNoFormulir').value  = button.getAttribute('data-no_formulir');
+        document.getElementById('editNama').value        = button.getAttribute('data-nama');
+        document.getElementById('editJenisKelamin').value = button.getAttribute('data-jenis_kelamin');
+        document.getElementById('editTempatLahir').value = button.getAttribute('data-tempat_lahir');
+        document.getElementById('editTanggalLahir').value = button.getAttribute('data-tanggal_lahir');
+        document.getElementById('editAsalSekolah').value = button.getAttribute('data-asal_sekolah');
+        document.getElementById('editAlamat').value      = button.getAttribute('data-alamat');
+        document.getElementById('editNoHp').value        = button.getAttribute('data-no_hp');
+        document.getElementById('editNoHpOrtu').value    = button.getAttribute('data-no_hp_ortu');
+      });
     });
-  });
 
-  // Delete button event listener
-  document.querySelectorAll('.deleteBtn').forEach(button => {
-    button.addEventListener('click', () => {
-      document.getElementById('deleteId').value = button.getAttribute('data-id');
-      document.getElementById('deleteNama').innerText = button.getAttribute('data-nama');
+    // Delete button event listener
+    document.querySelectorAll('.deleteBtn').forEach(button => {
+      button.addEventListener('click', () => {
+        document.getElementById('deleteId').value     = button.getAttribute('data-id');
+        document.getElementById('deleteNama').innerText = button.getAttribute('data-nama');
+      });
     });
-  });
-</script>
 
+    // Toggle sidebar
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/sidebar_pendaftaran.js"></script>
 </body>
