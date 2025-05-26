@@ -69,6 +69,17 @@ $stmt->bind_param('s', $unit);
 $stmt->execute();
 $result = $stmt->get_result();
 
+// Fetch semua baris ke array untuk menghitung statistik
+$rows = $result->fetch_all(MYSQLI_ASSOC);
+$lunas = $angsuran = $belum = 0;
+foreach ($rows as $r) {
+    switch (strtolower($r['status_pembayaran'])) {
+        case 'lunas':    $lunas++;    break;
+        case 'angsuran': $angsuran++; break;
+        default:         $belum++;    break;
+    }
+}
+
 function formatTanggal($t){
     if (!$t || $t === '0000-00-00') return '-';
     $bulan = [
@@ -110,6 +121,17 @@ function formatTanggal($t){
     h1 { text-align: center; margin-bottom: 0.5rem; }
     .no-print { margin-bottom: 1rem; }
     button { padding: 0.5rem 1rem; margin-right: 0.5rem; }
+    .stats {
+      margin: 1rem 0;
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.95rem;
+    }
+    .stats div {
+      background: #f1f3f5;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+    }
     table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
     th { background: #2e59d9; color: #fff; }
     th, td { border: 1px solid #ccc; padding: 6px; text-align: center; font-size: 14px; }
@@ -123,6 +145,14 @@ function formatTanggal($t){
   </div>
 
   <h1>Daftar Siswa <?= htmlspecialchars($unit) ?></h1>
+
+  <div class="stats no-print">
+    <div>Total: <?= count($rows) ?></div>
+    <div>Lunas: <?= $lunas ?></div>
+    <div>Angsuran: <?= $angsuran ?></div>
+    <div>Belum Bayar: <?= $belum ?></div>
+  </div>
+
   <table>
     <thead>
       <tr>
@@ -141,7 +171,7 @@ function formatTanggal($t){
       </tr>
     </thead>
     <tbody>
-      <?php $i = 1; while ($row = $result->fetch_assoc()): ?>
+      <?php $i = 1; foreach ($rows as $row): ?>
       <tr>
         <td><?= $i++ ?></td>
         <td><?= htmlspecialchars($row['no_formulir']) ?></td>
@@ -159,7 +189,7 @@ function formatTanggal($t){
         <td><?= htmlspecialchars($row['metode_pembayaran']) ?></td>
         <td><?= formatTanggal($row['tanggal_pendaftaran']) ?></td>
       </tr>
-      <?php endwhile; ?>
+      <?php endforeach; ?>
     </tbody>
   </table>
 
