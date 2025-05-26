@@ -125,12 +125,12 @@ function getStatusPembayaranLabel($status) {
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Daftar Siswa <?= htmlspecialchars($unit ?? '') ?></h2>
         <div class="mb-3">
                 <a href="dashboard_pendaftaran.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
                 </a>
             </div>
+        <h2 class="text-center mb-4">Daftar Siswa <?= htmlspecialchars($unit ?? '') ?></h2>
         <div class="table-responsive">
             <table class="table table-hover table-bordered align-middle">
                 <thead class="table-dark">
