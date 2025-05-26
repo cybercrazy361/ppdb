@@ -381,8 +381,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const pembayaran_id = this.getAttribute('data-id');
 
             fetch(`get_pembayaran.php?id=${encodeURIComponent(pembayaran_id)}`)
-                .then(response => response.json())
+                .then(response => {
+                    // Jika response bukan 200/OK, lempar error!
+                    if (!response.ok) throw new Error('HTTP status ' + response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('DATA FETCH EDIT:', data); // DEBUG LOG
                     if (data.success) {
                         const pembayaran = data.data;
                         const details = data.details;
@@ -394,13 +399,21 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('edit_keterangan').value = pembayaran.keterangan;
                         const editPaymentWrapper = document.getElementById('edit-payment-wrapper');
                         editPaymentWrapper.innerHTML = '';
-                        details.forEach(detail => {
-                            addEditPayment(
-                                detail.jenis_pembayaran_id,
-                                detail.bulan ?? '',
-                                detail.jumlah ?? '',
-                                detail.cashback ?? ''
-                            );
+
+                        // Tambahkan try/catch di dalam loop agar error tidak block modal tampil
+                        details.forEach((detail, idx) => {
+                            try {
+                                console.log('DETAIL KE-', idx, detail); // DEBUG LOG
+                                addEditPayment(
+                                    detail.jenis_pembayaran_id,
+                                    detail.bulan ?? '',
+                                    detail.jumlah ?? '',
+                                    detail.cashback ?? ''
+                                );
+                            } catch (err) {
+                                console.error('Gagal addEditPayment di detail ke-', idx, detail, err);
+                                // Bisa juga tampilkan error di layar/modal
+                            }
                         });
                         const modalEdit = new bootstrap.Modal(document.getElementById('modalEditPembayaran'));
                         modalEdit.show();
@@ -409,6 +422,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 })
                 .catch(error => {
+                    // DEBUG LOG
+                    console.error('Fetch Edit Error:', error);
                     alert('Terjadi kesalahan saat mengambil data pembayaran.');
                 });
         });
