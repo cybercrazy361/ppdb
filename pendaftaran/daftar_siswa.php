@@ -6,12 +6,12 @@ session_start();
 include '../database_connection.php';
 
 // Validasi akses
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
     header('Location: login_pendaftaran.php');
     exit();
 }
 
-$unit = $_SESSION['unit'];
+$unit = $_SESSION['unit'] ?? '';
 $limit = 5;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
@@ -23,7 +23,7 @@ $stmtTotal = $conn->prepare($totalQuery);
 $stmtTotal->bind_param('s', $unit);
 $stmtTotal->execute();
 $totalResult = $stmtTotal->get_result();
-$totalSiswa = $totalResult->fetch_assoc()['total'];
+$totalSiswa = $totalResult->fetch_assoc()['total'] ?? 0;
 $stmtTotal->close();
 
 // IDs jenis pembayaran
@@ -91,6 +91,7 @@ $result = $stmt->get_result();
 
 $totalPages = ceil($totalSiswa / $limit);
 
+// Helper untuk format tanggal
 function formatTanggalIndonesia($tanggal) {
     if (!$tanggal || $tanggal === '0000-00-00') return '-';
     $bulan = [
@@ -100,11 +101,12 @@ function formatTanggalIndonesia($tanggal) {
         'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
     ];
     $d = date('d', strtotime($tanggal));
-    $m = $bulan[date('F', strtotime($tanggal))];
+    $m = $bulan[date('F', strtotime($tanggal))] ?? date('F', strtotime($tanggal));
     $y = date('Y', strtotime($tanggal));
     return "$d $m $y";
 }
 
+// Helper untuk badge status
 function getStatusPembayaranLabel($status) {
     switch (strtolower($status)) {
         case 'lunas':
@@ -121,7 +123,7 @@ function getStatusPembayaranLabel($status) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Daftar Siswa <?= htmlspecialchars($unit) ?> – PPDB</title>
+  <title>Daftar Siswa <?= htmlspecialchars($unit ?? '') ?> – PPDB</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
@@ -129,15 +131,18 @@ function getStatusPembayaranLabel($status) {
 </head>
 <body>
 
-  <?php $active = 'progres'; include 'sidebar_pendaftaran.php'; ?>
+  <?php 
+    $active = 'progres';
+    include 'sidebar_pendaftaran.php'; 
+  ?>
 
   <div class="main">
     <!-- Navbar Header -->
     <header class="navbar">
       <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-      <div class="title">Daftar Siswa <?= htmlspecialchars($unit) ?></div>
+      <div class="title">Daftar Siswa <?= htmlspecialchars($unit ?? '') ?></div>
       <div class="user-menu">
-        <small>Halo, <?= htmlspecialchars($_SESSION['nama']) ?></small>
+        <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
       </div>
     </header>
@@ -150,7 +155,7 @@ function getStatusPembayaranLabel($status) {
         </a>
       </div>
 
-      <h2 class="text-center">Daftar Siswa <?= htmlspecialchars($unit) ?></h2>
+      <h2 class="text-center">Daftar Siswa <?= htmlspecialchars($unit ?? '') ?></h2>
 
       <div class="table-responsive mt-4">
         <table class="table table-hover table-bordered">
@@ -172,26 +177,25 @@ function getStatusPembayaranLabel($status) {
             </tr>
           </thead>
           <tbody>
-            <?php
-            if ($result->num_rows):
+            <?php if ($result->num_rows): 
               $no = $offset + 1;
               while ($row = $result->fetch_assoc()): ?>
                 <tr>
                   <td><?= $no++ ?></td>
-                  <td><?= htmlspecialchars($row['no_formulir']) ?></td>
-                  <td><?= htmlspecialchars($row['nama']) ?></td>
-                  <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
+                  <td><?= htmlspecialchars($row['no_formulir']   ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['nama']          ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?></td>
                   <td>
-                    <?= htmlspecialchars($row['tempat_lahir']) ?>,
-                    <?= formatTanggalIndonesia($row['tanggal_lahir']) ?>
+                    <?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>,
+                    <?= formatTanggalIndonesia($row['tanggal_lahir'] ?? '') ?>
                   </td>
-                  <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-                  <td><?= htmlspecialchars($row['alamat']) ?></td>
-                  <td><?= htmlspecialchars($row['no_hp']) ?></td>
-                  <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
-                  <td><?= getStatusPembayaranLabel($row['status_pembayaran']) ?></td>
-                  <td><?= htmlspecialchars($row['metode_pembayaran']) ?></td>
-                  <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran']) ?></td>
+                  <td><?= htmlspecialchars($row['asal_sekolah']    ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['alamat']           ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['no_hp']            ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['no_hp_ortu']       ?? '') ?></td>
+                  <td><?= getStatusPembayaranLabel($row['status_pembayaran'] ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '') ?></td>
+                  <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') ?></td>
                   <td class="text-center">
                     <a href="print_siswa.php?id=<?= $row['id'] ?>" target="_blank"
                        class="btn btn-success btn-sm mb-1">
@@ -199,21 +203,21 @@ function getStatusPembayaranLabel($status) {
                     </a>
                     <button class="btn btn-warning btn-sm editBtn"
                             data-id="<?= $row['id'] ?>"
-                            data-no_formulir="<?= htmlspecialchars($row['no_formulir']) ?>"
-                            data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                            data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin']) ?>"
-                            data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir']) ?>"
-                            data-tanggal_lahir="<?= htmlspecialchars($row['tanggal_lahir']) ?>"
-                            data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah']) ?>"
-                            data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
-                            data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
-                            data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
+                            data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
+                            data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
+                            data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
+                            data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>"
+                            data-tanggal_lahir="<?= htmlspecialchars($row['tanggal_lahir'] ?? '') ?>"
+                            data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
+                            data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
+                            data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
+                            data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
                             data-bs-toggle="modal" data-bs-target="#editModal">
                       <i class="fas fa-edit"></i> Edit
                     </button>
                     <button class="btn btn-danger btn-sm deleteBtn"
                             data-id="<?= $row['id'] ?>"
-                            data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                            data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
                             data-bs-toggle="modal" data-bs-target="#deleteModal">
                       <i class="fas fa-trash-alt"></i> Delete
                     </button>
@@ -241,7 +245,7 @@ function getStatusPembayaranLabel($status) {
             $start = max(1, $end - $max_links + 1);
           }
           for ($i = $start; $i <= $end; $i++): ?>
-            <li class="page-item <?= ($i == $page ? 'active' : '') ?>">
+            <li class="page-item <?= ($i === $page ? 'active' : '') ?>">
               <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
             </li>
           <?php endfor; ?>
@@ -264,7 +268,6 @@ function getStatusPembayaranLabel($status) {
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <!-- form fields sama seperti sebelumnya -->
             <div class="mb-3">
               <label class="form-label">No Formulir</label>
               <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
@@ -345,17 +348,18 @@ function getStatusPembayaranLabel($status) {
     // Fill edit modal
     document.querySelectorAll('.editBtn').forEach(btn => {
       btn.onclick = () => {
-        ['Id','NoFormulir','Nama','JenisKelamin','TempatLahir','TanggalLahir','AsalSekolah','Alamat','NoHp','NoHpOrtu']
-          .forEach(field => {
-            document.getElementById('edit'+field).value = btn.dataset[field.toLowerCase()];
-          });
+        const fields = ['Id','NoFormulir','Nama','JenisKelamin','TempatLahir','TanggalLahir','AsalSekolah','Alamat','NoHp','NoHpOrtu'];
+        fields.forEach(f => {
+          const el = document.getElementById('edit' + f);
+          if (el) el.value = btn.dataset[f.toLowerCase()] ?? '';
+        });
       };
     });
     // Fill delete modal
     document.querySelectorAll('.deleteBtn').forEach(btn => {
       btn.onclick = () => {
-        document.getElementById('deleteId').value = btn.dataset.id;
-        document.getElementById('deleteNama').innerText = btn.dataset.nama;
+        document.getElementById('deleteId').value = btn.dataset.id ?? '';
+        document.getElementById('deleteNama').innerText = btn.dataset.nama ?? '';
       };
     });
   </script>
