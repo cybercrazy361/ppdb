@@ -725,3 +725,10 @@ if (tambahPembayaranForm) {
             .catch(() => alert('Error server!'));
     });
 }
+function isSPP(jenis_id) {
+    if (!window.jenisPembayaranList) return false;
+    // Cari di list, samakan string 'SPP' (tidak case sensitive)
+    const jenis = window.jenisPembayaranList.find(j => j.id == jenis_id);
+    if (!jenis) return false;
+    return (jenis.nama || '').trim().toLowerCase() === 'spp';
+}
