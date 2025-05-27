@@ -12,9 +12,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
-// ====================
-// AMBIL DATA SISWA
-// ====================
 $stmt = $conn->prepare("SELECT * FROM siswa WHERE id=?");
 $stmt->bind_param('i', $id);
 $stmt->execute();
@@ -22,9 +19,6 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-// ====================
-// AMBIL PETUGAS
-// ====================
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 
@@ -54,61 +48,6 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// =======================
-// CEK STATUS PEMBAYARAN
-// =======================
-$status_pembayaran = 'Belum Bayar';
-$uang_pangkal_id = 1; // ganti sesuai ID sistemmu
-$spp_id = 2;
-
-$stmtStatus = $conn->prepare("
-    SELECT
-      CASE
-        WHEN 
-            (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                WHERE p1.siswa_id = ? 
-                  AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                  AND pd1.status_pembayaran = 'Lunas'
-            ) > 0
-        AND
-            (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                WHERE p2.siswa_id = ? 
-                  AND pd2.jenis_pembayaran_id = $spp_id
-                  AND pd2.bulan = 'Juli'
-                  AND pd2.status_pembayaran = 'Lunas'
-            ) > 0
-        THEN 'Lunas'
-        WHEN 
-            (
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = ? 
-                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                      AND pd1.status_pembayaran = 'Lunas'
-                ) > 0
-                OR
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = ? 
-                      AND pd2.jenis_pembayaran_id = $spp_id
-                      AND pd2.bulan = 'Juli'
-                      AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
-            )
-        THEN 'Angsuran'
-        ELSE 'Belum Bayar'
-      END AS status_pembayaran
-");
-$stmtStatus->bind_param('iiii', $id, $id, $id, $id);
-$stmtStatus->execute();
-$resultStatus = $stmtStatus->get_result();
-if ($rStatus = $resultStatus->fetch_assoc()) {
-    $status_pembayaran = $rStatus['status_pembayaran'] ?? 'Belum Bayar';
-}
-$stmtStatus->close();
-
 // ===================
 // Ambil tagihan awal
 // ===================
@@ -125,22 +64,188 @@ $stmtTagihan->execute();
 $res = $stmtTagihan->get_result();
 while ($t = $res->fetch_assoc()) $tagihan[] = $t;
 $stmtTagihan->close();
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- CSS utama -->
-    <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran_pembayaran.css" />
-  <!-- FontAwesome CDN untuk ikon cetak -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; }
+  .container {
+    width: 800px; max-width: 100%; margin: 22px auto; background: #fff;
+    border-radius: 10px; box-shadow: 0 0 8px rgba(60,60,60,0.13);
+    padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
+  }
+  .header {
+    position: relative;
+    min-height: 80px;
+    border-bottom: 2px solid #d1d5db;
+    margin-bottom: 18px;
+    padding-bottom: 9px;
+  }
+  .logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    position: absolute;
+    left: 0;
+    top: -40px;
+    z-index: 2;
+  }
+  .header-content {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+  }
+  @media print {
+    .header {
+      position: relative;
+      min-height: 80px;
+      border-bottom: 2px solid #d1d5db;
+      margin-bottom: 18px;
+      padding-bottom: 9px;
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      position: absolute;
+      left: 0;
+      top: -25px;
+      z-index: 2;
+    }
+    .header-content {
+      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+    }
+  }
+  .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
+  .sub-title { font-size: 16px; font-weight: 500; }
+  .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
+  .no-reg { margin-bottom: 10px; font-weight: 500; }
+  .data-table caption {
+    background: #eaf2ce; font-weight: bold; font-size: 16px; padding: 5px 0;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 0;
+  }
+  .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px;}
+  .data-table th, .data-table td {
+    border: 1px solid #777; padding: 7px 12px; font-size: 15px;
+  }
+  .data-table th { background: #f2f6e9; text-align: left; width: 34%; }
+  .data-table td { background: #fff; }
+  .tagihan-table {
+    width: 60%; min-width:270px; margin: 0 auto 18px auto; border-collapse: collapse;
+    background: #f9f9fa;
+    border-radius: 8px; overflow: hidden;
+  }
+  .tagihan-table th, .tagihan-table td {
+    border: 1px solid #b5b5b5;
+    padding: 8px 18px;
+    font-size: 15px;
+    text-align: left;
+  }
+  .tagihan-table th { background: #ecf3fd; text-align: left;}
+  .tagihan-table td { background: #fff; }
+  .row-btm {
+    display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 18px;
+  }
+  .info-contact { font-size: 14px; line-height: 1.7; }
+  .note {
+    font-size: 13px; margin-top: 15px; color: #333;
+    background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
+  }
+  .footer-ttd-kanan {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: 65px;
+    min-height: 90px;
+  }
+  .ttd-block-kanan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 200px;
+  }
+  .ttd-tanggal-kanan {
+    font-size: 17px;
+    margin-bottom: 70px;
+    text-align: center;
+    width: 100%;
+  }
+  .ttd-petugas-kanan {
+    font-weight: normal;
+    font-size: 21px;
+    margin-bottom: 1px;
+    text-align: center;
+    width: 100%;
+  }
+  .ttd-label-kanan {
+    font-weight: normal;
+    font-size: 17px;
+    text-align: center;
+    width: 100%;
+  }
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+    html, body {
+      width: 210mm;
+      height: 297mm;
+      background: #fff !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .container {
+      width: 100% !important;
+      max-width: 185mm !important;
+      min-height: 250mm;
+      margin: 0 auto !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
+      page-break-after: avoid;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .data-table caption,
+    .data-table th,
+    .note {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .footer-ttd-kanan {
+      margin-top: 75px !important;
+    }
+  }
+</style>
 </head>
 <body>
   <!-- Tombol Cetak, hanya tampil di layar -->
-  <button class="no-print btn-cetak" onclick="window.print()">
+  <button class="no-print btn-cetak" onclick="window.print()" style="padding:8px 20px;background:#25a244;color:#fff;border:none;border-radius:6px;font-size:16px;cursor:pointer">
     <i class="fas fa-print"></i> Cetak
   </button>
   <div class="container">
@@ -166,7 +271,7 @@ $stmtTagihan->close();
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
     <!-- TABEL TAGIHAN AWAL -->
-    <table class="tagihan-table">
+    <table class="tagihan-table" style="margin-top:25px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
           <i class="fas fa-coins"></i> Proses pembayaran awal
@@ -192,60 +297,11 @@ $stmtTagihan->close();
         Hotline SMK : <b>085880120889</b> (Bu Ina)
       </div>
     </div>
-
-    <!-- STATUS PEMBAYARAN SECTION -->
-    <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-      <div class="note-success">
-        <span class="status-badge"><?= strtoupper($status_pembayaran) ?></span>
-        <b>Pembayaran sudah dilakukan.</b><br>
-        Status pembayaran: <b><?= strtoupper($status_pembayaran) ?></b><br>
-        Berikut rincian pembayaran terakhir:
-      </div>
-      <!-- Tabel pembayaran terakhir -->
-      <table class="tagihan-table">
-        <tr>
-          <th>Jenis</th>
-          <th>Bulan</th>
-          <th>Nominal</th>
-          <th>Status</th>
-          <th>Tanggal</th>
-        </tr>
-        <?php
-        // Ambil 5 pembayaran terakhir
-        $sqlPembayaran = $conn->prepare("
-          SELECT pd.jenis_pembayaran_id, jp.nama as jenis, pd.bulan, pd.nominal, pd.status_pembayaran, p.tanggal_pembayaran
-          FROM pembayaran_detail pd
-          JOIN pembayaran p ON pd.pembayaran_id = p.id
-          JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
-          WHERE p.siswa_id = ?
-          ORDER BY p.tanggal_pembayaran DESC
-          LIMIT 5
-        ");
-        $sqlPembayaran->bind_param('i', $id);
-        $sqlPembayaran->execute();
-        $rsPembayaran = $sqlPembayaran->get_result();
-        if ($rsPembayaran->num_rows): while($d = $rsPembayaran->fetch_assoc()): ?>
-        <tr>
-          <td><?= safe($d['jenis']) ?></td>
-          <td><?= safe($d['bulan']) ?></td>
-          <td>Rp <?= number_format($d['nominal'],0,',','.') ?></td>
-          <td><?= safe($d['status_pembayaran']) ?></td>
-          <td><?= tanggal_id($d['tanggal_pembayaran']) ?></td>
-        </tr>
-        <?php endwhile; else: ?>
-        <tr><td colspan="5" style="text-align:center;">Belum ada pembayaran tercatat.</td></tr>
-        <?php endif; $sqlPembayaran->close(); ?>
-      </table>
-    <?php else: ?>
-      <div class="note status-belum">
-        <span class="status-badge status-belum">BELUM BAYAR</span>
-        <b>Catatan:</b><br>
-        Bukti pendaftaran ini hanya menyatakan Anda telah mendaftar.<br>
-        Silakan lakukan pembayaran di bagian keuangan.<br>
-        Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
-      </div>
-    <?php endif; ?>
-
+    <div class="note">
+      <b>Catatan:</b><br>
+      Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
+      Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
+    </div>
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
@@ -254,5 +310,7 @@ $stmtTagihan->close();
       </div>
     </div>
   </div>
+  <!-- Icon FontAwesome agar tombol print ada ikon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
