@@ -29,16 +29,19 @@
       <i class="fas fa-clipboard-list"></i>
       <span>Progres Pendaftaran</span>
     </a>
-    <a href="cetak_laporan_pendaftaran.php"
-      class="nav-link <?= ($active=='cetak'?'active':'') ?>">
-      <i class="fas fa-file-alt"></i>
-      <span>Cetak</span>
-    </a>
-    <a href="review_calon_pendaftar.php"
-      class="nav-link <?= ($active=='review'?'active':'') ?>">
-      <i class="fas fa-check-circle"></i>
-      <span>Review</span>
-    </a>
+    <!--
+<a href="cetak_laporan_pendaftaran.php"
+  class="nav-link <?= ($active=='cetak'?'active':'') ?>">
+  <i class="fas fa-file-alt"></i>
+  <span>Cetak</span>
+</a>
+<a href="review_calon_pendaftar.php"
+  class="nav-link <?= ($active=='review'?'active':'') ?>">
+  <i class="fas fa-check-circle"></i>
+  <span>Review</span>
+</a>
+-->
+
   </div>
 </nav>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
