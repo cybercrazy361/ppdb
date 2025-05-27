@@ -417,8 +417,7 @@ body::-webkit-scrollbar-track,
     margin-bottom: 0 !important;
 }
 
-.table thead th,
-.table thead td {
+.table thead th {
     text-align: center !important;
     vertical-align: middle !important;
 }
