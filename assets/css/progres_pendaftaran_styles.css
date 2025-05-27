@@ -379,3 +379,18 @@ body {
     background: #b7d3fdba;
     border-radius: 14px;
 }
+
+/* Lebarkan kolom status */
+.table th.status-col,
+.table td.status-col {
+    min-width: 155px;
+    width: 180px;
+    text-align: center;
+}
+
+.table td .status-select {
+    min-width: 130px;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+}
