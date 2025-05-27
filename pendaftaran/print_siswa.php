@@ -171,6 +171,13 @@ $stmtTagihan->close();
       </tr>
       <?php endif; ?>
     </table>
+    <div class="row-btm">
+      <div class="info-contact">
+        Informasi lebih lanjut hubungi:<br>
+        Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
+        Hotline SMK : <b>085880120889</b> (Bu Ina)
+      </div>
+    </div>
     <!-- STATUS PEMBAYARAN SECTION -->
     <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
       <div class="note-success">
@@ -180,13 +187,6 @@ $stmtTagihan->close();
         <!-- Tidak ada tabel pembayaran terakhir sama sekali -->
       </div>
     <?php else: ?>
-      <div class="row-btm">
-      <div class="info-contact">
-        Informasi lebih lanjut hubungi:<br>
-        Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
-        Hotline SMK : <b>085880120889</b> (Bu Ina)
-      </div>
-    </div>
       <div class="note status-belum">
         <span class="status-badge status-belum">BELUM BAYAR</span>
         <b>Catatan:</b><br>
