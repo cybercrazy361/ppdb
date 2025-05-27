@@ -3,7 +3,12 @@ session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 
-// Di awal file, setelah session_start() dan validasi login
+// Validasi login
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
+    die('Akses tidak diizinkan.');
+}
+
+// AMBIL NAMA LENGKAP PETUGAS DARI DATABASE
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 
@@ -19,10 +24,9 @@ if ($username_petugas) {
     $stmt_petugas->close();
 }
 
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
-    die('Akses tidak diizinkan.');
-}
-
+// ==========================
+// PROSES CETAK SISWA & TAGIHAN
+// ==========================
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
@@ -32,9 +36,6 @@ $stmt->execute();
 $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
-
-// Ambil nama petugas (dari database jika ada field nama, atau dari username)
-$petugas = isset($_SESSION['nama_petugas']) ? $_SESSION['nama_petugas'] : $_SESSION['username'];
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 function tanggal_id($tgl) {
