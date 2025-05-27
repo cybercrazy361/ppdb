@@ -115,7 +115,8 @@ body {
 .tagihan-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+    /* rapatkan jarak bawah tabel */
     box-sizing: border-box;
 }
 
@@ -180,7 +181,8 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-top: 12px;
+    margin-top: 8px;
+    /* rapatkan jarak atas */
 }
 
 .info-contact {
@@ -191,6 +193,9 @@ body {
     /* rata kiri */
     font-weight: 500;
     color: #111;
+    margin-top: 0;
+    margin-bottom: 8px;
+    /* rapatkan jarak bawah */
 }
 
 /* Catatan Warna Sesuai Status */
