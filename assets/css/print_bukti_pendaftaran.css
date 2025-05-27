@@ -282,6 +282,10 @@ body {
         padding: 0;
     }
 
+    body {
+        padding-top: 10px !important;
+    }
+
     .container {
         width: 100% !important;
         max-width: 185mm !important;
@@ -291,7 +295,12 @@ body {
         box-shadow: none !important;
         border: none !important;
         page-break-after: avoid;
-        padding: 20px 20px 20px 20px !important;
+        padding: 20px !important;
+    }
+
+    .header {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
 
     .no-print {
