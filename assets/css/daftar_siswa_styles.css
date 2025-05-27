@@ -398,3 +398,21 @@ body::-webkit-scrollbar-track,
 .table-responsive::-webkit-scrollbar-track {
     background: transparent;
 }
+
+/* Kolom aksi horizontal, selalu sejajar */
+.table td.text-center {
+    white-space: nowrap;
+}
+
+.table td.text-center .btn-sm {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 4px 0 0;
+    /* jarak antar tombol */
+    vertical-align: middle;
+}
+
+/* Hapus margin-bottom pada btn-sm agar tidak turun di mobile */
+.table td.text-center .btn-sm {
+    margin-bottom: 0 !important;
+}
