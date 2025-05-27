@@ -1,6 +1,4 @@
-/* --------------------------------
-   Reset dan Global Style
---------------------------------- */
+/* Reset dan Global */
 *,
 *::before,
 *::after {
@@ -11,37 +9,38 @@ body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f6f8fa;
     margin: 0;
-    padding: 20px;
+    padding: 20px 25px;
+    /* padding kiri kanan sedikit lebih besar untuk cetak A4 */
     color: #222;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.35;
+    /* vertical spacing lebih rapat */
 }
 
-/* --------------------------------
-   Container utama
---------------------------------- */
+/* Container utama */
 .container {
     width: 210mm;
-    /* Lebar A4 */
+    /* Ukuran kertas A4 */
     max-width: 100%;
     margin: 0 auto;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
-    padding: 28px 34px 24px 34px;
+    padding: 22px 30px 20px 30px;
+    /* padding dirapikan */
     border: 1px solid #d1dbe7;
     page-break-after: avoid;
+    box-sizing: border-box;
 }
 
-/* --------------------------------
-   Header section
---------------------------------- */
+/* Header */
 .header {
     position: relative;
     min-height: 80px;
     border-bottom: 2px solid #d1d5db;
-    margin-bottom: 18px;
-    padding-bottom: 9px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
 }
 
 .logo {
@@ -74,47 +73,62 @@ body {
     color: #193871;
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-bottom: 2px;
 }
 
 .sub-title {
     font-size: 16px;
     font-weight: 500;
-    margin-top: 3px;
+    margin-bottom: 2px;
 }
 
 .tahun-ajaran {
     font-size: 15px;
-    margin-bottom: 7px;
+    margin-bottom: 0;
 }
 
-/* --------------------------------
-   No. Registrasi / Formulir
---------------------------------- */
+/* No. Reg / No Formulir */
 .no-reg {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 15px;
+    text-align: left;
+    /* rata kiri */
 }
 
-/* --------------------------------
-   Tabel Data Siswa dan Tagihan
---------------------------------- */
+/* Status Pembayaran */
+.status-row {
+    font-size: 17px;
+    font-weight: bold;
+    color: #222;
+    text-align: center;
+    background: #f6f7fc;
+    border-radius: 7px;
+    padding: 8px 0;
+    /* padding dirapikan */
+    margin-bottom: 15px;
+    border: 1px solid #c5d1e8;
+}
+
+/* Tabel Data Calon Siswa dan Tagihan */
 .data-table,
 .tagihan-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
 }
 
 .data-table caption,
 .tagihan-table caption {
     background: #eaf2ce;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 5px 0;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 6px 0;
     border-radius: 4px 4px 0 0;
     margin-bottom: 0;
     text-align: center;
+    letter-spacing: 0.7px;
 }
 
 .data-table th,
@@ -122,8 +136,8 @@ body {
 .tagihan-table th,
 .tagihan-table td {
     border: 1px solid #777;
-    padding: 8px 15px;
-    font-size: 15px;
+    padding: 6px 12px;
+    font-size: 14px;
     vertical-align: middle;
 }
 
@@ -138,6 +152,7 @@ body {
 .data-table td,
 .tagihan-table td {
     background: #fff;
+    text-align: left;
 }
 
 .tagihan-table {
@@ -154,51 +169,42 @@ body {
     text-align: right;
 }
 
-/* --------------------------------
-   Status Pembayaran
---------------------------------- */
-.status-row {
-    font-size: 17px;
-    font-weight: bold;
-    color: #222;
-    text-align: center;
-    background: #f6f7fc;
-    border-radius: 7px;
-    padding: 12px 0 8px 0;
-    margin-bottom: 20px;
-    border: 1px solid #c5d1e8;
+/* Riwayat Pembayaran Table Adjust */
+.tagihan-table tr td:nth-child(1) {
+    text-align: left;
+    /* Kolom jenis rata kiri */
 }
 
-/* --------------------------------
-   Info Kontak
---------------------------------- */
+/* Informasi kontak */
 .row-btm {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-top: 18px;
+    margin-top: 12px;
 }
 
 .info-contact {
-    font-size: 14px;
-    line-height: 1.7;
+    font-size: 13.5px;
+    line-height: 1.35;
     white-space: pre-line;
+    text-align: left;
+    /* rata kiri */
+    font-weight: 500;
+    color: #111;
 }
 
-/* --------------------------------
-   Catatan dengan Warna Sesuai Status
---------------------------------- */
+/* Catatan Warna Sesuai Status */
 .note {
     font-size: 13px;
-    margin-top: 15px;
+    margin-top: 10px;
     padding: 10px 18px 8px 14px;
     border-left: 3.5px solid #0497df;
     box-sizing: border-box;
     border-radius: 3px;
-    /* Default warna untuk belum bayar */
     color: #333;
     background: #f7f7fc;
     border-color: #0497df;
+    line-height: 1.3;
 }
 
 .note.belum-bayar {
@@ -219,15 +225,13 @@ body {
     border-color: #c3e6cb;
 }
 
-/* --------------------------------
-   Footer Tanda Tangan Petugas
---------------------------------- */
+/* Footer Tanda Tangan Petugas */
 .footer-ttd-kanan {
     width: 100%;
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
-    margin-top: 65px;
+    margin-top: 50px;
     min-height: 90px;
 }
 
@@ -239,15 +243,15 @@ body {
 }
 
 .ttd-tanggal-kanan {
-    font-size: 17px;
-    margin-bottom: 70px;
+    font-size: 16px;
+    margin-bottom: 60px;
     text-align: center;
     width: 100%;
 }
 
 .ttd-petugas-kanan {
     font-weight: normal;
-    font-size: 21px;
+    font-size: 20px;
     margin-bottom: 1px;
     text-align: center;
     width: 100%;
@@ -255,14 +259,12 @@ body {
 
 .ttd-label-kanan {
     font-weight: normal;
-    font-size: 17px;
+    font-size: 16px;
     text-align: center;
     width: 100%;
 }
 
-/* --------------------------------
-   Media Query untuk Print (A4)
---------------------------------- */
+/* Responsive dan Print */
 @media print {
     @page {
         size: A4 portrait;
@@ -277,6 +279,7 @@ body {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         margin: 0;
+        padding: 0;
     }
 
     .container {
@@ -288,6 +291,7 @@ body {
         box-shadow: none !important;
         border: none !important;
         page-break-after: avoid;
+        padding: 20px 20px 20px 20px !important;
     }
 
     .no-print {
@@ -302,7 +306,7 @@ body {
     }
 
     .footer-ttd-kanan {
-        margin-top: 75px !important;
+        margin-top: 70px !important;
     }
 
     .logo {
