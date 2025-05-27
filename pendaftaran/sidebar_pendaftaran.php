@@ -17,14 +17,15 @@
       <i class="fas fa-users"></i>
       <span>Progres Pembayaran</span>
     </a>
+
+    <!-- SKAT DENGAN LABEL -->
+    <div class="sidebar-section-label">PROGRES PENDAFTAR</div>
+
     <a href="input_progres_pendaftaran.php"
       class="nav-link <?= ($active=='inputpendaftaran'?'active':'') ?>">
       <i class="fas fa-user-edit"></i>
       <span>Input Progres Pendaftaran</span>
     </a>
-
-    <!-- SKAT DENGAN LABEL -->
-    <div class="sidebar-section-label">PROGRES PENDAFTAR</div>
 
     <a href="progres_pendaftaran.php"
       class="nav-link <?= ($active=='progrespendaftaran'?'active':'') ?>">
