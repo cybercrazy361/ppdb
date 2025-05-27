@@ -3,6 +3,22 @@ session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 
+// Di awal file, setelah session_start() dan validasi login
+$petugas = '-';
+$username_petugas = $_SESSION['username'] ?? '';
+
+if ($username_petugas) {
+    $stmt_petugas = $conn->prepare("SELECT nama_lengkap FROM petugas WHERE username = ?");
+    $stmt_petugas->bind_param('s', $username_petugas);
+    $stmt_petugas->execute();
+    $result_petugas = $stmt_petugas->get_result();
+    $data_petugas = $result_petugas->fetch_assoc();
+    if ($data_petugas && !empty($data_petugas['nama_lengkap'])) {
+        $petugas = $data_petugas['nama_lengkap'];
+    }
+    $stmt_petugas->close();
+}
+
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
@@ -259,7 +275,7 @@ $stmtTagihan->close();
     <table class="tagihan-table" style="margin-top:25px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
-          <i class="fas fa-coins"></i> Verifikasi Tagihan Awal
+          <i class="fas fa-coins"></i> Proses pembayaran awal
         </th>
       </tr>
       <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
