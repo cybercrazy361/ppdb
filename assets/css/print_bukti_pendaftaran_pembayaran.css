@@ -1,0 +1,262 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f6f8fa;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    margin: 22px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
+    padding: 28px 34px 24px 34px;
+    border: 1px solid #d1dbe7;
+}
+
+.header {
+    position: relative;
+    min-height: 80px;
+    border-bottom: 2px solid #d1d5db;
+    margin-bottom: 18px;
+    padding-bottom: 9px;
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    position: absolute;
+    left: 0;
+    top: -25px;
+    z-index: 2;
+}
+
+.header-content {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.sekolah-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #193871;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sub-title {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.tahun-ajaran {
+    font-size: 15px;
+    margin-bottom: 7px;
+}
+
+.no-reg {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.data-table caption {
+    background: #eaf2ce;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 5px 0;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 0;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid #777;
+    padding: 7px 12px;
+    font-size: 15px;
+}
+
+.data-table th {
+    background: #f2f6e9;
+    text-align: left;
+    width: 34%;
+}
+
+.data-table td {
+    background: #fff;
+}
+
+.tagihan-table {
+    width: 70%;
+    min-width: 260px;
+    margin: 0 auto 18px auto;
+    border-collapse: collapse;
+    background: #f9f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tagihan-table th,
+.tagihan-table td {
+    border: 1px solid #b5b5b5;
+    padding: 7px 14px;
+    font-size: 15px;
+    text-align: left;
+}
+
+.tagihan-table th {
+    background: #ecf3fd;
+}
+
+.tagihan-table td {
+    background: #fff;
+}
+
+.row-btm {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 18px;
+}
+
+.info-contact {
+    font-size: 13.5px;
+    line-height: 1.7;
+}
+
+.note {
+    font-size: 13px;
+    margin-top: 15px;
+    color: #333;
+    background: #f7f7fc;
+    border-left: 3.5px solid #0497df;
+    padding: 10px 18px 8px 14px;
+}
+
+.note-success {
+    font-size: 13px;
+    margin-top: 15px;
+    color: #185e36;
+    background: #e6faed;
+    border-left: 3.5px solid #13c276;
+    padding: 10px 18px 8px 14px;
+}
+
+.footer-ttd-kanan {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: 65px;
+    min-height: 90px;
+}
+
+.ttd-block-kanan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 200px;
+}
+
+.ttd-tanggal-kanan {
+    font-size: 16px;
+    margin-bottom: 65px;
+    text-align: center;
+    width: 100%;
+}
+
+.ttd-petugas-kanan {
+    font-weight: normal;
+    font-size: 19px;
+    margin-bottom: 1px;
+    text-align: center;
+    width: 100%;
+}
+
+.ttd-label-kanan {
+    font-weight: normal;
+    font-size: 16px;
+    text-align: center;
+    width: 100%;
+}
+
+.status-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 3px 14px;
+    margin-bottom: 2px;
+    margin-top: 7px;
+    background: #e0f7ec;
+    color: #169e56;
+    border: 1px solid #25d684;
+    letter-spacing: .6px;
+}
+
+.status-belum {
+    background: #f6e8e8;
+    color: #c71b1b;
+    border: 1px solid #f09a9a;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 12mm 12mm 15mm 12mm;
+    }
+
+    html,
+    body {
+        width: 210mm;
+        height: 297mm;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: 185mm !important;
+        min-height: 250mm;
+        margin: 0 auto !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        page-break-after: avoid;
+        padding: 18px 20px 16px 20px !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .data-table caption,
+    .data-table th,
+    .note,
+    .note-success {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .footer-ttd-kanan {
+        margin-top: 75px !important;
+    }
+}
