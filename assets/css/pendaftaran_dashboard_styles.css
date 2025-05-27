@@ -1,156 +1,145 @@
-/* Reset margin & padding */
-html,
-body {
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 100%;
-    width: 100%;
-    box-sizing: border-box;
-}
+/* pendaftaran_dashboard_styles.css */
 
-/* Variables */
+/* Font dan root variabel */
 :root {
-    --color-primary: #2e59d9;
-    --color-secondary: #858796;
+    --color-primary: #355cfc;
+    --color-accent: #13afe0;
     --color-success: #1cc88a;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
     --color-info: #36b9cc;
-    --color-warning: #f6c23e;
-    --color-danger: #e74a3b;
-    --color-light: #f8f9fc;
-    --color-dark: #5a5c69;
-
-    --sidebar-width: 240px;
-    --navbar-height: 56px;
-    --border-radius: 0.75rem;
-    --transition: 0.3s;
-    --font-base: 'Poppins', sans-serif;
+    --color-dark: #2e325e;
+    --color-bg: #f4f7fd;
+    --color-card: #fff;
+    --color-card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.11);
+    --border-radius: 1.25rem;
+    --font-base: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    --transition: 0.24s cubic-bezier(.7, .15, .2, 1);
+    --main-padding: 32px;
+    --main-padding-mobile: 15px;
+    --header-height: 64px;
 }
 
-/* Main Layout */
+/* General */
 body {
+    background: var(--color-bg);
     font-family: var(--font-base);
-    background: var(--color-light);
-    color: var(--color-dark);
+    margin: 0;
     min-height: 100vh;
 }
 
 .main {
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    display: flex;
-    flex-direction: column;
-    transition: margin-left var(--transition), width var(--transition);
-    margin-top: 0 !important;
-    /* FORCE no space */
-    padding-top: 0 !important;
+    margin-left: var(--sidebar-width, 240px);
+    padding: var(--main-padding);
+    transition: margin-left .22s;
 }
 
 @media (max-width: 992px) {
-    .main {
-        margin-left: 60px !important;
-        width: calc(100% - 60px) !important;
-    }
-}
-
-@media (max-width: 576px) {
     .main {
         margin-left: 0 !important;
-        width: 100% !important;
+        padding: var(--main-padding-mobile);
     }
 }
 
-/* Navbar Header */
+/* ---- Header / Navbar ---- */
 .navbar {
-    height: var(--navbar-height);
-    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 22;
+    height: var(--header-height);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 12px 0 rgba(46, 89, 217, 0.04);
     display: flex;
     align-items: center;
-    padding: 0 1.5rem;
-    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
-    z-index: 2;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+    justify-content: space-between;
+    padding: 0 1.7rem 0 0.7rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    backdrop-filter: blur(10px);
+    margin-bottom: 22px;
+    min-height: 56px;
 }
 
-/* Navbar Toggle button */
-.navbar .toggle-btn {
-    display: none;
-    font-size: 1.25rem;
-    color: var(--color-secondary);
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-@media (max-width: 992px) {
-    .navbar .toggle-btn {
-        display: block;
-    }
-}
-
-/* Navbar Title */
 .navbar .title {
-    flex: 1;
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.22rem;
+    color: var(--color-dark);
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 7px #31467a12;
 }
 
-/* User menu */
-.navbar .user-menu {
+.user-menu {
     display: flex;
     align-items: center;
+    gap: 18px;
 }
 
-.navbar .user-menu small {
-    margin-right: 1rem;
-    color: var(--color-secondary);
+.user-menu small {
+    color: #7587ad;
+    font-size: .95em;
+    font-weight: 500;
 }
 
-/* Logout button */
 .btn-logout {
     background: var(--color-danger);
     color: #fff;
+    padding: 4px 14px;
     border: none;
-    padding: .5rem 1rem;
-    border-radius: var(--border-radius);
-    transition: background var(--transition);
+    border-radius: 7px;
+    font-size: 1em;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .19s;
+    margin-left: 4px;
 }
 
 .btn-logout:hover {
-    background: #c0392b;
+    background: #b60d2f;
+    color: #fff;
 }
 
-/* Dashboard cards grid */
+/* ---- Dashboard Cards ---- */
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem;
+    gap: 30px;
+    margin-bottom: 34px;
 }
 
-/* Card styles */
 .card {
-    background: #fff;
+    background: var(--color-card);
     border-radius: var(--border-radius);
-    box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.1);
-    transition: transform var(--transition), box-shadow var(--transition);
-    text-align: center;
-    padding: 1.75rem 1rem;
+    box-shadow: var(--color-card-shadow);
+    padding: 30px 22px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: box-shadow 0.21s, transform 0.18s;
+    position: relative;
+    min-width: 0;
+    min-height: 170px;
     cursor: pointer;
+    border: none;
+    outline: none;
+    animation: fadeInCard .8s;
+}
+
+.card:active,
+.card:focus {
+    transform: scale(.97);
 }
 
 .card:hover {
-    transform: translateY(-0.25rem);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 28px 0 rgba(46, 89, 217, 0.12);
+    transform: translateY(-3px) scale(1.02);
+    z-index: 2;
 }
 
 .card .icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.card .icon.text-primary {
+    font-size: 2.35rem;
+    margin-bottom: 18px;
     color: var(--color-primary);
+    filter: drop-shadow(0 2px 7px #355cfc36);
+    transition: color .22s, filter .2s;
 }
 
 .card .icon.text-success {
@@ -165,128 +154,175 @@ body {
     color: var(--color-danger);
 }
 
+.card .icon.text-primary {
+    color: var(--color-primary);
+}
+
+.card .icon.text-info {
+    color: var(--color-accent);
+}
+
 .card .title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
+    margin-bottom: 6px;
+    color: #222b45;
+    letter-spacing: .5px;
 }
 
 .card .count {
-    font-size: 1.5rem;
+    font-size: 2.14rem;
     font-weight: 700;
-    margin: 0.5rem 0;
+    margin-bottom: 7px;
+    color: var(--color-primary);
+    letter-spacing: 1.5px;
+    line-height: 1.1;
 }
 
 .card .subtext {
-    font-size: 0.875rem;
-    color: var(--color-secondary);
+    font-size: .98rem;
+    color: #8b97b2;
+    font-weight: 400;
 }
 
-/* Chart card */
+/* ---- Chart Card ---- */
 .chart-card {
-    margin: 0 2rem 2rem;
-    background: #fff;
+    background: var(--color-card);
     border-radius: var(--border-radius);
-    box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.1);
-    padding: 2rem;
+    box-shadow: var(--color-card-shadow);
+    padding: 22px 22px 16px 22px;
+    margin-bottom: 28px;
+    animation: fadeInCard 1.1s;
 }
 
 .chart-card h6 {
-    font-size: 1rem;
+    margin-bottom: 13px;
+    font-size: 1.08rem;
     font-weight: 600;
-    text-align: center;
-    margin-bottom: 1.5rem;
+    color: #253057;
+    letter-spacing: 1px;
 }
 
 .chart-container {
     width: 100%;
-    max-width: 350px;
-    height: 350px;
+    max-width: 410px;
     margin: 0 auto;
+    padding: 8px;
+    background: none;
 }
 
-/* Modal header */
-.modal .modal-header {
-    background: var(--color-primary);
-    color: #fff;
+@media (max-width: 540px) {
+    .chart-container {
+        max-width: 99vw;
+        padding: 0;
+    }
 }
 
-/* Modal table font */
-.modal .table {
-    font-size: 0.875rem;
+/* ---- Modal Styles ---- */
+.modal-content {
+    border-radius: 1.05rem;
+    box-shadow: 0 6px 26px #4358e714;
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
+.modal-header {
+    background: #f3f7fe;
+    border-radius: 1.05rem 1.05rem 0 0;
+    border-bottom: none;
+}
+
+.modal-title {
+    color: var(--color-primary);
+    font-weight: 600;
+    letter-spacing: .5px;
+}
+
+.modal-body {
+    background: #fff;
+    border-radius: 0 0 1.05rem 1.05rem;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #f7faff;
+}
+
+/* ---- Scrollbar minimalis ---- */
+body::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar,
+.main::-webkit-scrollbar {
+    width: 7px;
+}
+
+body::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb,
+.main::-webkit-scrollbar-thumb {
+    background: #b7d3fdba;
+    border-radius: 14px;
+}
+
+body::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track,
+.main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ---- Animations ---- */
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---- Responsive tweaks ---- */
+@media (max-width: 700px) {
     .dashboard-cards {
-        padding: 1.2rem;
-        gap: 1rem;
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
-}
 
-@media (max-width: 992px) {
     .main {
-        margin-left: 60px !important;
-        width: calc(100% - 60px) !important;
-    }
-
-    .dashboard-cards {
-        gap: 1rem;
-    }
-
-    .navbar .toggle-btn {
-        display: block;
-    }
-}
-
-@media (max-width: 768px) {
-    .main {
-        padding: 1rem !important;
-    }
-
-    .dashboard-cards,
-    .row.g-4 {
-        grid-template-columns: 1fr !important;
-        display: grid !important;
-        gap: 1rem !important;
-    }
-
-    .card {
-        padding: 1.25rem 0.75rem !important;
-        margin-bottom: 1rem !important;
+        padding: var(--main-padding-mobile);
     }
 
     .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0.75rem 1rem !important;
+        padding: 0 7px;
+    }
+
+    .chart-card {
+        padding: 12px 4px 8px 8px;
     }
 }
 
-@media (max-width: 576px) {
-    .main {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
-
-    .dashboard-cards,
-    .row.g-4 {
-        grid-template-columns: 1fr !important;
-        display: grid !important;
-        gap: 1rem !important;
-        padding: 0.8rem !important;
-    }
-
-    .navbar {
-        padding: 0.5rem !important;
-        min-height: 44px;
-    }
-
+@media (max-width: 480px) {
     .navbar .title {
-        font-size: 1rem;
+        font-size: .98rem;
     }
 
-    .card {
-        padding: 1rem 0.5rem !important;
-        font-size: 1rem;
+    .card .title {
+        font-size: 1.01rem;
     }
+
+    .card .count {
+        font-size: 1.58rem;
+    }
+
+    .dashboard-cards {
+        gap: 10px;
+    }
+
+    .chart-card {
+        margin-bottom: 17px;
+    }
+}
+
+/* ---- Button Styles (optional) ---- */
+.btn,
+.btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
