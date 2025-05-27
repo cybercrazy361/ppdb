@@ -122,7 +122,7 @@ $stmtTagihan->close();
 <head>
   <meta charset="UTF-8">
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <link rel="stylesheet" href="../assets/css/print_bukti_pedaftaran_pembayaran.css">
+  <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran_pembayaran.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
