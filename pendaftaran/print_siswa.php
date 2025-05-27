@@ -3,6 +3,8 @@ session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 
+function safe($str) { return htmlspecialchars($str ?? '-'); }
+
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
@@ -17,10 +19,23 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-// Ambil nama petugas (dari database jika ada field nama, atau dari username)
-$petugas = isset($_SESSION['nama_petugas']) ? $_SESSION['nama_petugas'] : $_SESSION['username'];
+$petugas = '-';
+$username_petugas = $_SESSION['username'] ?? '';
 
-function safe($str) { return htmlspecialchars($str ?? '-'); }
+if ($username_petugas) {
+    $stmt_petugas = $conn->prepare("SELECT nama FROM petugas WHERE username = ?");
+    $stmt_petugas->bind_param('s', $username_petugas);
+    $stmt_petugas->execute();
+    $result_petugas = $stmt_petugas->get_result();
+    $data_petugas = $result_petugas->fetch_assoc();
+    if ($data_petugas && !empty($data_petugas['nama'])) {
+        $petugas = $data_petugas['nama'];
+    } else {
+        $petugas = $username_petugas;
+    }
+    $stmt_petugas->close();
+}
+
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
     $bulan = [
