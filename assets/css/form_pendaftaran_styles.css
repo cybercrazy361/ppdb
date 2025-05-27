@@ -120,27 +120,35 @@ body {
 
 @media (max-width: 600px) {
     .navbar {
-        padding: 0 2vw !important;
-        min-height: 45px;
-        height: 46px;
-        margin-bottom: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 7px 2vw 7px 2vw !important;
+        min-height: unset;
+        height: auto;
+        gap: 2px;
     }
 
     .navbar .title {
-        font-size: .98rem;
-        padding-left: 2px;
-        letter-spacing: .6px;
+        width: 100%;
+        padding-left: 7px;
+        font-size: .97rem;
+        order: 2;
     }
 
-    .btn-logout {
-        padding: 3px 9px;
-        font-size: .90em;
-        margin-left: 2px;
-        border-radius: 6px;
+    .toggle-btn {
+        order: 1;
     }
 
     .user-menu {
-        gap: 8px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2px;
+        gap: 6px;
+        order: 3;
+        padding-left: 7px;
     }
 }
 
