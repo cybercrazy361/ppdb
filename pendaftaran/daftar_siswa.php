@@ -186,7 +186,7 @@ function getStatusPembayaranLabel($status) {
                   <td><?= getStatusPembayaranLabel($row['status_pembayaran'] ?? '') ?></td>
                   <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '') ?></td>
                   <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') ?></td>
-                  <td class="text-center d-flex flex-wrap justify-content-center gap-1">
+                  <td class="text-center">
                   <a href="print_siswa.php?id=<?= $row['id'] ?>"
                     class="btn btn-success btn-sm" target="_blank">
                     <i class="fas fa-print"></i> Print
