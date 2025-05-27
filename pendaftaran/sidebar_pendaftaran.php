@@ -17,7 +17,6 @@
       <i class="fas fa-users"></i>
       <span>Progres Pembayaran</span>
     </a>
-
     <!-- SKAT DENGAN LABEL -->
     <div class="sidebar-section-label">PROGRES PENDAFTAR</div>
 
