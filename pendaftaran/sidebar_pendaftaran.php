@@ -1,5 +1,14 @@
 <!-- sidebar_pendaftaran.php -->
-<nav class="sidebar">
+<!-- Pastikan sudah include FontAwesome dan CSS sidebar ini -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="sidebar_pendaftaran_styles.css">
+
+<!-- Toggle button (mobile) -->
+<button class="toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">
+  <i class="fas fa-bars"></i>
+</button>
+
+<nav class="sidebar" id="sidebarNav">
   <div class="brand">SPMB <?= htmlspecialchars($unit) ?></div>
   <div class="nav flex-column">
     <a href="dashboard_pendaftaran.php"
@@ -7,9 +16,8 @@
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
-        <!-- SKAT DENGAN LABEL -->
+    <!-- LABEL PEMBAYARAN -->
     <div class="sidebar-section-label">PROGRES PEMBAYARAN</div>
-
     <a href="form_pendaftaran.php"
       class="nav-link <?= ($active=='form'?'active':'') ?>">
       <i class="fas fa-user-plus"></i>
@@ -20,32 +28,19 @@
       <i class="fas fa-users"></i>
       <span>Progres Pembayaran</span>
     </a>
-    <!-- SKAT DENGAN LABEL -->
+    <!-- LABEL PENDAFTAR -->
     <div class="sidebar-section-label">PROGRES PENDAFTAR</div>
-
     <a href="input_progres_pendaftaran.php"
       class="nav-link <?= ($active=='inputpendaftaran'?'active':'') ?>">
       <i class="fas fa-user-edit"></i>
       <span>Input Progres Pendaftaran</span>
     </a>
-
     <a href="progres_pendaftaran.php"
       class="nav-link <?= ($active=='progrespendaftaran'?'active':'') ?>">
       <i class="fas fa-clipboard-list"></i>
       <span>Progres Pendaftaran</span>
     </a>
-    <!--
-    <a href="cetak_laporan_pendaftaran.php"
-      class="nav-link <?= ($active=='cetak'?'active':'') ?>">
-      <i class="fas fa-file-alt"></i>
-      <span>Cetak</span>
-    </a>
-    <a href="review_calon_pendaftar.php"
-      class="nav-link <?= ($active=='review'?'active':'') ?>">
-      <i class="fas fa-check-circle"></i>
-      <span>Review</span>
-    </a>
-    -->
+    <!-- Untuk kebutuhan lain tinggal tambahkan menu di sini -->
   </div>
 </nav>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
