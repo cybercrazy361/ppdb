@@ -31,11 +31,8 @@ if (empty($_SESSION['csrf_token'])) {
         </header>
         <div class="container-form">
             <div class="form-card">
-                <h3 class="form-title mb-1">Formulir Pendaftaran</h3>
-                <p class="desc mb-3">
-                    Lengkapi data di bawah untuk mendaftar secara online.<br>
-                    <span class="text-muted">Gratis biaya pendaftaran, kuota terbatas!</span>
-                </p>
+                <h3 class="form-title mb-1">input Progres Pendaftaran</h3>
+                
                 <form action="proses_calon_pendaftar.php" method="POST" autocomplete="off">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="row g-3">
