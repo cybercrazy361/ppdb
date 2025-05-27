@@ -42,6 +42,12 @@ body {
     }
 }
 
+@media (max-width: 500px) {
+    .main {
+        padding-bottom: 38px;
+    }
+}
+
 /* Header/Navbar */
 .navbar {
     position: sticky;
@@ -114,15 +120,27 @@ body {
 
 @media (max-width: 500px) {
     .navbar {
-        padding: 0 2px;
+        padding: 0 4px !important;
+        margin-bottom: 7px;
+        min-height: 44px;
+        height: 48px;
     }
 
     .navbar .title {
-        font-size: .97rem;
+        font-size: .95rem;
+        padding-left: 2px;
+        letter-spacing: .7px;
     }
 
     .btn-logout {
-        font-size: .93em;
+        padding: 3px 9px;
+        font-size: .90em;
+        margin-left: 2px;
+        border-radius: 6px;
+    }
+
+    .user-menu {
+        gap: 7px;
     }
 }
 
@@ -147,6 +165,49 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Responsive Card */
+@media (max-width: 900px) {
+    .form-card {
+        padding: 10px 3px 6px 3px;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-card {
+        padding: 3px 0px 3px 0px;
+        margin: 7px 1px;
+    }
+
+    .form-label,
+    .input-group-text {
+        font-size: .97rem;
+    }
+
+    .btn,
+    .btn-gradient {
+        font-size: .97rem;
+    }
+
+    .navbar {
+        padding: 0 2px;
+    }
+
+    .navbar .title {
+        font-size: .97rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .form-card {
+        padding: 2px 1px 1px 1px;
+    }
+
+    .btn,
+    .btn-gradient {
+        padding: .67em 1em;
     }
 }
 
@@ -268,49 +329,7 @@ input[type="tel"].form-control {
     letter-spacing: 0.5px;
 }
 
-/* Responsive tweaks */
-@media (max-width: 900px) {
-    .form-card {
-        padding: 10px 3px 6px 3px;
-    }
-}
-
-@media (max-width: 576px) {
-    .form-card {
-        padding: 3px 0px 3px 0px;
-        margin: 7px 1px;
-    }
-
-    .form-label,
-    .input-group-text {
-        font-size: .97rem;
-    }
-
-    .btn,
-    .btn-gradient {
-        font-size: .97rem;
-    }
-
-    .navbar {
-        padding: 0 2px;
-    }
-
-    .navbar .title {
-        font-size: .97rem;
-    }
-}
-
-@media (max-width: 420px) {
-    .form-card {
-        padding: 2px 1px 1px 1px;
-    }
-
-    .btn,
-    .btn-gradient {
-        padding: .67em 1em;
-    }
-}
-
+/* Gutter Utility */
 .row.g-4,
 .row.g-2,
 .row.g-3 {
@@ -342,10 +361,12 @@ textarea:-ms-input-placeholder {
     opacity: 1;
 }
 
+/* Select required */
 select.form-select:invalid {
     color: #9ca3af;
 }
 
+/* Scrollbar minimalis */
 .form-card::-webkit-scrollbar {
     width: 7px;
 }
