@@ -265,8 +265,13 @@ function getStatusBadge($status) {
         Hotline SMK : <b>085880120889</b> (Bu Ina)
 </div>
 </div>
-<!-- Bagian Catatan -->
-<div class="note">
+<?php
+  $note_class = '';
+  if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
+  elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
+  elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
+?>
+<div class="note <?= $note_class ?>">
   <?php if ($status_pembayaran === 'Belum Bayar'): ?>
     <b>Catatan:</b><br>
     Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
@@ -284,7 +289,6 @@ function getStatusBadge($status) {
     Status pembayaran tidak diketahui.
   <?php endif; ?>
 </div>
-
 
 <div class="footer-ttd-kanan">
   <div class="ttd-block-kanan">
