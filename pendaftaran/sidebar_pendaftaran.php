@@ -7,6 +7,9 @@
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
+        <!-- SKAT DENGAN LABEL -->
+    <div class="sidebar-section-label">PROGRES PEMBAYARAN</div>
+
     <a href="form_pendaftaran.php"
       class="nav-link <?= ($active=='form'?'active':'') ?>">
       <i class="fas fa-user-plus"></i>
