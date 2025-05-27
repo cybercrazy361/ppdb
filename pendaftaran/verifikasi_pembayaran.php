@@ -25,3 +25,4 @@ foreach ($data as $jenis => $nominal) {
 $stmt->close();
 
 echo json_encode(['success' => true]);
+?>
