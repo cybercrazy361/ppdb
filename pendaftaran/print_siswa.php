@@ -184,41 +184,8 @@ $stmtTagihan->close();
         <span class="status-badge"><?= strtoupper($status_pembayaran) ?></span>
         <b>Pembayaran sudah dilakukan.</b><br>
         Status pembayaran: <b><?= strtoupper($status_pembayaran) ?></b><br>
-        Berikut rincian pembayaran terakhir:
+        <!-- Tidak ada tabel pembayaran terakhir sama sekali -->
       </div>
-      <table class="tagihan-table" style="margin-top:11px;">
-        <tr>
-          <th>Jenis</th>
-          <th>Bulan</th>
-          <th>Nominal</th>
-          <th>Status</th>
-          <th>Tanggal</th>
-        </tr>
-        <?php
-        $sqlPembayaran = $conn->prepare("
-          SELECT pd.jenis_pembayaran_id, jp.nama as jenis, pd.bulan, pd.nominal, pd.status_pembayaran, p.tanggal_pembayaran
-          FROM pembayaran_detail pd
-          JOIN pembayaran p ON pd.pembayaran_id = p.id
-          JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
-          WHERE p.siswa_id = ?
-          ORDER BY p.tanggal_pembayaran DESC
-          LIMIT 5
-        ");
-        $sqlPembayaran->bind_param('i', $id);
-        $sqlPembayaran->execute();
-        $rsPembayaran = $sqlPembayaran->get_result();
-        if ($rsPembayaran->num_rows): while($d = $rsPembayaran->fetch_assoc()): ?>
-        <tr>
-          <td><?= safe($d['jenis']) ?></td>
-          <td><?= safe($d['bulan']) ?></td>
-          <td>Rp <?= number_format($d['nominal'],0,',','.') ?></td>
-          <td><?= safe($d['status_pembayaran']) ?></td>
-          <td><?= tanggal_id($d['tanggal_pembayaran']) ?></td>
-        </tr>
-        <?php endwhile; else: ?>
-        <tr><td colspan="5" style="text-align:center;">Belum ada pembayaran tercatat.</td></tr>
-        <?php endif; $sqlPembayaran->close(); ?>
-      </table>
     <?php else: ?>
       <div class="note status-belum">
         <span class="status-badge status-belum">BELUM BAYAR</span>
