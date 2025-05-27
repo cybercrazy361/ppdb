@@ -444,8 +444,7 @@ function formatRupiah(angka) {
 // Tangani submit (AJAX/simpan manual sesuai backend)
 document.getElementById('verifyForm').addEventListener('submit', function(e){
   e.preventDefault();
-  // Ambil semua nilai pembayaran yang dipilih
-  const jenisBayar = [];
+  const id = document.getElementById('verifyId').value;
   const values = {};
   if(document.getElementById('cbUangPangkal').checked)
     values['Uang Pangkal'] = document.getElementById('uangPangkalInput').value;
@@ -456,12 +455,23 @@ document.getElementById('verifyForm').addEventListener('submit', function(e){
   if(document.getElementById('cbKegiatan').checked)
     values['Kegiatan'] = document.getElementById('kegiatanInput').value;
 
-  // Kirim data ke server untuk disimpan (AJAX/fetch sesuai kebutuhan)
-  // contoh: alert
-  alert('Verifikasi:\n' + Object.entries(values).map(([k,v])=>`${k}: Rp ${Number(v).toLocaleString()}`).join('\n'));
-  // Jika pakai AJAX, kirim ke PHP proses verifikasi di sini
-  // lalu tampilkan notif sukses/gagal dan tutup modal
-  // bootstrap.Modal.getInstance(document.getElementById('verifyModal')).hide();
+  fetch('verifikasi_pembayaran.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: `id=${encodeURIComponent(id)}&data=${encodeURIComponent(JSON.stringify(values))}`
+  })
+  .then(res => res.json())
+  .then(res => {
+    if(res.success) {
+      alert('Data verifikasi berhasil disimpan!');
+      // Tutup modal dll...
+      bootstrap.Modal.getInstance(document.getElementById('verifyModal')).hide();
+      // Optional: reload/refresh data tabel
+      location.reload();
+    } else {
+      alert('Gagal menyimpan: ' + res.message);
+    }
+  });
 });
 
   </script>
