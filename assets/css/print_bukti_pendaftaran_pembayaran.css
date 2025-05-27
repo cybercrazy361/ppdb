@@ -9,27 +9,44 @@ body {
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f6f8fa;
-    margin: 0;
-    padding: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
+.no-print.btn-cetak {
+    display: block;
+    width: 100vw;
+    max-width: 100%;
+    background: #25a244;
+    color: #fff;
+    font-weight: 600;
+    font-size: 17px;
+    padding: 14px 0 12px 0;
+    border: none;
+    border-radius: 0 0 12px 12px;
+    cursor: pointer;
+    margin: 0 0 20px 0;
+    box-shadow: 0 2px 8px 0 #237c3a33;
+    letter-spacing: 0.5px;
+    transition: background 0.18s;
+}
+
+.no-print.btn-cetak:hover {
+    background: #218838;
+}
+
 .container {
     width: 100%;
     max-width: 900px;
-    min-width: 0;
     margin: 22px auto;
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
-    padding: 28px 2vw 24px 2vw;
-    border: 1px solid #d1dbe7;
-    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(60, 60, 60, 0.11);
+    padding: 30px 3vw 28px 3vw;
+    border: 1.2px solid #d1dbe7;
     box-sizing: border-box;
-    min-height: calc(100vh - 44px);
-    /* 44px = tinggi kira-kira tombol print */
+    min-height: calc(100vh - 68px);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -37,15 +54,15 @@ body {
 
 .header {
     position: relative;
-    min-height: 80px;
+    min-height: 86px;
     border-bottom: 2px solid #d1d5db;
-    margin-bottom: 18px;
-    padding-bottom: 9px;
+    margin-bottom: 22px;
+    padding-bottom: 11px;
 }
 
 .logo {
-    width: 120px;
-    height: 120px;
+    width: 110px;
+    height: 110px;
     object-fit: contain;
     position: absolute;
     left: 0;
@@ -58,7 +75,7 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    height: 80px;
+    height: 86px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -68,55 +85,60 @@ body {
 }
 
 .sekolah-title {
-    font-size: 19px;
-    font-weight: 700;
-    color: #193871;
+    font-size: 22px;
+    font-weight: 800;
+    color: #194ab6;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
 }
 
 .sub-title {
-    font-size: 16px;
+    font-size: 16.5px;
     font-weight: 500;
+    color: #193871;
 }
 
 .tahun-ajaran {
     font-size: 15px;
     margin-bottom: 7px;
+    color: #466c97;
 }
 
 .no-reg {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-weight: 500;
 }
 
 .data-table caption {
-    background: #eaf2ce;
+    background: #f4fad9;
     font-weight: bold;
     font-size: 16px;
-    padding: 5px 0;
-    border-radius: 4px 4px 0 0;
+    padding: 8px 0;
+    border-radius: 6px 6px 0 0;
     margin-bottom: 0;
+    color: #446a23;
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
     overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px #aaa1;
 }
 
 .data-table th,
 .data-table td {
-    border: 1px solid #777;
-    padding: 7px 12px;
+    border: 1px solid #bfc6e1;
+    padding: 8px 13px;
     font-size: 15px;
 }
 
 .data-table th {
-    background: #f2f6e9;
+    background: #f3f9e7;
     text-align: left;
-    width: 34%;
+    width: 36%;
 }
 
 .data-table td {
@@ -125,25 +147,27 @@ body {
 
 .tagihan-table {
     width: 100%;
-    max-width: 600px;
-    min-width: 280px;
-    margin: 0 auto 18px auto;
+    max-width: 620px;
+    min-width: 250px;
+    margin: 0 auto 20px auto;
     border-collapse: collapse;
     background: #f9f9fa;
     border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 1px 2px #9db0ff18;
 }
 
 .tagihan-table th,
 .tagihan-table td {
     border: 1px solid #b5b5b5;
-    padding: 7px 14px;
+    padding: 8px 18px;
     font-size: 15px;
     text-align: left;
 }
 
 .tagihan-table th {
-    background: #ecf3fd;
+    background: #e3eaf7;
+    text-align: left;
 }
 
 .tagihan-table td {
@@ -151,81 +175,52 @@ body {
 }
 
 .row-btm {
+    margin-top: 20px;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-top: 18px;
 }
 
 .info-contact {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: #22335a;
+    background: #f6f9fe;
+    border-left: 3.2px solid #44c276;
+    border-radius: 5px;
+    padding: 12px 24px 12px 13px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px #b6eccc16;
+}
+
+.note,
+.note-success {
     font-size: 13.5px;
-    line-height: 1.7;
+    margin-top: 18px;
+    border-radius: 6px;
 }
 
 .note {
-    font-size: 13px;
-    margin-top: 15px;
     color: #333;
     background: #f7f7fc;
     border-left: 3.5px solid #0497df;
-    padding: 10px 18px 8px 14px;
+    padding: 11px 18px 10px 16px;
 }
 
 .note-success {
-    font-size: 13px;
-    margin-top: 15px;
     color: #185e36;
     background: #e6faed;
     border-left: 3.5px solid #13c276;
-    padding: 10px 18px 8px 14px;
-}
-
-.footer-ttd-kanan {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-top: auto;
-    /* PENTING: Dorong footer ke bawah container */
-    min-height: 65px;
-}
-
-.ttd-block-kanan {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 140px;
-}
-
-.ttd-tanggal-kanan {
-    font-size: 15px;
-    margin-bottom: 20px;
-    text-align: center;
-    width: 100%;
-}
-
-.ttd-petugas-kanan {
-    font-weight: normal;
-    font-size: 17px;
-    margin-bottom: 1px;
-    text-align: center;
-    width: 100%;
-}
-
-.ttd-label-kanan {
-    font-weight: normal;
-    font-size: 14px;
-    text-align: center;
-    width: 100%;
+    padding: 11px 18px 10px 16px;
 }
 
 .status-badge {
     display: inline-block;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: bold;
     border-radius: 6px;
-    padding: 3px 14px;
-    margin-bottom: 2px;
+    padding: 4px 14px;
+    margin-bottom: 3px;
     margin-top: 7px;
     background: #e0f7ec;
     color: #169e56;
@@ -234,20 +229,64 @@ body {
 }
 
 .status-belum {
-    background: #f6e8e8;
-    color: #c71b1b;
-    border: 1px solid #f09a9a;
+    background: #f6e8e8 !important;
+    color: #c71b1b !important;
+    border: 1px solid #f09a9a !important;
 }
 
+.footer-ttd-kanan {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: auto;
+    min-height: 65px;
+}
+
+.ttd-block-kanan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 150px;
+}
+
+.ttd-tanggal-kanan {
+    font-size: 16px;
+    margin-bottom: 18px;
+    text-align: center;
+    width: 100%;
+}
+
+.ttd-petugas-kanan {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 1px;
+    text-align: center;
+    width: 100%;
+    color: #244684;
+}
+
+.ttd-label-kanan {
+    font-weight: normal;
+    font-size: 15px;
+    text-align: center;
+    width: 100%;
+    color: #626f87;
+}
+
+/* Responsive */
 @media (max-width: 900px) {
     .container {
-        max-width: 100vw;
+        max-width: 99vw;
         padding: 2vw 1vw 2vw 1vw;
     }
 
     .tagihan-table {
-        width: 100%;
         font-size: 13.5px;
+    }
+
+    .header-content .sekolah-title {
+        font-size: 18px;
     }
 }
 
@@ -265,31 +304,50 @@ body {
     }
 
     .header-content .sekolah-title {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .sub-title,
     .tahun-ajaran {
-        font-size: 13px;
+        font-size: 12px;
+    }
+
+    .logo {
+        width: 72px;
+        height: 72px;
+    }
+
+    .info-contact {
+        font-size: 12px;
+        padding: 9px 8px 9px 9px;
+    }
+
+    .footer-ttd-kanan {
+        margin-top: 15px;
     }
 }
 
 @media (max-width: 530px) {
     .header-content .sekolah-title {
-        font-size: 12.5px;
+        font-size: 12px;
     }
 
     .logo {
-        width: 64px;
-        height: 64px;
+        width: 55px;
+        height: 55px;
         top: 0;
     }
 
     .footer-ttd-kanan {
-        margin-top: 20px;
+        margin-top: 10px;
+    }
+
+    .info-contact {
+        font-size: 10.5px;
     }
 }
 
+/* PRINT STYLES */
 @media print {
     @page {
         size: A4 portrait;
@@ -335,8 +393,8 @@ body {
     }
 
     .footer-ttd-kanan {
-        margin-top: 35px !important;
-        min-height: 44px !important;
+        margin-top: 28px !important;
+        min-height: 40px !important;
         display: flex !important;
     }
 }
