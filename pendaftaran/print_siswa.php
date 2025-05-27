@@ -12,7 +12,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
-// --- AMBIL DATA SISWA
+// ====================
+// AMBIL DATA SISWA
+// ====================
 $stmt = $conn->prepare("SELECT * FROM siswa WHERE id=?");
 $stmt->bind_param('i', $id);
 $stmt->execute();
@@ -20,9 +22,12 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-// --- AMBIL PETUGAS
+// ====================
+// AMBIL PETUGAS
+// ====================
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
+
 if ($username_petugas) {
     $stmt_petugas = $conn->prepare("SELECT nama FROM petugas WHERE username = ?");
     $stmt_petugas->bind_param('s', $username_petugas);
@@ -49,10 +54,13 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// --- CEK STATUS PEMBAYARAN
+// =======================
+// CEK STATUS PEMBAYARAN
+// =======================
 $status_pembayaran = 'Belum Bayar';
-$uang_pangkal_id = 1;
+$uang_pangkal_id = 1; // ganti sesuai ID sistemmu
 $spp_id = 2;
+
 $stmtStatus = $conn->prepare("
     SELECT
       CASE
@@ -101,7 +109,9 @@ if ($rStatus = $resultStatus->fetch_assoc()) {
 }
 $stmtStatus->close();
 
-// --- TAGIHAN AWAL
+// ===================
+// Ambil tagihan awal
+// ===================
 $tagihan = [];
 $stmtTagihan = $conn->prepare("
     SELECT jp.nama AS jenis, sta.nominal
@@ -115,18 +125,21 @@ $stmtTagihan->execute();
 $res = $stmtTagihan->get_result();
 while ($t = $res->fetch_assoc()) $tagihan[] = $t;
 $stmtTagihan->close();
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran_pembayaran.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- CSS utama -->
+  <link rel="stylesheet" href="print_bukti_pendaftaran_pembayaran.css?v=3">
+  <!-- FontAwesome CDN untuk ikon cetak -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <!-- Tombol Cetak -->
+  <!-- Tombol Cetak, hanya tampil di layar -->
   <button class="no-print btn-cetak" onclick="window.print()">
     <i class="fas fa-print"></i> Cetak
   </button>
@@ -139,9 +152,8 @@ $stmtTagihan->close();
         <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
       </div>
     </div>
-    <div class="no-reg">
-      <b>No. Reg / No Formulir :</b> <?= safe($row['no_formulir']) ?>
-    </div>
+
+    <div class="no-reg"><b>No. Reg / No Formulir :</b> <?= safe($row['no_formulir']) ?></div>
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
@@ -153,30 +165,77 @@ $stmtTagihan->close();
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
-    <!-- Tagihan Awal -->
-    <table class="tagihan-table" style="margin-top:25px;">
+    <!-- TABEL TAGIHAN AWAL -->
+    <table class="tagihan-table">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
           <i class="fas fa-coins"></i> Proses pembayaran awal
         </th>
       </tr>
-      <?php foreach($tagihan as $tg): ?>
+      <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
       <tr>
         <td><?= safe($tg['jenis']) ?></td>
         <td style="text-align:right;font-weight:600">
           Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
         </td>
       </tr>
-      <?php endforeach; ?>
+      <?php endforeach; else: ?>
+      <tr>
+        <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
+      </tr>
+      <?php endif; ?>
     </table>
+    <div class="row-btm">
+      <div class="info-contact">
+        Informasi lebih lanjut hubungi:<br>
+        Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
+        Hotline SMK : <b>085880120889</b> (Bu Ina)
+      </div>
+    </div>
 
-    <!-- Status Pembayaran -->
+    <!-- STATUS PEMBAYARAN SECTION -->
     <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
       <div class="note-success">
         <span class="status-badge"><?= strtoupper($status_pembayaran) ?></span>
         <b>Pembayaran sudah dilakukan.</b><br>
-        Status pembayaran: <b><?= strtoupper($status_pembayaran) ?></b>
+        Status pembayaran: <b><?= strtoupper($status_pembayaran) ?></b><br>
+        Berikut rincian pembayaran terakhir:
       </div>
+      <!-- Tabel pembayaran terakhir -->
+      <table class="tagihan-table">
+        <tr>
+          <th>Jenis</th>
+          <th>Bulan</th>
+          <th>Nominal</th>
+          <th>Status</th>
+          <th>Tanggal</th>
+        </tr>
+        <?php
+        // Ambil 5 pembayaran terakhir
+        $sqlPembayaran = $conn->prepare("
+          SELECT pd.jenis_pembayaran_id, jp.nama as jenis, pd.bulan, pd.nominal, pd.status_pembayaran, p.tanggal_pembayaran
+          FROM pembayaran_detail pd
+          JOIN pembayaran p ON pd.pembayaran_id = p.id
+          JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
+          WHERE p.siswa_id = ?
+          ORDER BY p.tanggal_pembayaran DESC
+          LIMIT 5
+        ");
+        $sqlPembayaran->bind_param('i', $id);
+        $sqlPembayaran->execute();
+        $rsPembayaran = $sqlPembayaran->get_result();
+        if ($rsPembayaran->num_rows): while($d = $rsPembayaran->fetch_assoc()): ?>
+        <tr>
+          <td><?= safe($d['jenis']) ?></td>
+          <td><?= safe($d['bulan']) ?></td>
+          <td>Rp <?= number_format($d['nominal'],0,',','.') ?></td>
+          <td><?= safe($d['status_pembayaran']) ?></td>
+          <td><?= tanggal_id($d['tanggal_pembayaran']) ?></td>
+        </tr>
+        <?php endwhile; else: ?>
+        <tr><td colspan="5" style="text-align:center;">Belum ada pembayaran tercatat.</td></tr>
+        <?php endif; $sqlPembayaran->close(); ?>
+      </table>
     <?php else: ?>
       <div class="note status-belum">
         <span class="status-badge status-belum">BELUM BAYAR</span>
@@ -187,22 +246,6 @@ $stmtTagihan->close();
       </div>
     <?php endif; ?>
 
-    <!-- Kontak Info -->
-    <div class="row-btm">
-      <div class="info-contact">
-        <span>Informasi lebih lanjut hubungi:</span><br>
-        <span style="display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-user-circle"></i>
-          <b>Bu Puji</b> <span style="color:#25a244;font-weight:500;">081511519271</span>
-        </span><br>
-        <span style="display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-user-circle"></i>
-          <b>Bu Ina</b> <span style="color:#25a244;font-weight:500;">085880120889</span>
-        </span>
-      </div>
-    </div>
-
-    <!-- TTD Petugas -->
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
@@ -211,6 +254,5 @@ $stmtTagihan->close();
       </div>
     </div>
   </div>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
