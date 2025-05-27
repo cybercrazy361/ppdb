@@ -134,7 +134,7 @@ $stmtTagihan->close();
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- CSS utama -->
-  <link rel="stylesheet" href="print_bukti_pendaftaran_pembayaran.css?v=3">
+    <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran_pembayaran.css" />
   <!-- FontAwesome CDN untuk ikon cetak -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
