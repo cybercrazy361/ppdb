@@ -1,13 +1,28 @@
+/* --------------------------------
+   Reset dan Global Style
+--------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f6f8fa;
     margin: 0;
     padding: 20px;
-    box-sizing: border-box;
+    color: #222;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+/* --------------------------------
+   Container utama
+--------------------------------- */
 .container {
     width: 210mm;
+    /* Lebar A4 */
     max-width: 100%;
     margin: 0 auto;
     background: #fff;
@@ -15,10 +30,12 @@ body {
     box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
     padding: 28px 34px 24px 34px;
     border: 1px solid #d1dbe7;
-    box-sizing: border-box;
     page-break-after: avoid;
 }
 
+/* --------------------------------
+   Header section
+--------------------------------- */
 .header {
     position: relative;
     min-height: 80px;
@@ -62,6 +79,7 @@ body {
 .sub-title {
     font-size: 16px;
     font-weight: 500;
+    margin-top: 3px;
 }
 
 .tahun-ajaran {
@@ -69,19 +87,27 @@ body {
     margin-bottom: 7px;
 }
 
+/* --------------------------------
+   No. Registrasi / Formulir
+--------------------------------- */
 .no-reg {
     margin-bottom: 10px;
     font-weight: 500;
+    font-size: 16px;
 }
 
-.data-table {
+/* --------------------------------
+   Tabel Data Siswa dan Tagihan
+--------------------------------- */
+.data-table,
+.tagihan-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 15px;
-    box-sizing: border-box;
 }
 
-.data-table caption {
+.data-table caption,
+.tagihan-table caption {
     background: #eaf2ce;
     font-weight: bold;
     font-size: 16px;
@@ -92,39 +118,32 @@ body {
 }
 
 .data-table th,
-.data-table td {
+.data-table td,
+.tagihan-table th,
+.tagihan-table td {
     border: 1px solid #777;
-    padding: 7px 12px;
+    padding: 8px 15px;
     font-size: 15px;
+    vertical-align: middle;
 }
 
-.data-table th {
+.data-table th,
+.tagihan-table th {
     background: #f2f6e9;
     text-align: left;
     width: 34%;
+    font-weight: 600;
 }
 
-.data-table td {
+.data-table td,
+.tagihan-table td {
     background: #fff;
 }
 
 .tagihan-table {
-    width: 60%;
-    min-width: 270px;
-    margin: 0 auto 18px auto;
-    border-collapse: collapse;
     background: #f9f9fa;
     border-radius: 8px;
     overflow: hidden;
-    box-sizing: border-box;
-}
-
-.tagihan-table th,
-.tagihan-table td {
-    border: 1px solid #b5b5b5;
-    padding: 8px 18px;
-    font-size: 15px;
-    text-align: left;
 }
 
 .tagihan-table th {
@@ -132,9 +151,12 @@ body {
 }
 
 .tagihan-table td {
-    background: #fff;
+    text-align: right;
 }
 
+/* --------------------------------
+   Status Pembayaran
+--------------------------------- */
 .status-row {
     font-size: 17px;
     font-weight: bold;
@@ -145,9 +167,11 @@ body {
     padding: 12px 0 8px 0;
     margin-bottom: 20px;
     border: 1px solid #c5d1e8;
-    box-sizing: border-box;
 }
 
+/* --------------------------------
+   Info Kontak
+--------------------------------- */
 .row-btm {
     display: flex;
     justify-content: flex-start;
@@ -161,15 +185,22 @@ body {
     white-space: pre-line;
 }
 
+/* --------------------------------
+   Catatan dengan Warna Sesuai Status
+--------------------------------- */
 .note {
     font-size: 13px;
     margin-top: 15px;
     padding: 10px 18px 8px 14px;
     border-left: 3.5px solid #0497df;
     box-sizing: border-box;
+    border-radius: 3px;
+    /* Default warna untuk belum bayar */
+    color: #333;
+    background: #f7f7fc;
+    border-color: #0497df;
 }
 
-/* Warna catatan sesuai status */
 .note.belum-bayar {
     color: #333;
     background: #f7f7fc;
@@ -188,6 +219,9 @@ body {
     border-color: #c3e6cb;
 }
 
+/* --------------------------------
+   Footer Tanda Tangan Petugas
+--------------------------------- */
 .footer-ttd-kanan {
     width: 100%;
     display: flex;
@@ -226,6 +260,9 @@ body {
     width: 100%;
 }
 
+/* --------------------------------
+   Media Query untuk Print (A4)
+--------------------------------- */
 @media print {
     @page {
         size: A4 portrait;
@@ -239,6 +276,7 @@ body {
         background: #fff !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        margin: 0;
     }
 
     .container {
