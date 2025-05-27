@@ -86,10 +86,7 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
         <div class="main-container">
             <div class="card-wrapper shadow-sm">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-2 gap-2">
-                    <h4 class="mb-0 fw-bold">Review Calon Pendaftar</h4>
-                    <a href="dashboard_pendaftaran.php" class="btn btn-outline-secondary btn-sm btn-back">
-                        <i class="fas fa-arrow-left"></i> Dashboard
-                    </a>
+                    <h4 class="mb-0 fw-bold">Progres Pendaftaran</h4>
                 </div>
                 <!-- Box Rekap Status -->
                 <div class="rekap-box mb-3">

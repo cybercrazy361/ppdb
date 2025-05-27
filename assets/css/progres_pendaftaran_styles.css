@@ -25,6 +25,7 @@ body {
 .main {
     padding: var(--main-padding);
     min-height: 100vh;
+    transition: padding .2s;
 }
 
 @media (max-width:900px) {
@@ -39,6 +40,121 @@ body {
     }
 }
 
+/* ====== HEADER/NAVBAR ====== */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 22;
+    height: var(--header-height);
+    background: rgba(255, 255, 255, 0.93);
+    box-shadow: 0 2px 12px 0 rgba(46, 89, 217, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.3rem 0 0.7rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    backdrop-filter: blur(10px);
+    margin-bottom: 22px;
+    min-height: 56px;
+    gap: 10px;
+}
+
+.navbar .title {
+    font-weight: 700;
+    font-size: 1.18rem;
+    color: var(--color-dark);
+    letter-spacing: 1.1px;
+    text-shadow: 0 2px 7px #31467a10;
+    flex: 1 1 auto;
+    padding-left: 4px;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.user-menu small {
+    color: #7587ad;
+    font-size: .96em;
+    font-weight: 500;
+}
+
+.btn-logout {
+    background: var(--color-danger);
+    color: #fff;
+    padding: 4px 13px;
+    border: none;
+    border-radius: 7px;
+    font-size: .98em;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .19s;
+    margin-left: 4px;
+}
+
+.btn-logout:hover {
+    background: #b60d2f;
+    color: #fff;
+}
+
+.toggle-btn {
+    background: rgba(41, 214, 248, 0.13);
+    border: none;
+    font-size: 1.45rem;
+    color: var(--color-primary);
+    cursor: pointer;
+    margin-right: 12px;
+    outline: none;
+    display: none;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 11px;
+    transition: background .16s, color 0.13s;
+}
+
+.toggle-btn:hover,
+.toggle-btn:focus {
+    background: #e7f6ff;
+    color: #13afe0;
+    box-shadow: 0 0 8px #13afe04d;
+}
+
+@media (max-width:992px) {
+    .toggle-btn {
+        display: inline-flex !important;
+        margin-left: 5px;
+    }
+}
+
+@media (max-width:500px) {
+    .navbar {
+        padding: 0 4px !important;
+        margin-bottom: 7px;
+        min-height: 44px;
+        height: 48px;
+    }
+
+    .navbar .title {
+        font-size: .96rem;
+        padding-left: 2px;
+        letter-spacing: .7px;
+    }
+
+    .btn-logout {
+        padding: 3px 9px;
+        font-size: .90em;
+        margin-left: 2px;
+        border-radius: 6px;
+    }
+
+    .user-menu {
+        gap: 7px;
+    }
+}
+
+/* ====== PROGRES WRAPPER/BOX ====== */
 .main-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -84,7 +200,7 @@ body {
     border-radius: 9px;
 }
 
-/* Rekap Box & Status Badge */
+/* ====== Rekap Box & Status Badge ====== */
 .rekap-box {
     margin-bottom: 18px;
 }
@@ -142,7 +258,7 @@ body {
     color: #fff !important;
 }
 
-/* Tabel & Tombol */
+/* ====== Table & Button ====== */
 .table thead th,
 .table thead td {
     text-align: center !important;
@@ -172,7 +288,7 @@ body {
     min-width: 85px;
 }
 
-/* Modal: konsisten border-radius */
+/* ====== Modal (consistency) ====== */
 .modal-content {
     border-radius: 1.15rem;
 }
@@ -254,7 +370,7 @@ body {
     }
 }
 
-/* Scrollbar minimalis untuk table responsive */
+/* Minimal scrollbar for table responsive */
 .table-responsive::-webkit-scrollbar {
     height: 8px;
 }
