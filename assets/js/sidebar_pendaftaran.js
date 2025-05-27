@@ -1,16 +1,19 @@
-// Tidak perlu edit, cukup copy-paste di bawah ini (setelah include Bootstrap dan sebelum include sidebar_pendaftaran.js jika JS eksternal)
+// Sidebar toggle: mobile/desktop, ESC key, resize
 document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.querySelector('.sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
     const backdrop = document.getElementById('sidebarBackdrop');
 
     function showSidebar() {
-        sidebar.classList.add('active');
+        if (sidebar) sidebar.classList.add('active');
         if (backdrop) backdrop.classList.add('active');
+        // Trap focus in sidebar (accessibility, optional)
+        document.body.style.overflow = "hidden";
     }
     function hideSidebar() {
-        sidebar.classList.remove('active');
+        if (sidebar) sidebar.classList.remove('active');
         if (backdrop) backdrop.classList.remove('active');
+        document.body.style.overflow = "";
     }
 
     if (sidebarToggle) {
@@ -24,8 +27,20 @@ document.addEventListener("DOMContentLoaded", function () {
             hideSidebar();
         });
     }
-    // Hide sidebar if resize >992px
+
+    // ESC keyboard close
+    document.addEventListener('keydown', function (e) {
+        if ((e.key === "Escape" || e.keyCode === 27) && sidebar && sidebar.classList.contains('active')) {
+            hideSidebar();
+        }
+    });
+
+    // Hide sidebar if resize >992px (with debounce)
+    let resizeTimer;
     window.addEventListener('resize', function () {
-        if (window.innerWidth > 992) hideSidebar();
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            if (window.innerWidth > 992) hideSidebar();
+        }, 80);
     });
 });
