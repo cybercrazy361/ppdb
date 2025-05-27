@@ -4,6 +4,8 @@ session_start();
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
+$unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
