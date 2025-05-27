@@ -416,3 +416,9 @@ body::-webkit-scrollbar-track,
 .table td.text-center .btn-sm {
     margin-bottom: 0 !important;
 }
+
+.table thead th,
+.table thead td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
