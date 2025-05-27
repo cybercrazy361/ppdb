@@ -1,6 +1,6 @@
 <!-- sidebar_pendaftaran.php -->
 <nav class="sidebar">
-  <div class="brand">PPDB <?= htmlspecialchars($unit) ?></div>
+  <div class="brand">SPMB <?= htmlspecialchars($unit) ?></div>
   <div class="nav flex-column">
     <a href="dashboard_pendaftaran.php"
       class="nav-link <?= ($active=='dashboard'?'active':'') ?>">
