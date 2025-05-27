@@ -16,6 +16,7 @@
     --header-height: 62px;
 }
 
+/* GENERAL */
 body {
     background: var(--color-bg);
     font-family: var(--font-base);
@@ -47,6 +48,7 @@ body {
     }
 }
 
+/* NAVBAR / HEADER */
 .navbar {
     position: sticky;
     top: 0;
@@ -142,6 +144,7 @@ body {
     }
 }
 
+/* FORM CONTAINER & CARD */
 .container-form {
     width: 100%;
     max-width: 830px;
@@ -271,6 +274,46 @@ textarea.form-control {
     border-color: #8091f1;
 }
 
+/* Placeholder style */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color: #a5b8d7 !important;
+    opacity: 1;
+}
+
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+    color: #a5b8d7 !important;
+    opacity: 1;
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+    color: #a5b8d7 !important;
+    opacity: 1;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color: #a5b8d7 !important;
+    opacity: 1;
+}
+
+select.form-select:invalid {
+    color: #9ca3af;
+}
+
+/* Modern scrollbar */
+.form-card::-webkit-scrollbar {
+    width: 7px;
+}
+
+.form-card::-webkit-scrollbar-thumb {
+    background: #b7d3fdba;
+    border-radius: 14px;
+}
+
+/* RESPONSIVE */
 @media (max-width: 900px) {
     .form-card {
         padding: 10px 4px 8px 4px;
@@ -315,42 +358,4 @@ textarea.form-control {
     .btn-outline-secondary {
         padding: .67em 1em;
     }
-}
-
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-    color: #a5b8d7 !important;
-    opacity: 1;
-}
-
-input:-moz-placeholder,
-textarea:-moz-placeholder {
-    color: #a5b8d7 !important;
-    opacity: 1;
-}
-
-input::-moz-placeholder,
-textarea::-moz-placeholder {
-    color: #a5b8d7 !important;
-    opacity: 1;
-}
-
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-    color: #a5b8d7 !important;
-    opacity: 1;
-}
-
-select.form-select:invalid {
-    color: #9ca3af;
-}
-
-/* Modern scrollbar */
-.form-card::-webkit-scrollbar {
-    width: 7px;
-}
-
-.form-card::-webkit-scrollbar-thumb {
-    background: #b7d3fdba;
-    border-radius: 14px;
 }
