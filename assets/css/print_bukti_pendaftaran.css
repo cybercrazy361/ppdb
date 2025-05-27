@@ -149,6 +149,12 @@ body {
     vertical-align: middle;
 }
 
+/* Header tabel rata kiri untuk data-table */
+.data-table th {
+    text-align: left;
+    padding-left: 12px;
+}
+
 /* Khusus tabel riwayat pembayaran (tagihan-table) */
 .tagihan-table th:nth-child(1),
 .tagihan-table td:nth-child(1) {
