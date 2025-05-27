@@ -1,8 +1,19 @@
+html,
+body {
+    height: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f6f8fa;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
@@ -17,6 +28,11 @@ body {
     border: 1px solid #d1dbe7;
     overflow-x: auto;
     box-sizing: border-box;
+    min-height: calc(100vh - 44px);
+    /* 44px = tinggi kira-kira tombol print */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .header {
@@ -169,10 +185,9 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
-    margin-top: 38px;
-    /* Perkecil jarak agar tidak terpotong */
+    margin-top: auto;
+    /* PENTING: Dorong footer ke bawah container */
     min-height: 65px;
-    /* Turunkan min-height */
 }
 
 .ttd-block-kanan {
@@ -185,7 +200,6 @@ body {
 .ttd-tanggal-kanan {
     font-size: 15px;
     margin-bottom: 20px;
-    /* Lebih kecil, agar cukup */
     text-align: center;
     width: 100%;
 }
@@ -305,6 +319,7 @@ body {
         page-break-after: avoid;
         padding: 8mm 10mm 6mm 10mm !important;
         box-sizing: border-box;
+        display: block !important;
     }
 
     .no-print {
@@ -322,5 +337,6 @@ body {
     .footer-ttd-kanan {
         margin-top: 35px !important;
         min-height: 44px !important;
+        display: flex !important;
     }
 }
