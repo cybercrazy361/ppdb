@@ -156,46 +156,47 @@ body {
 }
 
 /* Khusus tabel riwayat pembayaran (tagihan-table) */
+.tagihan-table colgroup col:nth-child(1),
+.tagihan-table colgroup col:nth-child(2) {
+    width: 25%;
+}
+
+/* Kolom Jenis */
 .tagihan-table th:nth-child(1),
 .tagihan-table td:nth-child(1) {
-    width: 35%;
-    /* Kolom Jenis lebih lebar */
     text-align: left;
 }
 
+/* Kolom Nominal */
 .tagihan-table th:nth-child(2),
 .tagihan-table td:nth-child(2) {
-    width: 20%;
-    /* Nominal cukup ruang */
     text-align: right;
 }
 
+/* Kolom Status */
 .tagihan-table th:nth-child(3),
 .tagihan-table td:nth-child(3) {
     width: 20%;
-    /* Status cukup ruang */
     text-align: left;
 }
 
+/* Kolom Bulan */
 .tagihan-table th:nth-child(4),
 .tagihan-table td:nth-child(4) {
-    width: 12%;
-    /* Bulan */
+    width: 15%;
     text-align: center;
     white-space: nowrap;
-    /* cegah pembungkusan */
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 80px;
 }
 
+/* Kolom Tanggal */
 .tagihan-table th:nth-child(5),
 .tagihan-table td:nth-child(5) {
-    width: 13%;
-    /* Tanggal */
+    width: 15%;
     text-align: center;
     white-space: nowrap;
-    /* cegah pembungkusan */
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 120px;
