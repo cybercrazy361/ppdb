@@ -137,17 +137,29 @@ body {
     letter-spacing: 0.7px;
 }
 
+/* Kolom disesuaikan lebar dan alignment */
+.data-table th,
+.data-table td,
+.tagihan-table th,
+.tagihan-table td {
+    border: 1px solid #777;
+    padding: 5px 10px;
+    /* padding lebih rapat */
+    font-size: 14px;
+    vertical-align: middle;
+}
+
 /* Header tabel rata kiri untuk data-table */
 .data-table th {
     text-align: left;
     padding-left: 12px;
 }
 
-/* Kolom disesuaikan lebar dan alignment */
+/* Khusus tabel riwayat pembayaran (tagihan-table) */
 .tagihan-table th:nth-child(1),
 .tagihan-table td:nth-child(1) {
-    width: 25%;
-    /* Kolom Jenis diperkecil */
+    width: 35%;
+    /* Kolom Jenis lebih lebar */
     text-align: left;
 }
 
@@ -170,13 +182,23 @@ body {
     width: 12%;
     /* Bulan */
     text-align: center;
+    white-space: nowrap;
+    /* cegah pembungkusan */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
 }
 
 .tagihan-table th:nth-child(5),
 .tagihan-table td:nth-child(5) {
-    width: 23%;
-    /* Tanggal dilebarkan */
+    width: 13%;
+    /* Tanggal */
     text-align: center;
+    white-space: nowrap;
+    /* cegah pembungkusan */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
 }
 
 .data-table th,
