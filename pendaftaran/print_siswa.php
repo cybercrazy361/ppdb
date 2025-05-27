@@ -14,7 +14,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
-// ambil data siswa
+// Ambil data siswa
 $stmt = $conn->prepare("SELECT * FROM siswa WHERE id=?");
 $stmt->bind_param('i', $id);
 $stmt->execute();
@@ -22,7 +22,7 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-// ambil nama petugas
+// Ambil nama petugas
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 if ($username_petugas) {
@@ -47,7 +47,7 @@ function tanggal_id($tgl) {
     return "$d $m $y";
 }
 
-// ambil tagihan awal
+// Ambil tagihan awal
 $tagihan = [];
 $stmtTagihan = $conn->prepare("
     SELECT jp.nama AS jenis, sta.nominal
@@ -58,12 +58,13 @@ $stmtTagihan = $conn->prepare("
 ");
 $stmtTagihan->bind_param('i', $id);
 $stmtTagihan->execute();
-while ($t = $stmtTagihan->get_result()->fetch_assoc()) {
+$resTagihan = $stmtTagihan->get_result();
+while ($t = $resTagihan->fetch_assoc()) {
     $tagihan[] = $t;
 }
 $stmtTagihan->close();
 
-// hitung status pembayaran
+// Hitung status pembayaran
 $uang_pangkal_id = 1;
 $spp_id = 2;
 $stmtCount = $conn->prepare("
@@ -137,6 +138,7 @@ if ($cntPangkal > 0 && $cntSpp > 0) {
     .ttd-tanggal-kanan { font-size: 17px; margin-bottom: 70px; text-align: center; width: 100%; }
     .ttd-petugas-kanan { font-size: 21px; margin-bottom: 1px; text-align: center; width: 100%; }
     .ttd-label-kanan { font-size: 17px; text-align: center; width: 100%; }
+    .no-print { margin-bottom: 10px; }
     @media print {
       @page { size: A4 portrait; margin: 12mm; }
       html, body { width: 210mm; height: 297mm; background: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -173,9 +175,7 @@ if ($cntPangkal > 0 && $cntSpp > 0) {
     </table>
 
     <table class="tagihan-table">
-      <tr>
-        <th colspan="2">Proses Pembayaran Awal</th>
-      </tr>
+      <tr><th colspan="2">Proses Pembayaran Awal</th></tr>
       <?php if (count($tagihan)): foreach ($tagihan as $tg): ?>
       <tr>
         <td><?= safe($tg['jenis']) ?></td>
