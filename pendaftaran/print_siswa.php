@@ -171,13 +171,7 @@ $stmtTagihan->close();
       </tr>
       <?php endif; ?>
     </table>
-    <div class="row-btm">
-      <div class="info-contact">
-        Informasi lebih lanjut hubungi:<br>
-        Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
-        Hotline SMK : <b>085880120889</b> (Bu Ina)
-      </div>
-    </div>
+
     <!-- STATUS PEMBAYARAN SECTION -->
     <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
       <div class="note-success">
@@ -195,6 +189,13 @@ $stmtTagihan->close();
         Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
       </div>
     <?php endif; ?>
+        <div class="row-btm">
+      <div class="info-contact">
+        Informasi lebih lanjut hubungi:<br>
+        Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
+        Hotline SMK : <b>085880120889</b> (Bu Ina)
+      </div>
+    </div>
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
