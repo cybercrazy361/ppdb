@@ -194,7 +194,7 @@ body {
 /* Kolom Tanggal */
 .tagihan-table th:nth-child(5),
 .tagihan-table td:nth-child(5) {
-    width: 18%;
+    width: 20%;
     /* Lebarkan kolom tanggal */
     text-align: center;
     white-space: nowrap;
