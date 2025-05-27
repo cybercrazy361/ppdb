@@ -100,77 +100,77 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
 
                 <div class="table-responsive">
                     <table id="calonTable" class="table table-hover table-bordered align-middle">
-                        <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Jenis Kelamin</th>
-                            <th>Asal Sekolah</th>
-                            <th>No HP</th>
-                            <th>Alamat</th>
-                            <th>Pendidikan Ortu/Wali</th>
-                            <th>No HP Ortu/Wali</th>
-                            <th>Tanggal Daftar</th>
-                            <th>Status</th>
-                            <th>Keterangan</th>
-                            <th>Kirim</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php $no=1; foreach ($calon as $row):
-                            $current = $row['status'];
-                            $notes   = $row['notes'];
-                            $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
-                        ?>
-                        <tr data-id="<?= $row['id'] ?>">
-                            <td><?= $no++ ?></td>
-                            <td><?= htmlspecialchars($row['nama']) ?></td>
-                            <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
-                            <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-                            <td><?= htmlspecialchars($row['no_hp']) ?></td>
-                            <td><?= htmlspecialchars($row['alamat']) ?></td>
-                            <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
-                            <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
-                            <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
-                            <td class="text-center">
-                                <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
-                                <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
-                                <?php foreach ($status_list as $st => $desc): ?>
-                                    <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $st ?></option>
-                                <?php endforeach; ?>
-                                </select>
-                            </td>
-                            <td class="text-center">
-                                <button type="button"
-                                    class="btn btn-sm btn-outline-primary btn-notes"
-                                    data-id="<?= $row['id'] ?>"
-                                    data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                                    data-notes="<?= htmlspecialchars($notes) ?>">
-                                    <i class="fas fa-sticky-note"></i> Lihat/Edit
-                                </button>
-                            </td>
-                            <td class="text-center">
-                                <?php if ($terkirim): ?>
-                                <span class="badge bg-success">Terkirim</span>
-                                <?php else: ?>
-                                <button class="btn btn-sm btn-success btn-kirim"
-                                        data-id="<?= $row['id'] ?>"
-                                        data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                                        data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin']) ?>"
-                                        data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah']) ?>"
-                                        data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
-                                        data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
-                                        data-pendidikan_ortu="<?= htmlspecialchars($row['pendidikan_ortu']) ?>"
-                                        data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
-                                        data-tanggal_daftar="<?= htmlspecialchars($row['tanggal_daftar']) ?>"
-                                        data-unit="<?= htmlspecialchars($unit) ?>"
-                                ><i class="fas fa-paper-plane"></i> Kirim</button>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Jenis Kelamin</th>
+            <th>Asal Sekolah</th>
+            <th>No HP</th>
+            <th>Alamat</th>
+            <th>Pendidikan Ortu/Wali</th>
+            <th>No HP Ortu/Wali</th>
+            <th>Tanggal Daftar</th>
+            <th class="status-col">Status</th>
+            <th>Keterangan</th>
+            <th>Kirim</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php $no=1; foreach ($calon as $row):
+        $current = $row['status'];
+        $notes   = $row['notes'];
+        $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
+    ?>
+    <tr data-id="<?= $row['id'] ?>">
+        <td><?= $no++ ?></td>
+        <td><?= htmlspecialchars($row['nama']) ?></td>
+        <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
+        <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
+        <td><?= htmlspecialchars($row['no_hp']) ?></td>
+        <td><?= htmlspecialchars($row['alamat']) ?></td>
+        <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
+        <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
+        <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
+        <td class="status-col text-center">
+            <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
+            <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
+            <?php foreach ($status_list as $st => $desc): ?>
+                <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $st ?></option>
+            <?php endforeach; ?>
+            </select>
+        </td>
+        <td class="text-center">
+            <button type="button"
+                class="btn btn-sm btn-outline-primary btn-notes"
+                data-id="<?= $row['id'] ?>"
+                data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                data-notes="<?= htmlspecialchars($notes) ?>">
+                <i class="fas fa-sticky-note"></i> Lihat/Edit
+            </button>
+        </td>
+        <td class="text-center">
+            <?php if ($terkirim): ?>
+            <span class="badge bg-success">Terkirim</span>
+            <?php else: ?>
+            <button class="btn btn-sm btn-success btn-kirim"
+                    data-id="<?= $row['id'] ?>"
+                    data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                    data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin']) ?>"
+                    data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah']) ?>"
+                    data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
+                    data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
+                    data-pendidikan_ortu="<?= htmlspecialchars($row['pendidikan_ortu']) ?>"
+                    data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
+                    data-tanggal_daftar="<?= htmlspecialchars($row['tanggal_daftar']) ?>"
+                    data-unit="<?= htmlspecialchars($unit) ?>"
+            ><i class="fas fa-paper-plane"></i> Kirim</button>
+            <?php endif; ?>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
                 </div>
             </div>
         </div>
