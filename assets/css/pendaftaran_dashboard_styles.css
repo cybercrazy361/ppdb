@@ -42,6 +42,12 @@ body {
     }
 }
 
+@media (max-width: 500px) {
+    .main {
+        padding-bottom: 38px;
+    }
+}
+
 /* Header/Navbar */
 .navbar {
     position: sticky;
@@ -132,15 +138,27 @@ body {
 
 @media (max-width: 500px) {
     .navbar {
-        padding: 0 2px;
+        padding: 0 4px !important;
+        margin-bottom: 7px;
+        min-height: 44px;
+        height: 48px;
     }
 
     .navbar .title {
-        font-size: .97rem;
+        font-size: .95rem;
+        padding-left: 2px;
+        letter-spacing: .7px;
     }
 
     .btn-logout {
-        font-size: .93em;
+        padding: 3px 9px;
+        font-size: .90em;
+        margin-left: 2px;
+        border-radius: 6px;
+    }
+
+    .user-menu {
+        gap: 7px;
     }
 }
 
@@ -152,19 +170,23 @@ body {
     margin-bottom: 25px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     .dashboard-cards {
         grid-template-columns: 1fr 1fr;
         gap: 8px;
+        margin-bottom: 11px;
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
     .dashboard-cards {
         grid-template-columns: 1fr;
+        gap: 6px;
+        margin-bottom: 7px;
     }
 }
 
+/* Card */
 .card {
     background: var(--color-card);
     border-radius: var(--border-radius);
@@ -180,6 +202,7 @@ body {
     border: none;
     outline: none;
     animation: fadeInCard .8s;
+    margin: 0;
 }
 
 .card:active,
@@ -238,23 +261,35 @@ body {
 @media (max-width: 500px) {
     .card {
         font-size: .94rem;
-        padding: 9px 3px 6px 3px;
+        padding: 9px 4px 8px 8px;
+        min-height: 88px;
+        border-radius: 1rem;
+        box-shadow: 0 1px 6px 0 rgba(31, 38, 135, 0.08);
     }
 
     .card .icon {
-        font-size: 1.48rem;
+        font-size: 1.12rem;
+        margin-bottom: 4px;
     }
 
     .card .title {
-        font-size: .93rem;
+        font-size: .92rem;
     }
 
     .card .count {
-        font-size: 1.2rem;
+        font-size: 1.12rem;
     }
 
     .card .subtext {
-        font-size: .87rem;
+        font-size: .80rem;
+    }
+}
+
+@media (max-width: 430px) {
+    .card {
+        border-radius: .7rem;
+        padding: 7px 2px 7px 7px;
+        min-height: 80px;
     }
 }
 
