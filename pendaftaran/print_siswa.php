@@ -43,8 +43,8 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// AMBIL STATUS PROGRES
-$uang_pangkal_id = 1; // Pastikan sama dengan DB
+// Ambil status progres
+$uang_pangkal_id = 1;
 $spp_id = 2;
 
 $query_status = "
@@ -137,59 +137,28 @@ function getStatusBadge($status) {
     if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold"><i class="fas fa-hourglass-half"></i> Angsuran</span>';
     return '<span style="color:#e74a3b;font-weight:bold"><i class="fas fa-times-circle"></i> Belum Bayar</span>';
 }
+
+$note_class = '';
+if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
+elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
+elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-<style>
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; }
-  .container { width: 800px; max-width: 100%; margin: 22px auto; background: #fff; border-radius: 10px; box-shadow: 0 0 8px rgba(60,60,60,0.13); padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7; }
-  .header { position: relative; min-height: 80px; border-bottom: 2px solid #d1d5db; margin-bottom: 18px; padding-bottom: 9px; }
-  .logo { width: 150px; height: 150px; object-fit: contain; position: absolute; left: 0; top: -40px; z-index: 2; }
-  .header-content { width: 100%; position: absolute; left: 0; top: 0; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
-  @media print { .logo { width: 120px; height: 120px; top: -25px; } }
-  .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
-  .sub-title { font-size: 16px; font-weight: 500; }
-  .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
-  .no-reg { margin-bottom: 10px; font-weight: 500; }
-  .data-table caption { background: #eaf2ce; font-weight: bold; font-size: 16px; padding: 5px 0; border-radius: 4px 4px 0 0; margin-bottom: 0; }
-  .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px;}
-  .data-table th, .data-table td { border: 1px solid #777; padding: 7px 12px; font-size: 15px;}
-  .data-table th { background: #f2f6e9; text-align: left; width: 34%; }
-  .data-table td { background: #fff; }
-  .tagihan-table { width: 60%; min-width:270px; margin: 0 auto 18px auto; border-collapse: collapse; background: #f9f9fa; border-radius: 8px; overflow: hidden; }
-  .tagihan-table th, .tagihan-table td { border: 1px solid #b5b5b5; padding: 8px 18px; font-size: 15px; text-align: left; }
-  .tagihan-table th { background: #ecf3fd; text-align: left;}
-  .tagihan-table td { background: #fff; }
-  .status-row { font-size: 17px; font-weight: bold; color: #222; text-align: center; background: #f6f7fc; border-radius: 7px; padding: 12px 0 8px 0; margin-bottom: 20px; border: 1px solid #c5d1e8; }
-  .row-btm { display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 18px; }
-  .info-contact { font-size: 14px; line-height: 1.7; }
-  .note { font-size: 13px; margin-top: 15px; color: #333; background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px; }
-  .footer-ttd-kanan { width: 100%; display: flex; justify-content: flex-end; align-items: flex-end; margin-top: 65px; min-height: 90px; }
-  .ttd-block-kanan { display: flex; flex-direction: column; align-items: center; min-width: 200px; }
-  .ttd-tanggal-kanan { font-size: 17px; margin-bottom: 70px; text-align: center; width: 100%; }
-  .ttd-petugas-kanan { font-weight: normal; font-size: 21px; margin-bottom: 1px; text-align: center; width: 100%; }
-  .ttd-label-kanan { font-weight: normal; font-size: 17px; text-align: center; width: 100%; }
-  @media print {
-    @page { size: A4 portrait; margin: 12mm; }
-    html, body { width: 210mm; height: 297mm; background: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    .container { width: 100% !important; max-width: 185mm !important; min-height: 250mm; margin: 0 auto !important; border-radius: 0 !important; box-shadow: none !important; border: none !important; page-break-after: avoid; }
-    .no-print { display: none !important; }
-    .data-table caption, .data-table th, .note { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    .footer-ttd-kanan { margin-top: 75px !important; }
-  }
-</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <!-- LINK EXTERNAL CSS -->
+  <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
 </head>
 <body>
-  <!-- Tombol Cetak, hanya tampil di layar -->
-  <button class="no-print btn-cetak" onclick="window.print()" style="padding:8px 20px;background:#25a244;color:#fff;border:none;border-radius:6px;font-size:16px;cursor:pointer">
+  <button class="no-print btn-cetak" onclick="window.print()">
     <i class="fas fa-print"></i> Cetak
   </button>
   <div class="container">
     <div class="header">
-      <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'"/>
       <div class="header-content">
         <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
         <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
@@ -214,7 +183,6 @@ function getStatusBadge($status) {
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-    <!-- TAGIHAN -->
     <table class="tagihan-table" style="margin-top:25px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
@@ -235,7 +203,6 @@ function getStatusBadge($status) {
       <?php endif; ?>
     </table>
 
-    <!-- RIWAYAT PEMBAYARAN JIKA SUDAH ADA PEMBAYARAN -->
     <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
       <div style="margin:18px 0 4px 0;font-size:15.2px;font-weight:500;">Riwayat Pembayaran:</div>
       <table class="tagihan-table" style="margin-bottom:18px;">
@@ -263,41 +230,36 @@ function getStatusBadge($status) {
         Informasi lebih lanjut hubungi:<br>
         Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
         Hotline SMK : <b>085880120889</b> (Bu Ina)
-</div>
-</div>
-<?php
-  $note_class = '';
-  if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
-  elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
-  elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
-?>
-<div class="note <?= $note_class ?>">
-  <?php if ($status_pembayaran === 'Belum Bayar'): ?>
-    <b>Catatan:</b><br>
-    Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
-    Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
-  <?php elseif ($status_pembayaran === 'Angsuran'): ?>
-    <b>Catatan:</b><br>
-    Siswa telah melakukan pembayaran sebagian (angsuran).<br>
-    Simpan bukti ini sebagai tanda terima pembayaran.
-  <?php elseif ($status_pembayaran === 'Lunas'): ?>
-    <b>Catatan:</b><br>
-    Siswa telah menyelesaikan seluruh pembayaran.<br>
-    Simpan bukti ini sebagai tanda lunas dan konfirmasi pendaftaran.
-  <?php else: ?>
-    <b>Catatan:</b><br>
-    Status pembayaran tidak diketahui.
-  <?php endif; ?>
-</div>
+      </div>
+    </div>
 
-<div class="footer-ttd-kanan">
-  <div class="ttd-block-kanan">
-    <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
-    <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
-    <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
-  </div>
-</div>
-</div> 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
-</body> 
+    <div class="note <?= $note_class ?>">
+      <?php if ($status_pembayaran === 'Belum Bayar'): ?>
+        <b>Catatan:</b><br>
+        Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
+        Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
+      <?php elseif ($status_pembayaran === 'Angsuran'): ?>
+        <b>Catatan:</b><br>
+        Siswa telah melakukan pembayaran sebagian (angsuran).<br>
+        Simpan bukti ini sebagai tanda terima pembayaran.
+      <?php elseif ($status_pembayaran === 'Lunas'): ?>
+        <b>Catatan:</b><br>
+        Siswa telah menyelesaikan seluruh pembayaran.<br>
+        Simpan bukti ini sebagai tanda lunas dan konfirmasi pendaftaran.
+      <?php else: ?>
+        <b>Catatan:</b><br>
+        Status pembayaran tidak diketahui.
+      <?php endif; ?>
+    </div>
+
+    <div class="footer-ttd-kanan">
+      <div class="ttd-block-kanan">
+        <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
+        <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
+        <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
+      </div>
+    </div>
+  </div> 
+
+</body>
 </html>
