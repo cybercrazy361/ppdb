@@ -12,6 +12,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
+// ====================
+// AMBIL DATA SISWA
+// ====================
 $stmt = $conn->prepare("SELECT * FROM siswa WHERE id=?");
 $stmt->bind_param('i', $id);
 $stmt->execute();
@@ -19,6 +22,9 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
+// ====================
+// AMBIL PETUGAS
+// ====================
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 
@@ -48,6 +54,61 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
+// =======================
+// CEK STATUS PEMBAYARAN
+// =======================
+$status_pembayaran = 'Belum Bayar';
+$uang_pangkal_id = 1; // ganti sesuai ID sistemmu
+$spp_id = 2;
+
+$stmtStatus = $conn->prepare("
+    SELECT
+      CASE
+        WHEN 
+            (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                WHERE p1.siswa_id = ? 
+                  AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                  AND pd1.status_pembayaran = 'Lunas'
+            ) > 0
+        AND
+            (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                WHERE p2.siswa_id = ? 
+                  AND pd2.jenis_pembayaran_id = $spp_id
+                  AND pd2.bulan = 'Juli'
+                  AND pd2.status_pembayaran = 'Lunas'
+            ) > 0
+        THEN 'Lunas'
+        WHEN 
+            (
+                (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                    WHERE p1.siswa_id = ? 
+                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                      AND pd1.status_pembayaran = 'Lunas'
+                ) > 0
+                OR
+                (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                    WHERE p2.siswa_id = ? 
+                      AND pd2.jenis_pembayaran_id = $spp_id
+                      AND pd2.bulan = 'Juli'
+                      AND pd2.status_pembayaran = 'Lunas'
+                ) > 0
+            )
+        THEN 'Angsuran'
+        ELSE 'Belum Bayar'
+      END AS status_pembayaran
+");
+$stmtStatus->bind_param('iiii', $id, $id, $id, $id);
+$stmtStatus->execute();
+$resultStatus = $stmtStatus->get_result();
+if ($rStatus = $resultStatus->fetch_assoc()) {
+    $status_pembayaran = $rStatus['status_pembayaran'] ?? 'Belum Bayar';
+}
+$stmtStatus->close();
+
 // ===================
 // Ambil tagihan awal
 // ===================
@@ -64,6 +125,7 @@ $stmtTagihan->execute();
 $res = $stmtTagihan->get_result();
 while ($t = $res->fetch_assoc()) $tagihan[] = $t;
 $stmtTagihan->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -173,6 +235,10 @@ $stmtTagihan->close();
     font-size: 13px; margin-top: 15px; color: #333;
     background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
   }
+  .note-success {
+    font-size: 13px; margin-top: 15px; color: #185e36;
+    background: #e6faed; border-left: 3.5px solid #13c276; padding: 10px 18px 8px 14px;
+  }
   .footer-ttd-kanan {
     width: 100%;
     display: flex;
@@ -206,6 +272,24 @@ $stmtTagihan->close();
     text-align: center;
     width: 100%;
   }
+  .status-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 3px 14px;
+    margin-bottom: 2px;
+    margin-top: 7px;
+    background: #e0f7ec;
+    color: #169e56;
+    border: 1px solid #25d684;
+    letter-spacing: .6px;
+  }
+  .status-belum {
+    background: #f6e8e8;
+    color: #c71b1b;
+    border: 1px solid #f09a9a;
+  }
   @media print {
     @page {
       size: A4 portrait;
@@ -233,7 +317,8 @@ $stmtTagihan->close();
     }
     .data-table caption,
     .data-table th,
-    .note {
+    .note,
+    .note-success {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
@@ -297,11 +382,60 @@ $stmtTagihan->close();
         Hotline SMK : <b>085880120889</b> (Bu Ina)
       </div>
     </div>
-    <div class="note">
-      <b>Catatan:</b><br>
-      Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
-      Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
-    </div>
+
+    <!-- STATUS PEMBAYARAN SECTION -->
+    <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
+      <div class="note-success">
+        <span class="status-badge"><?= strtoupper($status_pembayaran) ?></span>
+        <b>Pembayaran sudah dilakukan.</b><br>
+        Status pembayaran: <b><?= strtoupper($status_pembayaran) ?></b><br>
+        Berikut rincian pembayaran terakhir:
+      </div>
+      <!-- Tabel pembayaran terakhir -->
+      <table class="tagihan-table" style="margin-top:11px;">
+        <tr>
+          <th>Jenis</th>
+          <th>Bulan</th>
+          <th>Nominal</th>
+          <th>Status</th>
+          <th>Tanggal</th>
+        </tr>
+        <?php
+        // Ambil 5 pembayaran terakhir
+        $sqlPembayaran = $conn->prepare("
+          SELECT pd.jenis_pembayaran_id, jp.nama as jenis, pd.bulan, pd.nominal, pd.status_pembayaran, p.tanggal_pembayaran
+          FROM pembayaran_detail pd
+          JOIN pembayaran p ON pd.pembayaran_id = p.id
+          JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
+          WHERE p.siswa_id = ?
+          ORDER BY p.tanggal_pembayaran DESC
+          LIMIT 5
+        ");
+        $sqlPembayaran->bind_param('i', $id);
+        $sqlPembayaran->execute();
+        $rsPembayaran = $sqlPembayaran->get_result();
+        if ($rsPembayaran->num_rows): while($d = $rsPembayaran->fetch_assoc()): ?>
+        <tr>
+          <td><?= safe($d['jenis']) ?></td>
+          <td><?= safe($d['bulan']) ?></td>
+          <td>Rp <?= number_format($d['nominal'],0,',','.') ?></td>
+          <td><?= safe($d['status_pembayaran']) ?></td>
+          <td><?= tanggal_id($d['tanggal_pembayaran']) ?></td>
+        </tr>
+        <?php endwhile; else: ?>
+        <tr><td colspan="5" style="text-align:center;">Belum ada pembayaran tercatat.</td></tr>
+        <?php endif; $sqlPembayaran->close(); ?>
+      </table>
+    <?php else: ?>
+      <div class="note status-belum">
+        <span class="status-badge status-belum">BELUM BAYAR</span>
+        <b>Catatan:</b><br>
+        Bukti pendaftaran ini hanya menyatakan Anda telah mendaftar.<br>
+        Silakan lakukan pembayaran di bagian keuangan.<br>
+        Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
+      </div>
+    <?php endif; ?>
+
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
