@@ -402,22 +402,51 @@ body::-webkit-scrollbar-track,
 /* Kolom aksi horizontal, selalu sejajar */
 .table td.text-center {
     white-space: nowrap;
+    /* biar konten aksi tidak wrap ke bawah */
+    vertical-align: middle;
+    padding-top: 7px;
+    padding-bottom: 7px;
 }
 
 .table td.text-center .btn-sm {
     display: inline-flex;
     align-items: center;
-    margin: 0 4px 0 0;
-    /* jarak antar tombol */
+    margin: 0 5px 0 0;
+    /* Jarak antar tombol */
     vertical-align: middle;
+    margin-bottom: 0 !important;
+    /* Hapus margin bawah */
+    min-width: 86px;
 }
 
-/* Hapus margin-bottom pada btn-sm agar tidak turun di mobile */
-.table td.text-center .btn-sm {
-    margin-bottom: 0 !important;
+.table td.text-center .btn-sm:last-child {
+    margin-right: 0;
 }
 
 .table thead th {
     text-align: center !important;
     vertical-align: middle !important;
 }
+
+/* Responsive: tetap horizontal di mobile, tapi beri jarak lebih agar tetap klik-able */
+@media (max-width: 600px) {
+    .table td.text-center .btn-sm {
+        min-width: 78px;
+        font-size: 13px;
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+
+    .table td.text-center {
+        font-size: 13px;
+    }
+}
+
+/* Optional: supaya wrap kalau layarnya super sempit, bisa pakai: */
+/*
+@media (max-width: 420px) {
+    .table td.text-center {
+        white-space: normal;
+    }
+}
+*/

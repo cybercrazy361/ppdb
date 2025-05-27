@@ -32,6 +32,23 @@ function tanggal_id($tgl) {
     $year = date('Y', strtotime($tgl));
     return "$date $month $year";
 }
+
+// ===================
+// Ambil tagihan awal
+// ===================
+$tagihan = [];
+$stmtTagihan = $conn->prepare("
+    SELECT jp.nama AS jenis, sta.nominal
+    FROM siswa_tagihan_awal sta
+    JOIN jenis_pembayaran jp ON sta.jenis_pembayaran_id = jp.id
+    WHERE sta.siswa_id = ?
+    ORDER BY jp.id ASC
+");
+$stmtTagihan->bind_param('i', $id);
+$stmtTagihan->execute();
+$res = $stmtTagihan->get_result();
+while ($t = $res->fetch_assoc()) $tagihan[] = $t;
+$stmtTagihan->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -45,40 +62,6 @@ function tanggal_id($tgl) {
     border-radius: 10px; box-shadow: 0 0 8px rgba(60,60,60,0.13);
     padding: 28px 34px 24px 34px; border: 1px solid #d1dbe7;
   }
-
-.header {
-  position: relative;
-  min-height: 80px;
-  border-bottom: 2px solid #d1d5db;
-  margin-bottom: 18px;
-  padding-bottom: 9px;
-}
-
-.logo {
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
-  position: absolute;
-  left: 0;
-  top: -40px;  /* dari 'top: 0' menjadi 'top: -10px' atau lebih kecil lagi */
-  z-index: 2;
-}
-
-.header-content {
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  pointer-events: none; /* biar tombol print dll tetap bisa diklik */
-}
-
-@media print {
   .header {
     position: relative;
     min-height: 80px;
@@ -87,15 +70,14 @@ function tanggal_id($tgl) {
     padding-bottom: 9px;
   }
   .logo {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     object-fit: contain;
     position: absolute;
     left: 0;
-    top: -25px; /* atau sesuaikan */
+    top: -40px;
     z-index: 2;
   }
-  
   .header-content {
     width: 100%;
     position: absolute;
@@ -109,8 +91,37 @@ function tanggal_id($tgl) {
     text-align: center;
     pointer-events: none;
   }
-}
-
+  @media print {
+    .header {
+      position: relative;
+      min-height: 80px;
+      border-bottom: 2px solid #d1d5db;
+      margin-bottom: 18px;
+      padding-bottom: 9px;
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      position: absolute;
+      left: 0;
+      top: -25px;
+      z-index: 2;
+    }
+    .header-content {
+      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+    }
+  }
   .sekolah-title { font-size: 19px; font-weight: 700; color: #193871; text-transform: uppercase; letter-spacing: 1px;}
   .sub-title { font-size: 16px; font-weight: 500; }
   .tahun-ajaran { font-size: 15px; margin-bottom: 7px; }
@@ -126,6 +137,19 @@ function tanggal_id($tgl) {
   }
   .data-table th { background: #f2f6e9; text-align: left; width: 34%; }
   .data-table td { background: #fff; }
+  .tagihan-table {
+    width: 60%; min-width:270px; margin: 0 auto 18px auto; border-collapse: collapse;
+    background: #f9f9fa;
+    border-radius: 8px; overflow: hidden;
+  }
+  .tagihan-table th, .tagihan-table td {
+    border: 1px solid #b5b5b5;
+    padding: 8px 18px;
+    font-size: 15px;
+    text-align: left;
+  }
+  .tagihan-table th { background: #ecf3fd; text-align: left;}
+  .tagihan-table td { background: #fff; }
   .row-btm {
     display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 18px;
   }
@@ -134,85 +158,75 @@ function tanggal_id($tgl) {
     font-size: 13px; margin-top: 15px; color: #333;
     background: #f7f7fc; border-left: 3.5px solid #0497df; padding: 10px 18px 8px 14px;
   }
-
-.footer-ttd-kanan {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  margin-top: 65px;
-  min-height: 90px;
-}
-
-.ttd-block-kanan {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 200px;
-}
-
-.ttd-tanggal-kanan {
-  font-size: 17px;
-  margin-bottom: 70px;
-  text-align: center;
-  width: 100%;
-}
-
-.ttd-petugas-kanan {
-  font-weight: normal;
-  font-size: 21px;
-  margin-bottom: 1px;
-  text-align: center;
-  width: 100%;
-}
-
-.ttd-label-kanan {
-  font-weight: normal;
-  font-size: 17px;
-  text-align: center;
-  width: 100%;
-}
-
-
-/* PRINTING - supaya layout rapi dan warna tetap */
-@media print {
-  @page {
-    size: A4 portrait;
-    margin: 12mm;
-  }
-  html, body {
-    width: 210mm;
-    height: 297mm;
-    background: #fff !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  .container {
-    width: 100% !important;
-    max-width: 185mm !important;
-    min-height: 250mm;
-    margin: 0 auto !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    page-break-after: avoid;
-  }
-  .no-print {
-    display: none !important;
-  }
-  .data-table caption,
-  .data-table th,
-  .note {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
   .footer-ttd-kanan {
-    margin-top: 75px !important;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: 65px;
+    min-height: 90px;
   }
-}
-
+  .ttd-block-kanan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 200px;
+  }
+  .ttd-tanggal-kanan {
+    font-size: 17px;
+    margin-bottom: 70px;
+    text-align: center;
+    width: 100%;
+  }
+  .ttd-petugas-kanan {
+    font-weight: normal;
+    font-size: 21px;
+    margin-bottom: 1px;
+    text-align: center;
+    width: 100%;
+  }
+  .ttd-label-kanan {
+    font-weight: normal;
+    font-size: 17px;
+    text-align: center;
+    width: 100%;
+  }
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+    html, body {
+      width: 210mm;
+      height: 297mm;
+      background: #fff !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .container {
+      width: 100% !important;
+      max-width: 185mm !important;
+      min-height: 250mm;
+      margin: 0 auto !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
+      page-break-after: avoid;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .data-table caption,
+    .data-table th,
+    .note {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .footer-ttd-kanan {
+      margin-top: 75px !important;
+    }
+  }
 </style>
-
 </head>
 <body>
   <!-- Tombol Cetak, hanya tampil di layar -->
@@ -221,12 +235,12 @@ function tanggal_id($tgl) {
   </button>
   <div class="container">
     <div class="header">
-    <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
-    <div class="header-content">
+      <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <div class="header-content">
         <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
         <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
         <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
-    </div>
+      </div>
     </div>
 
     <div class="no-reg"><b>No. Reg / No Formulir :</b> <?= safe($row['no_formulir']) ?></div>
@@ -241,6 +255,26 @@ function tanggal_id($tgl) {
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
+    <!-- TABEL TAGIHAN AWAL -->
+    <table class="tagihan-table" style="margin-top:25px;">
+      <tr>
+        <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
+          <i class="fas fa-coins"></i> Verifikasi Tagihan Awal
+        </th>
+      </tr>
+      <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
+      <tr>
+        <td><?= safe($tg['jenis']) ?></td>
+        <td style="text-align:right;font-weight:600">
+          Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
+        </td>
+      </tr>
+      <?php endforeach; else: ?>
+      <tr>
+        <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
+      </tr>
+      <?php endif; ?>
+    </table>
     <div class="row-btm">
       <div class="info-contact">
         Informasi lebih lanjut hubungi:<br>
@@ -251,14 +285,14 @@ function tanggal_id($tgl) {
     <div class="note">
       <b>Catatan:</b><br>
       Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
-      Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
+      Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
     </div>
     <div class="footer-ttd-kanan">
-    <div class="ttd-block-kanan">
+      <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
         <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
         <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
-    </div>
+      </div>
     </div>
   </div>
   <!-- Icon FontAwesome agar tombol print ada ikon -->

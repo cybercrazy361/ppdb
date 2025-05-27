@@ -163,7 +163,7 @@ function getStatusPembayaranLabel($status) {
             <tr>
               <th>No</th><th>No Formulir</th><th>Nama</th><th>Jenis Kelamin</th>
               <th>Tempat/Tgl Lahir</th><th>Asal Sekolah</th><th>Alamat</th>
-              <th>No HP</th><th>No HP Ortu</th><th>Status Pembayaran</th>
+              <th>No HP</th><th>No HP Ortu</th><th>Progres Pembayaran</th>
               <th>Metode Pembayaran</th><th>Tgl Pendaftaran</th><th>Aksi</th>
             </tr>
           </thead>
@@ -186,32 +186,44 @@ function getStatusPembayaranLabel($status) {
                   <td><?= getStatusPembayaranLabel($row['status_pembayaran'] ?? '') ?></td>
                   <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '') ?></td>
                   <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') ?></td>
-                  <td class="text-center">
-                    <a href="print_siswa.php?id=<?= $row['id'] ?>"
-                       class="btn btn-success btn-sm mb-1" target="_blank">
-                      <i class="fas fa-print"></i> Print
-                    </a>
-                    <button class="btn btn-warning btn-sm editBtn"
-                            data-id="<?= $row['id'] ?>"
-                            data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
-                            data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
-                            data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
-                            data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>"
-                            data-tanggal_lahir="<?= htmlspecialchars($row['tanggal_lahir'] ?? '') ?>"
-                            data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
-                            data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
-                            data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
-                            data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
-                            data-bs-toggle="modal" data-bs-target="#editModal">
-                      <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-danger btn-sm deleteBtn"
-                            data-id="<?= $row['id'] ?>"
-                            data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
-                            data-bs-toggle="modal" data-bs-target="#deleteModal">
-                      <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                  </td>
+                  <td class="text-center d-flex flex-wrap justify-content-center gap-1">
+                  <a href="print_siswa.php?id=<?= $row['id'] ?>"
+                    class="btn btn-success btn-sm" target="_blank">
+                    <i class="fas fa-print"></i> Print
+                  </a>
+                  <button class="btn btn-info btn-sm verifyBtn"
+                          data-id="<?= $row['id'] ?>"
+                          data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
+                          data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
+                          data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
+                          data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
+                          data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
+                          data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
+                          data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
+                          data-bs-toggle="modal" data-bs-target="#verifyModal">
+                    <i class="fas fa-check-double"></i> Verifikasi
+                  </button>
+                  <button class="btn btn-warning btn-sm editBtn"
+                          data-id="<?= $row['id'] ?>"
+                          data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
+                          data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
+                          data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
+                          data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>"
+                          data-tanggal_lahir="<?= htmlspecialchars($row['tanggal_lahir'] ?? '') ?>"
+                          data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
+                          data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
+                          data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
+                          data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
+                          data-bs-toggle="modal" data-bs-target="#editModal">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-danger btn-sm deleteBtn"
+                          data-id="<?= $row['id'] ?>"
+                          data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
+                          data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash-alt"></i> Delete
+                  </button>
+                </td>
                 </tr>
               <?php endwhile;
             else: ?>
@@ -317,6 +329,61 @@ function getStatusPembayaranLabel($status) {
     </div></div>
   </div>
 
+  <!-- Modal Verifikasi -->
+<div class="modal fade" id="verifyModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="verifyForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Verifikasi Jenis Pembayaran</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="verifyId" name="id">
+          <div class="mb-2"><b>Nama:</b> <span id="verifyNama"></span></div>
+          <div class="mb-2"><b>No Formulir:</b> <span id="verifyNoFormulir"></span></div>
+          <div class="mb-3">
+            <label class="form-label">Pilih pembayaran yang akan diverifikasi:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="Uang Pangkal" id="cbUangPangkal" name="jenis_bayar[]">
+              <label class="form-check-label" for="cbUangPangkal">
+                Uang Pangkal (<span class="nominal" id="uangPangkalNominal">Rp -</span>)
+              </label>
+              <input type="number" min="0" step="1000" class="form-control form-control-sm mt-1" id="uangPangkalInput" placeholder="Nominal" style="max-width:140px;display:inline-block;">
+            </div>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" value="SPP" id="cbSPP" name="jenis_bayar[]">
+              <label class="form-check-label" for="cbSPP">
+                SPP (<span class="nominal" id="sppNominal">Rp -</span>)
+              </label>
+              <input type="number" min="0" step="1000" class="form-control form-control-sm mt-1" id="sppInput" placeholder="Nominal" style="max-width:140px;display:inline-block;">
+            </div>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" value="Seragam" id="cbSeragam" name="jenis_bayar[]">
+              <label class="form-check-label" for="cbSeragam">
+                Seragam (<span class="nominal" id="seragamNominal">Rp -</span>)
+              </label>
+              <input type="number" min="0" step="1000" class="form-control form-control-sm mt-1" id="seragamInput" placeholder="Nominal" style="max-width:140px;display:inline-block;">
+            </div>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" value="Kegiatan" id="cbKegiatan" name="jenis_bayar[]">
+              <label class="form-check-label" for="cbKegiatan">
+                Kegiatan (<span class="nominal" id="kegiatanNominal">Rp -</span>)
+              </label>
+              <input type="number" min="0" step="1000" class="form-control form-control-sm mt-1" id="kegiatanInput" placeholder="Nominal" style="max-width:140px;display:inline-block;">
+            </div>
+            <!-- Tambah jenis pembayaran lain jika perlu -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-success">Simpan Verifikasi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
   <script>
     // Edit button event listener
     document.querySelectorAll('.editBtn').forEach(button => {
@@ -346,6 +413,57 @@ function getStatusPembayaranLabel($status) {
     document.getElementById('sidebarToggle').addEventListener('click', () => {
       document.querySelector('.sidebar').classList.toggle('active');
     });
+
+document.querySelectorAll('.verifyBtn').forEach(button => {
+  button.addEventListener('click', () => {
+    document.getElementById('verifyId').value = button.getAttribute('data-id');
+    document.getElementById('verifyNama').innerText = button.getAttribute('data-nama');
+    document.getElementById('verifyNoFormulir').innerText = button.getAttribute('data-no_formulir');
+    // Reset form saat buka modal
+    ['cbUangPangkal','cbSPP','cbSeragam','cbKegiatan'].forEach(id => {
+      document.getElementById(id).checked = false;
+    });
+    ['uangPangkalInput','sppInput','seragamInput','kegiatanInput'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    // Optional: ambil nominal default dari server via AJAX
+    // Misal:
+    // document.getElementById('uangPangkalNominal').innerText = "Rp 2.500.000";
+  });
+});
+// Format nominal jadi rupiah
+function formatRupiah(angka) {
+  return 'Rp ' + (angka ? angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "-");
+}
+['uangPangkalInput','sppInput','seragamInput','kegiatanInput'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function() {
+    var nominalSpan = document.getElementById(id.replace('Input','Nominal'));
+    nominalSpan.innerText = formatRupiah(this.value);
+  });
+});
+// Tangani submit (AJAX/simpan manual sesuai backend)
+document.getElementById('verifyForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  // Ambil semua nilai pembayaran yang dipilih
+  const jenisBayar = [];
+  const values = {};
+  if(document.getElementById('cbUangPangkal').checked)
+    values['Uang Pangkal'] = document.getElementById('uangPangkalInput').value;
+  if(document.getElementById('cbSPP').checked)
+    values['SPP'] = document.getElementById('sppInput').value;
+  if(document.getElementById('cbSeragam').checked)
+    values['Seragam'] = document.getElementById('seragamInput').value;
+  if(document.getElementById('cbKegiatan').checked)
+    values['Kegiatan'] = document.getElementById('kegiatanInput').value;
+
+  // Kirim data ke server untuk disimpan (AJAX/fetch sesuai kebutuhan)
+  // contoh: alert
+  alert('Verifikasi:\n' + Object.entries(values).map(([k,v])=>`${k}: Rp ${Number(v).toLocaleString()}`).join('\n'));
+  // Jika pakai AJAX, kirim ke PHP proses verifikasi di sini
+  // lalu tampilkan notif sukses/gagal dan tutup modal
+  // bootstrap.Modal.getInstance(document.getElementById('verifyModal')).hide();
+});
+
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/sidebar_pendaftaran.js"></script>
