@@ -271,3 +271,19 @@
         max-width: 99vw;
     }
 }
+
+.sidebar-section-label {
+    font-size: 0.93rem;
+    font-weight: 700;
+    color: #7b91bf;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 18px 8px 6px 8px;
+    padding: 4px 2px 4px 14px;
+    border-left: 3.5px solid #355cfc55;
+    background: #f3f7fe;
+    border-radius: 7px;
+    opacity: 0.95;
+    /* Optional, line under */
+    /* border-bottom: 1px solid #e7ecff; */
+}

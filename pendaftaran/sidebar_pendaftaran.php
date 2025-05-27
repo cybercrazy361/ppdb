@@ -1,3 +1,4 @@
+<!-- sidebar_pendaftaran.php -->
 <nav class="sidebar">
   <div class="brand">SPMB <?= htmlspecialchars($unit) ?></div>
   <div class="nav flex-column">
@@ -21,6 +22,10 @@
       <i class="fas fa-user-edit"></i>
       <span>Input Progres Pendaftaran</span>
     </a>
+
+    <!-- SKAT DENGAN LABEL -->
+    <div class="sidebar-section-label">PROGRES PENDAFTAR</div>
+
     <a href="progres_pendaftaran.php"
       class="nav-link <?= ($active=='progrespendaftaran'?'active':'') ?>">
       <i class="fas fa-clipboard-list"></i>
@@ -40,3 +45,4 @@
     -->
   </div>
 </nav>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
