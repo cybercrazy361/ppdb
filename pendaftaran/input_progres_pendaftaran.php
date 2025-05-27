@@ -30,9 +30,7 @@ if (empty($_SESSION['csrf_token'])) {
             </div>
         </header>
         <div class="container-form">
-            <div class="form-card">
-                <h3 class="form-title mb-1">input Progres Pendaftaran</h3>
-                
+            <div class="form-card">               
                 <form action="proses_calon_pendaftar.php" method="POST" autocomplete="off">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="row g-3">
