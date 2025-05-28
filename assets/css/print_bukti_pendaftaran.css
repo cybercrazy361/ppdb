@@ -405,12 +405,22 @@ body {
     padding: 0;
 }
 
-/* Lebarkan kolom tanggal riwayat pembayaran */
-.tagihan-table.riwayat-bayar td:last-child,
-.tagihan-table.riwayat-bayar th:last-child {
-    width: 120px !important;
-    min-width: 100px !important;
-    max-width: 180px !important;
-    text-align: left;
-    white-space: normal;
+/* Paksa kolom tanggal lebih lebar, override global! */
+.riwayat-bayar th:last-child,
+.riwayat-bayar td:last-child,
+.riwayat-bayar .tgl-lebar {
+    min-width: 120px !important;
+    width: 22% !important;
+    max-width: 210px !important;
+    text-align: left !important;
+    font-size: 15px !important;
+    white-space: nowrap !important;
+}
+
+.riwayat-bayar th:nth-child(5),
+.riwayat-bayar td:nth-child(5) {
+    min-width: 60px !important;
+    width: 10% !important;
+    max-width: 70px !important;
+    text-align: center !important;
 }
