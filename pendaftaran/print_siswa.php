@@ -175,16 +175,21 @@ $no_invoice = $row['no_invoice'] ?? '';
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
     <table class="data-table">
-      <caption>DATA CALON PESERTA DIDIK BARU</caption>
-      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
-      <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
-      <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
-      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
-      <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
-      <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
-      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
-      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
-    </table>
+  <colgroup>
+    <col style="width:40%">
+    <col style="width:60%">
+  </colgroup>
+  <caption>DATA CALON PESERTA DIDIK BARU</caption>
+  <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
+  <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
+  <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
+  <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
+  <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
+  <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
+  <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
+  <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
+</table>
+
     <table class="tagihan-table" style="margin-top:25px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
