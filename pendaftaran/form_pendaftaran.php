@@ -25,6 +25,22 @@ function display_errors() {
 }
 
 $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
+
+// ==== Generate NO INVOICE AUTO ====
+// Format: INV-[YEAR]-[UNIT]-[SEQ]
+$tahun = date('Y');
+$prefix = "INV-{$tahun}-{$unit}-";
+$today = date('Y-m-d');
+$stmt = $conn->prepare("SELECT COUNT(*) as total FROM siswa WHERE unit = ? AND DATE(created_at) = ?");
+$stmt->bind_param('ss', $unit, $today);
+$stmt->execute();
+$res = $stmt->get_result();
+$urut = 1;
+if ($row = $res->fetch_assoc()) {
+    $urut = intval($row['total']) + 1;
+}
+$stmt->close();
+$no_invoice = $prefix . str_pad($urut, 3, '0', STR_PAD_LEFT);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -49,7 +65,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
   <!-- Navbar Header -->
   <header class="navbar">
     <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-    <div class="title">Progres Pendaftaran Murid baru <?= htmlspecialchars($unit) ?></div>
+    <div class="title">Progres Pendaftaran Murid Baru <?= htmlspecialchars($unit) ?></div>
     <div class="user-menu">
       <small>Halo, <?= htmlspecialchars($_SESSION['nama']) ?></small>
       <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
@@ -65,12 +81,12 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 
         <div class="row g-4">
           <div class="col-12 col-md-6">
-            <label for="no_formulir" class="form-label">No Formulir</label>
+            <label for="no_invoice" class="form-label">No Invoice</label>
             <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-              <input type="text" id="no_formulir" name="no_formulir"
-                     class="form-control" placeholder="Contoh: 2025-SMA-001"
-                     required>
+              <span class="input-group-text"><i class="fas fa-receipt"></i></span>
+              <input type="text" id="no_invoice" name="no_invoice"
+                     class="form-control" value="<?= htmlspecialchars($no_invoice) ?>"
+                     readonly>
             </div>
           </div>
 
