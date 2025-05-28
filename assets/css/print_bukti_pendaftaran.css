@@ -378,3 +378,29 @@ body {
     text-align: center;
     letter-spacing: 0.7px;
 }
+
+.riwayat-bayar th,
+.riwayat-bayar td {
+    font-size: 13.2px !important;
+    padding: 5px 7px !important;
+}
+
+/* RAPATKAN .row-btm DAN .info-contact */
+.row-btm {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 2px;
+    /* Rapatkan dari 6px/18px ke 2px */
+}
+
+.info-contact {
+    font-size: 13.5px;
+    line-height: 1.18;
+    white-space: pre-line;
+    text-align: left;
+    font-weight: 500;
+    color: #111;
+    margin: 0;
+    padding: 0;
+}

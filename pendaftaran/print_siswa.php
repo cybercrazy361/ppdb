@@ -111,11 +111,11 @@ $res = $stmtTagihan->get_result();
 while ($t = $res->fetch_assoc()) $tagihan[] = $t;
 $stmtTagihan->close();
 
-// Riwayat pembayaran terakhir
+// Riwayat pembayaran terakhir (TARIK CASHBACK JUGA)
 $pembayaran_terakhir = [];
 if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar = $conn->prepare("
-        SELECT jp.nama AS jenis, pd.jumlah, pd.status_pembayaran, pd.bulan, p.tanggal_pembayaran
+        SELECT jp.nama AS jenis, pd.jumlah, pd.status_pembayaran, pd.bulan, p.tanggal_pembayaran, pd.cashback
         FROM pembayaran_detail pd
         JOIN pembayaran p ON pd.pembayaran_id = p.id
         JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
@@ -175,21 +175,20 @@ $no_invoice = $row['no_invoice'] ?? '';
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
     <table class="data-table">
-  <colgroup>
-    <col style="width:40%">
-    <col style="width:60%">
-  </colgroup>
-  <caption>DATA CALON PESERTA DIDIK BARU</caption>
-  <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
-  <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
-  <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
-  <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
-  <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
-  <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
-  <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
-  <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
-</table>
-
+      <colgroup>
+        <col style="width:40%">
+        <col style="width:60%">
+      </colgroup>
+      <caption>DATA CALON PESERTA DIDIK BARU</caption>
+      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
+      <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
+      <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
+      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
+      <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
+      <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
+      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
+      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
+    </table>
     <table class="tagihan-table" style="margin-top:25px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
@@ -211,10 +210,19 @@ $no_invoice = $row['no_invoice'] ?? '';
     </table>
     <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
       <div style="margin:18px 0 4px 0;font-size:15.2px;font-weight:500;">Riwayat Pembayaran:</div>
-      <table class="tagihan-table" style="margin-bottom:18px;">
+      <table class="tagihan-table riwayat-bayar" style="margin-bottom:18px;">
+        <colgroup>
+          <col style="width:23%">
+          <col style="width:22%">
+          <col style="width:16%">
+          <col style="width:13%">
+          <col style="width:14%">
+          <col style="width:12%">
+        </colgroup>
         <tr>
           <th>Jenis</th>
           <th>Nominal</th>
+          <th>Cashback</th>
           <th>Status</th>
           <th>Bulan</th>
           <th>Tanggal</th>
@@ -223,6 +231,9 @@ $no_invoice = $row['no_invoice'] ?? '';
         <tr>
           <td><?= safe($b['jenis']) ?></td>
           <td style="text-align:right;">Rp <?= number_format($b['jumlah'],0,',','.') ?></td>
+          <td style="text-align:right;">
+            <?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'],0,',','.') : '-' ?>
+          </td>
           <td><?= safe($b['status_pembayaran']) ?></td>
           <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
           <td><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
