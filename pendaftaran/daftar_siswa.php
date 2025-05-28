@@ -161,7 +161,7 @@ function getStatusPembayaranLabel($status) {
         <table class="table table-hover table-bordered align-middle">
           <thead>
             <tr>
-              <th>No</th><th>No Formulir</th><th>Nama</th><th>Jenis Kelamin</th>
+              <th>No</th><th>No Invoice</th><th>Nama</th><th>Jenis Kelamin</th>
               <th>Tempat/Tgl Lahir</th><th>Asal Sekolah</th><th>Alamat</th>
               <th>No HP</th><th>No HP Ortu</th><th>Progres Pembayaran</th>
               <th>Metode Pembayaran</th><th>Tgl Pendaftaran</th><th>Aksi</th>
@@ -269,7 +269,7 @@ function getStatusPembayaranLabel($status) {
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-3"><label class="form-label">No Formulir</label>
+          <div class="mb-3"><label class="form-label">No Invoice</label>
             <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
           </div>
           <div class="mb-3"><label class="form-label">Nama</label>
@@ -341,7 +341,7 @@ function getStatusPembayaranLabel($status) {
         <div class="modal-body">
           <input type="hidden" id="verifyId" name="id">
           <div class="mb-2"><b>Nama:</b> <span id="verifyNama"></span></div>
-          <div class="mb-2"><b>No Formulir:</b> <span id="verifyNoFormulir"></span></div>
+          <div class="mb-2"><b>No invoice:</b> <span id="verifyNoFormulir"></span></div>
           <div class="mb-3">
             <label class="form-label">Pilih pembayaran yang akan diverifikasi:</label>
             <div class="form-check">
