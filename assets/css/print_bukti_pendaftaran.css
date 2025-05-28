@@ -380,3 +380,26 @@ body {
         top: -25px !important;
     }
 }
+
+.no-reg-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.no-reg-label {
+    min-width: 110px;
+    /* Biar rata ke kanan */
+}
+
+.no-reg-sep {
+    width: 16px;
+    /* Lebar titik dua biar pas rata */
+    text-align: center;
+}
+
+.no-reg-val {
+    flex: 1;
+}
