@@ -32,7 +32,7 @@ $bulan_order = ["Juli","Agustus","September","Oktober","November","Desember",
 // Tangkap data dari form
 $no_formulir         = isset($_POST['no_formulir'])      ? sanitize($_POST['no_formulir'])      : '';
 $nama                = isset($_POST['nama'])             ? sanitize($_POST['nama'])             : '';
-$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])  ? sanitize($_POST['tahun_pelajaran'])  : '';
+$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])  ? sanitize($_POST['tahun_pelajaran'])  : '';  // perbaikan nama index
 $metode_pembayaran   = isset($_POST['metode_pembayaran'])? sanitize($_POST['metode_pembayaran']): '';
 $keterangan          = isset($_POST['keterangan'])       ? sanitize($_POST['keterangan'])       : '';
 $jenis_pembayaran    = isset($_POST['jenis_pembayaran']) && is_array($_POST['jenis_pembayaran']) ? $_POST['jenis_pembayaran'] : [];
@@ -49,8 +49,6 @@ if ($nama === '')               $errors[] = 'Nama siswa tidak valid.';
 if ($tahun_pelajaran === '')    $errors[] = 'Tahun Pelajaran harus diisi.';
 if ($metode_pembayaran === '')  $errors[] = 'Metode Pembayaran harus dipilih.';
 if (count($jenis_pembayaran) === 0) $errors[] = 'Setidaknya satu Jenis Pembayaran harus dipilih.';
-
-$spp_bulan_diajukan = []; // simpan semua bulan SPP yang diajukan di transaksi ini
 
 // Validasi tiap item dan akumulasi total
 for ($i = 0; $i < count($jenis_pembayaran); $i++) {
@@ -90,8 +88,6 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
     if ($jenis_nama === 'spp') {
         if ($bulan_val === '' || array_search($bulan_val, $bulan_order) === false) {
             $errors[] = "Item ".($i+1).": Bulan harus dipilih dan valid untuk SPP.";
-        } else {
-            $spp_bulan_diajukan[] = $bulan_val;
         }
     } else {
         if ($bulan_val !== '') {
@@ -176,43 +172,6 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
         if ($effective > $sisa) {
             $errors[] = "Item ".($i+1).": Pembayaran (".number_format($effective,0,',','.').") melebihi sisa ".number_format($sisa,0,',','.').".";
             continue;
-        }
-    }
-}
-
-// === CEK LONCAT SPP di server-side ===
-if (count($spp_bulan_diajukan) > 0) {
-    // Ambil semua bulan SPP yang sudah lunas dari database
-    $stmt = $conn->prepare("
-        SELECT bulan 
-        FROM pembayaran_detail pd
-        JOIN pembayaran p ON p.id = pd.pembayaran_id
-        WHERE p.no_formulir = ? 
-          AND pd.bulan IS NOT NULL
-          AND p.tahun_pelajaran = ?
-          AND pd.status_pembayaran = 'Lunas'
-    ");
-    $stmt->bind_param('ss', $no_formulir, $tahun_pelajaran);
-    $stmt->execute();
-    $res_bulan = $stmt->get_result();
-    $bulan_lunas = [];
-    while ($row = $res_bulan->fetch_assoc()) {
-        if ($row['bulan']) $bulan_lunas[] = $row['bulan'];
-    }
-    $stmt->close();
-
-    // Cari bulan pertama yang belum lunas
-    $bulan_pertama_belum_lunas = null;
-    foreach ($bulan_order as $b) {
-        if (!in_array($b, $bulan_lunas)) {
-            $bulan_pertama_belum_lunas = $b;
-            break;
-        }
-    }
-    // Jika ada request bayar SPP tapi yang diajukan bukan bulan paling awal yg belum lunas, tolak!
-    foreach ($spp_bulan_diajukan as $b) {
-        if ($b !== $bulan_pertama_belum_lunas) {
-            $errors[] = "Pembayaran SPP hanya boleh dilakukan untuk bulan pertama yang belum lunas ($bulan_pertama_belum_lunas), tidak bisa loncat ke $b.";
         }
     }
 }
