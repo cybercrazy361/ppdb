@@ -10,39 +10,30 @@ body {
     background: #f6f8fa;
     margin: 0;
     padding: 20px 25px;
-    /* padding kiri kanan sedikit lebih besar untuk cetak A4 */
     color: #222;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.35;
-    /* vertical spacing lebih rapat */
 }
 
-/* Container utama */
 .container {
     width: 210mm;
-    /* Ukuran kertas A4 */
     max-width: 100%;
     margin: 0 auto;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
     padding: 18px 25px 18px 25px;
-    /* padding lebih rapat */
     border: 1px solid #d1dbe7;
     page-break-after: avoid;
-    box-sizing: border-box;
 }
 
-/* Header */
 .header {
     position: relative;
     min-height: 80px;
     border-bottom: 2px solid #d1d5db;
     margin-bottom: 12px;
-    /* rapatkan margin */
     padding-bottom: 6px;
-    /* rapatkan padding */
 }
 
 .logo {
@@ -89,17 +80,13 @@ body {
     margin-bottom: 0;
 }
 
-/* No. Reg / No Formulir */
 .no-reg {
     margin-bottom: 6px;
-    /* rapatkan margin */
     font-weight: 500;
     font-size: 15px;
     text-align: left;
-    /* rata kiri */
 }
 
-/* Status Pembayaran */
 .status-row {
     font-size: 17px;
     font-weight: bold;
@@ -108,20 +95,15 @@ body {
     background: #f6f7fc;
     border-radius: 7px;
     padding: 6px 0;
-    /* padding lebih rapat */
     margin-bottom: 12px;
-    /* rapatkan margin */
     border: 1px solid #c5d1e8;
 }
 
-/* Tabel Data Calon Siswa dan Tagihan */
 .data-table,
 .tagihan-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 6px;
-    /* rapatkan margin */
-    box-sizing: border-box;
 }
 
 .data-table caption,
@@ -130,57 +112,43 @@ body {
     font-weight: 700;
     font-size: 15px;
     padding: 5px 0;
-    /* padding lebih rapat */
     border-radius: 4px 4px 0 0;
     margin-bottom: 0;
     text-align: center;
     letter-spacing: 0.7px;
 }
 
-/* Kolom disesuaikan lebar dan alignment */
 .data-table th,
 .data-table td,
 .tagihan-table th,
 .tagihan-table td {
     border: 1px solid #777;
     padding: 5px 10px;
-    /* padding lebih rapat */
     font-size: 14px;
     vertical-align: middle;
 }
 
-/* Header tabel rata kiri untuk data-table */
 .data-table th {
     text-align: left;
     padding-left: 12px;
 }
 
-/* Khusus tabel riwayat pembayaran (tagihan-table) */
-.tagihan-table colgroup col:nth-child(1),
-.tagihan-table colgroup col:nth-child(2) {
-    width: 25%;
-}
-
-/* Kolom Jenis */
 .tagihan-table th:nth-child(1),
 .tagihan-table td:nth-child(1) {
     text-align: left;
 }
 
-/* Kolom Nominal */
 .tagihan-table th:nth-child(2),
 .tagihan-table td:nth-child(2) {
     text-align: right;
 }
 
-/* Kolom Status */
 .tagihan-table th:nth-child(3),
 .tagihan-table td:nth-child(3) {
     width: 20%;
     text-align: left;
 }
 
-/* Kolom Bulan */
 .tagihan-table th:nth-child(4),
 .tagihan-table td:nth-child(4) {
     width: 15%;
@@ -191,11 +159,9 @@ body {
     max-width: 80px;
 }
 
-/* Kolom Tanggal */
 .tagihan-table th:nth-child(5),
 .tagihan-table td:nth-child(5) {
     width: 25%;
-    /* Lebarkan kolom tanggal dari 20% ke 25% */
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
@@ -208,7 +174,6 @@ body {
     font-weight: 600;
 }
 
-/* Default kolom isi rata kiri */
 .data-table td,
 .tagihan-table td {
     background: #fff;
@@ -225,37 +190,29 @@ body {
     background: #ecf3fd;
 }
 
-/* Informasi kontak */
 .row-btm {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     margin-top: 6px;
-    /* rapatkan jarak atas */
 }
 
 .info-contact {
     font-size: 13.5px;
     line-height: 1.25;
-    /* rapatkan line height */
     white-space: pre-line;
     text-align: left;
-    /* rata kiri */
     font-weight: 500;
     color: #111;
     margin-top: 0;
     margin-bottom: 6px;
-    /* rapatkan margin bawah */
 }
 
-/* Catatan Warna Sesuai Status */
 .note {
     font-size: 13px;
     margin-top: 6px;
-    /* rapatkan margin atas */
     padding: 8px 16px 6px 14px;
     border-left: 3.5px solid #0497df;
-    box-sizing: border-box;
     border-radius: 3px;
     color: #333;
     background: #f7f7fc;
@@ -281,14 +238,12 @@ body {
     border-color: #c3e6cb;
 }
 
-/* Footer Tanda Tangan Petugas */
 .footer-ttd-kanan {
     width: 100%;
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
     margin-top: 40px;
-    /* rapatkan margin */
     min-height: 90px;
 }
 
@@ -302,7 +257,6 @@ body {
 .ttd-tanggal-kanan {
     font-size: 16px;
     margin-bottom: 50px;
-    /* rapatkan margin */
     text-align: center;
     width: 100%;
 }
@@ -322,7 +276,6 @@ body {
     width: 100%;
 }
 
-/* Responsive dan Print */
 @media print {
     @page {
         size: A4 portrait;

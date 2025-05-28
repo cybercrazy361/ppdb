@@ -142,6 +142,9 @@ $note_class = '';
 if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
 elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
 elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
+
+// No Invoice, pastikan kolom ini ada di tabel siswa!
+$no_invoice = $row['no_invoice'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -149,7 +152,6 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
   <meta charset="UTF-8" />
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <!-- LINK EXTERNAL CSS -->
   <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
 </head>
 <body>
@@ -165,12 +167,13 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
         <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
       </div>
     </div>
-
-    <div class="no-reg"><b>No. Reg / No Formulir :</b> <?= safe($row['no_formulir']) ?></div>
+    <div class="no-reg"><b>No. Formulir :</b> <?= safe($row['no_formulir']) ?></div>
+    <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+      <div class="no-reg"><b>No. Invoice :</b> <?= safe($no_invoice) ?></div>
+    <?php endif; ?>
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
-
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
@@ -182,7 +185,6 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
-
     <table class="tagihan-table" style="margin-top:25px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
@@ -202,7 +204,6 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
       </tr>
       <?php endif; ?>
     </table>
-
     <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
       <div style="margin:18px 0 4px 0;font-size:15.2px;font-weight:500;">Riwayat Pembayaran:</div>
       <table class="tagihan-table" style="margin-bottom:18px;">
@@ -224,7 +225,6 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
         <?php endforeach; ?>
       </table>
     <?php endif; ?>
-
     <div class="row-btm">
       <div class="info-contact">
         Informasi lebih lanjut hubungi:<br>
@@ -232,7 +232,6 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
         Hotline SMK : <b>085880120889</b> (Bu Ina)
       </div>
     </div>
-
     <div class="note <?= $note_class ?>">
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
         <b>Catatan:</b><br>
@@ -251,7 +250,6 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
         Status pembayaran tidak diketahui.
       <?php endif; ?>
     </div>
-
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
@@ -260,6 +258,5 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
       </div>
     </div>
   </div> 
-
 </body>
 </html>
