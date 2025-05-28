@@ -189,26 +189,27 @@ function getStatusPembayaranLabel($status) {
         </a>
       </div>
       <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>No Formulir</th>
-              <th>No Invoice</th>
-              <th>Nama</th>
-              <th>Jenis Kelamin</th>
-              <th>Tempat/Tgl Lahir</th>
-              <th>Asal Sekolah</th>
-              <th>Alamat</th>
-              <th>No HP</th>
-              <th>No HP Ortu</th>
-              <th>Progres Pembayaran</th>
-              <th>Metode Pembayaran</th>
-              <th>Tgl Pendaftaran</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle" style="min-width:1800px;">
+    <thead>
+      <tr>
+        <th style="min-width:50px;">No</th>
+        <th style="min-width:120px;">No Formulir</th>
+        <th style="min-width:120px;">No Invoice</th>
+        <th style="min-width:180px;">Nama</th>
+        <th style="min-width:120px;">Jenis Kelamin</th>
+        <th style="min-width:180px;">Tempat/Tgl Lahir</th>
+        <th style="min-width:160px;">Asal Sekolah</th>
+        <th style="min-width:220px;">Alamat</th>
+        <th style="min-width:120px;">No HP</th>
+        <th style="min-width:130px;">No HP Ortu</th>
+        <th style="min-width:180px;">Progres Pembayaran</th>
+        <th style="min-width:150px;">Metode Pembayaran</th>
+        <th style="min-width:160px;">Tgl Pendaftaran</th>
+        <th style="min-width:150px;">Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
             <?php if ($result->num_rows): $no = $offset + 1;
               while ($row = $result->fetch_assoc()): ?>
                 <tr>
