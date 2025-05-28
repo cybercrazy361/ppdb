@@ -192,7 +192,7 @@ $no_invoice = $row['no_invoice'] ?? '';
     <table class="tagihan-table" style="margin-top:25px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
-          <i class="fas fa-coins"></i> Proses pembayaran awal
+          <i class="fas fa-coins"></i> Keterangan Pembayaran
         </th>
       </tr>
       <?php if(count($tagihan)): foreach($tagihan as $tg): ?>

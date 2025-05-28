@@ -1,4 +1,4 @@
-/* Reset dan Global */
+/* ============ RESET & GLOBAL ============ */
 *,
 *::before,
 *::after {
@@ -16,6 +16,7 @@ body {
     line-height: 1.35;
 }
 
+/* ============ CONTAINER ============ */
 .container {
     width: 210mm;
     max-width: 100%;
@@ -23,11 +24,13 @@ body {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
-    padding: 18px 25px 18px 25px;
+    padding: 18px 25px;
     border: 1px solid #d1dbe7;
     page-break-after: avoid;
+    box-sizing: border-box;
 }
 
+/* ============ HEADER ============ */
 .header {
     position: relative;
     min-height: 80px;
@@ -87,6 +90,7 @@ body {
     text-align: left;
 }
 
+/* ============ STATUS ROW ============ */
 .status-row {
     font-size: 17px;
     font-weight: bold;
@@ -99,15 +103,24 @@ body {
     border: 1px solid #c5d1e8;
 }
 
-.data-table,
-.tagihan-table {
+/* ============ DATA TABLE 40:60 ============ */
+.data-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 6px;
+    table-layout: fixed;
+    box-sizing: border-box;
 }
 
-.data-table caption,
-.tagihan-table caption {
+.data-table colgroup col:first-child {
+    width: 40%;
+}
+
+.data-table colgroup col:last-child {
+    width: 60%;
+}
+
+.data-table caption {
     background: #eaf2ce;
     font-weight: 700;
     font-size: 15px;
@@ -119,95 +132,121 @@ body {
 }
 
 .data-table th,
-.data-table td,
-.tagihan-table th,
-.tagihan-table td {
+.data-table td {
     border: 1px solid #777;
     padding: 5px 10px;
     font-size: 14px;
     vertical-align: middle;
+    background: #fff;
 }
 
 .data-table th {
+    background: #f2f6e9;
+    font-weight: 600;
     text-align: left;
     padding-left: 12px;
 }
 
-.tagihan-table th:nth-child(1),
-.tagihan-table td:nth-child(1) {
+/* ============ RIWAYAT PEMBAYARAN TABLE ============ */
+.riwayat-bayar {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f9f9fa;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.riwayat-bayar th,
+.riwayat-bayar td {
+    border: 1px solid #777;
+    font-size: 15px !important;
+    padding: 5px 7px !important;
+    background: #fff;
+    vertical-align: middle;
     text-align: left;
 }
 
-.tagihan-table th:nth-child(2),
-.tagihan-table td:nth-child(2) {
+.riwayat-bayar th {
+    background: #ecf3fd;
+    font-weight: 600;
+    text-align: left;
+}
+
+.riwayat-bayar th:nth-child(1),
+.riwayat-bayar td:nth-child(1) {
+    width: 18%;
+}
+
+.riwayat-bayar th:nth-child(2),
+.riwayat-bayar td:nth-child(2) {
+    width: 18%;
     text-align: right;
 }
 
-.tagihan-table th:nth-child(3),
-.tagihan-table td:nth-child(3) {
-    width: 20%;
+.riwayat-bayar th:nth-child(3),
+.riwayat-bayar td:nth-child(3) {
+    width: 18%;
+    text-align: right;
+}
+
+.riwayat-bayar th:nth-child(4),
+.riwayat-bayar td:nth-child(4) {
+    width: 13%;
     text-align: left;
 }
 
-.tagihan-table th:nth-child(4),
-.tagihan-table td:nth-child(4) {
-    width: 15%;
+.riwayat-bayar th:nth-child(5),
+.riwayat-bayar td:nth-child(5) {
+    width: 13%;
     text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80px;
 }
 
-.tagihan-table th:nth-child(5),
-.tagihan-table td:nth-child(5) {
-    width: 25%;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.riwayat-bayar th:last-child,
+.riwayat-bayar td:last-child,
+.riwayat-bayar .tgl-lebar {
+    min-width: 120px !important;
+    width: 20% !important;
+    max-width: 170px !important;
+    text-align: left !important;
+    font-size: 15px !important;
+    white-space: nowrap !important;
 }
 
-.data-table th,
-.tagihan-table th {
-    background: #f2f6e9;
-    font-weight: 600;
+@media (max-width: 700px) {
+
+    .data-table,
+    .riwayat-bayar {
+        font-size: 12px;
+    }
 }
 
-.data-table td,
-.tagihan-table td {
-    background: #fff;
-    text-align: left;
-}
-
-.tagihan-table {
-    background: #f9f9fa;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.tagihan-table th {
-    background: #ecf3fd;
-}
-
+/* ============ INFO KONTAK RINGKAS ============ */
 .row-btm {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-top: 6px;
+    margin-top: 2px;
+    /* Rapatkan */
 }
 
 .info-contact {
     font-size: 13.5px;
-    line-height: 1.25;
+    line-height: 1.13;
     white-space: pre-line;
     text-align: left;
     font-weight: 500;
     color: #111;
-    margin-top: 0;
-    margin-bottom: 6px;
+    margin: 0;
+    padding: 0;
 }
 
+.info-contact br {
+    line-height: 90%;
+}
+
+/* ============ NOTE & STATUS ============ */
 .note {
     font-size: 13px;
     margin-top: 6px;
@@ -238,6 +277,7 @@ body {
     border-color: #c3e6cb;
 }
 
+/* ============ TANDA TANGAN ============ */
 .footer-ttd-kanan {
     width: 100%;
     display: flex;
@@ -276,6 +316,7 @@ body {
     width: 100%;
 }
 
+/* ============ PRINT OVERRIDES ============ */
 @media print {
     @page {
         size: A4 portrait;
@@ -334,93 +375,4 @@ body {
         height: 120px !important;
         top: -25px !important;
     }
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 6px;
-    box-sizing: border-box;
-    table-layout: fixed;
-}
-
-.data-table colgroup col:first-child {
-    width: 40%;
-}
-
-.data-table colgroup col:last-child {
-    width: 60%;
-}
-
-.data-table th,
-.data-table td {
-    border: 1px solid #777;
-    padding: 5px 10px;
-    font-size: 14px;
-    vertical-align: middle;
-    background: #fff;
-}
-
-.data-table th {
-    background: #f2f6e9;
-    font-weight: 600;
-    text-align: left;
-    padding-left: 12px;
-}
-
-.data-table caption {
-    background: #eaf2ce;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 5px 0;
-    border-radius: 4px 4px 0 0;
-    margin-bottom: 0;
-    text-align: center;
-    letter-spacing: 0.7px;
-}
-
-.riwayat-bayar th,
-.riwayat-bayar td {
-    font-size: 13.2px !important;
-    padding: 5px 7px !important;
-}
-
-/* RAPATKAN .row-btm DAN .info-contact */
-.row-btm {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin-top: 2px;
-    /* Rapatkan dari 6px/18px ke 2px */
-}
-
-.info-contact {
-    font-size: 13.5px;
-    line-height: 1.18;
-    white-space: pre-line;
-    text-align: left;
-    font-weight: 500;
-    color: #111;
-    margin: 0;
-    padding: 0;
-}
-
-/* Paksa kolom tanggal lebih lebar, override global! */
-.riwayat-bayar th:last-child,
-.riwayat-bayar td:last-child,
-.riwayat-bayar .tgl-lebar {
-    min-width: 120px !important;
-    width: 22% !important;
-    max-width: 210px !important;
-    text-align: left !important;
-    font-size: 15px !important;
-    white-space: nowrap !important;
-}
-
-.riwayat-bayar th:nth-child(5),
-.riwayat-bayar td:nth-child(5) {
-    min-width: 60px !important;
-    width: 10% !important;
-    max-width: 70px !important;
-    text-align: center !important;
 }
