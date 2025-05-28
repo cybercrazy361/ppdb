@@ -184,9 +184,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       </div>
     <?php endif; ?>
 
-    <div class="status-row">
-      Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
-    </div>
     <table class="data-table">
       <colgroup>
         <col style="width:40%">
@@ -254,6 +251,11 @@ $no_invoice = $row['no_invoice'] ?? '';
         <?php endforeach; ?>
       </table>
     <?php endif; ?>
+
+        <div class="status-row">
+          Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
+        </div>
+        
     <div class="row-btm">
       <div class="info-contact">
         Informasi lebih lanjut hubungi:<br>
