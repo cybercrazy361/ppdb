@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Ambil dan bersihkan input
-$no_formulir   = trim($_POST['no_formulir']   ?? '');
+$no_invoice    = trim($_POST['no_invoice']    ?? ''); // Ambil dari field form
 $nama          = trim($_POST['nama']          ?? '');
 $jenis_kelamin = trim($_POST['jenis_kelamin'] ?? '');
 $tempat_lahir  = trim($_POST['tempat_lahir']  ?? '');
@@ -27,7 +27,7 @@ $alamat        = trim($_POST['alamat']        ?? '');
 
 // Validasi setiap field wajib
 $fields = [
-    'No Formulir'      => $no_formulir,
+    'No Invoice'       => $no_invoice,
     'Nama Lengkap'     => $nama,
     'Jenis Kelamin'    => $jenis_kelamin,
     'Tempat Lahir'     => $tempat_lahir,
@@ -77,7 +77,7 @@ if (!$stmt) {
 // Bind parameter dan eksekusi
 $stmt->bind_param(
     'sssssssssss',
-    $no_formulir,
+    $no_invoice, // simpan ke kolom no_formulir di database!
     $nama,
     $jenis_kelamin,
     $tempat_lahir,
