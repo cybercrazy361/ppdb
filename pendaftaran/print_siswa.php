@@ -111,7 +111,7 @@ $res = $stmtTagihan->get_result();
 while ($t = $res->fetch_assoc()) $tagihan[] = $t;
 $stmtTagihan->close();
 
-// Riwayat pembayaran terakhir (TARIK CASHBACK JUGA)
+// Riwayat pembayaran terakhir + cashback
 $pembayaran_terakhir = [];
 if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar = $conn->prepare("
@@ -130,7 +130,6 @@ if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar->close();
 }
 
-// Badge warna status
 function getStatusBadge($status) {
     $status = strtolower($status);
     if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold"><i class="fas fa-check-circle"></i> Lunas</span>';
@@ -236,7 +235,7 @@ $no_invoice = $row['no_invoice'] ?? '';
           </td>
           <td><?= safe($b['status_pembayaran']) ?></td>
           <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
-          <td><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
+          <td class="tgl-lebar"><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
         </tr>
         <?php endforeach; ?>
       </table>

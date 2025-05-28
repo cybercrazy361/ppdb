@@ -1,4 +1,4 @@
-/* ============ RESET & GLOBAL ============ */
+/* === RESET & GLOBAL === */
 *,
 *::before,
 *::after {
@@ -16,7 +16,7 @@ body {
     line-height: 1.35;
 }
 
-/* ============ CONTAINER ============ */
+/* === CONTAINER === */
 .container {
     width: 210mm;
     max-width: 100%;
@@ -24,13 +24,13 @@ body {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
-    padding: 18px 25px;
+    padding: 18px 25px 18px 25px;
     border: 1px solid #d1dbe7;
     page-break-after: avoid;
     box-sizing: border-box;
 }
 
-/* ============ HEADER ============ */
+/* === HEADER === */
 .header {
     position: relative;
     min-height: 80px;
@@ -90,7 +90,7 @@ body {
     text-align: left;
 }
 
-/* ============ STATUS ROW ============ */
+/* === STATUS ROW === */
 .status-row {
     font-size: 17px;
     font-weight: bold;
@@ -103,7 +103,7 @@ body {
     border: 1px solid #c5d1e8;
 }
 
-/* ============ DATA TABLE 40:60 ============ */
+/* === DATA TABLE UTAMA 40-60 === */
 .data-table {
     width: 100%;
     border-collapse: collapse;
@@ -147,7 +147,8 @@ body {
     padding-left: 12px;
 }
 
-/* ============ RIWAYAT PEMBAYARAN TABLE ============ */
+/* === TABEL TAGIHAN/RIWAYAT PEMBAYARAN (dengan .riwayat-bayar) === */
+.tagihan-table,
 .riwayat-bayar {
     width: 100%;
     border-collapse: collapse;
@@ -158,16 +159,19 @@ body {
     box-sizing: border-box;
 }
 
+.tagihan-table th,
+.tagihan-table td,
 .riwayat-bayar th,
 .riwayat-bayar td {
     border: 1px solid #777;
     font-size: 15px !important;
     padding: 5px 7px !important;
-    background: #fff;
     vertical-align: middle;
+    background: #fff;
     text-align: left;
 }
 
+.tagihan-table th,
 .riwayat-bayar th {
     background: #ecf3fd;
     font-weight: 600;
@@ -193,13 +197,13 @@ body {
 
 .riwayat-bayar th:nth-child(4),
 .riwayat-bayar td:nth-child(4) {
-    width: 13%;
+    width: 12%;
     text-align: left;
 }
 
 .riwayat-bayar th:nth-child(5),
 .riwayat-bayar td:nth-child(5) {
-    width: 13%;
+    width: 12%;
     text-align: center;
 }
 
@@ -207,8 +211,8 @@ body {
 .riwayat-bayar td:last-child,
 .riwayat-bayar .tgl-lebar {
     min-width: 120px !important;
-    width: 20% !important;
-    max-width: 170px !important;
+    width: 22% !important;
+    max-width: 210px !important;
     text-align: left !important;
     font-size: 15px !important;
     white-space: nowrap !important;
@@ -222,13 +226,13 @@ body {
     }
 }
 
-/* ============ INFO KONTAK RINGKAS ============ */
+/* === RAPATKAN INFO KONTAK BAWAH === */
 .row-btm {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     margin-top: 2px;
-    /* Rapatkan */
+    /* Lebih rapat */
 }
 
 .info-contact {
@@ -246,7 +250,7 @@ body {
     line-height: 90%;
 }
 
-/* ============ NOTE & STATUS ============ */
+/* === NOTE & STATUS === */
 .note {
     font-size: 13px;
     margin-top: 6px;
@@ -277,7 +281,7 @@ body {
     border-color: #c3e6cb;
 }
 
-/* ============ TANDA TANGAN ============ */
+/* === FOOTER/TTD === */
 .footer-ttd-kanan {
     width: 100%;
     display: flex;
@@ -316,7 +320,7 @@ body {
     width: 100%;
 }
 
-/* ============ PRINT OVERRIDES ============ */
+/* === PRINT OVERRIDES === */
 @media print {
     @page {
         size: A4 portrait;
