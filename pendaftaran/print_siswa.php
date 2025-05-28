@@ -158,14 +158,19 @@ $no_invoice = $row['no_invoice'] ?? '';
     <i class="fas fa-print"></i> Cetak
   </button>
   <div class="container">
-    <div class="header">
-      <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'"/>
-      <div class="header-content">
-        <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
-        <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
-        <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
-      </div>
-    </div>
+    <<div class="header">
+  <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'"/>
+  <div class="header-content">
+    <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
+    <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
+      <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
+    <?php else: ?>
+      <div class="sub-title">BUKTI REGISTRASI PENDAFTARAN SISWA BARU</div>
+    <?php endif; ?>
+    <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
+  </div>
+</div>
+
     <div class="no-reg"><b>No. Formulir :</b> <?= safe($row['no_formulir']) ?></div>
     <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
       <div class="no-reg"><b>No. Invoice :</b> <?= safe($no_invoice) ?></div>
