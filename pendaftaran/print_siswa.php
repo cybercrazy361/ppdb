@@ -163,11 +163,11 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div class="header-content">
         <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
         <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-          <div class="sub-title">BUKTI PENDAFTARAN MURID DIDIK BARU</div>
+          <div class="sub-title"><b>BUKTI PENDAFTARAN MURID DIDIK BARU</b></div>
         <?php else: ?>
-          <div class="sub-title">BUKTI PENDAFTARAN CALON MURID BARU</div>
+          <div class="sub-title"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
         <?php endif; ?>
-        <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
+        <div class="tahun-ajaran"><b>TAHUN AJARAN 2025/2026</b></div>
       </div>
     </div>
 
