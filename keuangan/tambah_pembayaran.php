@@ -32,7 +32,7 @@ $bulan_order = ["Juli","Agustus","September","Oktober","November","Desember",
 // Tangkap data dari form
 $no_formulir         = isset($_POST['no_formulir'])      ? sanitize($_POST['no_formulir'])      : '';
 $nama                = isset($_POST['nama'])             ? sanitize($_POST['nama'])             : '';
-$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])  ? sanitize($_POST['tahun_pelajaran'])  : '';  // perbaikan nama index
+$tahun_pelajaran     = isset($_POST['tahun_pelajaran'])  ? sanitize($_POST['tahun_pelajaran'])  : '';
 $metode_pembayaran   = isset($_POST['metode_pembayaran'])? sanitize($_POST['metode_pembayaran']): '';
 $keterangan          = isset($_POST['keterangan'])       ? sanitize($_POST['keterangan'])       : '';
 $jenis_pembayaran    = isset($_POST['jenis_pembayaran']) && is_array($_POST['jenis_pembayaran']) ? $_POST['jenis_pembayaran'] : [];
@@ -49,6 +49,26 @@ if ($nama === '')               $errors[] = 'Nama siswa tidak valid.';
 if ($tahun_pelajaran === '')    $errors[] = 'Tahun Pelajaran harus diisi.';
 if ($metode_pembayaran === '')  $errors[] = 'Metode Pembayaran harus dipilih.';
 if (count($jenis_pembayaran) === 0) $errors[] = 'Setidaknya satu Jenis Pembayaran harus dipilih.';
+
+// ========== Ambil bulan SPP yang sudah lunas ==========
+$paid_months = [];
+if ($no_formulir && $tahun_pelajaran) {
+    $sql_paid = "
+        SELECT pd.bulan
+        FROM pembayaran_detail pd
+        JOIN pembayaran p ON p.id=pd.pembayaran_id
+        JOIN jenis_pembayaran jp ON jp.id=pd.jenis_pembayaran_id
+        WHERE p.no_formulir=? AND p.tahun_pelajaran=? AND jp.nama='SPP' AND pd.status_pembayaran='Lunas'
+    ";
+    $stmt_paid = $conn->prepare($sql_paid);
+    $stmt_paid->bind_param('ss', $no_formulir, $tahun_pelajaran);
+    $stmt_paid->execute();
+    $res_paid = $stmt_paid->get_result();
+    while ($row_paid = $res_paid->fetch_assoc()) {
+        if ($row_paid['bulan']) $paid_months[] = $row_paid['bulan'];
+    }
+    $stmt_paid->close();
+}
 
 // Validasi tiap item dan akumulasi total
 for ($i = 0; $i < count($jenis_pembayaran); $i++) {
@@ -88,6 +108,22 @@ for ($i = 0; $i < count($jenis_pembayaran); $i++) {
     if ($jenis_nama === 'spp') {
         if ($bulan_val === '' || array_search($bulan_val, $bulan_order) === false) {
             $errors[] = "Item ".($i+1).": Bulan harus dipilih dan valid untuk SPP.";
+        }
+        // ================= BLOKIR LONCAT BULAN SPP ==============
+        // Urutkan paid_months sesuai $bulan_order
+        $bulan_progress = [];
+        foreach ($bulan_order as $b) if (in_array($b, $paid_months)) $bulan_progress[] = $b;
+        // Cari bulan pertama yang belum lunas
+        $first_unpaid = '';
+        foreach ($bulan_order as $b) {
+            if (!in_array($b, $paid_months)) {
+                $first_unpaid = $b;
+                break;
+            }
+        }
+        // Validasi: user harus pilih bulan pertama yang belum lunas, tidak boleh loncat
+        if ($bulan_val !== $first_unpaid) {
+            $errors[] = "Item ".($i+1).": Pembayaran SPP harus urut, bulan berikutnya hanya boleh dibayar jika bulan sebelumnya lunas. Silakan bayar bulan <b>$first_unpaid</b> terlebih dahulu.";
         }
     } else {
         if ($bulan_val !== '') {

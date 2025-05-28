@@ -54,7 +54,6 @@ if ($metode_pembayaran === '')  $errors[] = 'Metode Pembayaran harus dipilih.';
 if ($tahun_pelajaran === '')    $errors[] = 'Tahun Pelajaran harus diisi.';
 if (count($jenis_list) === 0)   $errors[] = 'Setidaknya satu jenis pembayaran harus dipilih.';
 
-// PROSES UPDATE DIMULAI
 $conn->begin_transaction();
 try {
     // Verifikasi ownership & ambil siswa_id + no_formulir
@@ -72,11 +71,33 @@ try {
     }
     $row = $res->fetch_assoc();
     $siswa_id = $row['siswa_id'];
-    $no_formulir = $row['no_formulir'];  // <<< DIBUTUHKAN UNTUK CEK SPP/BLOKIR
+    $no_formulir = $row['no_formulir'];
 
     $stmt->close();
 
-    // Validasi tiap item pembayaran
+    // === BLOKIR LONCAT SPP (ambil paid_months SPP selain pembayaran ini) ===
+    $paid_months = [];
+    $sql_paid = "
+        SELECT pd.bulan
+        FROM pembayaran_detail pd
+        JOIN pembayaran p ON p.id = pd.pembayaran_id
+        JOIN jenis_pembayaran jp ON jp.id = pd.jenis_pembayaran_id
+        WHERE p.no_formulir = ? 
+          AND p.tahun_pelajaran = ? 
+          AND jp.nama = 'SPP' 
+          AND pd.status_pembayaran = 'Lunas'
+          AND p.id != ?
+    ";
+    $stmt_paid = $conn->prepare($sql_paid);
+    $stmt_paid->bind_param('ssi', $no_formulir, $tahun_pelajaran, $pembayaran_id);
+    $stmt_paid->execute();
+    $res_paid = $stmt_paid->get_result();
+    while ($row_paid = $res_paid->fetch_assoc()) {
+        if ($row_paid['bulan']) $paid_months[] = $row_paid['bulan'];
+    }
+    $stmt_paid->close();
+
+    // Validasi tiap item pembayaran (termasuk urutan SPP)
     for ($i = 0; $i < count($jenis_list); $i++) {
         $jenis_id = $jenis_list[$i];
         $j_str    = $jumlah_list[$i] ?? '0';
@@ -113,6 +134,39 @@ try {
         if ($nama_jenis === 'spp') {
             if ($bulan === '' || array_search($bulan, $bulan_order) === false) {
                 $errors[] = "Item ".($i+1).": Bulan harus dipilih dan valid untuk SPP.";
+            }
+            // Cek SPP harus urut
+            $bulan_progress = [];
+            foreach ($bulan_order as $b) if (in_array($b, $paid_months)) $bulan_progress[] = $b;
+            // Cari bulan pertama yang belum lunas
+            $first_unpaid = '';
+            foreach ($bulan_order as $b) {
+                if (!in_array($b, $paid_months)) {
+                    $first_unpaid = $b;
+                    break;
+                }
+            }
+            // Cek apakah di input ada SPP bulan yang loncat
+            // Ambil semua bulan SPP yang diinputkan (hanya bulan pada proses update ini)
+            $bulan_spp_in_update = [];
+            for ($k = 0; $k < count($jenis_list); $k++) {
+                if ($jenis_list[$k] == $jenis_id) {
+                    $stmt_spp = $conn->prepare("SELECT nama FROM jenis_pembayaran WHERE id=?");
+                    $stmt_spp->bind_param('i', $jenis_list[$k]);
+                    $stmt_spp->execute();
+                    $res_spp = $stmt_spp->get_result();
+                    $nm_spp = strtolower($res_spp->fetch_assoc()['nama']);
+                    $stmt_spp->close();
+                    if ($nm_spp === 'spp') {
+                        $b_spp = $bulan_list[$k] ?? '';
+                        if ($b_spp) $bulan_spp_in_update[] = $b_spp;
+                    }
+                }
+            }
+            // Lakukan validasi urutan hanya pada item SPP pertama pada form
+            // (agar error tidak muncul banyak2)
+            if ($bulan !== $first_unpaid && !in_array($first_unpaid, $bulan_spp_in_update)) {
+                $errors[] = "Item ".($i+1).": Pembayaran SPP harus urut. Bulan berikutnya hanya boleh dibayar jika bulan sebelumnya lunas. Silakan bayar bulan <b>$first_unpaid</b> terlebih dahulu.";
             }
         } else {
             if ($bulan !== '') {
@@ -166,9 +220,10 @@ try {
                   AND pd.jenis_pembayaran_id=? 
                   AND pd.bulan=? 
                   AND p.tahun_pelajaran=?
+                  AND p.id != ?
             ";
             $stm = $conn->prepare($sql);
-            $stm->bind_param('siis', $no_formulir, $jenis_id, $bulan, $tahun_pelajaran);
+            $stm->bind_param('siisi', $no_formulir, $jenis_id, $bulan, $tahun_pelajaran, $pembayaran_id);
         } else {
             $sql = "
                 SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev
@@ -178,9 +233,10 @@ try {
                   AND pd.jenis_pembayaran_id=? 
                   AND pd.bulan IS NULL 
                   AND p.tahun_pelajaran=?
+                  AND p.id != ?
             ";
             $stm = $conn->prepare($sql);
-            $stm->bind_param('sis', $no_formulir, $jenis_id, $tahun_pelajaran);
+            $stm->bind_param('sisi', $no_formulir, $jenis_id, $tahun_pelajaran, $pembayaran_id);
         }
         $stm->execute();
         $prev = floatval($stm->get_result()->fetch_assoc()['prev']);
@@ -267,9 +323,10 @@ try {
                   AND pd.jenis_pembayaran_id = ? 
                   AND pd.bulan = ? 
                   AND p.tahun_pelajaran = ?
+                  AND p.id != ?
             ";
             $stm3 = $conn->prepare($sql2);
-            $stm3->bind_param('iiss', $siswa_id, $jenis_id, $bulan, $tahun_pelajaran);
+            $stm3->bind_param('iissi', $siswa_id, $jenis_id, $bulan, $tahun_pelajaran, $pembayaran_id);
         } else {
             $sql2 = "
                 SELECT COALESCE(SUM(pd.jumlah+COALESCE(pd.cashback,0)),0) AS prev,
@@ -280,9 +337,10 @@ try {
                   AND pd.jenis_pembayaran_id = ? 
                   AND pd.bulan IS NULL 
                   AND p.tahun_pelajaran = ?
+                  AND p.id != ?
             ";
             $stm3 = $conn->prepare($sql2);
-            $stm3->bind_param('iis', $siswa_id, $jenis_id, $tahun_pelajaran);
+            $stm3->bind_param('iisi', $siswa_id, $jenis_id, $tahun_pelajaran, $pembayaran_id);
         }
         $stm3->execute();
         $row2 = $stm3->get_result()->fetch_assoc();

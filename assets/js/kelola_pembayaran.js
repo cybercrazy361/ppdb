@@ -218,18 +218,45 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
                 bulanSelect.style.display = 'block';
-                // disable opsi bulan yang sudah lunas
+
+                // Bulan urut dari Juli ke Juni
+                const bulan_order = [
+                    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+                    "Januari", "Februari", "Maret", "April", "Mei", "Juni"
+                ];
+
+                // Cari bulan pertama yang belum lunas
+                let firstUnpaid = null;
+                for (const bulan of bulan_order) {
+                    if (!paidMonths.includes(bulan)) {
+                        firstUnpaid = bulan;
+                        break;
+                    }
+                }
+
                 Array.from(bulanSelect.options).forEach(opt => {
+                    if (!opt.value) return; // skip placeholder
+
+                    // Hanya bulan pertama yang belum lunas yang enable
+                    if (opt.value === firstUnpaid) {
+                        opt.disabled = false;
+                        opt.text = opt.text.replace(' (Terkunci)', '');
+                    } else {
+                        opt.disabled = true;
+                        if (!opt.text.includes(' (Terkunci)')) opt.text += ' (Terkunci)';
+                    }
+                    // Kalau sudah lunas, tetap di-disable & tulis lunas
                     if (paidMonths.includes(opt.value)) {
                         opt.disabled = true;
                         if (!opt.text.includes(' (Lunas)')) opt.text += ' (Lunas)';
-                    } else {
-                        opt.disabled = false;
-                        opt.text = opt.text.replace(' (Lunas)', '');
                     }
                 });
-                if (selectedBulan) bulanSelect.value = selectedBulan;
+
+                // Otomatis pilih bulan pertama yang belum lunas
+                if (firstUnpaid) bulanSelect.value = firstUnpaid;
+                else bulanSelect.value = '';
             }
+
 
             // Inisialisasi tampilan
             toggleCashbackInput();
