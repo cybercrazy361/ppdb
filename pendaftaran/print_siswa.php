@@ -216,8 +216,8 @@ $no_invoice = $row['no_invoice'] ?? '';
           <col style="width:19%">
           <col style="width:20%">
           <col style="width:13%">
-          <col style="width:10%">
           <col style="width:20%">
+          <col style="width:10%">
         </colgroup>
         <tr>
           <th>Jenis</th>
