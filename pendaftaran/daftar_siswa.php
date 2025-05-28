@@ -17,9 +17,29 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $offset = ($page > 1) ? ($page * $limit) - $limit : 0;
 
-// Hitung total siswa
-$stmtTotal = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
-$stmtTotal->bind_param('s', $unit);
+// Ambil kata kunci pencarian
+$search = trim($_GET['q'] ?? '');
+
+// Untuk filter query SQL
+$searchSql = '';
+$searchParam = '';
+if ($search !== '') {
+    $searchSql = "AND (
+        s.no_formulir LIKE ? OR
+        s.no_invoice LIKE ? OR
+        s.nama LIKE ?
+    )";
+    $searchParam = '%' . $search . '%';
+}
+
+// Hitung total siswa (untuk paginasi)
+$sqlCount = "SELECT COUNT(*) AS total FROM siswa s WHERE s.unit = ? $searchSql";
+$stmtTotal = $conn->prepare($sqlCount);
+if ($search !== '') {
+    $stmtTotal->bind_param('ssss', $unit, $searchParam, $searchParam, $searchParam);
+} else {
+    $stmtTotal->bind_param('s', $unit);
+}
 $stmtTotal->execute();
 $totalResult = $stmtTotal->get_result();
 $totalSiswa = $totalResult->fetch_assoc()['total'] ?? 0;
@@ -79,11 +99,16 @@ $query = "
         END AS status_pembayaran
     FROM siswa s
     WHERE s.unit = ?
+    $searchSql
     ORDER BY s.id DESC
     LIMIT ? OFFSET ?
 ";
 $stmt = $conn->prepare($query);
-$stmt->bind_param('sii', $unit, $limit, $offset);
+if ($search !== '') {
+    $stmt->bind_param('ssssii', $unit, $searchParam, $searchParam, $searchParam, $limit, $offset);
+} else {
+    $stmt->bind_param('sii', $unit, $limit, $offset);
+}
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -139,23 +164,30 @@ function getStatusPembayaranLabel($status) {
       </div>
     </header>
 
-        <?php if (!empty($_SESSION['flash_message'])): ?>
-        <div class="alert alert-<?= $_SESSION['flash_type'] ?> alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['flash_message']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <?php 
-        // Hapus setelah ditampilkan
-        unset($_SESSION['flash_message'], $_SESSION['flash_type']);
-        endif;
-        ?>
+    <?php if (!empty($_SESSION['flash_message'])): ?>
+    <div class="alert alert-<?= $_SESSION['flash_type'] ?> alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['flash_message']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php 
+    // Hapus setelah ditampilkan
+    unset($_SESSION['flash_message'], $_SESSION['flash_type']);
+    endif;
+    ?>
 
     <div class="container mt-1">
-        <div class="mb-1">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <form method="get" class="d-flex" style="gap:6px;">
+          <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" class="form-control" placeholder="Cari No Formulir, No Invoice, Nama...">
+          <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+          <?php if($search): ?>
+            <a href="<?= strtok($_SERVER["REQUEST_URI"],'?') ?>" class="btn btn-outline-danger" title="Reset Cari"><i class="fas fa-times"></i></a>
+          <?php endif; ?>
+        </form>
         <a href="cetak_daftar_siswa.php" target="_blank" class="btn btn-primary">
-            <i class="fas fa-print"></i> Cetak Daftar Lengkap
+          <i class="fas fa-print"></i> Cetak Daftar Lengkap
         </a>
-        </div>
+      </div>
       <div class="table-responsive">
         <table class="table table-hover table-bordered align-middle">
           <thead>
@@ -249,7 +281,7 @@ function getStatusPembayaranLabel($status) {
       <nav class="mt-4">
         <ul class="pagination justify-content-center">
           <li class="page-item <?= ($page <= 1 ? 'disabled' : '') ?>">
-            <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
+            <a class="page-link" href="?q=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
           </li>
           <?php
           $max_links = 5;
@@ -260,11 +292,11 @@ function getStatusPembayaranLabel($status) {
           }
           for ($i = $start; $i <= $end; $i++): ?>
             <li class="page-item <?= ($i === $page ? 'active' : '') ?>">
-              <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+              <a class="page-link" href="?q=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
             </li>
           <?php endfor; ?>
           <li class="page-item <?= ($page >= $totalPages ? 'disabled' : '') ?>">
-            <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+            <a class="page-link" href="?q=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
           </li>
         </ul>
       </nav>
