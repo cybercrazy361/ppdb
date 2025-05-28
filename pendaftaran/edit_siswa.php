@@ -1,10 +1,11 @@
 <?php
-session_start();                // ✱ PENTING: mulai session
+session_start();
 include '../database_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id            = $_POST['id'];
     $no_formulir   = $_POST['no_formulir'];
+    $no_invoice    = $_POST['no_invoice']; // Ambil No Invoice dari form
     $nama          = $_POST['nama'];
     $jenis_kelamin = $_POST['jenis_kelamin'];
     $tempat_lahir  = $_POST['tempat_lahir'];
@@ -16,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $query = "UPDATE siswa SET 
                 no_formulir   = ?,
+                no_invoice    = ?,      -- Tambahkan kolom ini
                 nama          = ?, 
                 jenis_kelamin = ?,
                 tempat_lahir  = ?,
@@ -27,8 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param(
-        'sssssssssi',
+        'ssssssssssi',
         $no_formulir,
+        $no_invoice,
         $nama,
         $jenis_kelamin,
         $tempat_lahir,
@@ -41,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     );
 
     if ($stmt->execute()) {
-        // ✱ Set flash message sebelum redirect
         $_SESSION['flash_message'] = 'Data siswa berhasil diperbarui.';
         $_SESSION['flash_type']    = 'success';
         header('Location: daftar_siswa.php');

@@ -9,13 +9,13 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Jika bukan POST, kembali ke form
     header('Location: form_pendaftaran.php');
     exit();
 }
 
 // Ambil dan bersihkan input
-$no_invoice    = trim($_POST['no_invoice']    ?? ''); // Ambil dari field form
+$no_formulir   = trim($_POST['no_formulir']   ?? '');
+$no_invoice    = trim($_POST['no_invoice']    ?? '');
 $nama          = trim($_POST['nama']          ?? '');
 $jenis_kelamin = trim($_POST['jenis_kelamin'] ?? '');
 $tempat_lahir  = trim($_POST['tempat_lahir']  ?? '');
@@ -27,6 +27,7 @@ $alamat        = trim($_POST['alamat']        ?? '');
 
 // Validasi setiap field wajib
 $fields = [
+    'No Formulir'      => $no_formulir,
     'No Invoice'       => $no_invoice,
     'Nama Lengkap'     => $nama,
     'Jenis Kelamin'    => $jenis_kelamin,
@@ -48,12 +49,13 @@ foreach ($fields as $label => $value) {
 
 // Semua validasi lolos, siapkan simpan ke database
 $status_pembayaran = 'Pending';
-$unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
+$unit = $_SESSION['unit'];
 
-// Prepare SQL INSERT
+// Prepare SQL INSERT (dengan no_formulir dan no_invoice)
 $sql = "
     INSERT INTO siswa (
         no_formulir,
+        no_invoice,
         nama,
         jenis_kelamin,
         tempat_lahir,
@@ -64,7 +66,7 @@ $sql = "
         alamat,
         status_pembayaran,
         unit
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ";
 
 $stmt = $conn->prepare($sql);
@@ -74,10 +76,10 @@ if (!$stmt) {
     exit();
 }
 
-// Bind parameter dan eksekusi
 $stmt->bind_param(
-    'sssssssssss',
-    $no_invoice, // simpan ke kolom no_formulir di database!
+    'ssssssssssss',
+    $no_formulir,
+    $no_invoice,
     $nama,
     $jenis_kelamin,
     $tempat_lahir,
@@ -91,16 +93,15 @@ $stmt->bind_param(
 );
 
 if ($stmt->execute()) {
-    // Berhasil: arahkan kembali ke dashboard dengan alert
     echo "<script>
             alert('Pendaftaran berhasil!');
             window.location.href = 'dashboard_pendaftaran.php';
           </script>";
 } else {
-    // Gagal eksekusi
     $_SESSION['error_message'] = "Pendaftaran gagal: " . $stmt->error;
     header('Location: form_pendaftaran.php');
 }
 
 $stmt->close();
 $conn->close();
+?>

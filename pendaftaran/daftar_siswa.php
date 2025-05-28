@@ -150,7 +150,6 @@ function getStatusPembayaranLabel($status) {
         endif;
         ?>
 
-
     <div class="container mt-1">
         <div class="mb-1">
         <a href="cetak_daftar_siswa.php" target="_blank" class="btn btn-primary">
@@ -161,10 +160,20 @@ function getStatusPembayaranLabel($status) {
         <table class="table table-hover table-bordered align-middle">
           <thead>
             <tr>
-              <th>No</th><th>No Invoice</th><th>Nama</th><th>Jenis Kelamin</th>
-              <th>Tempat/Tgl Lahir</th><th>Asal Sekolah</th><th>Alamat</th>
-              <th>No HP</th><th>No HP Ortu</th><th>Progres Pembayaran</th>
-              <th>Metode Pembayaran</th><th>Tgl Pendaftaran</th><th>Aksi</th>
+              <th>No</th>
+              <th>No Formulir</th>
+              <th>No Invoice</th>
+              <th>Nama</th>
+              <th>Jenis Kelamin</th>
+              <th>Tempat/Tgl Lahir</th>
+              <th>Asal Sekolah</th>
+              <th>Alamat</th>
+              <th>No HP</th>
+              <th>No HP Ortu</th>
+              <th>Progres Pembayaran</th>
+              <th>Metode Pembayaran</th>
+              <th>Tgl Pendaftaran</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -173,6 +182,7 @@ function getStatusPembayaranLabel($status) {
                 <tr>
                   <td><?= $no++ ?></td>
                   <td><?= htmlspecialchars($row['no_formulir']   ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['no_invoice']   ?? '') ?></td>
                   <td><?= htmlspecialchars($row['nama']          ?? '') ?></td>
                   <td><?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?></td>
                   <td>
@@ -195,6 +205,7 @@ function getStatusPembayaranLabel($status) {
                           data-id="<?= $row['id'] ?>"
                           data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
                           data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
+                          data-no_invoice="<?= htmlspecialchars($row['no_invoice'] ?? '') ?>"
                           data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
                           data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
                           data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
@@ -206,6 +217,7 @@ function getStatusPembayaranLabel($status) {
                   <button class="btn btn-warning btn-sm editBtn"
                           data-id="<?= $row['id'] ?>"
                           data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
+                          data-no_invoice="<?= htmlspecialchars($row['no_invoice'] ?? '') ?>"
                           data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
                           data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
                           data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>"
@@ -227,7 +239,7 @@ function getStatusPembayaranLabel($status) {
                 </tr>
               <?php endwhile;
             else: ?>
-              <tr><td colspan="13" class="text-center">Tidak ada data siswa.</td></tr>
+              <tr><td colspan="14" class="text-center">Tidak ada data siswa.</td></tr>
             <?php endif; ?>
           </tbody>
         </table>
@@ -269,8 +281,11 @@ function getStatusPembayaranLabel($status) {
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-3"><label class="form-label">No Invoice</label>
+          <div class="mb-3"><label class="form-label">No Formulir</label>
             <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
+          </div>
+          <div class="mb-3"><label class="form-label">No Invoice</label>
+            <input type="text" class="form-control" id="editNoInvoice" name="no_invoice" required>
           </div>
           <div class="mb-3"><label class="form-label">Nama</label>
             <input type="text" class="form-control" id="editNama" name="nama" required>
@@ -341,7 +356,7 @@ function getStatusPembayaranLabel($status) {
         <div class="modal-body">
           <input type="hidden" id="verifyId" name="id">
           <div class="mb-2"><b>Nama:</b> <span id="verifyNama"></span></div>
-          <div class="mb-2"><b>No invoice:</b> <span id="verifyNoFormulir"></span></div>
+          <div class="mb-2"><b>No invoice:</b> <span id="verifyNoInvoice"></span></div>
           <div class="mb-3">
             <label class="form-label">Pilih pembayaran yang akan diverifikasi:</label>
             <div class="form-check">
@@ -390,6 +405,7 @@ function getStatusPembayaranLabel($status) {
       button.addEventListener('click', () => {
         document.getElementById('editId').value          = button.getAttribute('data-id');
         document.getElementById('editNoFormulir').value  = button.getAttribute('data-no_formulir');
+        document.getElementById('editNoInvoice').value   = button.getAttribute('data-no_invoice');
         document.getElementById('editNama').value        = button.getAttribute('data-nama');
         document.getElementById('editJenisKelamin').value = button.getAttribute('data-jenis_kelamin');
         document.getElementById('editTempatLahir').value = button.getAttribute('data-tempat_lahir');
@@ -414,65 +430,63 @@ function getStatusPembayaranLabel($status) {
       document.querySelector('.sidebar').classList.toggle('active');
     });
 
-document.querySelectorAll('.verifyBtn').forEach(button => {
-  button.addEventListener('click', () => {
-    document.getElementById('verifyId').value = button.getAttribute('data-id');
-    document.getElementById('verifyNama').innerText = button.getAttribute('data-nama');
-    document.getElementById('verifyNoFormulir').innerText = button.getAttribute('data-no_formulir');
-    // Reset form saat buka modal
-    ['cbUangPangkal','cbSPP','cbSeragam','cbKegiatan'].forEach(id => {
-      document.getElementById(id).checked = false;
+    document.querySelectorAll('.verifyBtn').forEach(button => {
+      button.addEventListener('click', () => {
+        document.getElementById('verifyId').value = button.getAttribute('data-id');
+        document.getElementById('verifyNama').innerText = button.getAttribute('data-nama');
+        document.getElementById('verifyNoInvoice').innerText = button.getAttribute('data-no_invoice');
+        // Reset form saat buka modal
+        ['cbUangPangkal','cbSPP','cbSeragam','cbKegiatan'].forEach(id => {
+          document.getElementById(id).checked = false;
+        });
+        ['uangPangkalInput','sppInput','seragamInput','kegiatanInput'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+        // Optional: ambil nominal default dari server via AJAX
+      });
     });
-    ['uangPangkalInput','sppInput','seragamInput','kegiatanInput'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    // Optional: ambil nominal default dari server via AJAX
-    // Misal:
-    // document.getElementById('uangPangkalNominal').innerText = "Rp 2.500.000";
-  });
-});
-// Format nominal jadi rupiah
-function formatRupiah(angka) {
-  return 'Rp ' + (angka ? angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "-");
-}
-['uangPangkalInput','sppInput','seragamInput','kegiatanInput'].forEach(id => {
-  document.getElementById(id).addEventListener('input', function() {
-    var nominalSpan = document.getElementById(id.replace('Input','Nominal'));
-    nominalSpan.innerText = formatRupiah(this.value);
-  });
-});
-// Tangani submit (AJAX/simpan manual sesuai backend)
-document.getElementById('verifyForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const id = document.getElementById('verifyId').value;
-  const values = {};
-  if(document.getElementById('cbUangPangkal').checked)
-    values['Uang Pangkal'] = document.getElementById('uangPangkalInput').value;
-  if(document.getElementById('cbSPP').checked)
-    values['SPP'] = document.getElementById('sppInput').value;
-  if(document.getElementById('cbSeragam').checked)
-    values['Seragam'] = document.getElementById('seragamInput').value;
-  if(document.getElementById('cbKegiatan').checked)
-    values['Kegiatan'] = document.getElementById('kegiatanInput').value;
 
-  fetch('verifikasi_pembayaran.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: `id=${encodeURIComponent(id)}&data=${encodeURIComponent(JSON.stringify(values))}`
-  })
-  .then(res => res.json())
-  .then(res => {
-    if(res.success) {
-      alert('Data verifikasi berhasil disimpan!');
-      // Tutup modal dll...
-      bootstrap.Modal.getInstance(document.getElementById('verifyModal')).hide();
-      // Optional: reload/refresh data tabel
-      location.reload();
-    } else {
-      alert('Gagal menyimpan: ' + res.message);
+    // Format nominal jadi rupiah
+    function formatRupiah(angka) {
+      return 'Rp ' + (angka ? angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "-");
     }
-  });
-});
+    ['uangPangkalInput','sppInput','seragamInput','kegiatanInput'].forEach(id => {
+      document.getElementById(id).addEventListener('input', function() {
+        var nominalSpan = document.getElementById(id.replace('Input','Nominal'));
+        nominalSpan.innerText = formatRupiah(this.value);
+      });
+    });
+
+    // Tangani submit (AJAX/simpan manual sesuai backend)
+    document.getElementById('verifyForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const id = document.getElementById('verifyId').value;
+      const values = {};
+      if(document.getElementById('cbUangPangkal').checked)
+        values['Uang Pangkal'] = document.getElementById('uangPangkalInput').value;
+      if(document.getElementById('cbSPP').checked)
+        values['SPP'] = document.getElementById('sppInput').value;
+      if(document.getElementById('cbSeragam').checked)
+        values['Seragam'] = document.getElementById('seragamInput').value;
+      if(document.getElementById('cbKegiatan').checked)
+        values['Kegiatan'] = document.getElementById('kegiatanInput').value;
+
+      fetch('verifikasi_pembayaran.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `id=${encodeURIComponent(id)}&data=${encodeURIComponent(JSON.stringify(values))}`
+      })
+      .then(res => res.json())
+      .then(res => {
+        if(res.success) {
+          alert('Data verifikasi berhasil disimpan!');
+          bootstrap.Modal.getInstance(document.getElementById('verifyModal')).hide();
+          location.reload();
+        } else {
+          alert('Gagal menyimpan: ' + res.message);
+        }
+      });
+    });
 
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
