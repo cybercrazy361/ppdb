@@ -212,12 +212,12 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div style="margin:18px 0 4px 0;font-size:15.2px;font-weight:500;">Riwayat Pembayaran:</div>
       <table class="tagihan-table riwayat-bayar" style="margin-bottom:18px;">
         <colgroup>
+          <col style="width:20%">
           <col style="width:18%">
-          <col style="width:19%">
-          <col style="width:20%">
+          <col style="width:16%">
           <col style="width:13%">
-          <col style="width:20%">
-          <col style="width:10%">
+          <col style="width:11%">
+          <col style="width:22%">
         </colgroup>
         <tr>
           <th>Jenis</th>
