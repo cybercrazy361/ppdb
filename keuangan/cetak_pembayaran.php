@@ -94,6 +94,7 @@ $stmt_detail = $conn->prepare("
         pembayaran_detail.jenis_pembayaran_id,
         jenis_pembayaran.nama AS jenis_pembayaran_nama,
         pembayaran_detail.jumlah AS detail_jumlah,
+        pembayaran_detail.cashback,
         pembayaran_detail.bulan,
         pembayaran_detail.status_pembayaran
     FROM pembayaran_detail
@@ -113,6 +114,15 @@ if ($stmt_detail) {
     $stmt_detail->close();
 } else {
     die("Error preparing detail statement: " . $conn->error);
+}
+
+// Cek jika ada cashback pada detail
+$ada_cashback = false;
+foreach ($details as $d) {
+    if (isset($d['cashback']) && $d['cashback'] > 0) {
+        $ada_cashback = true;
+        break;
+    }
 }
 
 // Fetch layout settings berdasarkan unit siswa
@@ -182,7 +192,6 @@ function getElementValue($elementName) {
     <meta charset="UTF-8">
     <title>Cetak Kuitansi Pembayaran</title>
 <style>
-    /* CSS untuk tampilan cetak */
     @media print {
         @page {
             size: <?= htmlspecialchars($paper_width_mm); ?>mm <?= htmlspecialchars($paper_height_mm); ?>mm;
@@ -197,7 +206,6 @@ function getElementValue($elementName) {
             position: relative;
             width: <?= htmlspecialchars($paper_width_mm); ?>mm;
             height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-            /* padding atas 0 agar mentok ke tepi atas */
             padding: 0 10mm 5mm;
             box-sizing: border-box;
             background-color: #fff;
@@ -210,11 +218,7 @@ function getElementValue($elementName) {
             border: none !important;
             outline: none !important;
             box-shadow: none !important;
-            /* hapus font-family: Arial, sans-serif !important; 
-               biarkan inline style mengambil alih */
         }
-
-        /* Tabel dan teks mewarisi font Courier New */
         .receipt-element table,
         .receipt-element table th,
         .receipt-element table td,
@@ -223,7 +227,6 @@ function getElementValue($elementName) {
             font-family: 'Courier New', Courier, monospace !important;
             font-size: inherit !important;
         }
-
         .receipt-header {
             display: flex;
             flex-direction: column;
@@ -235,11 +238,10 @@ function getElementValue($elementName) {
             transform: translateX(-50%);
             font-family: 'Courier New', Courier, monospace;
         }
-
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-top: 5mm; /* sedikit ruang di bawah header */
+            margin-top: 5mm;
             font-family: 'Courier New', Courier, monospace;
         }
         table, th, td {
@@ -250,17 +252,14 @@ function getElementValue($elementName) {
             font-size: 10pt;
             font-family: 'Courier New', Courier, monospace;
         }
-
         .print-button {
             display: none;
         }
-
         .receipt-element.logo-element img {
             max-width: 100px;
             max-height: 100px;
             pointer-events: none;
         }
-
         .receipt-element.watermark-element {
             opacity: 0.3;
             transform: rotate(-45deg);
@@ -270,14 +269,12 @@ function getElementValue($elementName) {
             font-family: 'Courier New', Courier, monospace;
         }
     }
-
-    /* CSS untuk tampilan layar (preview) */
     .receipt-container {
         position: relative;
         width: <?= htmlspecialchars($paper_width_mm); ?>mm;
         height: <?= htmlspecialchars($paper_height_mm); ?>mm;
         border: 1px solid #dee2e6;
-        padding: 10mm;  /* preview tetap pakai padding 10mm */
+        padding: 10mm;
         box-sizing: border-box;
         margin: 20px auto;
         background-color: #fff;
@@ -334,8 +331,6 @@ function getElementValue($elementName) {
         pointer-events: none;
         font-family: 'Courier New', Courier, monospace;
     }
-
-    /* override border dan shadow saat cetak */
     @media print {
         .receipt-container {
             border: none !important;
@@ -348,7 +343,6 @@ function getElementValue($elementName) {
         }
     }
 </style>
-
 </head>
 <body>
     <div class="receipt-container">
@@ -366,7 +360,6 @@ function getElementValue($elementName) {
             switch ($element) {
                 case 'logo':
                     if (!empty($layout_data[$element]['image_path'])) {
-                        // Tampilkan logo sebagai gambar
                         ?>
                         <div class="receipt-element logo-element"
                              style="left: <?= $x; ?>mm; top: <?= $y; ?>mm;">
@@ -378,7 +371,6 @@ function getElementValue($elementName) {
 
                 case 'watermark':
                     if (!empty($layout_data[$element]['watermark_text'])) {
-                        // Tampilkan watermark sebagai teks
                         ?>
                         <div class="receipt-element watermark-element"
                              style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
@@ -394,7 +386,6 @@ function getElementValue($elementName) {
                         style="left: 50%; top: <?= htmlspecialchars($pos['y']); ?>mm; width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm; transform: translateX(-50%); <?= $style_inline; ?>">
                         <h2 style="<?= $style_inline; ?> margin: 0;">KUITANSI PEMBAYARAN</h2>
                        <p style="<?= $style_inline; ?> margin:5px 0 0 0;"><?= $unit; ?> DHARMA KARYA</p>
-
                     </div>
                     <?php
                     break;
@@ -431,6 +422,9 @@ function getElementValue($elementName) {
                                         <th style="text-align:left; width:8mm; <?= $style_inline; ?>">No</th>
                                         <th style="text-align:left; width:50mm; <?= $style_inline; ?>">Jenis Pembayaran</th>
                                         <th style="text-align:left; width:30mm; <?= $style_inline; ?>">Jumlah</th>
+                                        <?php if ($ada_cashback): ?>
+                                            <th style="text-align:left; width:20mm; <?= $style_inline; ?>">Cashback</th>
+                                        <?php endif; ?>
                                         <th style="text-align:left; width:15mm; <?= $style_inline; ?>">Bulan</th>
                                         <th style="text-align:left; width:30mm; <?= $style_inline; ?>">Status</th>
                                     </tr>
@@ -440,18 +434,23 @@ function getElementValue($elementName) {
                                     $no = 1;
                                     foreach ($details as $detail) : 
                                         $detail_jumlah = number_format($detail['detail_jumlah'], 0, ',', '.');
+                                        $cashback = isset($detail['cashback']) && $detail['cashback'] > 0 
+                                            ? 'Rp ' . number_format($detail['cashback'], 0, ',', '.') 
+                                            : '-';
                                     ?>
                                         <tr>
                                             <td style="text-align:left; width:8mm; <?= $style_inline; ?>"><?= $no++; ?></td>
                                             <td style="text-align:left; width:50mm; <?= $style_inline; ?>"><?= htmlspecialchars($detail['jenis_pembayaran_nama']); ?></td>
                                             <td style="text-align:left; width:30mm; <?= $style_inline; ?>">Rp <?= $detail_jumlah; ?></td>
+                                            <?php if ($ada_cashback): ?>
+                                                <td style="text-align:left; width:20mm; <?= $style_inline; ?>"><?= $cashback; ?></td>
+                                            <?php endif; ?>
                                             <td style="text-align:left; width:15mm; <?= $style_inline; ?>"><?= htmlspecialchars($detail['bulan']); ?></td>
                                             <td style="text-align:left; width:30mm; <?= $style_inline; ?>"><?= htmlspecialchars($detail['status_pembayaran']); ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
-
                         <?php else : ?>
                             <p style="<?= $style_inline; ?>">Tidak ada rincian pembayaran.</p>
                         <?php endif; ?>
@@ -471,37 +470,35 @@ function getElementValue($elementName) {
                     <?php
                     break;
 
-case 'jumlah':
-    ?>
-    <div class="receipt-element"
-         style="left: <?= htmlspecialchars($pos['x']); ?>mm;
-                top:  <?= htmlspecialchars($pos['y']); ?>mm;
-                <?= $style_inline; ?>">
-        <p style="<?= $style_inline; ?>">
-            <strong>Jumlah Total:</strong>
-            <?= getElementValue('jumlah'); ?>
-        </p>
-    </div>
-    <?php
-    break;
+                case 'jumlah':
+                    ?>
+                    <div class="receipt-element"
+                         style="left: <?= htmlspecialchars($pos['x']); ?>mm;
+                                top:  <?= htmlspecialchars($pos['y']); ?>mm;
+                                <?= $style_inline; ?>">
+                        <p style="<?= $style_inline; ?>">
+                            <strong>Jumlah Total:</strong>
+                            <?= getElementValue('jumlah'); ?>
+                        </p>
+                    </div>
+                    <?php
+                    break;
 
-case 'terbilang':
-    // Ambil total pembayaran
-    $total = $pembayaran['jumlah'];
-    // Ubah angka ke kata, kapitalisasi tiap kata, tambahkan “ Rupiah”
-    $angka = ucwords(trim(terbilang($total))) . ' Rupiah';
-    ?>
-    <div class="receipt-element"
-         style="
-           left: <?= htmlspecialchars($pos['x']); ?>mm;
-           top:  <?= htmlspecialchars($pos['y']); ?>mm;
-           font-size: <?= $layout_data['terbilang']['font_size']; ?>pt;
-           font-family: '<?= htmlspecialchars($layout_data['terbilang']['font_family']); ?>';
-         ">
-      Terbilang : <em><?= htmlspecialchars($angka); ?></em>
-    </div>
-    <?php
-    break;
+                case 'terbilang':
+                    $total = $pembayaran['jumlah'];
+                    $angka = ucwords(trim(terbilang($total))) . ' Rupiah';
+                    ?>
+                    <div class="receipt-element"
+                         style="
+                           left: <?= htmlspecialchars($pos['x']); ?>mm;
+                           top:  <?= htmlspecialchars($pos['y']); ?>mm;
+                           font-size: <?= $layout_data['terbilang']['font_size']; ?>pt;
+                           font-family: '<?= htmlspecialchars($layout_data['terbilang']['font_family']); ?>';
+                         ">
+                      Terbilang : <em><?= htmlspecialchars($angka); ?></em>
+                    </div>
+                    <?php
+                    break;
 
                 default:
                     // Elemen tidak dikenali
@@ -510,10 +507,8 @@ case 'terbilang':
         }
         ?>
     </div>
-
     <div class="print-button">
         <button onclick="window.print()" class="btn btn-primary">Cetak Kuitansi</button>
     </div>
-    
 </body>
 </html>
