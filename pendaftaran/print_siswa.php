@@ -163,17 +163,17 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div class="header-content">
         <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
         <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-          <div class="sub-title">BUKTI PENDAFTARAN CALON PESERTA DIDIK BARU</div>
+          <div class="sub-title">BUKTI PENDAFTARAN MURID DIDIK BARU</div>
         <?php else: ?>
-          <div class="sub-title">BUKTI REGISTRASI PENDAFTARAN SISWA BARU</div>
+          <div class="sub-title">BUKTI PENDAFTARAN CALON MURID BARU</div>
         <?php endif; ?>
         <div class="tahun-ajaran">TAHUN AJARAN 2025/2026</div>
       </div>
     </div>
 
-    <div class="no-reg"><b>No. Formulir :</b> <?= safe($row['no_formulir']) ?></div>
+    <div class="no-reg"><b>No. INVOICE :</b> <?= safe($row['no_formulir']) ?></div>
     <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
-      <div class="no-reg"><b>No. Invoice :</b> <?= safe($no_invoice) ?></div>
+      <div class="no-reg"><b>No. FORMULIR :</b> <?= safe($no_invoice) ?></div>
     <?php endif; ?>
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
