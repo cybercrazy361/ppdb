@@ -194,8 +194,8 @@ function getStatusPembayaranLabel($status) {
     <thead>
       <tr>
         <th style="min-width:50px;">No</th>
-        <th style="min-width:120px;">No Formulir</th>
         <th style="min-width:120px;">No Invoice</th>
+        <th style="min-width:120px;">No Formulir</th>
         <th style="min-width:180px;">Nama</th>
         <th style="min-width:120px;">Jenis Kelamin</th>
         <th style="min-width:180px;">Tempat/Tgl Lahir</th>
