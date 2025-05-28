@@ -172,17 +172,17 @@ $no_invoice = $row['no_invoice'] ?? '';
     </div>
 
     <div class="no-reg-row">
-      <div class="no-reg-label"><b>No. Invoice</b></div>
-      <div class="no-reg-sep">:</div>
-      <div class="no-reg-val"><?= safe($row['no_invoice']) ?></div>
-    </div>
-    <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_formulir)): ?>
-      <div class="no-reg-row">
-        <div class="no-reg-label"><b>No. Formulir</b></div>
-        <div class="no-reg-sep">:</div>
-        <div class="no-reg-val"><?= safe($row['no_formulir']) ?></div>
-      </div>
-    <?php endif; ?>
+  <div class="no-reg-label"><b>No. Formulir</b></div>
+  <div class="no-reg-sep">:</div>
+  <div class="no-reg-val"><?= safe($row['no_formulir']) ?></div>
+</div>
+<?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+  <div class="no-reg-row">
+    <div class="no-reg-label"><b>No. Invoice</b></div>
+    <div class="no-reg-sep">:</div>
+    <div class="no-reg-val"><?= safe($no_invoice) ?></div>
+  </div>
+<?php endif; ?>
 
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
