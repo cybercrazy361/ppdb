@@ -386,15 +386,15 @@ body {
     align-items: center;
     margin-bottom: 4px;
     font-size: 15px;
-    font-weight: bold;
-    font-style: italic;
+    font-weight: 500;
 }
-
 
 .no-reg-label {
     min-width: 120px;
     /* Sesuaikan jika perlu */
     text-align: left;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .no-reg-sep {
