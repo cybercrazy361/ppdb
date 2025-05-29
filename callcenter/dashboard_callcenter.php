@@ -63,6 +63,7 @@ $conn->close();
 <?php include 'sidebar_callcenter.php'; ?>
 
 <div class="main">
+    <div class="container-dashboard">
     <header class="navbar">
         <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
         <div class="title">Dashboard Call Center (<?=htmlspecialchars($unit)?>)</div>
@@ -126,6 +127,7 @@ $conn->close();
             </table>
         </div>
         </div>
+    </div>
     </div>
 </div>
 

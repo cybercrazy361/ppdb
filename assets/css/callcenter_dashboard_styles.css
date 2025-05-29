@@ -26,18 +26,25 @@ body {
 
 /* == Sidebar padding integration == */
 .main {
-    padding: var(--main-padding);
-    min-height: 100vh;
     margin-left: 235px;
-    /* match sidebar width */
-    transition: margin-left .18s, padding .2s;
+    padding: 32px 32px 18px 32px;
+    /* kiri kanan sama, tidak lebay */
+    min-height: 100vh;
+    background: var(--color-bg);
+    transition: padding .2s, margin-left .2s;
 }
 
 @media (max-width: 991px) {
     .main {
-        margin-left: 0;
-        padding: var(--main-padding-mobile);
+        margin-left: 0 !important;
+        padding: 13px 5px;
     }
+}
+
+.container-dashboard {
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 /* == Navbar / Topbar == */
