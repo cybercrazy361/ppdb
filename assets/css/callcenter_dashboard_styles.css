@@ -1,0 +1,180 @@
+/* callcenter_dashboard_styles.css */
+
+/* Main container offset by sidebar */
+.main {
+    margin-left: 235px;
+    padding: 28px 28px 18px 28px;
+    background: #f5f9fd;
+    min-height: 100vh;
+}
+
+@media (max-width: 991px) {
+    .main {
+        margin-left: 0;
+        padding: 18px 6vw 15px 6vw;
+    }
+}
+
+/* Navbar/topbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px 28px 14px 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 10px rgba(80, 120, 210, 0.07);
+}
+
+.navbar .title {
+    font-weight: 700;
+    font-size: 1.27rem;
+    color: #2369c8;
+    letter-spacing: 1px;
+}
+
+.navbar .toggle-btn {
+    display: none;
+}
+
+.navbar .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.navbar .btn-logout {
+    background: #e75151;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 7px 17px;
+    margin-left: 6px;
+    font-size: 0.97rem;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.navbar .btn-logout:hover {
+    background: #b92d2d;
+}
+
+@media (max-width: 991px) {
+    .navbar .toggle-btn {
+        display: block;
+    }
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-bottom: 28px;
+}
+
+.dashboard-cards .card {
+    background: #fff;
+    border-radius: 1.1rem;
+    box-shadow: 0 1px 9px rgba(90, 120, 210, 0.09);
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform .18s, box-shadow .18s;
+    cursor: pointer;
+    position: relative;
+}
+
+.dashboard-cards .card:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 4px 18px rgba(50, 110, 180, 0.14);
+}
+
+.dashboard-cards .icon {
+    font-size: 2.3rem;
+    margin-bottom: 12px;
+}
+
+.dashboard-cards .title {
+    font-size: 1.08rem;
+    font-weight: 600;
+    margin-bottom: 7px;
+    color: #2369c8;
+}
+
+.dashboard-cards .count {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 7px;
+}
+
+.dashboard-cards .subtext {
+    font-size: 0.97rem;
+    color: #727a86;
+}
+
+/* Chart Card */
+.chart-card {
+    background: #fff;
+    border-radius: 1.1rem;
+    box-shadow: 0 1px 9px rgba(90, 120, 210, 0.09);
+    padding: 18px 22px 8px 22px;
+    margin-bottom: 28px;
+}
+
+.chart-card h6 {
+    font-weight: 600;
+    color: #2369c8;
+    margin-bottom: 13px;
+    font-size: 1.04rem;
+}
+
+.chart-container {
+    min-height: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Table */
+.modal-content {
+    border-radius: 1rem;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    background-color: #f5faff;
+}
+
+.table-striped>tbody>tr>td,
+.table-striped>tbody>tr>th {
+    vertical-align: middle;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    background: #f4f7fa;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d1e5fa;
+    border-radius: 6px;
+}
+
+/* For responsiveness */
+@media (max-width: 600px) {
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .main {
+        padding: 11px 3vw 8px 3vw;
+    }
+
+    .chart-card {
+        padding: 11px 8px 8px 8px;
+    }
+}
