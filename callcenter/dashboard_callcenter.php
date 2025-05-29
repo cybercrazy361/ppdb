@@ -61,7 +61,8 @@ $conn->close();
 <?php include 'sidebar_callcenter.php'; ?>
 
 <div class="main">
-    
+
+    <!-- Navbar / Topbar -->
     <header class="navbar">
         <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
         <div class="title">Dashboard Call Center (<?=htmlspecialchars($unit)?>)</div>
@@ -70,6 +71,8 @@ $conn->close();
             <a href="../callcenter/logout_callcenter.php" class="btn-logout">Logout</a>
         </div>
     </header>
+
+    <!-- Dashboard Cards -->
     <section class="dashboard-cards">
         <div class="card shadow" onclick="showModal('all')" style="cursor:pointer;">
             <div class="icon text-primary"><i class="fas fa-users"></i></div>
@@ -78,7 +81,7 @@ $conn->close();
             <div class="subtext">Unit <?=htmlspecialchars($unit)?></div>
         </div>
         <div class="card shadow" onclick="showModal('ppdb')" style="cursor:pointer;">
-            <div class="icon text-success"><i class="fas fa-comment-check"></i></div>
+            <div class="icon text-success"><i class="fas fa-user-check"></i></div>
             <div class="title">Sudah Follow-up</div>
             <div class="count"><?=$stat['status']['PPDB Bersama']?></div>
             <div class="subtext">PPDB Bersama</div>
@@ -96,6 +99,8 @@ $conn->close();
             <div class="subtext">Batal mendaftar</div>
         </div>
     </section>
+
+    <!-- Chart Section -->
     <section class="chart-card">
         <h6>Status Pendaftar</h6>
         <div class="chart-container">
@@ -103,8 +108,9 @@ $conn->close();
         </div>
     </section>
 </div>
+
 <!-- Modal Calon Pendaftar -->
-< class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
         <div class="modal-header">
@@ -124,6 +130,7 @@ $conn->close();
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/sidebar_callcenter.js"></script>
 <script>

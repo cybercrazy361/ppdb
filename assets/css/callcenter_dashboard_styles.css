@@ -13,6 +13,7 @@
     --font-base: 'Poppins', 'Segoe UI', Arial, sans-serif;
     --main-padding: 32px;
     --main-padding-mobile: 13px;
+    --sidebar-width: 235px;
     --header-height: 59px;
 }
 
@@ -23,9 +24,23 @@ body {
     min-height: 100vh;
 }
 
+/* ==== SIDEBAR FIX ==== */
+@media (min-width: 992px) {
+    body {
+        padding-left: var(--sidebar-width);
+    }
+}
+
+@media (max-width: 991px) {
+    body {
+        padding-left: 0 !important;
+    }
+}
+
+/* ==== MAIN ==== */
 .main {
-    margin-left: 235px;
-    padding: 32px 32px 18px 32px;
+    /* Konten mulai langsung setelah sidebar */
+    padding: var(--main-padding);
     min-height: 100vh;
     background: var(--color-bg);
     transition: padding .2s, margin-left .2s;
@@ -33,17 +48,11 @@ body {
 
 @media (max-width: 991px) {
     .main {
-        margin-left: 0 !important;
-        padding: 13px 5px;
+        padding: var(--main-padding-mobile);
     }
 }
 
-.container-dashboard {
-    width: 100%;
-    padding: 0;
-}
-
-/* Navbar / Topbar */
+/* ==== NAVBAR / TOPBAR ==== */
 .navbar {
     display: flex;
     align-items: center;
@@ -157,6 +166,7 @@ body {
     }
 }
 
+/* ==== DASHBOARD CARDS ==== */
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -285,6 +295,7 @@ body {
     }
 }
 
+/* ==== CHART CARD ==== */
 .chart-card {
     background: var(--color-card);
     border-radius: var(--border-radius);
@@ -316,6 +327,7 @@ body {
     }
 }
 
+/* ==== MODAL ==== */
 .modal-content {
     border-radius: 1.12rem;
     box-shadow: 0 7px 26px #2369c813;
@@ -347,6 +359,7 @@ body {
     vertical-align: middle;
 }
 
+/* ==== ANIMATIONS ==== */
 @keyframes fadeInCard {
     from {
         opacity: 0;
@@ -364,6 +377,7 @@ body {
     animation: fadeInCard .78s;
 }
 
+/* ==== SCROLLBAR ==== */
 body::-webkit-scrollbar,
 .main::-webkit-scrollbar {
     width: 7px;
@@ -380,15 +394,9 @@ body::-webkit-scrollbar-track,
     background: transparent;
 }
 
+/* ==== BUTTON ==== */
 .btn,
 .btn:focus {
     outline: none !important;
     box-shadow: none !important;
-}
-
-@media (max-width: 540px) {
-    .chart-container {
-        max-width: 99vw;
-        padding: 0;
-    }
 }
