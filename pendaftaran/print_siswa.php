@@ -159,46 +159,44 @@ $no_invoice = $row['no_invoice'] ?? '';
   </button>
   <div class="print-wrap">
     <!-- Kop Surat -->
-    <div class="kop-surat">
+    <header class="kop-surat">
       <div class="kop-logo">
         <img src="../assets/images/logo_trans.png" alt="Logo Sekolah">
       </div>
       <div class="kop-center">
-        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-        <div class="kop-akreditasi">Terakreditasi <b>“A”</b></div>
-        <div class="kop-alamat">Jl. Melawai XII No.2 Kav. 207A Kebayoran Baru, Jakarta Selatan</div>
-        <div class="kop-telp">Telp. 021-7398578 / 7250224</div>
+        <h1>YAYASAN PENDIDIKAN DHARMA KARYA</h1>
+        <h2>SMA/SMK DHARMA KARYA</h2>
+        <p>Terakreditasi <b>“A”</b></p>
+        <p>Jl. Melawai XII No.2 Kav. 207A Kebayoran Baru, Jakarta Selatan</p>
+        <p>Telp. 021-7398578 / 7250224</p>
       </div>
-    </div>
-    <div class="kop-garis"></div>
+    </header>
+    <hr class="kop-garis">
 
     <!-- Header Dokumen -->
     <div class="header-doc">
-      <div class="header-title">
-        <b>
-          <?= ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran') 
-            ? 'BUKTI PENDAFTARAN MURID BARU' 
-            : 'BUKTI PENDAFTARAN CALON MURID BARU' ?>
-        </b>
-      </div>
-      <div class="header-sub">SISTEM PENERIMAAN MURID BARU (SPMB)</div>
-      <div class="header-unit">SMA DHARMA KARYA JAKARTA</div>
-      <div class="header-ta">TAHUN AJARAN 2025/2026</div>
+      <h3>
+        <?= ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran') 
+          ? 'BUKTI PENDAFTARAN MURID BARU' 
+          : 'BUKTI PENDAFTARAN CALON MURID BARU' ?>
+      </h3>
+      <p class="header-sub">SISTEM PENERIMAAN MURID BARU (SPMB)</p>
+      <p class="header-unit">SMA DHARMA KARYA JAKARTA</p>
+      <p class="header-ta">TAHUN AJARAN 2025/2026</p>
     </div>
 
     <!-- Info Registrasi -->
     <div class="data-identitas">
       <div class="reg-row">
-        <div class="reg-label">No. Registrasi Pendaftaran</div>
-        <div class="reg-sep">:</div>
-        <div class="reg-val"><b><?= safe($row['no_formulir']) ?></b></div>
+        <span class="reg-label">No. Registrasi Pendaftaran</span>
+        <span class="reg-sep">:</span>
+        <span class="reg-val"><b><?= safe($row['no_formulir']) ?></b></span>
       </div>
       <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
       <div class="reg-row">
-        <div class="reg-label">No. Formulir Pendaftaran</div>
-        <div class="reg-sep">:</div>
-        <div class="reg-val"><b><?= safe($no_invoice) ?></b></div>
+        <span class="reg-label">No. Formulir Pendaftaran</span>
+        <span class="reg-sep">:</span>
+        <span class="reg-val"><b><?= safe($no_invoice) ?></b></span>
       </div>
       <?php endif; ?>
     </div>

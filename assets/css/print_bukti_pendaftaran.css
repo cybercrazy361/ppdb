@@ -1,353 +1,146 @@
-@media print {
-    body .no-print {
-        display: none !important;
-    }
-
-    body {
-        background: #fff;
-    }
-
-    .print-wrap {
-        box-shadow: none !important;
-        border: none !important;
-    }
-}
-
-/* Body & Container */
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f7fafd;
-    color: #232729;
-    font-size: 15px;
-    line-height: 1.48;
+    font-family: 'Arial', sans-serif;
     margin: 0;
-}
-
-button.btn-cetak {
-    display: inline-flex;
-    align-items: center;
-    padding: 9px 20px;
-    border: none;
-    background: #2972fa;
-    color: #fff;
-    border-radius: 7px;
-    font-size: 15px;
-    cursor: pointer;
-    margin-bottom: 14px;
-    box-shadow: 0 2px 8px rgba(41, 114, 250, 0.13);
-    transition: background 0.2s;
-}
-
-button.btn-cetak:hover {
-    background: #1747b0;
+    padding: 20px;
+    background-color: #f4f4f4;
 }
 
 .print-wrap {
-    width: 210mm;
-    max-width: 100%;
-    min-height: 297mm;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 18px rgba(60, 60, 60, 0.09);
-    padding: 20px 35px 32px 35px;
-    border: 1px solid #e5eaf1;
-    box-sizing: border-box;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Kop Surat */
 .kop-surat {
     display: flex;
     align-items: center;
-    gap: 24px;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
 }
 
 .kop-logo img {
-    width: 90px;
-    height: 90px;
-    object-fit: contain;
-    display: block;
+    max-width: 100px;
+    margin-right: 20px;
 }
 
 .kop-center {
-    flex: 1;
-    text-align: center;
+    flex-grow: 1;
 }
 
-.kop-title1 {
-    font-size: 18.5px;
-    font-weight: 700;
-    letter-spacing: 0.7px;
-    margin-bottom: 2px;
-}
-
-.kop-title2 {
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 2px;
-}
-
-.kop-akreditasi {
-    font-size: 15.5px;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-.kop-alamat,
-.kop-telp {
-    font-size: 13.5px;
-    font-weight: 400;
-    margin-bottom: 0.5px;
-    color: #49536a;
+.kop-center h1,
+.kop-center h2 {
+    margin: 0;
+    font-weight: normal;
 }
 
 .kop-garis {
-    border-bottom: 2.5px solid #23419d;
-    margin: 6px 0 16px 0;
-    border-radius: 1.5px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
 }
 
-/* Header Dokumen */
 .header-doc {
     text-align: center;
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
-.header-title {
-    font-size: 17.5px;
-    font-weight: 700;
-    letter-spacing: 0.9px;
-    color: #23419d;
-    margin-bottom: 3px;
+.header-doc h3 {
+    margin: 0;
+    font-size: 1.5em;
 }
 
-.header-sub {
-    font-size: 15.3px;
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
-.header-unit {
-    font-size: 14.7px;
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
-.header-ta {
-    font-size: 13.5px;
-    color: #555;
-}
-
-/* Registrasi/Identitas */
 .data-identitas {
-    margin-bottom: 11px;
+    margin-bottom: 20px;
 }
 
 .reg-row {
     display: flex;
-    align-items: center;
-    margin-bottom: 3px;
-    font-size: 15.1px;
+    margin-bottom: 5px;
 }
 
 .reg-label {
-    min-width: 185px;
-    font-weight: 500;
+    flex: 1;
 }
 
 .reg-sep {
-    min-width: 18px;
-    text-align: center;
-    font-weight: 400;
+    margin: 0 10px;
 }
 
-.reg-val {
-    font-weight: 700;
-    font-size: 15.3px;
-}
-
-/* Table Data Siswa */
-table.data-table,
-table.tagihan-table {
+.data-table,
+.tagihan-table,
+.riwayat-bayar {
     width: 100%;
-    margin-top: 13px;
     border-collapse: collapse;
-    background: #fafcff;
-    border-radius: 7px;
-    overflow: hidden;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.03);
-}
-
-table.data-table caption {
-    caption-side: top;
-    font-size: 15.1px;
-    font-weight: 600;
-    margin-bottom: 3.5px;
-    color: #23419d;
-    text-align: left;
-    padding: 3px 0 7px 2px;
+    margin-bottom: 20px;
 }
 
 .data-table th,
-.data-table td {
-    text-align: left;
-    padding: 5.5px 10px;
-    font-size: 15px;
-    vertical-align: top;
-    border-bottom: 1px solid #e5eaf1;
-}
-
-.data-table th {
-    background: #f3f7fe;
-    font-weight: 600;
-    width: 36%;
-}
-
-.data-table tr:last-child td {
-    border-bottom: none;
-}
-
 .tagihan-table th,
-.tagihan-table td {
-    text-align: left;
-    padding: 6px 10px;
-    font-size: 15px;
-    border-bottom: 1px solid #e5eaf1;
+.riwayat-bayar th {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
 }
 
-.tagihan-table th {
-    background: #e3eaf7;
-    font-weight: 600;
-    text-align: center;
-    font-size: 15.5px;
+.data-table td,
+.tagihan-table td,
+.riwayat-bayar td {
+    padding: 10px;
+    border: 1px solid #ccc;
 }
 
-.tagihan-table .text-right {
+.text-right {
     text-align: right;
 }
 
-.tagihan-table .text-center {
-    text-align: center;
-}
-
-.tagihan-table .muted {
-    color: #b9b9b9;
-}
-
-.tagihan-table tr:last-child td {
-    border-bottom: none;
-}
-
-.riwayat-title {
-    font-size: 15.2px;
-    font-weight: 600;
-    margin: 15px 0 4px 0;
-}
-
-.riwayat-bayar th,
-.riwayat-bayar td {
-    font-size: 14.3px;
-    text-align: center;
-    padding: 6px 6px;
-}
-
-/* Status Row */
 .status-row {
-    margin: 19px 0 6px 0;
-    font-size: 16px;
-    font-weight: 500;
+    font-weight: bold;
+    margin: 20px 0;
 }
 
-.status-row span {
-    font-size: 16.1px;
-}
-
-/* Contact & Note */
 .info-contact {
-    font-size: 14.3px;
-    margin: 10px 0 6px 0;
-    color: #232729;
+    margin: 20px 0;
 }
 
 .note {
-    font-size: 14.4px;
-    margin-top: 12px;
-    border-radius: 7px;
-    background: #f3f7fe;
-    border-left: 4px solid #23419d;
-    padding: 9px 15px 10px 13px;
-    color: #1e365c;
-    box-shadow: 0 2px 9px rgba(80, 108, 180, 0.05);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 20px;
 }
 
-.note.lunas {
-    border-left-color: #1cc88a;
+.belum-bayar {
+    background-color: #f8d7da;
+    color: #721c24;
 }
 
-.note.angsuran {
-    border-left-color: #f6c23e;
+.angsuran {
+    background-color: #fff3cd;
+    color: #856404;
 }
 
-.note.belum-bayar {
-    border-left-color: #e74a3b;
+.lunas {
+    background-color: #d4edda;
+    color: #155724;
 }
 
-/* Footer & TTD */
 .footer-ttd {
-    width: 100%;
-    margin-top: 27px;
     display: flex;
     justify-content: flex-end;
+    margin-top: 40px;
 }
 
 .footer-ttd-right {
     text-align: right;
-    min-width: 185px;
 }
 
 .ttd-tanggal {
-    font-size: 14px;
-    margin-bottom: 20px;
-    font-style: italic;
+    font-weight: bold;
 }
 
 .ttd-nama {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 2px;
+    margin-top: 5px;
 }
 
 .ttd-label {
-    font-size: 14px;
-    font-weight: 400;
-    color: #3a3a3a;
-}
-
-/* Print/Export tweaks */
-@media (max-width: 780px) {
-    .print-wrap {
-        padding: 4vw 2vw;
-    }
-
-    .kop-surat {
-        flex-direction: column;
-        gap: 9px;
-        align-items: flex-start;
-    }
-
-    .kop-center,
-    .kop-title1,
-    .kop-title2 {
-        text-align: left;
-    }
-
-    .header-doc {
-        font-size: 14px;
-    }
-
-    table.data-table,
-    table.tagihan-table {
-        font-size: 13.5px;
-    }
+    font-style: italic;
 }
