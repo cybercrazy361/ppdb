@@ -182,34 +182,27 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
-    <div class="no-reg-row">
-      <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
-      <div class="no-reg-sep">:</div>
-      <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
-    </div>
-    <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
-      <div class="no-reg-row">
-        <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
-        <div class="no-reg-sep">:</div>
-        <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
-      </div>
-      
-    <?php endif; ?>
-<?php if (!empty($row['reviewed_by'])): ?>
-  <div style="text-align:right;margin-bottom:3px;">
-    <span style="
-      display:inline-flex;align-items:center;
-      background:linear-gradient(90deg,#e6edfa 60%,#d4f1fd 100%);
-      padding:6px 18px 6px 12px;
-      border-radius:16px;
-      box-shadow:0 2px 10px 0 rgba(65,123,230,0.10);
-      font-size:13.5px;font-weight:600;
-      color:#1a4299;letter-spacing:0.2px;">
-      <i class="fas fa-headset" style="margin-right:7px;color:#2496db;font-size:15px;"></i>
-      <span style="color:#222b50;margin-left:2px;"><b>Call Center:</b> <?= safe($row['reviewed_by']) ?></span>
+<div class="no-reg-bar">
+  <div class="no-reg-row" style="margin-bottom:0;">
+    <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
+    <div class="no-reg-sep">:</div>
+    <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
+  </div>
+  <?php if (!empty($row['reviewed_by'])): ?>
+    <span class="callcenter-badge">
+      <i class="fas fa-headset"></i>
+      <b>Call Center:</b> <?= safe($row['reviewed_by']) ?>
     </span>
+  <?php endif; ?>
+</div>
+<?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+  <div class="no-reg-row">
+    <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
+    <div class="no-reg-sep">:</div>
+    <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
   </div>
 <?php endif; ?>
+
 
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
