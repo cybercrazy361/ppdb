@@ -150,22 +150,22 @@ $no_invoice = $row['no_invoice'] ?? '';
 <head>
   <meta charset="UTF-8" />
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
 </head>
 <body>
   <button class="no-print btn-cetak" onclick="window.print()">
     <i class="fas fa-print"></i> Cetak
   </button>
-  <div class="container">
+  <div class="print-wrap">
     <!-- Kop Surat -->
     <div class="kop-surat">
       <div class="kop-logo">
         <img src="../assets/images/logo_trans.png" alt="Logo Sekolah">
       </div>
       <div class="kop-center">
-        <div class="kop-title-1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-        <div class="kop-title-2">SMA/SMK DHARMA KARYA</div>
+        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
         <div class="kop-akreditasi">Terakreditasi <b>“A”</b></div>
         <div class="kop-alamat">Jl. Melawai XII No.2 Kav. 207A Kebayoran Baru, Jakarta Selatan</div>
         <div class="kop-telp">Telp. 021-7398578 / 7250224</div>
@@ -173,31 +173,35 @@ $no_invoice = $row['no_invoice'] ?? '';
     </div>
     <div class="kop-garis"></div>
 
-    <!-- Header -->
-    <div class="header">
-      <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-        <div class="sub-title">BUKTI PENDAFTARAN MURID BARU</div>
-      <?php else: ?>
-        <div class="sub-title">BUKTI PENDAFTARAN CALON MURID BARU</div>
-      <?php endif; ?>
-      <div class="tahun-ajaran">SISTEM PENERIMAAN MURID BARU (SPMB)</div>
-      <div class="tahun-ajaran">SMA DHARMA KARYA JAKARTA</div>
-      <div class="tahun-ajaran tahun-ajaran-thin">TAHUN AJARAN 2025/2026</div>
+    <!-- Header Dokumen -->
+    <div class="header-doc">
+      <div class="header-title">
+        <b>
+          <?= ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran') 
+            ? 'BUKTI PENDAFTARAN MURID BARU' 
+            : 'BUKTI PENDAFTARAN CALON MURID BARU' ?>
+        </b>
+      </div>
+      <div class="header-sub">SISTEM PENERIMAAN MURID BARU (SPMB)</div>
+      <div class="header-unit">SMA DHARMA KARYA JAKARTA</div>
+      <div class="header-ta">TAHUN AJARAN 2025/2026</div>
     </div>
 
-    <!-- Data Registrasi -->
-    <div class="reg-row">
-      <span class="reg-label">No. Registrasi Pendaftaran</span>
-      <span class="reg-sep">:</span>
-      <span class="reg-val"><?= safe($row['no_formulir']) ?></span>
+    <!-- Info Registrasi -->
+    <div class="data-identitas">
+      <div class="reg-row">
+        <div class="reg-label">No. Registrasi Pendaftaran</div>
+        <div class="reg-sep">:</div>
+        <div class="reg-val"><b><?= safe($row['no_formulir']) ?></b></div>
+      </div>
+      <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+      <div class="reg-row">
+        <div class="reg-label">No. Formulir Pendaftaran</div>
+        <div class="reg-sep">:</div>
+        <div class="reg-val"><b><?= safe($no_invoice) ?></b></div>
+      </div>
+      <?php endif; ?>
     </div>
-    <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
-    <div class="reg-row">
-      <span class="reg-label">No. Formulir Pendaftaran</span>
-      <span class="reg-sep">:</span>
-      <span class="reg-val"><?= safe($no_invoice) ?></span>
-    </div>
-    <?php endif; ?>
 
     <!-- Data Siswa -->
     <table class="data-table">
@@ -261,7 +265,7 @@ $no_invoice = $row['no_invoice'] ?? '';
 
     <!-- Kontak -->
     <div class="info-contact">
-      Informasi lebih lanjut hubungi: <br>
+      Informasi lebih lanjut hubungi:<br>
       Hotline SMA: <b>081511519271</b> (Bu Puji)
     </div>
 
@@ -294,4 +298,3 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
 </body>
 </html>
-
