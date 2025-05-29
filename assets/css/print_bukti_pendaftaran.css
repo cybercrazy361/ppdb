@@ -76,7 +76,7 @@ body {
 .kop-title1 {
     font-size: 25px;
     font-weight: 700;
-    color: #000000;
+    color: #163984;
     margin-bottom: 0;
     margin-top: 3px;
     letter-spacing: 0.7px;
@@ -85,27 +85,27 @@ body {
 .kop-title2 {
     font-size: 20px;
     font-weight: 800;
-    color: #000000;
+    color: #163984;
     margin-bottom: 2px;
     letter-spacing: 0.8px;
 }
 
 .kop-akreditasi {
     font-size: 16px;
-    color: #000000;
+    color: #163984;
     font-weight: 500;
     margin-bottom: 1.5px;
 }
 
 .kop-alamat {
     font-size: 14px;
-    color: #3b3b3b;
+    color: #163984;
     font-weight: 400;
     margin-bottom: 1px;
 }
 
 .kop-garis {
-    border-bottom: 2px solid #000000;
+    border-bottom: 2px solid #163984;
     margin-bottom: 7px;
     margin-top: 4px;
 }
@@ -118,14 +118,14 @@ body {
 .sub-title {
     font-size: 20px;
     letter-spacing: 0.1px;
-    color: #222;
+    color: #163984;
     margin-bottom: 0;
 }
 
 .tahun-ajaran {
     font-size: 16px;
     font-weight: 600;
-    color: #000000;
+    color: #163984;
     margin-bottom: 0;
     margin-top: 0;
 }
