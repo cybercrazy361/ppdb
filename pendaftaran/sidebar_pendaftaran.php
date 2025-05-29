@@ -28,18 +28,7 @@
       <i class="fas fa-users"></i>
       <span>Progres Pembayaran</span>
     </a>
-    <!-- LABEL PENDAFTAR -->
-    <div class="sidebar-section-label">PROGRES PENDAFTAR</div>
-    <a href="input_progres_pendaftaran.php"
-      class="nav-link <?= ($active=='inputpendaftaran'?'active':'') ?>">
-      <i class="fas fa-user-edit"></i>
-      <span>Input Progres Pendaftaran</span>
-    </a>
-    <a href="progres_pendaftaran.php"
-      class="nav-link <?= ($active=='progrespendaftaran'?'active':'') ?>">
-      <i class="fas fa-clipboard-list"></i>
-      <span>Progres Pendaftaran</span>
-    </a>
+    
     <!-- Untuk kebutuhan lain tinggal tambahkan menu di sini -->
   </div>
 </nav>
