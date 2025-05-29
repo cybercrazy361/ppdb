@@ -193,7 +193,23 @@ $no_invoice = $row['no_invoice'] ?? '';
         <div class="no-reg-sep">:</div>
         <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
       </div>
+      
     <?php endif; ?>
+<?php if (!empty($row['reviewed_by'])): ?>
+  <div style="text-align:right;margin-bottom:3px;">
+    <span style="
+      display:inline-flex;align-items:center;
+      background:linear-gradient(90deg,#e6edfa 60%,#d4f1fd 100%);
+      padding:6px 18px 6px 12px;
+      border-radius:16px;
+      box-shadow:0 2px 10px 0 rgba(65,123,230,0.10);
+      font-size:13.5px;font-weight:600;
+      color:#1a4299;letter-spacing:0.2px;">
+      <i class="fas fa-headset" style="margin-right:7px;color:#2496db;font-size:15px;"></i>
+      <span style="color:#222b50;margin-left:2px;"><b>Call Center:</b> <?= safe($row['reviewed_by']) ?></span>
+    </span>
+  </div>
+<?php endif; ?>
 
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
@@ -206,25 +222,7 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
-    <?php if (!empty($row['reviewed_by'])): ?>
-      <div class="reviewed-by" style="margin:16px 0 16px 0; text-align:center;">
-        <span style="
-          display: inline-flex;
-          align-items: center;
-          background: linear-gradient(90deg, #e6edfa 60%, #d4f1fd 100%);
-          padding: 7px 22px 7px 16px;
-          border-radius: 18px;
-          box-shadow: 0 2px 11px 0 rgba(65, 123, 230, 0.09);
-          font-size: 15px;
-          font-weight: 600;
-          color: #1a4299;
-          letter-spacing: 0.3px;
-        ">
-          <i class="fas fa-headset" style="margin-right:9px;color:#2496db;font-size:17px;"></i>
-          Call Center: <span style="margin-left:8px;color:#222b50;"><?= safe($row['reviewed_by']) ?></span>
-        </span>
-      </div>
-    <?php endif; ?>
+
 
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
