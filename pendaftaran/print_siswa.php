@@ -260,15 +260,15 @@ $no_invoice = $row['no_invoice'] ?? '';
     <div class="row-btm">
       <div class="info-contact">
         Informasi lebih lanjut hubungi:<br>
-        Hotline SMA : <b>081511519271</b> (Bu Puji)<br>
-        Hotline SMK : <b>085880120889</b> (Bu Ina)
+        Hotline SMA : <b>081511519271</b> (Bu Puji)
       </div>
     </div>
     <div class="note <?= $note_class ?>">
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
         <b>Catatan:</b><br>
-        Bukti pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA/SMK Dharma Karya.<br>
-        Siswa dinyatakan diterima apabila telah menyelesaikan administrasi.
+        1.	Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor pendaftaran.<br>
+        2.	Form pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
+
       <?php elseif ($status_pembayaran === 'Angsuran'): ?>
         <b>Catatan:</b><br>
         Siswa telah melakukan pembayaran sebagian (angsuran).<br>
