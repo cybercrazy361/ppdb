@@ -293,7 +293,7 @@ $no_invoice = $row['no_invoice'] ?? '';
 
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
-        <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
+        <div class="ttd-tanggal-kanan">Jakarta, <?= tanggal_id(date('Y-m-d')) ?></div>
         <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
         <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
       </div>
