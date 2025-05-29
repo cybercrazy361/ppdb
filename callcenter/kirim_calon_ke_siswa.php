@@ -55,7 +55,7 @@ $tanggal_pendaftaran = date('Y-m-d', strtotime($calon['tanggal_daftar'] ?? date(
 // 3. Generate no_formulir unik (format: INV052925001)
 $tgl = date('dm'); // contoh: 2905
 $thn = date('y');  // contoh: 25 untuk 2025
-$prefix = 'INV' . date('mdy'); // contoh: INV052925
+$prefix = 'REG' . date('mdy'); // contoh: INV052925
 
 // Cari urutan hari ini
 $stmtUrut = $conn->prepare("SELECT MAX(no_formulir) as maxf FROM siswa WHERE no_formulir LIKE CONCAT(?, '%')");
