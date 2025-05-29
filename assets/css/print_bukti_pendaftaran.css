@@ -74,7 +74,7 @@ body {
 }
 
 .kop-title1 {
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 700;
     color: #293981;
     margin-bottom: 0;
@@ -83,7 +83,7 @@ body {
 }
 
 .kop-title2 {
-    font-size: 16.3px;
+    font-size: 18px;
     font-weight: 800;
     color: #112277;
     margin-bottom: 2px;
@@ -91,14 +91,14 @@ body {
 }
 
 .kop-akreditasi {
-    font-size: 12px;
+    font-size: 16px;
     color: #1e3a8a;
     font-weight: 500;
     margin-bottom: 1.5px;
 }
 
 .kop-alamat {
-    font-size: 11px;
+    font-size: 14px;
     color: #3b3b3b;
     font-weight: 400;
     margin-bottom: 1px;
