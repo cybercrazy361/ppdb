@@ -23,7 +23,7 @@ $stmt->execute();
 $stmt->store_result();
 if ($stmt->num_rows > 0) {
     $stmt->close();
-    echo json_encode(['success' => false, 'message' => 'Sudah terkirim ke siswa.']);
+    echo json_encode(['success' => false, 'message' => 'siswa tersebut sudah terkirim ke tim pendaftaran.']);
     exit();
 }
 $stmt->close();
