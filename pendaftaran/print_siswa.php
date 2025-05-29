@@ -163,11 +163,13 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div class="header-content">
         <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
         <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-          <div class="sub-title"><b>BUKTI PENDAFTARAN MURID DIDIK BARU</b></div>
+          <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
         <?php else: ?>
           <div class="sub-title"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
         <?php endif; ?>
-        <div class="tahun-ajaran"><b>TAHUN AJARAN 2025/2026</b></div>
+        <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
+        <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
+        <div class="tahun-ajaran" style="font-size: 13px;"><b>TAHUN AJARAN 2025/2026</b></div>
       </div>
     </div>
 
