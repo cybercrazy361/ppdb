@@ -152,12 +152,11 @@ $no_invoice = $row['no_invoice'] ?? '';
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
-  
 </head>
 <body>
-  <button id="btnPrint" onclick="window.print()">Cetak</button>
-  <div class="container">
-
+  <button id="btnPrint" onclick="window.print()" style="display:inline-block;margin:10px 0 16px 0;padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+    <i class="fas fa-print"></i> Cetak / Simpan PDF
+  </button>
   <div class="container">
     <!-- KOP SURAT: Logo kiri, info tetap center -->
     <div class="kop-surat-rel">
@@ -172,7 +171,6 @@ $no_invoice = $row['no_invoice'] ?? '';
     </div>
     <div class="kop-garis"></div>
 
-    <!-- Header Judul -->
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
         <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
@@ -181,10 +179,9 @@ $no_invoice = $row['no_invoice'] ?? '';
       <?php endif; ?>
       <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
       <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
-      <div class="tahun-ajaran" style="font-size: 13px;"><b>TAHUN AJARAN 2025/2026</b></div>
+      <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
-    <!-- Nomor Registrasi/Formulir -->
     <div class="no-reg-row">
       <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
       <div class="no-reg-sep">:</div>
@@ -198,7 +195,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       </div>
     <?php endif; ?>
 
-    <!-- Data Siswa -->
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
@@ -211,10 +207,9 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-    <!-- Tagihan -->
-    <table class="tagihan-table" style="margin-top:18px;">
+    <table class="tagihan-table" style="margin-top:9px;">
       <tr>
-        <th colspan="2" style="background:#e3eaf7;font-size:15.5px;text-align:center">
+        <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
           <i class="fas fa-coins"></i> Keterangan Pembayaran
         </th>
       </tr>
@@ -232,10 +227,9 @@ $no_invoice = $row['no_invoice'] ?? '';
       <?php endif; ?>
     </table>
 
-    <!-- Riwayat Pembayaran -->
     <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
-      <div style="margin:18px 0 4px 0;font-size:15.2px;font-weight:500;">Riwayat Pembayaran:</div>
-      <table class="tagihan-table riwayat-bayar" style="margin-bottom:18px;">
+      <div style="margin:9px 0 2px 0;font-size:12.5px;font-weight:500;">Riwayat Pembayaran:</div>
+      <table class="tagihan-table riwayat-bayar" style="margin-bottom:9px;">
         <colgroup>
           <col style="width:18%">
           <col style="width:18%">
@@ -267,12 +261,10 @@ $no_invoice = $row['no_invoice'] ?? '';
       </table>
     <?php endif; ?>
 
-    <!-- Status -->
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
 
-    <!-- Kontak Info -->
     <div class="row-btm">
       <div class="info-contact">
         Informasi lebih lanjut hubungi:<br>
@@ -280,7 +272,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       </div>
     </div>
 
-    <!-- Note -->
     <div class="note <?= $note_class ?>">
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
         <b>Catatan:</b><br>
@@ -300,7 +291,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       <?php endif; ?>
     </div>
 
-    <!-- TTD PETUGAS -->
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan"><?= tanggal_id(date('Y-m-d')) ?></div>
