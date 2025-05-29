@@ -27,12 +27,16 @@ function display_errors() {
 $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 
 // ==== Generate NO INVOICE AUTO ====
-// Format: INV-[YEAR]-[UNIT]-[SEQ]
-$tahun = date('Y');
-$prefix = "INV-{$tahun}-{$unit}-";
+// Format: INV[MM][DD][YY][SEQ]
+$bulan = date('m');    // 05
+$tanggal = date('d');  // 29
+$tahun = date('y');    // 25
+$prefix = "INV{$bulan}{$tanggal}{$tahun}";
+
+// Hitung urutan hari ini di tabel siswa
 $today = date('Y-m-d');
-$stmt = $conn->prepare("SELECT COUNT(*) as total FROM siswa WHERE unit = ? AND DATE(created_at) = ?");
-$stmt->bind_param('ss', $unit, $today);
+$stmt = $conn->prepare("SELECT COUNT(*) as total FROM siswa WHERE DATE(created_at) = ?");
+$stmt->bind_param('s', $today);
 $stmt->execute();
 $res = $stmt->get_result();
 $urut = 1;
@@ -40,7 +44,10 @@ if ($row = $res->fetch_assoc()) {
     $urut = intval($row['total']) + 1;
 }
 $stmt->close();
+
+// Hasil akhir: INV052925001 (tanpa spasi)
 $no_invoice = $prefix . str_pad($urut, 3, '0', STR_PAD_LEFT);
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
