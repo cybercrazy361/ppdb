@@ -1,446 +1,318 @@
-/* Umum untuk layar */
+/* RESET & GLOBAL */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6fb;
+    color: #202b38;
     margin: 0;
-    padding: 20px;
-    color: #212529;
+    padding: 0;
 }
 
-.print-wrap {
-    background: white;
-    padding: 30px 40px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    margin: 0 auto 30px auto;
-}
-
-/* Header Surat */
-.kop-surat {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #0d6efd;
-    padding-bottom: 10px;
-}
-
-.kop-logo img {
-    max-width: 110px;
-    height: auto;
-    object-fit: contain;
-}
-
-.kop-center {
-    flex: 1;
-    text-align: center;
-}
-
-.kop-center h1 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 700;
-    color: #0d6efd;
-}
-
-.kop-center h2 {
-    margin: 5px 0 0 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: #212529;
-}
-
-.kop-center p {
-    margin: 2px 0;
-    font-size: 14px;
-    color: #495057;
-}
-
-/* Garis pemisah */
-.kop-garis {
-    border: none;
-    border-top: 3px solid #0d6efd;
-    margin: 0 0 20px 0;
-}
-
-/* Header utama dokumen */
-.header-doc {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.header-doc>h3 {
-    font-size: 22px;
-    color: #212529;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    font-weight: 700;
-}
-
-.header-sub,
-.header-unit,
-.header-ta {
-    margin: 2px 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: #495057;
-}
-
-/* Info Registrasi */
-.data-identitas {
-    margin-bottom: 20px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.reg-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    font-size: 15px;
-}
-
-.reg-label {
-    font-weight: 600;
-    color: #212529;
-}
-
-.reg-val {
-    font-weight: 700;
-    color: #0d6efd;
-}
-
-/* Tabel Data Siswa & Tagihan */
-.data-table,
-.tagihan-table,
-.riwayat-bayar {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-
-.data-table caption {
-    caption-side: top;
-    font-weight: 700;
-    font-size: 16px;
-    margin-bottom: 12px;
-    text-align: center;
-    color: #0d6efd;
-    text-transform: uppercase;
-}
-
-.data-table th,
-.data-table td,
-.tagihan-table th,
-.tagihan-table td,
-.riwayat-bayar th,
-.riwayat-bayar td {
-    border: 1px solid #dee2e6;
-    padding: 8px 12px;
-    vertical-align: middle;
-    color: #212529;
-}
-
-.data-table th,
-.tagihan-table th,
-.riwayat-bayar th {
-    background-color: #0d6efd;
-    color: white;
-    text-align: center;
-    font-weight: 700;
-    user-select: none;
-}
-
-.data-table td,
-.tagihan-table td,
-.riwayat-bayar td {
-    text-align: left;
-}
-
-.text-right {
-    text-align: right;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.muted {
-    color: #6c757d;
-    font-style: italic;
-}
-
-/* Styling tombol cetak - hilang saat print */
-.no-print {
-    background-color: #0d6efd;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    font-size: 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    box-shadow: 0 2px 6px rgba(13, 110, 253, 0.5);
-    transition: background-color 0.3s ease;
-}
-
-.no-print:hover {
-    background-color: #084298;
-}
-
-/* Status pembayaran badge */
-.status-row {
-    font-weight: 700;
-    font-size: 18px;
-    margin: 20px 0;
-    text-align: center;
-}
-
-.status-row span {
-    padding: 6px 14px;
-    border-radius: 25px;
-    display: inline-block;
-    font-size: 15px;
-}
-
-.status-row span i {
-    margin-right: 4px;
-}
-
-/* Status warna */
-.status-row .lunas {
-    background-color: #1cc88a;
-    color: white;
-}
-
-.status-row .angsuran {
-    background-color: #f6c23e;
-    color: black;
-}
-
-.status-row .belum-bayar {
-    background-color: #e74a3b;
-    color: white;
-}
-
-/* Catatan / note box */
-.note {
-    border-radius: 8px;
-    padding: 15px 20px;
-    margin-top: 25px;
-    font-size: 15px;
-    line-height: 1.4;
-}
-
-.note.belum-bayar {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.note.angsuran {
-    background-color: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeeba;
-}
-
-.note.lunas {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-/* Kontak */
-.info-contact {
-    text-align: center;
-    font-size: 16px;
-    margin: 30px 0 10px 0;
-    color: #212529;
-}
-
-/* Footer Tanda Tangan */
-.footer-ttd {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 40px;
-    font-size: 16px;
-}
-
-.footer-ttd-right {
-    text-align: right;
-    padding-right: 20px;
-}
-
-.ttd-tanggal {
-    font-weight: 700;
-    font-size: 16px;
-}
-
-.ttd-nama {
-    margin-top: 5px;
-    font-weight: 600;
-}
-
-.ttd-label {
-    font-style: italic;
-    color: #6c757d;
-    margin-top: 2px;
-}
-
-/* Riwayat pembayaran tabel */
-.riwayat-title {
-    font-weight: 700;
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: #212529;
-}
-
-/* Responsive for smaller screens */
-@media (max-width: 768px) {
-    .kop-surat {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .kop-logo {
-        margin-bottom: 10px;
-    }
-
-    .data-identitas {
-        max-width: 100%;
-    }
-}
-
-/* Print styling */
-@page {
-    size: A4;
-    margin: 20mm 15mm 20mm 15mm;
+/* CONTAINER */
+.container {
+    background: #fff;
+    width: 210mm;
+    /* A4 width */
+    min-height: 297mm;
+    /* A4 height */
+    margin: 0 auto;
+    box-shadow: 0 0 18px 2px rgba(42, 70, 131, 0.12);
+    border-radius: 14px;
+    padding: 32px 28px 22px 28px;
+    border: 1.4px solid #dde1ee;
+    position: relative;
+    overflow: hidden;
 }
 
 @media print {
     body {
-        background-color: white;
+        background: #fff;
+    }
+
+    .container {
         margin: 0;
-        padding: 0;
-        color: #000;
-    }
-
-    .no-print {
-        display: none !important;
-    }
-
-    .print-wrap {
         box-shadow: none;
-        border-radius: 0;
-        max-width: 100%;
-        padding: 0;
-        margin: 0;
-        font-size: 12pt;
-    }
-
-    .kop-surat {
-        border-bottom: 2px solid #000;
-        padding-bottom: 10px;
+        border: none;
         page-break-after: avoid;
+        min-height: auto;
+        width: 100%;
+        padding: 30px 24px 18px 24px;
+    }
+}
+
+/* KOP SURAT */
+.kop-surat-rel {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 8px;
+    min-height: 108px;
+}
+
+.kop-logo-abs {
+    width: 90px;
+    /* Bisa ubah sesuai logo */
+    height: 90px;
+    object-fit: contain;
+    position: absolute;
+    left: 0;
+    top: 6px;
+    z-index: 10;
+    background: #fff;
+}
+
+.kop-info-center {
+    margin: 0 auto;
+    width: 80%;
+    text-align: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.kop-title1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #293981;
+    margin-bottom: 2px;
+    margin-top: 5px;
+}
+
+.kop-title2 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #112277;
+    margin-bottom: 3px;
+}
+
+.kop-akreditasi {
+    font-size: 14px;
+    color: #1e3a8a;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.kop-alamat {
+    font-size: 13px;
+    color: #3b3b3b;
+    font-weight: 400;
+    margin-bottom: 1.5px;
+}
+
+.kop-garis {
+    border-bottom: 2.5px solid #273d7b;
+    margin-bottom: 14px;
+    margin-top: 12px;
+}
+
+/* HEADER UTAMA */
+.header-content {
+    text-align: center;
+    margin-bottom: 11px;
+}
+
+.sub-title {
+    font-size: 18.5px;
+    letter-spacing: 0.2px;
+    color: #222;
+    margin-bottom: 2px;
+}
+
+.tahun-ajaran {
+    font-size: 15px;
+    font-weight: 600;
+    color: #3949ab;
+    margin-bottom: 1px;
+}
+
+/* NO REG */
+.no-reg-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+    font-size: 15.1px;
+}
+
+.no-reg-label {
+    min-width: 188px;
+    font-weight: 500;
+}
+
+.no-reg-sep {
+    min-width: 16px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.no-reg-val {
+    font-weight: 700;
+    font-style: italic;
+    color: #1a53c7;
+}
+
+/* DATA SISWA TABLE */
+.data-table {
+    border-collapse: collapse;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    width: 100%;
+    background: #f9fafd;
+    font-size: 15px;
+}
+
+.data-table caption {
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+    color: #334296;
+    margin-bottom: 6px;
+    letter-spacing: 0.6px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 7.5px 11px;
+    border-bottom: 1.2px solid #e8eaf3;
+    text-align: left;
+}
+
+.data-table th {
+    width: 42%;
+    background: #e8ecfa;
+    color: #213b82;
+    font-weight: 600;
+    border-right: 1px solid #f0f1fa;
+}
+
+.data-table td {
+    background: #fff;
+}
+
+.tagihan-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: #f8fafb;
+    margin-top: 8px;
+    font-size: 14.7px;
+}
+
+.tagihan-table th,
+.tagihan-table td {
+    border: 1px solid #e5e8f2;
+    padding: 7px 9px;
+}
+
+.tagihan-table th {
+    background: #e3eaf7;
+    color: #183688;
+    font-weight: 600;
+}
+
+.riwayat-bayar th,
+.riwayat-bayar td {
+    font-size: 14.2px;
+    padding: 6px 7px;
+}
+
+/* STATUS BADGE & INFO */
+.status-row {
+    margin: 14px 0 9px 0;
+    font-size: 15.8px;
+    font-weight: 600;
+}
+
+.status-row span {
+    padding-left: 7px;
+}
+
+.note {
+    margin-top: 11px;
+    padding: 11px 16px 10px 14px;
+    font-size: 14.2px;
+    border-radius: 7px;
+    background: #f7faff;
+    color: #213052;
+    border-left: 4px solid #8190ef;
+}
+
+.note.lunas {
+    border-left-color: #24b97a;
+    background: #f5fff9;
+}
+
+.note.angsuran {
+    border-left-color: #efb91d;
+    background: #fff9ed;
+}
+
+.note.belum-bayar {
+    border-left-color: #e14e4e;
+    background: #fff4f4;
+}
+
+/* FOOTER & TTD */
+.footer-ttd-kanan {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 34px;
+}
+
+.ttd-block-kanan {
+    text-align: right;
+    font-size: 14.3px;
+}
+
+.ttd-tanggal-kanan {
+    margin-bottom: 32px;
+}
+
+.ttd-petugas-kanan {
+    font-weight: 700;
+    font-size: 14.8px;
+}
+
+.ttd-label-kanan {
+    font-size: 13px;
+    margin-top: 2px;
+    color: #555;
+}
+
+.info-contact {
+    font-size: 13.7px;
+    margin-top: 22px;
+    margin-bottom: 1px;
+    color: #173575;
+}
+
+.tgl-lebar {
+    min-width: 88px;
+}
+
+@media print {
+    .footer-ttd-kanan {
+        margin-top: 32px;
     }
 
-    .kop-logo img {
-        max-width: 90px;
-        height: auto;
-    }
-
-    .kop-center h1,
-    .kop-center h2,
-    .kop-center p {
-        color: #000;
-    }
-
-    .header-doc h3 {
-        font-size: 18pt;
-        color: #000;
-        margin-bottom: 5px;
-    }
-
-    .header-sub,
-    .header-unit,
-    .header-ta {
-        font-size: 12pt;
-        font-weight: normal;
-        color: #000;
-    }
-
-    .data-identitas {
-        max-width: 100%;
-        margin: 0 0 15px 0;
-    }
-
-    .reg-row {
-        font-size: 12pt;
-        margin-bottom: 4px;
-    }
-
-    .reg-label {
-        font-weight: bold;
-    }
-
-    .reg-val {
-        font-weight: normal;
-    }
-
-    table.data-table,
-    table.tagihan-table,
-    table.riwayat-bayar {
-        font-size: 12pt;
-        border: 1pt solid black;
-    }
-
-    table.data-table th,
-    table.tagihan-table th,
-    table.riwayat-bayar th,
-    table.data-table td,
-    table.tagihan-table td,
-    table.riwayat-bayar td {
-        border: 1pt solid black;
-        padding: 6px 10px;
-        color: #000;
-    }
-
+    .note,
     .status-row {
-        font-size: 14pt;
-        font-weight: bold;
-        margin: 18px 0;
-        text-align: center;
+        page-break-inside: avoid;
+    }
+}
+
+/* Responsive untuk preview */
+@media (max-width: 800px) {
+    .container {
+        width: 98vw;
+        min-width: unset;
     }
 
-    .note {
-        font-size: 12pt;
-        padding: 12px 15px;
-        border-width: 1.5pt;
-    }
-
-    .info-contact {
-        font-size: 13pt;
-        margin: 20px 0 10px 0;
-        text-align: center;
-        color: #000;
-    }
-
-    .footer-ttd {
-        font-size: 13pt;
-        margin-top: 50px;
-        justify-content: flex-end;
-    }
-
-    /* Prevent page break inside tables */
-    tr,
-    td,
-    th {
-        page-break-inside: avoid !important;
+    .kop-info-center {
+        width: 100%;
     }
 }
