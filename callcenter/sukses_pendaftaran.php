@@ -56,7 +56,7 @@ unset($_SESSION['success_pendaftaran']);
                 Data calon siswa berhasil disimpan.<br>
                 Silakan lanjutkan proses follow-up atau tambahkan pendaftar lainnya.
             </p>
-            <a href="input_progres_pendaftaran_callcenter.php" class="btn btn-primary"><i class="fa-solid fa-user-plus me-1"></i>Tambah Lagi</a>
+            <a href="input_progres_pendaftaran.php" class="btn btn-primary"><i class="fa-solid fa-user-plus me-1"></i>Tambah Lagi</a>
             <a href="dashboard_callcenter.php" class="btn btn-outline-success ms-2"><i class="fa-solid fa-house me-1"></i>Dashboard</a>
         </div>
     </div>
