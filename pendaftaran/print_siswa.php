@@ -158,8 +158,19 @@ $no_invoice = $row['no_invoice'] ?? '';
     <i class="fas fa-print"></i> Cetak
   </button>
   <div class="container">
+    <div class="kop-header">
+      <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo" />
+      <div class="kop-info">
+        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+        <div class="kop-title3">Terakreditasi “A”</div>
+        <div class="kop-title4">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+        <div class="kop-title4">Telp. 021-7398578 / 7250224</div>
+      </div>
+    </div>
+    <div class="kop-garis"></div>
+
     <div class="header">
-      <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'"/>
       <div class="header-content">
         <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
           <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
