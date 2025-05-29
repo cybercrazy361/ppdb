@@ -30,6 +30,12 @@ $pendidikan_ortu = input($_POST['pendidikan_ortu'] ?? '');
 $no_hp_ortu      = input($_POST['no_hp_ortu'] ?? '');
 $pilihan         = input($_POST['pilihan'] ?? '');
 
+// Kolom 'email' di tabel harus diisi (NOT NULL)
+$email           = "-";
+if (isset($_POST['email']) && !empty(trim($_POST['email']))) {
+    $email = input($_POST['email']);
+}
+
 // Validasi data wajib
 if (
     empty($nama) || empty($jenis_kelamin) || empty($asal_sekolah) ||
@@ -40,13 +46,13 @@ if (
     exit();
 }
 
-// SQL Insert
+// SQL Insert TANPA kolom 'created_at', gunakan field yang BENAR
 $stmt = $conn->prepare("INSERT INTO calon_pendaftar 
-    (nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan, status, created_at) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Tidak Ada Konfirmasi', NOW())");
+    (nama, jenis_kelamin, asal_sekolah, email, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan, status) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Tidak Ada Konfirmasi')");
 $stmt->bind_param(
-    "ssssssss",
-    $nama, $jenis_kelamin, $asal_sekolah, $no_hp, $alamat, $pendidikan_ortu, $no_hp_ortu, $pilihan
+    "sssssssss",
+    $nama, $jenis_kelamin, $asal_sekolah, $email, $no_hp, $alamat, $pendidikan_ortu, $no_hp_ortu, $pilihan
 );
 
 if ($stmt->execute()) {
