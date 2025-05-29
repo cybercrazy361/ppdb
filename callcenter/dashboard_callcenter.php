@@ -61,7 +61,6 @@ $conn->close();
 <?php include 'sidebar_callcenter.php'; ?>
 
 <div class="main">
-
     <!-- Navbar / Topbar -->
     <header class="navbar">
         <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
@@ -82,21 +81,39 @@ $conn->close();
         </div>
         <div class="card shadow" onclick="showModal('ppdb')" style="cursor:pointer;">
             <div class="icon text-success"><i class="fas fa-user-check"></i></div>
-            <div class="title">Sudah Follow-up</div>
+            <div class="title">PPDB Bersama</div>
             <div class="count"><?=$stat['status']['PPDB Bersama']?></div>
-            <div class="subtext">PPDB Bersama</div>
+            <div class="subtext">Follow-up Berhasil</div>
+        </div>
+        <div class="card shadow" onclick="showModal('titipan')" style="cursor:pointer;">
+            <div class="icon text-info"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="title">Uang Titipan</div>
+            <div class="count"><?=$stat['status']['Uang Titipan']?></div>
+            <div class="subtext">Sudah Titip Uang</div>
+        </div>
+        <div class="card shadow" onclick="showModal('akanbayar')" style="cursor:pointer;">
+            <div class="icon text-warning"><i class="fas fa-hourglass-half"></i></div>
+            <div class="title">Akan Bayar</div>
+            <div class="count"><?=$stat['status']['Akan Bayar']?></div>
+            <div class="subtext">Akan Melakukan Pembayaran</div>
+        </div>
+        <div class="card shadow" onclick="showModal('nunggunegeri')" style="cursor:pointer;">
+            <div class="icon" style="color:#8f9dff;"><i class="fas fa-user-clock"></i></div>
+            <div class="title">Menunggu Negeri</div>
+            <div class="count"><?=$stat['status']['Menunggu Negeri']?></div>
+            <div class="subtext">Menunggu Sekolah Negeri</div>
         </div>
         <div class="card shadow" onclick="showModal('pending')" style="cursor:pointer;">
-            <div class="icon text-warning"><i class="fas fa-clock"></i></div>
-            <div class="title">Belum dihubungi</div>
+            <div class="icon text-danger"><i class="fas fa-user-question"></i></div>
+            <div class="title">Tidak Ada Konfirmasi</div>
             <div class="count"><?=$stat['status']['Tidak Ada Konfirmasi']?></div>
-            <div class="subtext">Belum follow-up</div>
+            <div class="subtext">Belum dihubungi</div>
         </div>
         <div class="card shadow" onclick="showModal('tidakjadi')" style="cursor:pointer;">
-            <div class="icon text-danger"><i class="fas fa-user-slash"></i></div>
-            <div class="title">Tidak Jadi / Cancel</div>
+            <div class="icon" style="color:#727a86;"><i class="fas fa-user-slash"></i></div>
+            <div class="title">Tidak Jadi</div>
             <div class="count"><?=$stat['status']['Tidak Jadi']?></div>
-            <div class="subtext">Batal mendaftar</div>
+            <div class="subtext">Batal Mendaftar</div>
         </div>
     </section>
 
@@ -138,17 +155,21 @@ function showModal(status) {
     const body = document.getElementById('modalBody');
     body.innerHTML = '<tr><td colspan="5" class="text-center">Memuat...</td></tr>';
     let url = `fetch_calon_pendaftar.php?unit=<?=urlencode($unit)?>`;
-    if(status==='ppdb') url += "&status=PPDB%20Bersama";
-    if(status==='pending') url += "&status=Tidak%20Ada%20Konfirmasi";
-    if(status==='tidakjadi') url += "&status=Tidak%20Jadi";
+    if (status === 'ppdb') url += "&status=PPDB%20Bersama";
+    else if (status === 'titipan') url += "&status=Uang%20Titipan";
+    else if (status === 'akanbayar') url += "&status=Akan%20Bayar";
+    else if (status === 'nunggunegeri') url += "&status=Menunggu%20Negeri";
+    else if (status === 'pending') url += "&status=Tidak%20Ada%20Konfirmasi";
+    else if (status === 'tidakjadi') url += "&status=Tidak%20Jadi";
+    // "all" tidak tambah param status
     fetch(url)
         .then(r => r.json())
         .then(data => {
-            if(!data.length) {
+            if (!data.length) {
                 body.innerHTML = '<tr><td colspan="5" class="text-center">Tidak ada data.</td></tr>';
                 return;
             }
-            body.innerHTML = data.map((s,i) =>
+            body.innerHTML = data.map((s, i) =>
                 `<tr>
                   <td>${i+1}</td>
                   <td>${s.nama}</td>
