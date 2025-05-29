@@ -44,6 +44,8 @@ body {
     width: 100%;
 }
 
+
+
 /* Navbar / Topbar */
 .navbar {
     display: flex;
@@ -385,4 +387,11 @@ body::-webkit-scrollbar-track,
 .btn:focus {
     outline: none !important;
     box-shadow: none !important;
+}
+
+@media (max-width: 540px) {
+    .chart-container {
+        max-width: 99vw;
+        padding: 0;
+    }
 }

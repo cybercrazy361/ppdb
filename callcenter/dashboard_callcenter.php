@@ -61,7 +61,7 @@ $conn->close();
 <?php include 'sidebar_callcenter.php'; ?>
 
 <div class="main">
-    <div class="container-dashboard">
+    
     <header class="navbar">
         <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
         <div class="title">Dashboard Call Center (<?=htmlspecialchars($unit)?>)</div>
@@ -104,7 +104,7 @@ $conn->close();
     </section>
 </div>
 <!-- Modal Calon Pendaftar -->
-<div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+< class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
         <div class="modal-header">
@@ -122,7 +122,6 @@ $conn->close();
             </table>
         </div>
         </div>
-    </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
