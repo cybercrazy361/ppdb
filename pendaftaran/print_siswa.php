@@ -152,8 +152,31 @@ $no_invoice = $row['no_invoice'] ?? '';
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
+  <style>
+    @media print {
+      #btnPrint {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
+  <button id="btnPrint" onclick="window.print()" style="
+    display:inline-block;
+    margin: 24px auto 16px 6px;
+    padding: 8px 20px;
+    font-size: 15px;
+    background: #213b82;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    box-shadow: 0 1px 6px rgba(24,38,68,0.07);
+    transition: background 0.2s;
+  ">
+    <i class="fas fa-print"></i> Cetak / Simpan PDF
+  </button>
+
   <div class="container">
     <!-- KOP SURAT: Logo kiri, info tetap center -->
     <div class="kop-surat-rel">
