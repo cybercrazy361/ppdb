@@ -228,17 +228,21 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-<!-- Status dan Keterangan Sebelum Data Calon Peserta Didik -->
-    <div class="status-print-row" style="display:flex;justify-content:space-between;align-items:center;margin:18px 0 8px 0;padding:10px 18px;border-radius:9px;background:linear-gradient(90deg,#eef6fa 60%,#ecfcff 100%);box-shadow:0 2px 12px 0 rgba(78,145,223,0.07);font-size:15px;">
-      <div>
-        <b>Status Pendaftaran:</b>
-        <span style="color:#174edc"><?= htmlspecialchars($status_pendaftaran) ?></span>
-      </div>
-      <div style="margin-left:24px;">
-        <b>Keterangan:</b>
-        <span style="color:#222"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '<i>Tidak ada</i>' ?></span>
-      </div>
+<div class="status-print-row">
+    <div class="status-col">
+        <span>
+            <b>Status Pendaftaran:</b>
+            <span><?= htmlspecialchars($status_pendaftaran) ?></span>
+        </span>
     </div>
+    <div class="keterangan-col" style="text-align:right;">
+        <span>
+            <b class="keterangan-label">Keterangan:</b>
+            <span><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '<i>Tidak ada</i>' ?></span>
+        </span>
+    </div>
+</div>
+
 
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
