@@ -405,87 +405,77 @@ body {
     text-align: left;
 }
 
-.kop-header {
+.kop-row {
     display: flex;
     align-items: center;
-    gap: 18px;
-    margin-bottom: 7px;
-    margin-top: 7px;
-    padding-bottom: 2px;
-    background: transparent;
+    justify-content: flex-start;
+}
+
+.kop-logo-col {
+    flex: 0 0 110px;
+    /* lebih besar */
+    text-align: left;
 }
 
 .kop-logo {
-    width: 68px;
-    /* Lebih kecil dari sebelumnya */
-    height: 68px;
+    width: 100px;
+    /* Perbesar logo */
+    height: 100px;
     object-fit: contain;
-    margin-left: 7px;
-    background: #fff;
-    border-radius: 7px;
-    border: 1px solid #eee;
-    box-shadow: 0 1px 3px #0001;
     display: block;
+    margin-left: 8px;
+    background: none !important;
+    box-shadow: none !important;
+    border-radius: 12px;
 }
 
-.kop-info {
+.kop-title-col {
     flex: 1;
     text-align: center;
-    line-height: 1.09;
-    /* Lebih rapat */
-    color: #666;
-    margin-top: 0;
-    margin-right: 7px;
+    color: #818181;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 .kop-title1 {
-    font-size: 1.22rem;
-    /* Paling besar 22px */
+    font-size: 1.7rem;
     font-weight: 500;
-    letter-spacing: 0.5px;
-    color: #888;
-    margin-bottom: -2px;
-    margin-top: 0;
+    margin-bottom: 0;
+    letter-spacing: 0.4px;
+    line-height: 1.15;
 }
 
 .kop-title2 {
-    font-size: 1.55rem;
-    /* Sekitar 25px */
-    font-weight: 800;
-    color: #535b63;
-    margin-bottom: 1px;
-    margin-top: 0px;
-    letter-spacing: 0.9px;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 0px;
+    letter-spacing: 1px;
+    color: #686868;
 }
 
 .kop-akreditasi {
-    font-size: 1rem;
-    /* 16px */
-    font-weight: 600;
-    margin: 0;
-    color: #6c757d;
-}
-
-.kop-akreditasi span {
-    color: #252e39;
+    font-size: 1.09rem;
     font-weight: bold;
+    margin-bottom: 0;
+    margin-top: 0;
+    color: #707070;
+    line-height: 1.12;
 }
 
 .kop-alamat {
-    font-size: 0.98rem;
-    /* 15.5px */
+    font-size: 1.01rem;
     font-weight: 500;
-    color: #9fa4ad;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    letter-spacing: 0.3px;
+    color: #939393;
+    margin-top: 0;
+    margin-bottom: 0;
+    letter-spacing: 0.2px;
+    line-height: 1.12;
 }
 
 .kop-garis {
-    border-bottom: 4px solid #e9e9ea;
+    border-bottom: 5px solid #bcbcbc;
     width: 100%;
-    margin: 8px 0 11px 0;
-    border-radius: 1.2px;
-    opacity: 0.7;
-    box-shadow: 0 1px 0 #fff2;
+    margin: 14px 0 10px 0;
+    border-radius: 1.5px;
+    opacity: 0.65;
 }

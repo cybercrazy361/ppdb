@@ -158,17 +158,22 @@ $no_invoice = $row['no_invoice'] ?? '';
     <i class="fas fa-print"></i> Cetak
   </button>
   <div class="container">
-    <div class="kop-header">
-      <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo" />
-      <div class="kop-info">
-        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-        <div class="kop-akreditasi">Terakreditasi <span>“A”</span></div>
-        <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-        <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+    <div class="kop-surat">
+      <div class="kop-row">
+        <div class="kop-logo-col">
+          <img src="../assets/images/logo_transparan.png" alt="Logo" class="kop-logo"/>
+        </div>
+        <div class="kop-title-col">
+          <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+          <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+          <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
+          <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+          <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+        </div>
       </div>
+      <div class="kop-garis"></div>
     </div>
-    <div class="kop-garis"></div>
+
 
 
     <div class="header">
