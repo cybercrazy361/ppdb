@@ -368,44 +368,56 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    /* Pastikan sejajar atas */
-    margin: 18px 0 8px 0;
-    padding: 10px 18px;
-    border-radius: 9px;
     background: linear-gradient(90deg, #eef6fa 60%, #ecfcff 100%);
-    box-shadow: 0 2px 12px 0 rgba(78, 145, 223, 0.07);
-    font-size: 15px;
-    gap: 30px;
+    border-radius: 13px;
+    box-shadow: 0 2px 12px 0 rgba(78, 145, 223, 0.06);
+    padding: 13px 18px 11px 18px;
+    margin: 10px 0 12px 0;
+    font-size: 17px;
 }
 
-.status-print-row .status-col,
-.status-print-row .keterangan-col {
+.status-col,
+.keterangan-col {
     display: flex;
-    flex-direction: column;
-    font-weight: 600;
-    min-width: 240px;
+    flex-direction: row;
+    align-items: center;
+    gap: 7px;
 }
 
-.status-print-row span {
-    font-weight: normal;
-    color: #174edc;
-    margin-left: 6px;
+.status-label {
+    font-weight: bold;
+    color: #1564be;
+    margin-right: 2px;
+    font-size: 1.05em;
 }
 
-.status-print-row .keterangan-label {
-    color: #222;
+.status-value {
+    color: #196bd9;
+    font-weight: 400;
 }
 
-@media (max-width: 600px) {
+.keterangan-label {
+    font-weight: bold;
+    color: #232323;
+    margin-right: 2px;
+}
+
+.keterangan-value {
+    color: #196bd9;
+    font-weight: 400;
+    margin-left: 3px;
+}
+
+@media (max-width: 700px) {
     .status-print-row {
         flex-direction: column;
-        gap: 10px;
-        font-size: 14px;
-        padding: 8px 6px;
+        font-size: 15px;
+        gap: 5px;
+        padding: 10px 9px;
     }
 
-    .status-print-row .status-col,
-    .status-print-row .keterangan-col {
-        min-width: unset;
+    .status-col,
+    .keterangan-col {
+        justify-content: flex-start;
     }
 }

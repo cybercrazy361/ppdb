@@ -230,16 +230,12 @@ $no_invoice = $row['no_invoice'] ?? '';
 
 <div class="status-print-row">
     <div class="status-col">
-        <span>
-            <b>Status Pendaftaran:</b>
-            <span><?= htmlspecialchars($status_pendaftaran) ?></span>
-        </span>
+        <span class="status-label">Status Pendaftaran:</span>
+        <span class="status-value"><?= htmlspecialchars($status_pendaftaran) ?></span>
     </div>
-    <div class="keterangan-col" style="text-align:right;">
-        <span>
-            <b class="keterangan-label">Keterangan:</b>
-            <span><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '<i>Tidak ada</i>' ?></span>
-        </span>
+    <div class="keterangan-col">
+        <span class="keterangan-label">Keterangan:</span>
+        <span class="keterangan-value"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '-' ?></span>
     </div>
 </div>
 
