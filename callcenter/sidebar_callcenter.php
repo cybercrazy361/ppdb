@@ -10,27 +10,23 @@
 <nav class="sidebar" id="sidebarNav">
   <div class="brand">SPMB Call Center <?= htmlspecialchars($unit) ?></div>
   <div class="nav flex-column">
-    <a href="dashboard_callcenter.php"
-      class="nav-link <?= ($active=='dashboard'?'active':'') ?>">
+    <a href="dashboard_callcenter.php" class="nav-link <?= ($active=='dashboard'?'active':'') ?>">
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
     <!-- LABEL CALON SISWA -->
     <div class="sidebar-section-label">CALON SISWA</div>
-    <a href="daftar_calon_siswa.php"
-      class="nav-link <?= ($active=='calonsiswa'?'active':'') ?>">
+    <a href="daftar_calon_siswa.php" class="nav-link <?= ($active=='calonsiswa'?'active':'') ?>">
       <i class="fas fa-user-graduate"></i>
       <span>Daftar Calon Siswa</span>
     </a>
     <!-- LABEL KOMUNIKASI -->
     <div class="sidebar-section-label">KOMUNIKASI</div>
-    <a href="kontak_masuk.php"
-      class="nav-link <?= ($active=='kontakmasuk'?'active':'') ?>">
+    <a href="kontak_masuk.php" class="nav-link <?= ($active=='kontakmasuk'?'active':'') ?>">
       <i class="fas fa-inbox"></i>
       <span>Kontak Masuk</span>
     </a>
-    <a href="riwayat_komunikasi.php"
-      class="nav-link <?= ($active=='riwayat'?'active':'') ?>">
+    <a href="riwayat_komunikasi.php" class="nav-link <?= ($active=='riwayat'?'active':'') ?>">
       <i class="fas fa-history"></i>
       <span>Riwayat Komunikasi</span>
     </a>

@@ -16,7 +16,6 @@
     --header-height: 59px;
 }
 
-/* General */
 body {
     background: var(--color-bg);
     font-family: var(--font-base);
@@ -24,11 +23,9 @@ body {
     min-height: 100vh;
 }
 
-/* == Sidebar padding integration == */
 .main {
     margin-left: 235px;
     padding: 32px 32px 18px 32px;
-    /* kiri kanan sama, tidak lebay */
     min-height: 100vh;
     background: var(--color-bg);
     transition: padding .2s, margin-left .2s;
@@ -47,7 +44,7 @@ body {
     width: 100%;
 }
 
-/* == Navbar / Topbar == */
+/* Navbar / Topbar */
 .navbar {
     display: flex;
     align-items: center;
@@ -161,7 +158,6 @@ body {
     }
 }
 
-/* == Dashboard Cards == */
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -185,7 +181,6 @@ body {
     }
 }
 
-/* == Card == */
 .card {
     background: var(--color-card);
     border-radius: var(--border-radius);
@@ -291,7 +286,6 @@ body {
     }
 }
 
-/* == Chart Card == */
 .chart-card {
     background: var(--color-card);
     border-radius: var(--border-radius);
@@ -323,7 +317,6 @@ body {
     }
 }
 
-/* == Modal Styles == */
 .modal-content {
     border-radius: 1.12rem;
     box-shadow: 0 7px 26px #2369c813;
@@ -355,7 +348,6 @@ body {
     vertical-align: middle;
 }
 
-/* == Animations == */
 @keyframes fadeInCard {
     from {
         opacity: 0;
@@ -373,7 +365,6 @@ body {
     animation: fadeInCard .78s;
 }
 
-/* == Scrollbar minimalis == */
 body::-webkit-scrollbar,
 .main::-webkit-scrollbar {
     width: 7px;
@@ -390,7 +381,6 @@ body::-webkit-scrollbar-track,
     background: transparent;
 }
 
-/* == Button Styles == */
 .btn,
 .btn:focus {
     outline: none !important;

@@ -8,18 +8,16 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
     exit();
 }
 
-$unit = $_SESSION['unit']; // 'Yayasan', 'SMA', atau 'SMK'
+$unit = $_SESSION['unit'];
 
 // Statistik utama calon pendaftar
 function getCallCenterStats($conn, $unit) {
-    // Total calon pendaftar
     $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM calon_pendaftar WHERE pilihan = ?");
     $stmt->bind_param("s", $unit);
     $stmt->execute();
     $total = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
 
-    // Statistik status follow-up
     $statusList = [
         'PPDB Bersama'         => 0,
         'Uang Titipan'         => 0,
@@ -72,7 +70,6 @@ $conn->close();
             <a href="../logout/logout_callcenter.php" class="btn-logout">Logout</a>
         </div>
     </header>
-
     <section class="dashboard-cards">
         <div class="card shadow" onclick="showModal('all')" style="cursor:pointer;">
             <div class="icon text-primary"><i class="fas fa-users"></i></div>
@@ -99,7 +96,6 @@ $conn->close();
             <div class="subtext">Batal mendaftar</div>
         </div>
     </section>
-
     <section class="chart-card">
         <h6>Status Pendaftar</h6>
         <div class="chart-container">
@@ -107,7 +103,6 @@ $conn->close();
         </div>
     </section>
 </div>
-
 <!-- Modal Calon Pendaftar -->
 <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -130,7 +125,6 @@ $conn->close();
     </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/sidebar_callcenter.js"></script>
 <script>
@@ -163,7 +157,6 @@ function showModal(status) {
         });
     new bootstrap.Modal('#statusModal').show();
 }
-
 const ctx = document.getElementById('chartStatus').getContext('2d');
 new Chart(ctx, {
     type: 'doughnut',
