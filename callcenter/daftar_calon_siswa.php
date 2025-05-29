@@ -3,8 +3,8 @@ session_start();
 include '../database_connection.php';
 
 // 1) Validasi login
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
-    header('Location: login_pendaftaran.php');
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
+    header('Location: login_callcenter.php');
     exit();
 }
 
