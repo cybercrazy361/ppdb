@@ -206,26 +206,25 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
-<?php if (!empty($row['reviewed_by'])): ?>
-  <div class="reviewed-by" style="margin:10px 0 14px 0; text-align:right;">
-    <span style="
-      display: inline-flex;
-      align-items: center;
-      background: linear-gradient(90deg, #e6edfa 60%, #d4f1fd 100%);
-      padding: 5px 18px 5px 12px;
-      border-radius: 16px;
-      box-shadow: 0 1.5px 9px 0 rgba(65, 123, 230, 0.07);
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #1a4299;
-      letter-spacing: 0.2px;
-    ">
-      <i class="fas fa-headset" style="margin-right:8px;color:#2496db;font-size:15px;"></i>
-      Call Center: <span style="margin-left:6px;color:#222b50;"><?= safe($row['reviewed_by']) ?></span>
-    </span>
-  </div>
-<?php endif; ?>
-
+    <?php if (!empty($row['reviewed_by'])): ?>
+      <div class="reviewed-by" style="margin:16px 0 16px 0; text-align:center;">
+        <span style="
+          display: inline-flex;
+          align-items: center;
+          background: linear-gradient(90deg, #e6edfa 60%, #d4f1fd 100%);
+          padding: 7px 22px 7px 16px;
+          border-radius: 18px;
+          box-shadow: 0 2px 11px 0 rgba(65, 123, 230, 0.09);
+          font-size: 15px;
+          font-weight: 600;
+          color: #1a4299;
+          letter-spacing: 0.3px;
+        ">
+          <i class="fas fa-headset" style="margin-right:9px;color:#2496db;font-size:17px;"></i>
+          Call Center: <span style="margin-left:8px;color:#222b50;"><?= safe($row['reviewed_by']) ?></span>
+        </span>
+      </div>
+    <?php endif; ?>
 
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
