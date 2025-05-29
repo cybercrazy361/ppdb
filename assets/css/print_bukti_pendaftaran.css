@@ -116,14 +116,14 @@ body {
 }
 
 .sub-title {
-    font-size: 15.3px;
+    font-size: 20px;
     letter-spacing: 0.1px;
     color: #222;
     margin-bottom: 0;
 }
 
 .tahun-ajaran {
-    font-size: 12.4px;
+    font-size: 16px;
     font-weight: 600;
     color: #3949ab;
     margin-bottom: 0;
@@ -168,7 +168,7 @@ body {
     caption-side: top;
     font-weight: bold;
     font-size: 14.5px;
-    color: #84167b;
+    color: #163984;
     background: #e8ecfa;
     /* Warna background */
     text-align: center;
@@ -191,7 +191,7 @@ body {
 .data-table th {
     width: 38%;
     background: #e8ecfa;
-    color: #213b82;
+    color: #752182;
     font-weight: 600;
     border-right: 1px solid #f0f1fa;
 }
