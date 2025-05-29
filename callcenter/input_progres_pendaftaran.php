@@ -12,7 +12,8 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$unit = $_SESSION['unit'];
+$unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
+$nama_unit = ($unit == 'SMA') ? 'SMA Dharma Karya' : 'SMK Dharma Karya';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -39,7 +40,7 @@ $unit = $_SESSION['unit'];
             </div>
         </header>
         <div class="container-form">
-            <div class="form-card">               
+            <div class="form-card">
                 <form action="proses_calon_pendaftar.php" method="POST" autocomplete="off">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="row g-3">
@@ -108,12 +109,12 @@ $unit = $_SESSION['unit'];
                             <label for="pilihan" class="form-label">Pilih Sekolah</label>
                             <div class="input-group">
                                 <span class="input-group-text icon-field"><i class="fa-solid fa-building-columns"></i></span>
-                                <select class="form-select" id="pilihan" name="pilihan" required>
-                                    <option value="" disabled selected>-- Pilih Sekolah --</option>
-                                    <option value="SMA">SMA Dharma Karya</option>
-                                    <option value="SMK">SMK Dharma Karya</option>
+                                <select class="form-select" id="pilihan" name="pilihan" required readonly disabled>
+                                    <option value="<?=$unit?>" selected><?=htmlspecialchars($nama_unit)?></option>
                                 </select>
+                                <input type="hidden" name="pilihan" value="<?=$unit?>">
                             </div>
+                            <small class="text-muted ms-1">*Sekolah otomatis sesuai unit login</small>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between mt-4 gap-2">
