@@ -159,7 +159,7 @@ $no_invoice = $row['no_invoice'] ?? '';
   </button>
   <div class="container">
     <div class="kop-header">
-      <img src="../assets/images/logo_transparan.png" alt="Logo" class="kop-logo" />
+      <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo" />
       <div class="kop-info">
         <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
         <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
