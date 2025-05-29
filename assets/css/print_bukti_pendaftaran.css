@@ -164,13 +164,22 @@ body {
 }
 
 .data-table caption {
-    text-align: left;
+    display: table-caption;
+    caption-side: top;
     font-weight: bold;
-    font-size: 13.7px;
-    color: #334296;
-    margin-bottom: 2.5px;
+    font-size: 14.5px;
+    color: #163984;
+    background: #e8ecfa;
+    /* Warna background */
+    text-align: center;
+    /* Tengah */
+    padding: 7px 0 6px 0;
+    /* Padding atas bawah */
     letter-spacing: 0.5px;
+    border-radius: 3px 3px 0 0;
+    width: 100%;
 }
+
 
 .data-table th,
 .data-table td {
