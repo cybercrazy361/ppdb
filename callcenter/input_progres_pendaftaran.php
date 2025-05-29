@@ -2,42 +2,40 @@
 session_start();
 include '../database_connection.php';
 
-// Pastikan pengguna sudah login sebagai petugas pendaftaran
+// Validasi hanya untuk callcenter
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
     header('Location: login_callcenter.php');
     exit();
 }
 
-// CSRF token
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
-
+$unit = $_SESSION['unit'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Awal - Yayasan Pendidikan Dharma Karya</title>
+    <title>Input Calon Siswa - Call Center SPMB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
-  <link rel="stylesheet" href="../assets/css/input_progres_pendaftaran_styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/sidebar_callcenter_styles.css">
+    <link rel="stylesheet" href="../assets/css/input_progres_pendaftaran_styles.css">
 </head>
 <body>
-    <?php $active = 'inputpendaftaran'; ?>
-    <?php include 'sidebar_pendaftaran.php'; ?>
-  
+    <?php $active = 'progressiswa'; ?>
+    <?php include 'sidebar_callcenter.php'; ?>
+
     <div class="main">
         <header class="navbar">
-            <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-            <div class="title">Progres Pendaftaran Murid baru SMA/SMK</div>
+            <button class="toggle-btn" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+            <div class="title">Input Calon Siswa Baru SPMB (<?=htmlspecialchars($unit)?>)</div>
             <div class="user-menu">
                 <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
-                <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
+                <a href="../callcenter/logout_callcenter.php" class="btn-logout">Logout</a>
             </div>
         </header>
         <div class="container-form">
@@ -48,7 +46,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
                         <div class="col-12">
                             <label for="nama" class="form-label">Nama Lengkap</label>
                             <div class="input-group">
-                                <span class="input-group-text icon-field"><i class="fa fa-user"></i></span>
+                                <span class="input-group-text icon-field"><i class="fa-solid fa-user"></i></span>
                                 <input type="text" class="form-control" id="nama" name="nama" required placeholder="Masukkan nama lengkap">
                             </div>
                         </div>
@@ -73,7 +71,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
                         <div class="col-12 col-md-6">
                             <label for="no_hp" class="form-label">No HP Calon Peserta Didik</label>
                             <div class="input-group">
-                                <span class="input-group-text icon-field"><i class="fa fa-phone"></i></span>
+                                <span class="input-group-text icon-field"><i class="fa-solid fa-phone"></i></span>
                                 <input type="tel" class="form-control" id="no_hp" name="no_hp" required pattern="[0-9]{10,13}" placeholder="0812xxxxxx">
                             </div>
                             <small class="text-muted ms-1">Format: Hanya angka (10-13 digit)</small>
@@ -101,7 +99,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
                         <div class="col-12 col-md-6">
                             <label for="no_hp_ortu" class="form-label">No HP Orang Tua/Wali</label>
                             <div class="input-group">
-                                <span class="input-group-text icon-field"><i class="fa fa-phone-volume"></i></span>
+                                <span class="input-group-text icon-field"><i class="fa-solid fa-phone-volume"></i></span>
                                 <input type="tel" class="form-control" id="no_hp_ortu" name="no_hp_ortu" required pattern="[0-9]{10,13}" placeholder="0812xxxxxx">
                             </div>
                             <small class="text-muted ms-1">Format: Hanya angka (10-13 digit)</small>
@@ -109,7 +107,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
                         <div class="col-12">
                             <label for="pilihan" class="form-label">Pilih Sekolah</label>
                             <div class="input-group">
-                                <span class="input-group-text icon-field"><i class="fa fa-building-columns"></i></span>
+                                <span class="input-group-text icon-field"><i class="fa-solid fa-building-columns"></i></span>
                                 <select class="form-select" id="pilihan" name="pilihan" required>
                                     <option value="" disabled selected>-- Pilih Sekolah --</option>
                                     <option value="SMA">SMA Dharma Karya</option>
@@ -127,7 +125,6 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
         </div>
     </div>
     <script>
-      // Hamburger sidebar toggle (optional, follow pattern sidebar_pendaftaran.js)
       document.addEventListener("DOMContentLoaded", function () {
           const sidebarToggle = document.getElementById('sidebarToggle');
           if (sidebarToggle) {
@@ -138,6 +135,6 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
       });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/sidebar_pendaftaran.js"></script>
+    <script src="../assets/js/sidebar_callcenter.js"></script>
 </body>
 </html>
