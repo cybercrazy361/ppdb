@@ -389,7 +389,7 @@ function getStatusPembayaranLabel($status) {
         <div class="modal-body">
           <input type="hidden" id="verifyId" name="id">
           <div class="mb-2"><b>Nama:</b> <span id="verifyNama"></span></div>
-          <div class="mb-2"><b>No invoice:</b> <span id="verifyNoInvoice"></span></div>
+          <div class="mb-2"><b>No Formulir:</b> <span id="verifyNoFormulir"></span></div>
           <div class="mb-3">
             <label class="form-label">Pilih pembayaran yang akan diverifikasi:</label>
             <div class="form-check">
@@ -467,7 +467,7 @@ function getStatusPembayaranLabel($status) {
       button.addEventListener('click', () => {
         document.getElementById('verifyId').value = button.getAttribute('data-id');
         document.getElementById('verifyNama').innerText = button.getAttribute('data-nama');
-        document.getElementById('verifyNoInvoice').innerText = button.getAttribute('data-no_invoice');
+        document.getElementById('verifyNoFormulir').innerText = button.getAttribute('data-no_formulir');
         // Reset form saat buka modal
         ['cbUangPangkal','cbSPP','cbSeragam','cbKegiatan'].forEach(id => {
           document.getElementById(id).checked = false;
