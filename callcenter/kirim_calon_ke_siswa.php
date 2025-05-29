@@ -23,7 +23,7 @@ $stmt->execute();
 $stmt->store_result();
 if ($stmt->num_rows > 0) {
     $stmt->close();
-    echo json_encode(['success' => false, 'message' => 'siswa tersebut sudah terkirim ke tim pendaftaran.']);
+    echo json_encode(['success' => false, 'message' => 'Siswa tersebut sudah terkirim ke tim pendaftaran.']);
     exit();
 }
 $stmt->close();
@@ -52,10 +52,15 @@ $no_hp          = $calon['no_hp'] ?? '-';
 $no_hp_ortu     = $calon['no_hp_ortu'] ?? '-';
 $tanggal_pendaftaran = date('Y-m-d', strtotime($calon['tanggal_daftar'] ?? date('Y-m-d')));
 
-// 3. Generate no_formulir unik (format: INV052925001)
-$tgl = date('dm'); // contoh: 2905
-$thn = date('y');  // contoh: 25 untuk 2025
-$prefix = 'REG' . date('mdy'); // contoh: INV052925
+// === Ambil nama petugas callcenter ===
+$reviewed_by = $_SESSION['nama'] ?? $_SESSION['username'] ?? '-';
+// Jika mau catat waktu review juga:
+$reviewed_at = date('Y-m-d H:i:s'); // Pastikan kolom ini ada jika dipakai
+
+// 3. Generate no_formulir unik (format: REGmdy001)
+$tgl = date('dm');
+$thn = date('y');
+$prefix = 'REG' . date('mdy'); // Contoh: REG052925
 
 // Cari urutan hari ini
 $stmtUrut = $conn->prepare("SELECT MAX(no_formulir) as maxf FROM siswa WHERE no_formulir LIKE CONCAT(?, '%')");
@@ -66,20 +71,19 @@ $stmtUrut->close();
 
 $no_urut = 1;
 if ($maxData && $maxData['maxf']) {
-    // Ambil 3 digit urutan terakhir
     $angka = intval(substr($maxData['maxf'], 9, 3));
     $no_urut = $angka + 1;
 }
-$no_formulir = $prefix . str_pad($no_urut, 3, '0', STR_PAD_LEFT); // Contoh: INV052925001
+$no_formulir = $prefix . str_pad($no_urut, 3, '0', STR_PAD_LEFT);
 
-
-// 4. Masukkan ke tabel siswa (calon_pendaftar_id ikut dimasukkan)
-$stmt = $conn->prepare("INSERT INTO siswa
-    (no_formulir, nama, unit, jenis_kelamin, tempat_lahir, tanggal_lahir, asal_sekolah, alamat, no_hp, no_hp_ortu, tanggal_pendaftaran, calon_pendaftar_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+// 4. Masukkan ke tabel siswa
+$stmt = $conn->prepare("
+    INSERT INTO siswa
+    (no_formulir, nama, unit, jenis_kelamin, tempat_lahir, tanggal_lahir, asal_sekolah, alamat, no_hp, no_hp_ortu, tanggal_pendaftaran, calon_pendaftar_id, reviewed_by, reviewed_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 $stmt->bind_param(
-    "sssssssssssi",
+    "sssssssssssiss",
     $no_formulir,
     $nama,
     $unit,
@@ -91,11 +95,13 @@ $stmt->bind_param(
     $no_hp,
     $no_hp_ortu,
     $tanggal_pendaftaran,
-    $id
+    $id,
+    $reviewed_by,
+    $reviewed_at
 );
 
 if ($stmt->execute()) {
-    // 5. Update status calon_pendaftar (optional: bisa 'PPDB Bersama' atau custom)
+    // 5. Update status calon_pendaftar
     $stmt2 = $conn->prepare("UPDATE calon_pendaftar SET status = 'PPDB Bersama' WHERE id = ?");
     $stmt2->bind_param("i", $id);
     $stmt2->execute();
@@ -103,7 +109,7 @@ if ($stmt->execute()) {
 
     echo json_encode([
         'success' => true,
-        'message' => 'Siswa Berhasil Di kirim Ke tim Pendaftaran',
+        'message' => 'Siswa Berhasil Dikirim ke tim Pendaftaran',
         'no_formulir' => $no_formulir
     ]);
 } else {

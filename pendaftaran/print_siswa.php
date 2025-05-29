@@ -206,6 +206,13 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
+<?php if (!empty($row['reviewed_by'])): ?>
+  <div class="reviewed-by" style="margin:7px 0 10px 0;text-align:right;font-size:12.5px;">
+    <span style="background:#f4f6fb;padding:3px 14px 3px 8px;border-radius:7px;">
+      <b>Call Center:</b> <?= safe($row['reviewed_by']) ?>
+    </span>
+  </div>
+<?php endif; ?>
 
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
