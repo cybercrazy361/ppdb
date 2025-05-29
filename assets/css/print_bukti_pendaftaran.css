@@ -407,30 +407,31 @@ body {
 
 .kop-surat-rel {
     position: relative;
-    min-height: 140px;
-    /* Tinggi minimum agar logo besar tetap muat */
+    min-height: 120px;
+    /* Ubah sesuai kebutuhan tinggi logo */
     width: 100%;
     margin-bottom: 10px;
     margin-top: 5px;
 }
 
+/* LOGO MUTLAK ABSOLUTE */
 .kop-logo-abs {
     position: absolute;
     left: 0;
-    top: 4px;
-    /* Bisa diatur agar sejajar */
-    width: 120px;
-    /* PERBESAR LOGO DI SINI, misal 140px atau 180px */
-    height: 120px;
+    top: 0;
+    width: 100px;
+    /* Silakan ubah lebih besar jika perlu */
+    height: 100px;
     object-fit: contain;
     z-index: 2;
     background: none;
     box-shadow: none;
-    border-radius: 10px;
+    border-radius: 12px;
     pointer-events: none;
     user-select: none;
 }
 
+/* INFO TETAP 100% TENGAH HALAMAN */
 .kop-info-center {
     display: flex;
     flex-direction: column;
@@ -438,7 +439,9 @@ body {
     justify-content: center;
     text-align: center;
     width: 100%;
-    padding-left: 0;
+    /* Trik: padding-left agar tulisan tidak ketimpa logo */
+    padding-left: 110px;
+    /* minimal width logo + sedikit spasi */
 }
 
 .kop-title1 {
@@ -447,18 +450,18 @@ body {
     letter-spacing: 0.5px;
     color: #888;
     margin-bottom: 0;
-    margin-top: 12px;
-    line-height: 1.15;
+    margin-top: 18px;
+    line-height: 1.16;
 }
 
 .kop-title2 {
-    font-size: 1.65rem;
+    font-size: 1.67rem;
     font-weight: 800;
     color: #535b63;
     margin-bottom: 1px;
     margin-top: 0;
     letter-spacing: 0.9px;
-    line-height: 1.11;
+    line-height: 1.12;
 }
 
 .kop-akreditasi {
