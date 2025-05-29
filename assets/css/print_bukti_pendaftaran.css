@@ -405,39 +405,40 @@ body {
     text-align: left;
 }
 
-.kop-header {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    margin-bottom: 7px;
-    margin-top: 7px;
-    padding-bottom: 2px;
-    background: transparent;
+.kop-surat-rel {
+    position: relative;
+    min-height: 140px;
+    /* Tinggi minimum agar logo besar tetap muat */
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 5px;
 }
 
-.kop-logo {
-    width: 100px;
-    /* Perbesar agar lebih proporsional */
-    height: 100px;
+.kop-logo-abs {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    /* Bisa diatur agar sejajar */
+    width: 120px;
+    /* PERBESAR LOGO DI SINI, misal 140px atau 180px */
+    height: 120px;
     object-fit: contain;
-    margin-left: 7px;
-    background: none !important;
-    /* Hilangkan latar jika PNG transparan */
-    border-radius: 2px;
-    border: none;
-    /* Tidak perlu border jika PNG transparan */
+    z-index: 2;
+    background: none;
     box-shadow: none;
-    /* Tidak perlu shadow */
-    display: block;
+    border-radius: 10px;
+    pointer-events: none;
+    user-select: none;
 }
 
-.kop-info {
-    flex: 1;
+.kop-info-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    line-height: 1.09;
-    color: #666;
-    margin-top: 0;
-    margin-right: 7px;
+    width: 100%;
+    padding-left: 0;
 }
 
 .kop-title1 {
@@ -445,19 +446,19 @@ body {
     font-weight: 500;
     letter-spacing: 0.5px;
     color: #888;
-    margin-bottom: -1px;
-    margin-top: 0;
-    line-height: 1.14;
+    margin-bottom: 0;
+    margin-top: 12px;
+    line-height: 1.15;
 }
 
 .kop-title2 {
-    font-size: 1.67rem;
+    font-size: 1.65rem;
     font-weight: 800;
     color: #535b63;
     margin-bottom: 1px;
     margin-top: 0;
     letter-spacing: 0.9px;
-    line-height: 1.1;
+    line-height: 1.11;
 }
 
 .kop-akreditasi {
@@ -484,7 +485,7 @@ body {
 .kop-garis {
     border-bottom: 4px solid #e9e9ea;
     width: 100%;
-    margin: 10px 0 14px 0;
+    margin: 18px 0 14px 0;
     border-radius: 1.2px;
     opacity: 0.7;
     box-shadow: 0 1px 0 #fff2;
