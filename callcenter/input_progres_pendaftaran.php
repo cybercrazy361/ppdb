@@ -114,7 +114,7 @@ $nama_unit = ($unit == 'SMA') ? 'SMA Dharma Karya' : 'SMK Dharma Karya';
                                 </select>
                                 <input type="hidden" name="pilihan" value="<?=$unit?>">
                             </div>
-                            <small class="text-muted ms-1">*Sekolah otomatis sesuai unit login</small>
+                            <small class="text-muted ms-1">*Sekolah otomatis</small>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between mt-4 gap-2">
