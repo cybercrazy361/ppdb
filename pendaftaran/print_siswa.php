@@ -161,7 +161,6 @@ $no_invoice = $row['no_invoice'] ?? '';
     <div class="header">
       <img src="../assets/images/logo_trans.png" alt="Logo" class="logo" onerror="this.style.display='none'"/>
       <div class="header-content">
-        <div class="sekolah-title">SMA/SMK DHARMA KARYA JAKARTA</div>
         <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
           <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
         <?php else: ?>
