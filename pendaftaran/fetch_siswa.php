@@ -20,7 +20,8 @@ if ($unit === '' || $status === '') {
     exit();
 }
 
-$query = "
+// Query status pembayaran (case logic seperti dashboard)
+$mainQuery = "
     SELECT 
         s.id,
         s.nama,
@@ -65,19 +66,35 @@ $query = "
     WHERE s.unit = ?
 ";
 
-if ($status === 'lunas') {
-    $query = "SELECT * FROM ($query) x WHERE status_pembayaran = 'Lunas'";
+// Handle all status
+if ($status === 'total') {
+    // TAMPILKAN SEMUA (status apapun)
+    $query = $mainQuery;
+    $paramTypes = 's';
+    $params = [$unit];
+} elseif ($status === 'lunas') {
+    // Hanya Lunas
+    $query = "SELECT * FROM ($mainQuery) AS x WHERE status_pembayaran = 'Lunas'";
+    $paramTypes = 's';
+    $params = [$unit];
 } elseif ($status === 'angsuran') {
-    $query = "SELECT * FROM ($query) x WHERE status_pembayaran = 'Angsuran'";
+    // Hanya Angsuran
+    $query = "SELECT * FROM ($mainQuery) AS x WHERE status_pembayaran = 'Angsuran'";
+    $paramTypes = 's';
+    $params = [$unit];
 } elseif ($status === 'belum') {
-    $query = "SELECT * FROM ($query) x WHERE status_pembayaran = 'Belum Bayar'";
+    // Hanya Belum Bayar
+    $query = "SELECT * FROM ($mainQuery) AS x WHERE status_pembayaran = 'Belum Bayar'";
+    $paramTypes = 's';
+    $params = [$unit];
 } else {
+    // Status tak dikenal, balikin kosong
     echo json_encode([]);
     exit();
 }
 
 $stmt = $conn->prepare($query);
-$stmt->bind_param('s', $unit);
+$stmt->bind_param($paramTypes, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -93,3 +110,4 @@ $stmt->close();
 $conn->close();
 
 echo json_encode($siswaList);
+?>
