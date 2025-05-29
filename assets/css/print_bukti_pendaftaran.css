@@ -392,12 +392,14 @@ body {
     color: #1564be;
     white-space: nowrap;
     font-size: 1em;
-    padding: 0;
+    padding: 0 15px 0 0;
+    /* <-- tambah jarak ke kanan */
     vertical-align: top;
 }
 
 .status-ket-sep {
-    padding: 0 5px 0 6px;
+    padding: 0 5px 0 0;
+    /* agar spasi setelah : rapat ke value */
     font-weight: normal;
     color: #444;
     vertical-align: top;
