@@ -228,17 +228,20 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-<div class="status-print-row">
-    <div class="status-col">
-        <span class="status-label">Status Pendaftaran:</span>
-        <span class="status-value"><?= htmlspecialchars($status_pendaftaran) ?></span>
-    </div>
-    <div class="keterangan-col">
-        <span class="keterangan-label">Keterangan:</span>
-        <span class="keterangan-value"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '-' ?></span>
-    </div>
+<div class="status-keterangan-wrap">
+  <table class="status-keterangan-table">
+    <tr>
+      <td class="status-ket-label">Status Pendaftaran</td>
+      <td class="status-ket-sep">:</td>
+      <td class="status-ket-value"><?= htmlspecialchars($status_pendaftaran) ?></td>
+    </tr>
+    <tr>
+      <td class="status-ket-label">Keterangan</td>
+      <td class="status-ket-sep">:</td>
+      <td class="status-ket-value"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '-' ?></td>
+    </tr>
+  </table>
 </div>
-
 
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
