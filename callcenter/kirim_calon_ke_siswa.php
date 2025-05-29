@@ -91,7 +91,7 @@ if ($stmt->execute()) {
 
     echo json_encode([
         'success' => true,
-        'message' => 'Data berhasil dikirim ke siswa',
+        'message' => 'Siswa Berhasil Di kirim Ke tim Pendaftaran',
         'no_formulir' => $no_formulir
     ]);
 } else {
