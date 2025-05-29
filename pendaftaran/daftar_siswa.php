@@ -314,10 +314,10 @@ function getStatusPembayaranLabel($status) {
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-3"><label class="form-label">No Formulir</label>
+          <div class="mb-3"><label class="form-label">No Registrasi</label>
             <input type="text" class="form-control" id="editNoFormulir" name="no_formulir" required>
           </div>
-          <div class="mb-3"><label class="form-label">No Invoice</label>
+          <div class="mb-3"><label class="form-label">No Formulir</label>
             <input type="text" class="form-control" id="editNoInvoice" name="no_invoice" required>
           </div>
           <div class="mb-3"><label class="form-label">Nama</label>
