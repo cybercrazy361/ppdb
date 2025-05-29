@@ -66,19 +66,19 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
   <title>Progres Pendaftaran - PPDB</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
+  <link rel="stylesheet" href="../assets/css/sidebar_callcenter_styles.css">
   <link rel="stylesheet" href="../assets/css/progres_pendaftaran_styles.css">
 </head>
 <body>
-    <?php $active = 'progrespendaftaran'; ?>
-    <?php include 'sidebar_pendaftaran.php'; ?>
+    <?php $active = 'calonsiswa'; ?>
+    <?php include 'sidebar_callcenter_style.php'; ?>
     <div class="main">
         <header class="navbar">
             <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
             <div class="title">Progres Pendaftaran Calon Siswa</div>
             <div class="user-menu">
                 <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
-                <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
+                <a href="../logout/logout_callcenter.php" class="btn-logout">Logout</a>
             </div>
         </header>
         <div class="main-container">
