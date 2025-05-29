@@ -203,7 +203,6 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
 <?php endif; ?>
 
-
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
@@ -285,8 +284,8 @@ $no_invoice = $row['no_invoice'] ?? '';
     <div class="note <?= $note_class ?>">
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
         <b>Catatan:</b><br>
-        1. Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor pendaftaran.<br>
-        2. Form pendaftaran ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor pendaftaran.
+        1. Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor Formulir.<br>
+        2. Form Registrasi ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor Formulir.
       <?php elseif ($status_pembayaran === 'Angsuran'): ?>
         <b>Catatan:</b><br>
         Siswa telah melakukan pembayaran sebagian (angsuran).<br>
