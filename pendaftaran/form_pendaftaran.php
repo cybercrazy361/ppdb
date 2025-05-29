@@ -86,7 +86,7 @@ $no_invoice = $prefix . str_pad($urut, 3, '0', STR_PAD_LEFT);
 
         <div class="row g-4">
           <div class="col-12 col-md-6">
-            <label for="no_invoice" class="form-label">No Invoice</label>
+            <label for="no_invoice" class="form-label">No Registrasi</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-receipt"></i></span>
               <input type="text" id="no_invoice" name="no_invoice"
