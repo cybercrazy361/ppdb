@@ -163,12 +163,13 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div class="kop-info">
         <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
         <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-        <div class="kop-title3">Terakreditasi “A”</div>
-        <div class="kop-title4">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-        <div class="kop-title4">Telp. 021-7398578 / 7250224</div>
+        <div class="kop-akreditasi">Terakreditasi <span>“A”</span></div>
+        <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+        <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
       </div>
     </div>
     <div class="kop-garis"></div>
+
 
     <div class="header">
       <div class="header-content">
