@@ -369,7 +369,7 @@ body {
     background: linear-gradient(90deg, #eef6fa 60%, #ecfcff 100%);
     border-radius: 13px;
     box-shadow: 0 2px 12px 0 rgba(78, 145, 223, 0.06);
-    padding: 13px 18px 13px 18px;
+    padding: 13px 18px;
     width: 100%;
     max-width: 100%;
 }
@@ -377,22 +377,26 @@ body {
 .status-keterangan-table {
     border-collapse: collapse;
     width: 100%;
+    table-layout: fixed;
 }
 
 .status-ket-label {
     font-weight: bold;
     color: #1564be;
-    min-width: 170px;
-    padding-right: 9px;
+    min-width: 160px;
+    max-width: 190px;
+    padding-right: 7px;
     white-space: nowrap;
-    font-size: 1.04em;
+    font-size: 1.07em;
     vertical-align: top;
 }
 
 .status-ket-sep {
-    width: 14px;
-    min-width: 14px;
-    text-align: center;
+    width: 10px;
+    min-width: 10px;
+    max-width: 14px;
+    padding: 0 2px;
+    text-align: right;
     color: #444;
     vertical-align: top;
 }
@@ -402,6 +406,7 @@ body {
     font-weight: 500;
     vertical-align: top;
     word-break: break-word;
+    padding-left: 2px;
 }
 
 @media (max-width:700px) {
@@ -409,5 +414,10 @@ body {
     .status-keterangan-table .status-ket-label,
     .status-keterangan-table .status-ket-value {
         font-size: 0.98em;
+    }
+
+    .status-ket-label {
+        min-width: 112px;
+        max-width: 132px;
     }
 }
