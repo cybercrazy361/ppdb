@@ -243,6 +243,7 @@ $no_invoice = $row['no_invoice'] ?? '';
   </table>
 </div>
 
+
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
