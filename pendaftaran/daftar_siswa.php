@@ -389,7 +389,7 @@ function getStatusPembayaranLabel($status) {
         <div class="modal-body">
           <input type="hidden" id="verifyId" name="id">
           <div class="mb-2"><b>Nama:</b> <span id="verifyNama"></span></div>
-          <div class="mb-2"><b>No Formulir:</b> <span id="verifyNoFormulir"></span></div>
+          <div class="mb-2"><b>No Registrasi Pendaftaran:</b> <span id="verifyNoFormulir"></span></div>
           <div class="mb-3">
             <label class="form-label">Pilih pembayaran yang akan diverifikasi:</label>
             <div class="form-check">
