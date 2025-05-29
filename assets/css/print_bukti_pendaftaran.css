@@ -42,29 +42,30 @@ body {
 /* === KOP SURAT CENTER, LOGO BESAR === */
 .kop-surat-rel {
     width: 100%;
+    min-height: 100px;
+    margin-bottom: 12px;
     position: relative;
-    min-height: 105px;
-    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
 }
 
 .kop-logo-abs {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: -8px;
     width: 92px;
-    /* LOGO BESAR */
+    /* Besar sesuai tinggi blok yayasan */
     height: 92px;
     object-fit: contain;
-    z-index: 2;
+    flex: 0 0 92px;
+    margin-right: 18px;
+    margin-top: 2px;
 }
 
 .kop-info-center {
+    flex: 1;
     text-align: center;
-    width: 100%;
-    margin: 0 auto;
-    padding-top: 90px;
-    /* Jarak bawah logo ke text, agar text kop tidak tumpuk logo */
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
 }
 
 .kop-title1 {
@@ -72,7 +73,7 @@ body {
     font-weight: 700;
     letter-spacing: 1.1px;
     color: #1d366c;
-    line-height: 1.15;
+    line-height: 1.12;
     margin-bottom: 2px;
 }
 
