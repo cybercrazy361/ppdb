@@ -14,6 +14,12 @@
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
+     <!-- LABEL CALON SISWA -->
+    <div class="sidebar-section-label">Progres siswa</div>
+    <a href="input_progres_pendaftaran" class="nav-link <?= ($active=='progresiswa'?'active':'') ?>">
+      <i class="fa-user-plus"></i>
+      <span>Input Daftar Calon Siswa</span>
+    </a>
     <!-- LABEL CALON SISWA -->
     <div class="sidebar-section-label">CALON SISWA</div>
     <a href="daftar_calon_siswa.php" class="nav-link <?= ($active=='calonsiswa'?'active':'') ?>">
