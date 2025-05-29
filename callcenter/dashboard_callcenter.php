@@ -67,7 +67,7 @@ $conn->close();
         <div class="title">Dashboard Call Center (<?=htmlspecialchars($unit)?>)</div>
         <div class="user-menu">
             <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
-            <a href="../logout_callcenter.php" class="btn-logout">Logout</a>
+            <a href="../callcenter/logout_callcenter.php" class="btn-logout">Logout</a>
         </div>
     </header>
     <section class="dashboard-cards">
