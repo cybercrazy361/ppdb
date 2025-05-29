@@ -52,14 +52,26 @@ $no_hp          = $calon['no_hp'] ?? '-';
 $no_hp_ortu     = $calon['no_hp_ortu'] ?? '-';
 $tanggal_pendaftaran = date('Y-m-d', strtotime($calon['tanggal_daftar'] ?? date('Y-m-d')));
 
-// 3. Generate no_formulir unik (misal: SMA20240001)
-$max = $conn->query("SELECT MAX(no_formulir) as maxf FROM siswa WHERE unit='$unit' AND no_formulir LIKE '$unit%'")->fetch_assoc()['maxf'];
+// 3. Generate no_formulir unik (format: INV052925001)
+$tgl = date('dm'); // contoh: 2905
+$thn = date('y');  // contoh: 25 untuk 2025
+$prefix = 'INV' . date('mdy'); // contoh: INV052925
+
+// Cari urutan hari ini
+$stmtUrut = $conn->prepare("SELECT MAX(no_formulir) as maxf FROM siswa WHERE no_formulir LIKE CONCAT(?, '%')");
+$stmtUrut->bind_param("s", $prefix);
+$stmtUrut->execute();
+$maxData = $stmtUrut->get_result()->fetch_assoc();
+$stmtUrut->close();
+
 $no_urut = 1;
-if ($max) {
-    $angka = intval(substr($max, strlen($unit)));
+if ($maxData && $maxData['maxf']) {
+    // Ambil 3 digit urutan terakhir
+    $angka = intval(substr($maxData['maxf'], 9, 3));
     $no_urut = $angka + 1;
 }
-$no_formulir = $unit . date('Y') . str_pad($no_urut, 4, '0', STR_PAD_LEFT);
+$no_formulir = $prefix . str_pad($no_urut, 3, '0', STR_PAD_LEFT); // Contoh: INV052925001
+
 
 // 4. Masukkan ke tabel siswa (calon_pendaftar_id ikut dimasukkan)
 $stmt = $conn->prepare("INSERT INTO siswa
