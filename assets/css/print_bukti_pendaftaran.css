@@ -1,4 +1,8 @@
-/* === RESET & GLOBAL === */
+/* ======================== */
+/* print_bukti_pendaftaran.css */
+/* ======================== */
+
+/* --- Reset CSS & General --- */
 *,
 *::before,
 *::after {
@@ -6,490 +10,418 @@
 }
 
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f6f8fa;
-    margin: 0;
-    padding: 20px 25px;
+    font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+    background: #f4f6fb;
     color: #222;
+    margin: 0;
+    padding: 25px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.35;
+    font-size: 16px;
+    line-height: 1.45;
 }
 
-/* === CONTAINER === */
 .container {
     width: 210mm;
     max-width: 100%;
     margin: 0 auto;
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 8px rgba(60, 60, 60, 0.13);
-    padding: 18px 25px 18px 25px;
-    border: 1px solid #d1dbe7;
+    border-radius: 13px;
+    box-shadow: 0 0 12px 0 rgba(60, 60, 60, 0.17);
+    padding: 32px 34px 28px 34px;
+    border: 1.1px solid #d1dbe7;
     page-break-after: avoid;
     box-sizing: border-box;
-}
-
-/* === HEADER === */
-.header {
     position: relative;
-    min-height: 80px;
-    margin-bottom: 12px;
-    padding-bottom: 6px;
 }
 
-.logo {
-    width: 150px;
-    height: 150px;
-    object-fit: contain;
-    position: absolute;
-    left: 0;
-    top: -40px;
-    z-index: 2;
-}
-
-.header-content {
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 80px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    pointer-events: none;
-}
-
-.sekolah-title {
-    font-size: 19px;
-    font-weight: 700;
-    color: #193871;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 2px;
-}
-
-.sub-title {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
-.tahun-ajaran {
-    font-size: 15px;
-    margin-bottom: 0;
-}
-
-.no-reg {
-    margin-bottom: 6px;
-    font-weight: 500;
-    font-size: 15px;
-    text-align: left;
-}
-
-/* === STATUS ROW === */
-.status-row {
-    font-size: 17px;
-    font-weight: bold;
-    color: #222;
-    text-align: center;
-    background: #f6f7fc;
+/* --- Print Button --- */
+.btn-cetak {
+    display: inline-block;
+    margin-bottom: 22px;
+    background: #2954d7;
+    color: #fff;
+    padding: 10px 26px;
+    border: none;
     border-radius: 7px;
-    padding: 6px 0;
-    margin-bottom: 12px;
-    border: 1px solid #c5d1e8;
-}
-
-/* === DATA TABLE UTAMA 40-60 === */
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 6px;
-    table-layout: fixed;
-    box-sizing: border-box;
-}
-
-.data-table colgroup col:first-child {
-    width: 40%;
-}
-
-.data-table colgroup col:last-child {
-    width: 60%;
-}
-
-.data-table caption {
-    background: #eaf2ce;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 5px 0;
-    border-radius: 4px 4px 0 0;
-    margin-bottom: 0;
-    text-align: center;
-    letter-spacing: 0.7px;
-}
-
-.data-table th,
-.data-table td {
-    border: 1px solid #777;
-    padding: 5px 10px;
-    font-size: 14px;
-    vertical-align: middle;
-    background: #fff;
-}
-
-.data-table th {
-    background: #f2f6e9;
-    font-weight: 600;
-    text-align: left;
-    padding-left: 12px;
-}
-
-/* === TABEL TAGIHAN/RIWAYAT PEMBAYARAN (dengan .riwayat-bayar) === */
-.tagihan-table,
-.riwayat-bayar {
-    width: 100%;
-    border-collapse: collapse;
-    background: #f9f9fa;
-    border-radius: 8px;
-    margin-bottom: 6px;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-.tagihan-table th,
-.tagihan-table td,
-.riwayat-bayar th,
-.riwayat-bayar td {
-    border: 1px solid #777;
-    font-size: 15px !important;
-    padding: 5px 7px !important;
-    vertical-align: middle;
-    background: #fff;
-    text-align: left;
-}
-
-.tagihan-table th,
-.riwayat-bayar th {
-    background: #ecf3fd;
-    font-weight: 600;
-    text-align: left;
-}
-
-.riwayat-bayar th:nth-child(1),
-.riwayat-bayar td:nth-child(1) {
-    width: 18%;
-}
-
-.riwayat-bayar th:nth-child(2),
-.riwayat-bayar td:nth-child(2) {
-    width: 18%;
-    text-align: right;
-}
-
-.riwayat-bayar th:nth-child(3),
-.riwayat-bayar td:nth-child(3) {
-    width: 18%;
-    text-align: right;
-}
-
-.riwayat-bayar th:nth-child(4),
-.riwayat-bayar td:nth-child(4) {
-    width: 12%;
-    text-align: left;
-}
-
-.riwayat-bayar th:nth-child(5),
-.riwayat-bayar td:nth-child(5) {
-    width: 12%;
-    text-align: center;
-}
-
-.riwayat-bayar th:last-child,
-.riwayat-bayar td:last-child,
-.riwayat-bayar .tgl-lebar {
-    min-width: 120px !important;
-    width: 22% !important;
-    max-width: 210px !important;
-    text-align: left !important;
-    font-size: 15px !important;
-    white-space: nowrap !important;
-}
-
-@media (max-width: 700px) {
-
-    .data-table,
-    .riwayat-bayar {
-        font-size: 12px;
-    }
-}
-
-/* === RAPATKAN INFO KONTAK BAWAH === */
-.row-btm {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin-top: 2px;
-    /* Lebih rapat */
-}
-
-.info-contact {
-    font-size: 13.5px;
-    line-height: 1.13;
-    white-space: pre-line;
-    text-align: left;
+    font-size: 17px;
     font-weight: 500;
-    color: #111;
-    margin: 0;
-    padding: 0;
+    box-shadow: 0 3px 13px rgba(41, 84, 215, 0.11);
+    cursor: pointer;
+    transition: background 0.18s;
+    gap: 8px;
 }
 
-.info-contact br {
-    line-height: 90%;
+.btn-cetak i {
+    margin-right: 6px;
 }
 
-/* === NOTE & STATUS === */
-.note {
-    font-size: 13px;
-    margin-top: 6px;
-    padding: 8px 16px 6px 14px;
-    border-left: 3.5px solid #0497df;
-    border-radius: 3px;
-    color: #333;
-    background: #f7f7fc;
-    border-color: #0497df;
-    line-height: 1.3;
+.btn-cetak:hover {
+    background: #143a95;
 }
 
-.note.belum-bayar {
-    color: #333;
-    background: #f7f7fc;
-    border-color: #0497df;
-}
-
-.note.angsuran {
-    color: #856404;
-    background: #fff3cd;
-    border-color: #ffeeba;
-}
-
-.note.lunas {
-    color: #155724;
-    background: #d4edda;
-    border-color: #c3e6cb;
-}
-
-/* === FOOTER/TTD === */
-.footer-ttd-kanan {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-top: 40px;
-    min-height: 90px;
-}
-
-.ttd-block-kanan {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 200px;
-}
-
-.ttd-tanggal-kanan {
-    font-size: 16px;
-    margin-bottom: 50px;
-    text-align: center;
-    width: 100%;
-}
-
-.ttd-petugas-kanan {
-    font-weight: normal;
-    font-size: 20px;
-    margin-bottom: 1px;
-    text-align: center;
-    width: 100%;
-}
-
-.ttd-label-kanan {
-    font-weight: normal;
-    font-size: 16px;
-    text-align: center;
-    width: 100%;
-}
-
-/* === PRINT OVERRIDES === */
-@media print {
-    @page {
-        size: A4 portrait;
-        margin: 12mm;
-    }
-
-    html,
-    body {
-        width: 210mm;
-        height: 297mm;
-        background: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        padding-top: 10px !important;
-    }
-
-    .container {
-        width: 100% !important;
-        max-width: 185mm !important;
-        min-height: 250mm;
-        margin: 0 auto !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        border: none !important;
-        page-break-after: avoid;
-        padding: 20px !important;
-    }
-
-    .header {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }
-
-    .no-print {
-        display: none !important;
-    }
-
-    .data-table caption,
-    .data-table th,
-    .note {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    .footer-ttd-kanan {
-        margin-top: 70px !important;
-    }
-
-    .logo {
-        width: 120px !important;
-        height: 120px !important;
-        top: -25px !important;
-    }
-}
-
-.no-reg-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
-    font-size: 15px;
-    font-weight: 500;
-}
-
-.no-reg-label {
-    min-width: 120px;
-    /* Sesuaikan jika perlu */
-    text-align: left;
-
-}
-
-.no-reg-sep {
-    width: 16px;
-    text-align: center;
-}
-
-.no-reg-val {
-    flex: 1;
-    text-align: left;
-}
-
+/* --- Kop Surat --- */
 .kop-surat-rel {
     position: relative;
-    min-height: 120px;
-    /* Ubah sesuai kebutuhan tinggi logo */
-    width: 100%;
-    margin-bottom: 10px;
-    margin-top: 5px;
+    margin-bottom: 18px;
+    min-height: 110px;
 }
 
-/* LOGO MUTLAK ABSOLUTE */
 .kop-logo-abs {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100px;
-    /* Silakan ubah lebih besar jika perlu */
-    height: 100px;
+    width: 88px;
+    height: 88px;
     object-fit: contain;
     z-index: 2;
-    background: none;
-    box-shadow: none;
-    border-radius: 12px;
-    pointer-events: none;
-    user-select: none;
 }
 
-/* INFO TETAP 100% TENGAH HALAMAN */
 .kop-info-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     text-align: center;
-    width: 100%;
-    /* Trik: padding-left agar tulisan tidak ketimpa logo */
-    padding-left: 110px;
-    /* minimal width logo + sedikit spasi */
+    margin-left: 82px;
 }
 
 .kop-title1 {
-    font-size: 1.32rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    color: #888;
-    margin-bottom: 0;
-    margin-top: 18px;
-    line-height: 1.16;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    color: #21306c;
 }
 
 .kop-title2 {
-    font-size: 1.67rem;
-    font-weight: 800;
-    color: #535b63;
-    margin-bottom: 1px;
-    margin-top: 0;
-    letter-spacing: 0.9px;
-    line-height: 1.12;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2954d7;
+    margin-bottom: 2px;
 }
 
 .kop-akreditasi {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-    color: #6c757d;
-}
-
-.kop-akreditasi span {
-    color: #252e39;
-    font-weight: bold;
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 2px;
 }
 
 .kop-alamat {
-    font-size: 0.97rem;
-    font-weight: 500;
-    color: #9fa4ad;
-    margin-top: 0;
-    margin-bottom: 0;
-    letter-spacing: 0.3px;
+    font-size: 13.5px;
+    color: #222;
+    margin-bottom: 1px;
 }
 
 .kop-garis {
-    border-bottom: 4px solid #e9e9ea;
+    border-bottom: 2.6px solid #143a95;
+    margin-top: 13px;
+}
+
+/* --- Header & Subheader --- */
+.header {
+    margin-bottom: 18px;
+    margin-top: 8px;
+}
+
+.header-content {
+    text-align: center;
+}
+
+.sub-title {
+    font-size: 20px;
+    letter-spacing: 0.7px;
+    font-weight: 700;
+    color: #1d366c;
+    margin-bottom: 3px;
+}
+
+.tahun-ajaran {
+    font-size: 15.7px;
+    color: #264db7;
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+
+/* --- Nomor Registrasi / Invoice --- */
+.no-reg-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 7px;
+    font-size: 16.7px;
+}
+
+.no-reg-label {
+    width: 246px;
+    font-weight: bold;
+    color: #1e3565;
+}
+
+.no-reg-sep {
+    width: 21px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.no-reg-val {
+    font-weight: bold;
+    font-size: 17px;
+    color: #1238a4;
+}
+
+.no-reg-val i {
+    font-style: italic;
+    color: #444;
+}
+
+/* --- Tabel Data Siswa --- */
+.data-table {
     width: 100%;
-    margin: 18px 0 14px 0;
-    border-radius: 1.2px;
-    opacity: 0.7;
-    box-shadow: 0 1px 0 #fff2;
+    border-collapse: collapse;
+    margin: 16px 0 0 0;
+    font-size: 16px;
+    background: #f8fafd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 7px 0 rgba(150, 150, 150, 0.06);
+}
+
+.data-table caption {
+    background: #e3eaf7;
+    font-weight: 600;
+    font-size: 16.3px;
+    color: #2c3e9b;
+    padding: 8px;
+    letter-spacing: 0.4px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 10px 11px;
+    border-bottom: 1.2px solid #e5eaf2;
+}
+
+.data-table th {
+    width: 43%;
+    text-align: left;
+    background: #f5f7fa;
+    color: #193176;
+    font-weight: 600;
+}
+
+.data-table tr:last-child th,
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- Tabel Tagihan & Riwayat --- */
+.tagihan-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 13px;
+    font-size: 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 8px 0 rgba(130, 130, 150, 0.06);
+}
+
+.tagihan-table th,
+.tagihan-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e0e6ee;
+}
+
+.tagihan-table th {
+    background: #e3eaf7;
+    font-weight: 600;
+    color: #204095;
+    text-align: center;
+}
+
+.tagihan-table tr:last-child th,
+.tagihan-table tr:last-child td {
+    border-bottom: none;
+}
+
+.riwayat-bayar th,
+.riwayat-bayar td {
+    text-align: center;
+    font-size: 15.5px;
+}
+
+.riwayat-bayar td {
+    font-weight: 500;
+}
+
+.tgl-lebar {
+    min-width: 98px;
+}
+
+/* --- Status Row --- */
+.status-row {
+    margin: 14px 0 15px 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: #21306c;
+}
+
+/* --- Kontak Info --- */
+.row-btm {
+    margin-top: 18px;
+}
+
+.info-contact {
+    font-size: 15.2px;
+    color: #21306c;
+    margin-bottom: 6px;
+    padding-left: 2px;
+}
+
+/* --- Catatan & Note --- */
+.note {
+    margin: 22px 0 0 0;
+    padding: 14px 20px 13px 20px;
+    border-radius: 8px;
+    font-size: 15.3px;
+    background: #f7f7fd;
+    border-left: 5px solid #c3c9e4;
+    color: #2e3647;
+}
+
+.note.belum-bayar {
+    border-left-color: #e74a3b;
+    background: #fff7f7;
+    color: #c23826;
+}
+
+.note.angsuran {
+    border-left-color: #f6c23e;
+    background: #fffceb;
+    color: #ad7e00;
+}
+
+.note.lunas {
+    border-left-color: #1cc88a;
+    background: #f3fff8;
+    color: #237957;
+}
+
+/* --- TTD Petugas --- */
+.footer-ttd-kanan {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 42px;
+}
+
+.ttd-block-kanan {
+    text-align: right;
+}
+
+.ttd-tanggal-kanan {
+    font-size: 15.2px;
+    color: #222;
+    margin-bottom: 7px;
+}
+
+.ttd-petugas-kanan {
+    font-size: 16.1px;
+    font-weight: 600;
+    color: #204095;
+}
+
+.ttd-label-kanan {
+    font-size: 14px;
+    color: #444;
+    margin-top: 2px;
+}
+
+/* --- Icon --- */
+i.fas,
+i.fa {
+    margin-right: 3.5px;
+}
+
+/* --- Print Mode (PDF) --- */
+@media print {
+    body {
+        background: #fff !important;
+        color: #222 !important;
+        padding: 0 !important;
+    }
+
+    .container {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 12mm 11mm 13mm 13mm !important;
+        width: 100vw !important;
+        min-width: 0 !important;
+        max-width: 100vw !important;
+    }
+
+    .btn-cetak,
+    .no-print {
+        display: none !important;
+    }
+
+    .kop-logo-abs {
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    .note,
+    .status-row,
+    .info-contact {
+        page-break-inside: avoid;
+    }
+
+    .footer-ttd-kanan {
+        margin-top: 35mm !important;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 12mm 8mm 14mm 8mm;
+    }
+}
+
+/* --- Responsive (Mobile, Tablet) --- */
+@media (max-width: 900px) {
+    .container {
+        padding: 16px 5vw 18px 5vw;
+        width: 99vw;
+    }
+
+    .header-content,
+    .kop-info-center {
+        font-size: 95%;
+    }
+
+    .data-table th,
+    .data-table td,
+    .tagihan-table th,
+    .tagihan-table td {
+        font-size: 95%;
+        padding: 7px 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 8px 1vw;
+    }
+
+    .kop-logo-abs {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .header,
+    .header-content,
+    .data-table,
+    .tagihan-table,
+    .note {
+        font-size: 89%;
+    }
+
+    .no-reg-label {
+        width: 125px;
+    }
 }
