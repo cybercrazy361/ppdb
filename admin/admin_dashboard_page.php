@@ -152,44 +152,52 @@ $conn->close();
         <div class="mt-5">
             <h2 class="section-title">Manajemen Pengguna Semua Unit</h2>
             <div class="row text-center">
-                <!-- Manajemen Pimpinan -->
-                <div class="col-md-4 mb-4">
-                    <div class="card custom-card">
-                        <div class="card-body">
-                            <i class="fas fa-user-tie text-info fa-3x"></i>
-                            <h5 class="card-title mt-3">Login Pimpinan</h5>
-                            <p class="card-text">Kelola akun login pimpinan SMA & SMK.</p>
-                            <a href="manage_pimpinan.php" class="btn btn-primary">Kelola Pimpinan</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Manajemen Petugas Pendaftaran -->
-                <div class="col-md-4 mb-4">
-                    <div class="card custom-card">
-                        <div class="card-body">
-                            <i class="fas fa-user-edit text-danger fa-3x"></i>
-                            <h5 class="card-title mt-3">Login Petugas Pendaftaran</h5>
-                            <p class="card-text">Kelola akun petugas pendaftaran SMA & SMK.</p>
-                            <a href="manage_pendaftaran.php" class="btn btn-primary">Kelola Pendaftaran</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Manajemen Petugas Keuangan -->
-                <div class="col-md-4 mb-4">
-                    <div class="card custom-card">
-                        <div class="card-body">
-                            <i class="fas fa-money-check-alt text-success fa-3x"></i>
-                            <h5 class="card-title mt-3">Login Petugas Keuangan</h5>
-                            <p class="card-text">Kelola akun petugas keuangan SMA & SMK.</p>
-                            <a href="manage_keuangan.php" class="btn btn-primary">Kelola Keuangan</a>
-                        </div>
-                    </div>
-                </div>
+    <!-- Manajemen Pimpinan -->
+    <div class="col-md-3 mb-4">
+        <div class="card custom-card">
+            <div class="card-body">
+                <i class="fas fa-user-tie text-info fa-3x"></i>
+                <h5 class="card-title mt-3">Login Pimpinan</h5>
+                <p class="card-text">Kelola akun login pimpinan SMA & SMK.</p>
+                <a href="manage_pimpinan.php" class="btn btn-primary">Kelola Pimpinan</a>
             </div>
         </div>
     </div>
+    <!-- Manajemen Petugas Pendaftaran -->
+    <div class="col-md-3 mb-4">
+        <div class="card custom-card">
+            <div class="card-body">
+                <i class="fas fa-user-edit text-danger fa-3x"></i>
+                <h5 class="card-title mt-3">Login Petugas Pendaftaran</h5>
+                <p class="card-text">Kelola akun petugas pendaftaran SMA & SMK.</p>
+                <a href="manage_pendaftaran.php" class="btn btn-primary">Kelola Pendaftaran</a>
+            </div>
+        </div>
+    </div>
+    <!-- Manajemen Petugas Keuangan -->
+    <div class="col-md-3 mb-4">
+        <div class="card custom-card">
+            <div class="card-body">
+                <i class="fas fa-money-check-alt text-success fa-3x"></i>
+                <h5 class="card-title mt-3">Login Petugas Keuangan</h5>
+                <p class="card-text">Kelola akun petugas keuangan SMA & SMK.</p>
+                <a href="manage_keuangan.php" class="btn btn-primary">Kelola Keuangan</a>
+            </div>
+        </div>
+    </div>
+    <!-- Manajemen Petugas Call Center -->
+    <div class="col-md-3 mb-4">
+        <div class="card custom-card">
+            <div class="card-body">
+                <i class="fas fa-headset text-warning fa-3x"></i>
+                <h5 class="card-title mt-3">Login Petugas Call Center</h5>
+                <p class="card-text">Kelola akun petugas Call Center SMA & SMK.</p>
+                <a href="manage_callcenter.php" class="btn btn-primary">Kelola Call Center</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <!-- Footer -->
     <div class="footer bg-light text-center py-3 mt-5">
