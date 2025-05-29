@@ -71,7 +71,7 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
 </head>
 <body>
     <?php $active = 'calonsiswa'; ?>
-    <?php include 'sidebar_callcenter_style.php'; ?>
+    <?php include 'sidebar_callcenter.php'; ?>
     <div class="main">
         <header class="navbar">
             <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
