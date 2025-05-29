@@ -90,6 +90,7 @@ header.jumbotron {
     min-height: 300px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 header.jumbotron::before {
@@ -100,11 +101,14 @@ header.jumbotron::before {
     opacity: 0.18;
     border-radius: var(--radius-main);
     z-index: 0;
+    filter: brightness(0.9);
 }
 
 header.jumbotron .container {
     position: relative;
     z-index: 1;
+    max-width: 900px;
+    text-align: center;
 }
 
 header.jumbotron h1 {
@@ -131,6 +135,7 @@ header.jumbotron p {
     flex-direction: column;
     overflow: hidden;
     min-height: 270px;
+    padding: 1.6rem 1.4rem;
 }
 
 .custom-card:hover {
@@ -181,8 +186,12 @@ header.jumbotron p {
     letter-spacing: 0.5px;
     padding: .54rem 1.3rem;
     border-radius: 8px;
-    box-shadow: 0 3px 14px rgba(76, 0, 255, .09);
+    box-shadow: 0 3px 14px rgba(76, 0, 255, 0.09);
     transition: transform .3s, background .3s, box-shadow .3s;
+    color: var(--clr-white);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .btn-primary:hover,
@@ -190,7 +199,9 @@ header.jumbotron p {
     background: linear-gradient(45deg, var(--clr-accent), var(--clr-secondary)) !important;
     color: var(--clr-white) !important;
     transform: scale(1.07);
-    box-shadow: 0 6px 22px rgba(0, 198, 255, .18);
+    box-shadow: 0 6px 22px rgba(0, 198, 255, 0.18);
+    outline: none;
+    text-decoration: none;
 }
 
 /* 7. Footer */
@@ -255,6 +266,7 @@ footer .social-icon:hover {
 
     .custom-card {
         min-height: 220px;
+        padding: 1rem 1rem;
     }
 }
 
