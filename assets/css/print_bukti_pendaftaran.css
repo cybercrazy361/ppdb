@@ -366,13 +366,11 @@ body {
 
 .status-keterangan-wrap {
     margin: 18px 0 10px 0;
-    background: none;
-    /* atau hapus jika tidak mau warna bg */
-    border-radius: 0;
-    /* atau 13px jika mau sudut rounded */
-    box-shadow: none;
-    padding: 0;
-    width: auto;
+    background: linear-gradient(90deg, #eef6fa 60%, #ecfcff 100%);
+    border-radius: 13px;
+    box-shadow: 0 2px 12px 0 rgba(78, 145, 223, 0.06);
+    padding: 13px 18px 13px 18px;
+    width: 100%;
     max-width: 100%;
 }
 
@@ -381,33 +379,34 @@ body {
     width: auto;
 }
 
-.status-keterangan-table td {
-    padding: 0 0 2px 0;
-    border: none;
-    font-size: 1.23em;
-}
-
 .status-ket-label {
     font-weight: bold;
     color: #1564be;
     white-space: nowrap;
-    font-size: 1em;
-    padding: 0 15px 0 0;
-    /* <-- tambah jarak ke kanan */
+    font-size: 1.14em;
+    padding-right: 20px !important;
+    /* <--- PENTING: Pakai !important */
     vertical-align: top;
 }
 
 .status-ket-sep {
-    padding: 0 5px 0 0;
-    /* agar spasi setelah : rapat ke value */
+    padding: 0 7px 0 0;
     font-weight: normal;
     color: #444;
     vertical-align: top;
 }
 
 .status-ket-value {
-    color: #1564be;
+    color: #1a4299;
     font-weight: 500;
     vertical-align: top;
-    padding: 0;
+    word-break: break-word;
+}
+
+@media (max-width:700px) {
+
+    .status-keterangan-table .status-ket-label,
+    .status-keterangan-table .status-ket-value {
+        font-size: 0.98em;
+    }
 }
