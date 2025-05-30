@@ -170,6 +170,7 @@ $no_invoice = $row['no_invoice'] ?? '';
   <button id="btnPrint" onclick="window.print()" style="display:inline-block;margin:10px 0 16px 0;padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
     <i class="fas fa-print"></i> Cetak / Simpan PDF
   </button>
+  <button onclick="kirimBuktiWA()">Kirim Bukti ke WA Ortu</button>
   <div class="container">
     <!-- KOP SURAT: Logo kiri, info tetap center -->
     <div class="kop-surat-rel">
@@ -335,5 +336,13 @@ $no_invoice = $row['no_invoice'] ?? '';
       </div>
     </div>
   </div>
+  <script>
+function kirimBuktiWA() {
+    fetch('kirim_bukti_wa.php?id=<?= $row['id'] ?>')
+    .then(res => res.json())
+    .then(data => alert(data.message))
+    .catch(() => alert('Gagal kirim bukti ke WhatsApp!'));
+}
+</script>
 </body>
 </html>
