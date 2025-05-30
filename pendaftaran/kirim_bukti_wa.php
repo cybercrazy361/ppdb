@@ -141,13 +141,18 @@ $context  = stream_context_create($options);
 $result = file_get_contents($apiUrl, false, $context);
 
 if ($result === FALSE) {
-    echo json_encode(['success' => false, 'message' => 'Gagal koneksi ke Wablas']);
+    echo json_encode(['success' => false, 'message' => 'Gagal koneksi ke Wablas', 'debug' => 'Tidak dapat menghubungi endpoint Wablas']);
     exit;
 }
 $resObj = json_decode($result, true);
 if (isset($resObj['status']) && $resObj['status']) {
     echo json_encode(['success' => true, 'message' => 'Bukti berhasil dikirim ke WhatsApp orang tua!']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Gagal kirim ke WhatsApp', 'debug' => $result]);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Gagal kirim ke WhatsApp',
+        'debug' => $result // tampilkan response error asli Wablas
+    ]);
 }
+
 ?>
