@@ -1,51 +1,14 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
-// === Wablas API config ===
-define('WABLAS_API_KEY', 'iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2'); 
-define('WABLAS_API_URL', 'https://console.wablas.com/api/v2/send-document');
-
-// Helper: Kirim PDF ke WhatsApp
-if (!function_exists('kirimPDFKeWhatsApp')) {
-    function kirimPDFKeWhatsApp($noHP, $pdfFilePath, $pesan = '') {
-        $curl = curl_init();
-        $token = WABLAS_API_KEY;
-        // Format nomor: 08xxx -> 628xxx
-        $phone = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $noHP));
-        $data = [
-            "phone" => $phone,
-            "caption" => $pesan ?: "Bukti Pendaftaran Siswa Baru",
-            "document" => new CURLFile($pdfFilePath)
-        ];
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ["Authorization: $token"]);
-        curl_setopt($curl, CURLOPT_URL, WABLAS_API_URL);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-$result = curl_exec($curl);
-if ($result === false) {
-    $error = curl_error($curl);
-    curl_close($curl);
-    return json_encode(['status' => false, 'message' => "CURL Error: $error"]);
-}
-curl_close($curl);
-return $result;
-
-    }
-}
-
-// Sanitasi output
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
-// Validasi sesi user
+// === Wablas API config ===
+define('WABLAS_API_KEY', 'iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2');
+define('WABLAS_SEND_URL', 'https://console.wablas.com/api/v2/send-message');
+
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
@@ -60,7 +23,6 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-// Ambil data petugas
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 if ($username_petugas) {
@@ -73,7 +35,7 @@ if ($username_petugas) {
     $stmt_petugas->close();
 }
 
-// Ambil status & notes dari calon_pendaftar (jika ada)
+// Ambil status & notes dari calon_pendaftar (jika belum ada di tabel siswa)
 $status_pendaftaran = '-';
 $keterangan_pendaftaran = '-';
 if (!empty($row['calon_pendaftar_id'])) {
@@ -86,7 +48,6 @@ if (!empty($row['calon_pendaftar_id'])) {
     $stmtStatus->close();
 }
 
-// Format tanggal lokal Indonesia
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
     $bulan = [
@@ -99,7 +60,7 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// Status pembayaran (ambil dari DB, sama seperti kode kamu sebelumnya)
+// Ambil status progres pembayaran
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
@@ -201,37 +162,222 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 // No Invoice, pastikan kolom ini ada di tabel siswa!
 $no_invoice = $row['no_invoice'] ?? '';
 
-// ========================
-// === Proses PDF & WA ====
-// ========================
+// === Kirim Link PDF ke WhatsApp (Otomatis, jika ada $_GET['send_wa']) ===
 if (isset($_GET['send_wa']) && $_GET['send_wa'] == '1') {
-    // Render ulang HTML ke variabel menggunakan view khusus
-    ob_start();
-    include __DIR__ . '/print_siswa_view.php'; // hanya view (tidak ada logic/function duplikat)
-    $html = ob_get_clean();
+    // Path/link PDF hasil generate (pastikan benar-benar ada di hosting kamu!)
+    $link_pdf = "https://domainkamu.com/bukti/pendaftar_{$row['id']}.pdf"; // GANTI dengan link yang benar
 
-    $mpdf = new \Mpdf\Mpdf(['format'=>'A4']);
-    $mpdf->WriteHTML($html);
-    $pdfFile = sys_get_temp_dir() . '/bukti_daftar_' . $row['id'] . '_' . time() . '.pdf';
-    $mpdf->Output($pdfFile, \Mpdf\Output\Destination::FILE);
+    // Format nomor WA
+    $no_wa = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu']));
 
-    $pesan = "Halo, berikut kami lampirkan bukti pendaftaran atas nama {$row['nama']} di SMA Dharma Karya.";
-    $result = kirimPDFKeWhatsApp($row['no_hp_ortu'], $pdfFile, $pesan);
+    // Isi pesan ke WA
+    $pesan = "Halo, berikut link bukti pendaftaran untuk {$row['nama']} di SMA Dharma Karya:\n$link_pdf";
 
-    // Cek isi respon dari Wablas
-    $resArr = json_decode($result, true);
-    if (file_exists($pdfFile)) unlink($pdfFile);
+    // Kirim ke Wablas API (send-message)
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, WABLAS_SEND_URL);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ["Authorization: " . WABLAS_API_KEY]);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, [
+        "phone" => $no_wa,
+        "message" => $pesan
+    ]);
+    $result = curl_exec($curl);
+    curl_close($curl);
 
-    if (isset($resArr['status']) && $resArr['status']) {
-        echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua!');window.location='halaman_berikutnya.php';</script>";
-        exit;
-    } else {
-        echo "<pre>GAGAL KIRIM WA:\n";
-        print_r($resArr);
-        echo "\nRAW RESPONSE:\n$result</pre>";
-        exit;
-    }
+    // Bisa tambahkan validasi response jika ingin, untuk sekarang langsung alert
+    echo "<script>alert('Link bukti pendaftaran telah dikirim ke WhatsApp orang tua!');window.location='".$_SERVER['PHP_SELF']."?id=$id';</script>";
+    exit;
 }
 
-// Jika bukan proses PDF/WA, render halaman seperti biasa:
-include __DIR__ . '/print_siswa_view.php';
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
+</head>
+<body>
+  <button id="btnPrint" onclick="window.print()" style="display:inline-block;margin:10px 0 16px 0;padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+    <i class="fas fa-print"></i> Cetak / Simpan PDF
+  </button>
+  <button id="btnWA" onclick="window.location.href='<?= $_SERVER['PHP_SELF'] . '?id=' . $id . '&send_wa=1' ?>'" style="display:inline-block;margin:10px 0 16px 12px;padding:7px 18px;font-size:14px;background:#25d366;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+    <i class="fab fa-whatsapp"></i> Kirim Link PDF ke WhatsApp
+  </button>
+  <?php
+    // Tombol alternatif Click-to-Chat WhatsApp (jika API tidak bisa)
+    $link_pdf = "https://domainkamu.com/bukti/pendaftar_{$row['id']}.pdf"; // GANTI dengan link file PDF di hosting kamu
+    $no_wa = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu']));
+    $pesan_click = urlencode("Halo, berikut link bukti pendaftaran untuk {$row['nama']} di SMA Dharma Karya:\n$link_pdf");
+    echo '<a href="https://wa.me/'.$no_wa.'?text='.$pesan_click.'" target="_blank" style="display:inline-block;margin:10px 0 16px 12px;padding:7px 18px;font-size:14px;background:#25d366;color:#fff;border:none;border-radius:6px;text-decoration:none;"><i class=\'fab fa-whatsapp\'></i> Kirim Link ke WhatsApp (Manual)</a>';
+  ?>
+  <div class="container">
+    <!-- KOP SURAT: Logo kiri, info tetap center -->
+    <div class="kop-surat-rel">
+      <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
+      <div class="kop-info-center">
+        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+        <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
+        <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+        <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+      </div>
+    </div>
+    <div class="kop-garis"></div>
+
+    <div class="header-content">
+      <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
+        <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
+      <?php else: ?>
+        <div class="sub-title"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
+      <?php endif; ?>
+      <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
+      <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
+      <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
+    </div>
+
+<div class="no-reg-bar">
+  <div class="no-reg-row" style="margin-bottom:0;">
+    <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
+    <div class="no-reg-sep">:</div>
+    <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
+  </div>
+  <?php if (!empty($row['reviewed_by'])): ?>
+    <span class="callcenter-badge">
+      <i class="fas fa-headset"></i>
+      <b>Call Center:</b> <?= safe($row['reviewed_by']) ?>
+    </span>
+  <?php endif; ?>
+</div>
+<?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+  <div class="no-reg-row">
+    <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
+    <div class="no-reg-sep">:</div>
+    <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
+  </div>
+<?php endif; ?>
+
+    <table class="data-table">
+      <caption>DATA CALON PESERTA DIDIK BARU</caption>
+      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
+      <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
+      <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
+      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
+      <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
+      <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
+      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
+      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
+    </table>
+
+<div class="status-keterangan-wrap">
+  <table class="status-keterangan-table">
+    <tr>
+      <td class="status-ket-label">Status Pendaftaran</td>
+      <td class="status-ket-sep">:</td>
+      <td class="status-ket-value"><?= htmlspecialchars($status_pendaftaran) ?></td>
+    </tr>
+    <tr>
+      <td class="status-ket-label">Keterangan</td>
+      <td class="status-ket-sep">:</td>
+      <td class="status-ket-value"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '-' ?></td>
+    </tr>
+  </table>
+</div>
+
+    <table class="tagihan-table" style="margin-top:9px;">
+      <tr>
+        <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
+          <i class="fas fa-coins"></i> Keterangan Pembayaran
+        </th>
+      </tr>
+      <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
+      <tr>
+        <td><?= safe($tg['jenis']) ?></td>
+        <td style="text-align:right;font-weight:600">
+          Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
+        </td>
+      </tr>
+      <?php endforeach; else: ?>
+      <tr>
+        <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+
+    <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
+      <div style="margin:9px 0 2px 0;font-size:12.5px;font-weight:500;">Riwayat Pembayaran:</div>
+      <table class="tagihan-table riwayat-bayar" style="margin-bottom:9px;">
+        <colgroup>
+          <col style="width:18%">
+          <col style="width:18%">
+          <col style="width:18%">
+          <col style="width:14%">
+          <col style="width:10%">
+          <col style="width:22%">
+        </colgroup>
+        <tr>
+          <th>Jenis</th>
+          <th>Nominal</th>
+          <th>Cashback</th>
+          <th>Status</th>
+          <th>Bulan</th>
+          <th>Tanggal</th>
+        </tr>
+        <?php foreach($pembayaran_terakhir as $b): ?>
+        <tr>
+          <td><?= safe($b['jenis']) ?></td>
+          <td style="text-align:right;">Rp <?= number_format($b['jumlah'],0,',','.') ?></td>
+          <td style="text-align:right;">
+            <?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'],0,',','.') : '-' ?>
+          </td>
+          <td><?= safe($b['status_pembayaran']) ?></td>
+          <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
+          <td class="tgl-lebar"><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </table>
+    <?php endif; ?>
+
+    <div class="status-row">
+      Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
+    </div>
+
+    <div class="row-btm">
+      <div class="info-contact">
+        Informasi lebih lanjut hubungi:<br>
+        Hotline SMA : <b>081511519271</b> (Bu Puji)
+      </div>
+    </div>
+
+    <div class="note <?= $note_class ?>">
+      <?php if ($status_pembayaran === 'Belum Bayar'): ?>
+        <b>Catatan:</b><br>
+        1. Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor Formulir.<br>
+        2. Form Registrasi ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor Formulir.
+      <?php elseif ($status_pembayaran === 'Angsuran'): ?>
+        <b>Catatan:</b><br>
+        Siswa telah melakukan pembayaran sebagian (angsuran).<br>
+        Simpan bukti ini sebagai tanda terima pembayaran.
+      <?php elseif ($status_pembayaran === 'Lunas'): ?>
+        <b>Catatan:</b><br>
+        Siswa telah menyelesaikan seluruh pembayaran.<br>
+        Simpan bukti ini sebagai tanda lunas dan konfirmasi pendaftaran.
+      <?php else: ?>
+        <b>Catatan:</b><br>
+        Status pembayaran tidak diketahui.
+      <?php endif; ?>
+    </div>
+
+    <div class="footer-ttd-kanan">
+      <div class="ttd-block-kanan">
+        <div class="ttd-tanggal-kanan">Jakarta, <?= tanggal_id(date('Y-m-d')) ?></div>
+        <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
+        <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
