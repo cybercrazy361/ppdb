@@ -30,9 +30,15 @@ if (!function_exists('kirimPDFKeWhatsApp')) {
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        $result = curl_exec($curl);
-        curl_close($curl);
-        return $result;
+$result = curl_exec($curl);
+if ($result === false) {
+    $error = curl_error($curl);
+    curl_close($curl);
+    return json_encode(['status' => false, 'message' => "CURL Error: $error"]);
+}
+curl_close($curl);
+return $result;
+
     }
 }
 
@@ -212,25 +218,19 @@ if (isset($_GET['send_wa']) && $_GET['send_wa'] == '1') {
     $pesan = "Halo, berikut kami lampirkan bukti pendaftaran atas nama {$row['nama']} di SMA Dharma Karya.";
     $result = kirimPDFKeWhatsApp($row['no_hp_ortu'], $pdfFile, $pesan);
 
-if (file_exists($pdfFile)) unlink($pdfFile);
-
-// Cek isi respon dari Wablas
-$resArr = json_decode($result, true);
-if (isset($resArr['status']) && $resArr['status']) {
-    echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua!');window.location='halaman_berikutnya.php';</script>";
-    exit;
-} else {
-    echo "<pre>GAGAL KIRIM WA:\n";
-    print_r($resArr);
-    echo "\nRAW RESPONSE:\n$result</pre>";
-    exit;
-}
-
-
+    // Cek isi respon dari Wablas
+    $resArr = json_decode($result, true);
     if (file_exists($pdfFile)) unlink($pdfFile);
 
-    echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua!');window.location='halaman_berikutnya.php';</script>";
-    exit;
+    if (isset($resArr['status']) && $resArr['status']) {
+        echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua!');window.location='halaman_berikutnya.php';</script>";
+        exit;
+    } else {
+        echo "<pre>GAGAL KIRIM WA:\n";
+        print_r($resArr);
+        echo "\nRAW RESPONSE:\n$result</pre>";
+        exit;
+    }
 }
 
 // Jika bukan proses PDF/WA, render halaman seperti biasa:
