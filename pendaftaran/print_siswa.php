@@ -3,8 +3,37 @@ session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// === Wablas API config ===
+define('WABLAS_API_KEY', 'iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2'); // <-- GANTI!
+define('WABLAS_API_URL', 'https://console.wablas.com/api/v2/send-document');
+
+// Helper: Kirim PDF ke WhatsApp
+function kirimPDFKeWhatsApp($noHP, $pdfFilePath, $pesan = '') {
+    $curl = curl_init();
+    $token = WABLAS_API_KEY;
+    // Format nomor: 08xxx -> 628xxx
+    $phone = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $noHP));
+    $data = [
+        "phone" => $phone,
+        "caption" => $pesan ?: "Bukti Pendaftaran Siswa Baru",
+        "document" => new CURLFile($pdfFilePath)
+    ];
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ["Authorization: $token"]);
+    curl_setopt($curl, CURLOPT_URL, WABLAS_API_URL);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    $result = curl_exec($curl);
+    curl_close($curl);
+    return $result;
+}
+
+// Sanitasi output
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
+// Validasi sesi user
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
@@ -19,6 +48,7 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
+// Ambil data petugas
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 if ($username_petugas) {
@@ -31,7 +61,7 @@ if ($username_petugas) {
     $stmt_petugas->close();
 }
 
-// Ambil status & notes dari calon_pendaftar (jika belum ada di tabel siswa)
+// Ambil status & notes dari calon_pendaftar (jika ada)
 $status_pendaftaran = '-';
 $keterangan_pendaftaran = '-';
 if (!empty($row['calon_pendaftar_id'])) {
@@ -44,6 +74,7 @@ if (!empty($row['calon_pendaftar_id'])) {
     $stmtStatus->close();
 }
 
+// Format tanggal lokal Indonesia
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
     $bulan = [
@@ -56,7 +87,7 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// Ambil status progres
+// Status pembayaran (ambil dari DB, sama seperti kode kamu sebelumnya)
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
@@ -157,6 +188,42 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 
 // No Invoice, pastikan kolom ini ada di tabel siswa!
 $no_invoice = $row['no_invoice'] ?? '';
+
+// ========================
+// === Proses PDF & WA ====
+// ========================
+if (isset($_GET['send_wa']) && $_GET['send_wa'] == '1') {
+    // Render ulang HTML ke variabel
+    ob_start();
+    ?>
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
+      <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
+    </head>
+    <body>
+    <?php include __FILE__; // **PENTING: Render ulang body isi untuk PDF, jika perlu gunakan view khusus** ?>
+    </body>
+    </html>
+    <?php
+    $html = ob_get_clean();
+
+    $mpdf = new \Mpdf\Mpdf(['format'=>'A4']);
+    $mpdf->WriteHTML($html);
+    $pdfFile = sys_get_temp_dir() . '/bukti_daftar_' . $row['id'] . '_' . time() . '.pdf';
+    $mpdf->Output($pdfFile, \Mpdf\Output\Destination::FILE);
+
+    $pesan = "Halo, berikut kami lampirkan bukti pendaftaran atas nama {$row['nama']} di SMA Dharma Karya.";
+    $result = kirimPDFKeWhatsApp($row['no_hp_ortu'], $pdfFile, $pesan);
+
+    if (file_exists($pdfFile)) unlink($pdfFile);
+
+    echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua!');window.location='halaman_berikutnya.php';</script>";
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -170,7 +237,10 @@ $no_invoice = $row['no_invoice'] ?? '';
   <button id="btnPrint" onclick="window.print()" style="display:inline-block;margin:10px 0 16px 0;padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
     <i class="fas fa-print"></i> Cetak / Simpan PDF
   </button>
-  <button onclick="kirimBuktiWA()">Kirim Bukti ke WA Ortu</button>
+  <button id="btnWA" onclick="window.location.href='<?= $_SERVER['PHP_SELF'] . '?id=' . $id . '&send_wa=1' ?>'" style="display:inline-block;margin:10px 0 16px 12px;padding:7px 18px;font-size:14px;background:#25d366;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+    <i class="fab fa-whatsapp"></i> Kirim ke WhatsApp Orang Tua
+  </button>
+  
   <div class="container">
     <!-- KOP SURAT: Logo kiri, info tetap center -->
     <div class="kop-surat-rel">
@@ -336,14 +406,5 @@ $no_invoice = $row['no_invoice'] ?? '';
       </div>
     </div>
   </div>
-  <script>
-function kirimBuktiWA() {
-    fetch('kirim_bukti_wa.php?id=<?= $row["id"] ?>')
-    .then(res => res.json())
-    .then(data => alert(data.message + (data.debug ? ("\n\nDebug: " + data.debug) : "")))
-    .catch(e => alert('Gagal kirim bukti ke WhatsApp!\n' + e));
-}
-
-</script>
 </body>
 </html>
