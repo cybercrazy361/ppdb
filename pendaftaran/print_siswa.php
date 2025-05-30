@@ -209,7 +209,8 @@ if (isset($_GET['send_wa']) && $_GET['send_wa'] == '1') {
   </button>
   <?php
     // Tombol alternatif Click-to-Chat WhatsApp (jika API tidak bisa)
-    $link_pdf = "https://domainkamu.com/bukti/pendaftar_{$row['id']}.pdf"; // GANTI dengan link file PDF di hosting kamu
+    $link_pdf = "https://pakarinformatika.web.id/pendaftar/print_siswa.php?id={$row['id']}";
+ // GANTI dengan link file PDF di hosting kamu
     $no_wa = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu']));
     $pesan_click = urlencode("Halo, berikut link bukti pendaftaran untuk {$row['nama']} di SMA Dharma Karya:\n$link_pdf");
     echo '<a href="https://wa.me/'.$no_wa.'?text='.$pesan_click.'" target="_blank" style="display:inline-block;margin:10px 0 16px 12px;padding:7px 18px;font-size:14px;background:#25d366;color:#fff;border:none;border-radius:6px;text-decoration:none;"><i class=\'fab fa-whatsapp\'></i> Kirim Link ke WhatsApp (Manual)</a>';
