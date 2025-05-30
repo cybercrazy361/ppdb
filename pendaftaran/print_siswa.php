@@ -5,10 +5,6 @@ include '../database_connection.php';
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
-// === Wablas API config ===
-define('WABLAS_API_KEY', 'iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2');
-define('WABLAS_SEND_URL', 'https://console.wablas.com/api/v2/send-message');
-
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
@@ -60,7 +56,7 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// Ambil status progres pembayaran
+// Ambil status progres
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
@@ -161,36 +157,6 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 
 // No Invoice, pastikan kolom ini ada di tabel siswa!
 $no_invoice = $row['no_invoice'] ?? '';
-
-// === Kirim Link PDF ke WhatsApp (Otomatis, jika ada $_GET['send_wa']) ===
-if (isset($_GET['send_wa']) && $_GET['send_wa'] == '1') {
-    // Path/link PDF hasil generate (pastikan benar-benar ada di hosting kamu!)
-    $link_pdf = "https://domainkamu.com/bukti/pendaftar_{$row['id']}.pdf"; // GANTI dengan link yang benar
-
-    // Format nomor WA
-    $no_wa = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu']));
-
-    // Isi pesan ke WA
-    $pesan = "Halo, berikut link bukti pendaftaran untuk {$row['nama']} di SMA Dharma Karya:\n$link_pdf";
-
-    // Kirim ke Wablas API (send-message)
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, WABLAS_SEND_URL);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, ["Authorization: " . WABLAS_API_KEY]);
-    curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, [
-        "phone" => $no_wa,
-        "message" => $pesan
-    ]);
-    $result = curl_exec($curl);
-    curl_close($curl);
-
-    // Bisa tambahkan validasi response jika ingin, untuk sekarang langsung alert
-    echo "<script>alert('Link bukti pendaftaran telah dikirim ke WhatsApp orang tua!');window.location='".$_SERVER['PHP_SELF']."?id=$id';</script>";
-    exit;
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -204,17 +170,6 @@ if (isset($_GET['send_wa']) && $_GET['send_wa'] == '1') {
   <button id="btnPrint" onclick="window.print()" style="display:inline-block;margin:10px 0 16px 0;padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
     <i class="fas fa-print"></i> Cetak / Simpan PDF
   </button>
-  <button id="btnWA" onclick="window.location.href='<?= $_SERVER['PHP_SELF'] . '?id=' . $id . '&send_wa=1' ?>'" style="display:inline-block;margin:10px 0 16px 12px;padding:7px 18px;font-size:14px;background:#25d366;color:#fff;border:none;border-radius:6px;cursor:pointer;">
-    <i class="fab fa-whatsapp"></i> Kirim Link PDF ke WhatsApp
-  </button>
-  <?php
-    // Tombol alternatif Click-to-Chat WhatsApp (jika API tidak bisa)
-    $link_pdf = "https://pakarinformatika.web.id/pendaftar/print_siswa.php?id={$row['id']}";
- // GANTI dengan link file PDF di hosting kamu
-    $no_wa = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu']));
-    $pesan_click = urlencode("Halo, berikut link bukti pendaftaran untuk {$row['nama']} di SMA Dharma Karya:\n$link_pdf");
-    echo '<a href="https://wa.me/'.$no_wa.'?text='.$pesan_click.'" target="_blank" style="display:inline-block;margin:10px 0 16px 12px;padding:7px 18px;font-size:14px;background:#25d366;color:#fff;border:none;border-radius:6px;text-decoration:none;"><i class=\'fab fa-whatsapp\'></i> Kirim Link ke WhatsApp (Manual)</a>';
-  ?>
   <div class="container">
     <!-- KOP SURAT: Logo kiri, info tetap center -->
     <div class="kop-surat-rel">
