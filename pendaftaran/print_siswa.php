@@ -338,11 +338,12 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
   <script>
 function kirimBuktiWA() {
-    fetch('kirim_bukti_wa.php?id=<?= $row['id'] ?>')
+    fetch('kirim_bukti_wa.php?id=<?= $row["id"] ?>')
     .then(res => res.json())
-    .then(data => alert(data.message))
-    .catch(() => alert('Gagal kirim bukti ke WhatsApp!'));
+    .then(data => alert(data.message + (data.debug ? ("\n\nDebug: " + data.debug) : "")))
+    .catch(e => alert('Gagal kirim bukti ke WhatsApp!\n' + e));
 }
+
 </script>
 </body>
 </html>
