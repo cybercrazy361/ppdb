@@ -438,7 +438,7 @@ if (empty($_GET['notif'])) {
     }
 
     // Setelah kirim, reload halaman supaya notif admin tampil di atas
-    header("Location: " . $_SERVER['PHP_SELF'] . "?id=$id&notif=" . urlencode($notif_admin));
-    exit;
+    // header("Location: " . $_SERVER['PHP_SELF'] . "?id=$id&notif=" . urlencode($notif_admin));
+// exit;
 }
 ?>
