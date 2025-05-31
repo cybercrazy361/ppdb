@@ -1,5 +1,10 @@
 DirectoryIndex index.php index.html
 
+<FilesMatch "\.pdf$">
+    ForceType application/pdf
+    Header set Content-Type "application/pdf"
+</FilesMatch>
+
 # Izinkan akses ke folder .well-known/acme-challenge untuk SSL verification
 RewriteCond %{REQUEST_URI} ^/\.well-known/acme-challenge/ [NC]
 RewriteRule ^ - [L]
