@@ -379,7 +379,7 @@ if (file_exists($pdfPath)) {
 echo "</pre>";
 
 // URL publik PDF
-$pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
+$pdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
 
 // Format nomor WA internasional
 $no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
