@@ -396,8 +396,7 @@ if (empty($_GET['notif'])) {
 // SET PATH & URL PDF - HARUS SAMA DENGAN DOCUMENT ROOT OPENLITESPEED
     $pdf_file = "bukti_pendaftaran_{$row['no_formulir']}.pdf";
     $pdf_path = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/$pdf_file"; // <-- ABSOLUTE PATH DOCUMENT ROOT
-    $pdf_url = "http://185.201.8.147/pendaftaran/bukti/$pdf_file";
-
+    $pdf_url = "http://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$pdf_file";
 
     // Pastikan folder /bukti ada
 // Pastikan folder /bukti ada
