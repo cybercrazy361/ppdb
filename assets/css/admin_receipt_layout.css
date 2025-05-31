@@ -1,0 +1,239 @@
+/* File: assets/css/admin_receipt_layout.css */
+
+/* =========================
+   Theme Variables
+   ========================= */
+:root {
+    --clr-primary: #4e73df;
+    --clr-primary-dark: #2e59d9;
+    --clr-secondary: #5a5c69;
+    --clr-success: #1cc88a;
+    --clr-info: #36b9cc;
+    --clr-warning: #f6c23e;
+    --clr-danger: #e74a3b;
+    --clr-light-bg: #f8f9fc;
+    --clr-dark-text: #343a40;
+    --clr-muted-text: #858796;
+    --clr-border: #dee2e6;
+    --transition: 0.3s ease;
+}
+
+/* =========================
+   Global Styles
+   ========================= */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--clr-light-bg);
+    color: var(--clr-dark-text);
+}
+
+/* =========================
+   Main Content & Header
+   ========================= */
+.main-content {
+    margin-left: 250px;
+    padding: 1.5rem;
+    transition: margin var(--transition);
+}
+
+.sidebar.collapsed+.main-content {
+    margin-left: 80px;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--clr-secondary);
+    margin-bottom: 1rem;
+}
+
+/* =========================
+   Topbar Adjustments
+   ========================= */
+.navbar {
+    height: 50px;
+    min-height: 50px;
+    padding: 0 1rem;
+}
+
+.navbar .nav-link {
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+/* =========================
+   Card Styles
+   ========================= */
+.card {
+    background: #fff;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background: var(--clr-light-bg);
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--clr-secondary);
+}
+
+.card-body {
+    padding: 1rem 1.5rem;
+}
+
+/* =========================
+   Layout Grid Styles
+   ========================= */
+.layout-grid {
+    position: relative;
+    width: calc(var(--paper-width-mm, 80mm));
+    height: calc(var(--paper-height-mm, 120mm));
+    margin: 1rem auto;
+    background-image:
+        linear-gradient(to right, #eee 1mm, transparent 1mm),
+        linear-gradient(to bottom, #eee 1mm, transparent 1mm);
+    background-size: 1mm 1mm;
+    background-color: #fff;
+    border: 1px solid var(--clr-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* =========================
+   Layout Element Styles
+   ========================= */
+.layout-element {
+    position: absolute;
+    background-color: rgba(0, 123, 255, 0.2);
+    border: 1px solid #007bff;
+    border-radius: 0.5rem;
+    padding: 2px 6px;
+    font-size: 8pt;
+    font-weight: 600;
+    color: var(--clr-dark-text);
+    cursor: move;
+    user-select: none;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.layout-element:hover {
+    background-color: rgba(0, 123, 255, 0.4);
+    border-color: #0056b3;
+}
+
+.layout-element.dragging {
+    opacity: 0.7;
+    background-color: rgba(255, 193, 7, 0.4);
+    border-color: #ffc107;
+    z-index: 1000;
+}
+
+/* Logo & Watermark Overrides */
+.layout-element.logo-element img {
+    max-width: 100px;
+    max-height: 100px;
+    pointer-events: none;
+}
+
+.layout-element.watermark-element {
+    opacity: 0.3;
+    transform: rotate(-45deg);
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* =========================
+   Table Styles
+   ========================= */
+table.table-bordered {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 1.5rem;
+}
+
+table.table-bordered th,
+table.table-bordered td {
+    border: 1px solid var(--clr-border);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.position-input {
+    width: 80px;
+}
+
+/* =========================
+   Button Styles
+   ========================= */
+.btn-primary {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
+}
+
+/* =========================
+   Responsive Adjustments
+   ========================= */
+@media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 80px !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .layout-grid {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* =========================
+   Print Footer
+   ========================= */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 250px;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid var(--clr-border);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    transition: margin var(--transition);
+    z-index: 1000;
+}
+
+.sidebar.collapsed~.footer {
+    left: 80px;
+}

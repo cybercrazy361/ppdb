@@ -1,0 +1,187 @@
+/* File: assets/css/review_calon_pendaftar_responsive.css */
+
+:root {
+    --color-primary: #2e59d9;
+    --color-secondary: #858796;
+    --color-success: #1cc88a;
+    --color-info: #36b9cc;
+    --color-warning: #f6c23e;
+    --color-danger: #e74a3b;
+    --font-base: 'Poppins', sans-serif;
+    --border-radius: 0.75rem;
+    --transition: 0.3s;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-base);
+    background: #f0f4ff;
+    color: var(--color-secondary);
+    min-height: 100vh;
+}
+
+/* Container full width */
+.main-container {
+    width: 100%;
+    padding: 1.5rem;
+}
+
+/* Card wrapper */
+.card-wrapper {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.card-header h4 {
+    margin: 0;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.card-header .btn-back {
+    background: var(--color-secondary);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: .5rem 1rem;
+    text-decoration: none;
+    transition: background var(--transition);
+}
+
+.card-header .btn-back:hover {
+    background: #6c757d;
+}
+
+/* Table responsive */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    min-width: 1000px;
+    /* sesuaikan dengan jumlah kolom */
+}
+
+.table th,
+.table td {
+    vertical-align: middle !important;
+}
+
+/* Status dropdown warna */
+.status-select {
+    min-width: 120px;
+    border-radius: var(--border-radius);
+    border: 1px solid #ccc;
+    padding: .25rem .5rem;
+    font-size: .9rem;
+    transition: border var(--transition), background var(--transition), color var(--transition);
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.status-pending {
+    background: var(--color-secondary);
+    color: #fff;
+}
+
+.status-contacted {
+    background: var(--color-info);
+    color: #fff;
+}
+
+.status-accepted {
+    background: var(--color-success);
+    color: #fff;
+}
+
+.status-rejected {
+    background: var(--color-danger);
+    color: #fff;
+}
+
+/* Keterangan input */
+.desc-input {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    padding: .25rem .5rem;
+    font-size: .9rem;
+    transition: border var(--transition);
+}
+
+.desc-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+/* --------------------------------------------
+   DataTables Search & Entries-per-page Styling
+   --------------------------------------------
+   Kita hanya tweak minimal agar hanya muncul
+   satu caret pada entries-per-page. */
+/* Search box */
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 0.25rem;
+    border: 1px solid #ddd;
+    padding: .25rem .75rem .25rem .5rem;
+}
+
+/* Length menu wrapper */
+.dataTables_wrapper .dataTables_length {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+/* Entries-per-page select:
+   kita restore default appearance dan
+   remove bootstrap background-image */
+.dataTables_wrapper .dataTables_length select.form-select {
+    appearance: auto;
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
+    /* Remove bootstrap’s arrow so only native appears */
+    background-image: none !important;
+    /* Padding standar */
+    padding: .25rem .75rem;
+    padding-right: 2rem;
+    /* ruang untuk caret */
+    border-radius: 0.25rem;
+    border: 1px solid #ddd;
+    width: auto !important;
+    min-width: 4ch;
+}
+
+/* Pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: var(--border-radius);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        gap: .75rem;
+    }
+}

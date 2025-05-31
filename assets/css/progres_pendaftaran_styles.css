@@ -1,0 +1,514 @@
+:root {
+    --color-primary: #355cfc;
+    --color-accent: #13afe0;
+    --color-success: #1cc88a;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --color-info: #36b9cc;
+    --color-dark: #2e325e;
+    --color-bg: #f4f7fd;
+    --color-card: #fff;
+    --color-card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.11);
+    --border-radius: 1.15rem;
+    --font-base: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    --main-padding: 30px;
+    --header-height: 62px;
+}
+
+/* General */
+body {
+    background: var(--color-bg);
+    font-family: var(--font-base);
+    margin: 0;
+}
+
+.main {
+    padding: var(--main-padding);
+    min-height: 100vh;
+}
+
+@media (max-width:900px) {
+    .main {
+        padding: 10px 2vw;
+    }
+}
+
+@media (max-width:576px) {
+    .main {
+        padding: 5px 0;
+    }
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.card-wrapper {
+    background: var(--color-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--color-card-shadow);
+    padding: 28px 18px 21px 18px;
+    margin: 0 auto 14px auto;
+    min-width: 0;
+    animation: fadeInCard .7s;
+}
+
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-wrapper h4 {
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--color-dark);
+}
+
+.card-header {
+    padding-bottom: 0;
+    border: none;
+    background: none;
+}
+
+.btn-back {
+    font-size: .98rem;
+    border-radius: 9px;
+}
+
+/* Rekap Box & Status Badge */
+.rekap-box {
+    margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px 8px;
+}
+
+.rekap-box .badge {
+    font-size: 1rem;
+    padding: .5em 1.2em;
+    border-radius: 18px;
+    margin-right: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 1.5px 7px #92a9ea23;
+    letter-spacing: 0.1px;
+    user-select: none;
+    transition: filter .14s;
+    border: 1.2px solid #e2e8f5;
+    background: #f6faff;
+    color: #334d8f;
+}
+
+.rekap-box .badge.bg-dark {
+    background: #343a40 !important;
+    color: #fff !important;
+    border-color: #343a40;
+}
+
+.rekap-box .badge:hover,
+.rekap-box .badge.active {
+    filter: brightness(0.94) contrast(1.12);
+}
+
+/* Status Color Codes (consisten dengan dashboard) */
+.status-ppdb-bersama {
+    background: #198754 !important;
+    color: #fff !important;
+}
+
+.status-uang-titipan {
+    background: #6f42c1 !important;
+    color: #fff !important;
+}
+
+.status-akan-bayar {
+    background: #fd7e14 !important;
+    color: #fff !important;
+}
+
+.status-menunggu-negeri {
+    background: #ffc107 !important;
+    color: #1a2c4d !important;
+}
+
+.status-tidak-ada-konfirmasi {
+    background: #6c757d !important;
+    color: #fff !important;
+}
+
+.status-tidak-jadi {
+    background: #dc3545 !important;
+    color: #fff !important;
+}
+
+/* Tabel & Tombol */
+.table thead th,
+.table thead td {
+    text-align: center !important;
+    vertical-align: middle !important;
+    background: #f7fafd;
+    font-weight: 700;
+    color: #2e325e;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+.table td,
+.table th {
+    font-size: .97rem;
+}
+
+.table .btn {
+    font-size: .96rem;
+    padding: 4px 10px;
+    border-radius: 7px;
+}
+
+.table .btn-notes {
+    min-width: 110px;
+    font-weight: 600;
+    background: #f6fafd;
+    color: #355cfc;
+    border: 1.2px solid #d1e2ff;
+    transition: background .13s, color .13s;
+}
+
+.table .btn-notes:hover {
+    background: #e5f3ff;
+    color: #173ca3;
+    border-color: #355cfc;
+}
+
+.table .btn-kirim {
+    min-width: 85px;
+    font-weight: 600;
+    background: var(--color-success);
+    color: #fff;
+    border: none;
+    transition: background .13s;
+}
+
+.table .btn-kirim:disabled {
+    background: #b7f1df;
+    color: #e2e2e2;
+}
+
+/* Kolom status style konsisten */
+.table th.status-col,
+.table td.status-col {
+    min-width: 180px !important;
+    width: 200px !important;
+    max-width: 260px !important;
+    text-align: center !important;
+    background: #f7fafd;
+}
+
+.table td .status-select {
+    min-width: 130px !important;
+    width: 100% !important;
+    max-width: 220px !important;
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+    border-radius: 8px;
+    padding: 4px 9px;
+    font-weight: 600;
+    border: 1.1px solid #cfe2fd;
+    background: #f8fafb;
+    color: #193871;
+    transition: border .13s, background .13s;
+}
+
+.table td .status-select.status-ppdb-bersama {
+    background: #d0f5e4 !important;
+    color: #168f50 !important;
+    border-color: #76ebbb !important;
+}
+
+.table td .status-select.status-uang-titipan {
+    background: #ece5fc !important;
+    color: #5745a2 !important;
+    border-color: #b0a4de !important;
+}
+
+.table td .status-select.status-akan-bayar {
+    background: #ffe5cf !important;
+    color: #a66018 !important;
+    border-color: #ffd2a3 !important;
+}
+
+.table td .status-select.status-menunggu-negeri {
+    background: #fffbe7 !important;
+    color: #b5a200 !important;
+    border-color: #ffed90 !important;
+}
+
+.table td .status-select.status-tidak-ada-konfirmasi {
+    background: #e7e9ed !important;
+    color: #666b77 !important;
+    border-color: #bdc5d2 !important;
+}
+
+.table td .status-select.status-tidak-jadi {
+    background: #ffe3e7 !important;
+    color: #c13b4a !important;
+    border-color: #fab3bc !important;
+}
+
+.badge.bg-success {
+    background: var(--color-success) !important;
+    color: #fff !important;
+    font-weight: 700;
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 1.15rem;
+    box-shadow: 0 6px 26px #4358e715;
+}
+
+.modal-header {
+    border-radius: 1.15rem 1.15rem 0 0;
+    background: #f7fafd;
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-radius: 0 0 1.15rem 1.15rem;
+}
+
+.btn-gradient {
+    background: linear-gradient(90deg, #355cfc 65%, #13afe0 100%);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 18px #13afe04c;
+    font-weight: 700;
+    border-radius: 9px;
+    transition: background .17s, color .13s, box-shadow .16s;
+}
+
+.btn-gradient:hover,
+.btn-gradient:focus {
+    background: linear-gradient(90deg, #2840bb 60%, #18c6e6 100%);
+    color: #fff;
+}
+
+/* Form */
+#formNotesModal textarea {
+    min-height: 110px;
+    font-size: 1em;
+    border-radius: .7em;
+    background: #fafcff;
+    border: 1.1px solid #bcd1f6;
+}
+
+/* Responsive tweaks */
+@media (max-width:900px) {
+    .card-wrapper {
+        padding: 12px 5px 8px 5px;
+    }
+
+    .rekap-box .badge {
+        font-size: .95rem;
+        padding: .48em .8em;
+    }
+
+    .table td,
+    .table th {
+        font-size: .93rem;
+    }
+
+    .table th.status-col,
+    .table td.status-col {
+        min-width: 140px !important;
+        width: 155px !important;
+        max-width: 190px !important;
+    }
+
+    .table td .status-select {
+        min-width: 100px !important;
+        max-width: 170px !important;
+    }
+}
+
+@media (max-width:600px) {
+    .main-container {
+        padding: 0;
+    }
+
+    .card-wrapper {
+        padding: 6px 1vw 5px 1vw;
+    }
+
+    .rekap-box .badge {
+        font-size: .88rem;
+        padding: .4em .7em;
+    }
+
+    .table-responsive {
+        font-size: 0.93rem;
+    }
+
+    .table th.status-col,
+    .table td.status-col {
+        min-width: 120px !important;
+        width: 120px !important;
+        max-width: 120px !important;
+    }
+}
+
+@media (max-width:420px) {
+    .card-wrapper {
+        padding: 3px 0 2px 0;
+    }
+
+    .table .btn {
+        font-size: .88rem;
+        padding: 4px 5px;
+    }
+
+    .rekap-box .badge {
+        font-size: .81rem;
+    }
+
+    .table th.status-col,
+    .table td.status-col {
+        min-width: 95px !important;
+        width: 95px !important;
+        max-width: 100px !important;
+    }
+}
+
+/* Scrollbar minimalis untuk table responsive */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #b7d3fdba;
+    border-radius: 14px;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 22;
+    height: var(--header-height);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 2px 12px 0 rgba(46, 89, 217, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.3rem 0 0.7rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    margin-bottom: 20px;
+    min-height: 56px;
+    gap: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.navbar .title {
+    font-weight: 700;
+    font-size: 1.14rem;
+    color: var(--color-dark);
+    letter-spacing: 1.1px;
+    text-shadow: 0 2px 7px #31467a10;
+    flex: 1 1 auto;
+    padding-left: 4px;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.user-menu small {
+    color: #7587ad;
+    font-size: .95em;
+    font-weight: 500;
+}
+
+.btn-logout {
+    background: var(--color-danger);
+    color: #fff;
+    padding: 4px 13px;
+    border: none;
+    border-radius: 7px;
+    font-size: .98em;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .19s;
+    margin-left: 4px;
+}
+
+.btn-logout:hover {
+    background: #b60d2f;
+    color: #fff;
+}
+
+.toggle-btn {
+    background: rgba(41, 214, 248, 0.13);
+    border: none;
+    font-size: 1.45rem;
+    color: var(--color-primary);
+    cursor: pointer;
+    margin-right: 12px;
+    outline: none;
+    display: none;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 11px;
+    transition: background .16s, color 0.13s;
+}
+
+.toggle-btn:hover,
+.toggle-btn:focus {
+    background: #e7f6ff;
+    color: #13afe0;
+    box-shadow: 0 0 8px #13afe04d;
+}
+
+@media (max-width: 992px) {
+    .toggle-btn {
+        display: inline-flex !important;
+        margin-left: 5px;
+    }
+}
+
+@media (max-width: 500px) {
+    .navbar {
+        padding: 0 4px !important;
+        margin-bottom: 7px;
+        min-height: 44px;
+        height: 48px;
+    }
+
+    .navbar .title {
+        font-size: .95rem;
+        padding-left: 2px;
+        letter-spacing: .7px;
+    }
+
+    .btn-logout {
+        padding: 3px 9px;
+        font-size: .90em;
+        margin-left: 2px;
+        border-radius: 6px;
+    }
+
+    .user-menu {
+        gap: 7px;
+    }
+}

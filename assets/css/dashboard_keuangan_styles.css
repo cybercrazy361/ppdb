@@ -1,0 +1,124 @@
+/* assets/css/dashboard_keuangan_styles.css */
+:root {
+    --clr-primary: #4e73df;
+    --clr-success: #1cc88a;
+    --clr-danger: #e74a3b;
+    --clr-dark: #5a5c69;
+    --clr-light: #f8f9fc;
+    --transition: 0.3s ease;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--clr-light);
+    color: var(--clr-dark);
+}
+
+.main-content {
+    margin-left: 250px;
+    transition: margin var(--transition);
+}
+
+.sidebar.collapsed+.main-content {
+    margin-left: 80px;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition), box-shadow var(--transition);
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.25rem;
+}
+
+.total-card .card-icon {
+    background-color: var(--clr-primary);
+}
+
+.paid-card .card-icon {
+    background-color: var(--clr-success);
+}
+
+.unpaid-card .card-icon {
+    background-color: var(--clr-danger);
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.card-text {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.card-header {
+    background-color: var(--clr-light);
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: 250px;
+    background-color: #fff;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1.5rem;
+    transition: margin var(--transition);
+    text-align: center;
+}
+
+.sidebar.collapsed~.footer {
+    margin-left: 80px;
+}
+
+@media (max-width: 991.98px) {
+
+    .main-content,
+    .footer {
+        margin-left: 80px !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .main-content,
+    .footer {
+        margin-left: 0 !important;
+    }
+}

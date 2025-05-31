@@ -1,0 +1,111 @@
+/* admin_login_styles.css */
+
+/* Mengatur dasar body */
+body {
+    background: linear-gradient(135deg, #72EDF2 10%, #5151E5 100%);
+    height: 100vh;
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container utama untuk login */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+/* Kartu login */
+.login-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Judul login */
+.login-title {
+    font-size: 1.8rem;
+    color: #333333;
+    font-weight: 700;
+}
+
+/* Styling label */
+.form-label {
+    color: #555555;
+    font-weight: 600;
+}
+
+/* Input form */
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #dddddd;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+/* Button login */
+.btn-login {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.btn-login:hover {
+    background: linear-gradient(135deg, #0056b3, #0099ff);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Link kembali ke halaman utama */
+.btn-link {
+    font-size: 0.9rem;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.btn-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Styling ikon toggle password */
+#togglePassword {
+    border: none;
+    background: none;
+    padding: 0 10px;
+    cursor: pointer;
+    color: #555555;
+    transition: color 0.3s ease;
+}
+
+#togglePassword:hover {
+    color: #007bff;
+}
+
+/* Responsif untuk perangkat kecil */
+@media (max-width: 576px) {
+    .login-card {
+        padding: 20px;
+    }
+
+    .login-title {
+        font-size: 1.5rem;
+    }
+}

@@ -1,0 +1,174 @@
+/* ===== Global Styles ===== */
+body {
+    background: linear-gradient(to right, #ece9e6, #ffffff);
+    /* Latar belakang gradasi */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Navbar Styles ===== */
+.navbar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Bayangan navbar */
+}
+
+/* ===== Button Styles ===== */
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    /* Warna biru dengan gradasi */
+    border: none;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #0096c7);
+    transform: scale(1.05);
+    /* Efek zoom saat hover */
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+    /* Efek zoom */
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #28a745, #4edc83);
+    /* Warna hijau dengan gradasi */
+    border: none;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.btn-success:hover {
+    background: linear-gradient(45deg, #218838, #3cb76e);
+    transform: scale(1.05);
+}
+
+/* ===== Table Styles ===== */
+.table {
+    border: 1px solid #ddd;
+    /* Border tabel */
+    border-radius: 8px;
+    overflow: hidden;
+    /* Mencegah elemen keluar dari tabel */
+    margin-bottom: 20px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f9f9f9;
+    /* Warna baris tabel saat hover */
+}
+
+.table-bordered {
+    border-collapse: collapse;
+    border: 1px solid #dee2e6;
+}
+
+.table thead {
+    background-color: #004085;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ===== Form Styles ===== */
+.modal-content {
+    border-radius: 12px;
+    /* Membuat sudut modal lebih lembut */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    /* Bayangan modal */
+}
+
+.modal-header {
+    background-color: #004085;
+    color: white;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+.input-group-text {
+    background: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+/* ===== Pagination Styles ===== */
+.pagination .page-link {
+    color: #007bff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination .active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+.pagination .page-link:hover {
+    background-color: #eef5ff;
+    color: #004085;
+}
+
+/* ===== Animations ===== */
+.modal.fade .modal-dialog {
+    transform: translate(0, -50%);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translate(0, 0);
+}
+
+/* ===== Card Styles (if any) ===== */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+        /* Tabel dapat di-scroll secara horizontal */
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+.pagination .page-link {
+    color: #007bff;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.pagination .active .page-link {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}

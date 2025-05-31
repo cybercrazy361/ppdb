@@ -1,0 +1,143 @@
+/* Stylesheet untuk Halaman Login Admin - PPDB Online */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #388fe5, #1c06c3);
+    /* Gradien abu-abu muda ke biru muda */
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    /* Shadow lembut */
+    border-radius: 15px;
+    background-color: #ffffff;
+    /* Latar belakang card putih */
+    position: relative;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.login-card {
+    width: 100%;
+    border-radius: 15px;
+    background-color: #ffffff;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    color: #1d3557;
+    /* Biru tua */
+    font-weight: bold;
+    text-align: center;
+}
+
+.login-subtitle {
+    color: #6c757d;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.alert {
+    font-size: 0.9rem;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.btn-login {
+    background: linear-gradient(45deg, #457b9d, #1d3557);
+    /* Gradien biru tua */
+    border: none;
+    transition: all 0.3s ease;
+    padding: 10px;
+    font-size: 1rem;
+    color: #fff;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.btn-login:hover {
+    background: linear-gradient(45deg, #1d3557, #457b9d);
+    /* Inversi gradien */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #457b9d;
+    /* Warna fokus biru lembut */
+}
+
+.input-group-text {
+    background-color: #457b9d;
+    color: #fff;
+    border: none;
+    border-radius: 10px 0 0 10px;
+}
+
+.input-group .btn-outline-secondary {
+    border: 1px solid #ced4da;
+    color: #457b9d;
+    border-radius: 0 10px 10px 0;
+    transition: all 0.3s ease;
+}
+
+.input-group .btn-outline-secondary:hover {
+    background-color: #457b9d;
+    color: #fff;
+    border-color: #457b9d;
+}
+
+.btn-link {
+    color: #457b9d;
+    font-size: 0.9rem;
+}
+
+.btn-link:hover {
+    color: #1d3557;
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 576px) {
+    .login-container {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .login-title {
+        font-size: 1.5rem;
+    }
+
+    .login-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .btn-login {
+        font-size: 0.9rem;
+    }
+}

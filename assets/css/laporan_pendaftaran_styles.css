@@ -1,0 +1,226 @@
+/* Laporan Pendaftaran Styles */
+
+/* Mengatur font dan warna latar belakang */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Styling Header Laporan */
+#printableArea h2 {
+    text-align: center;
+    color: #1e90ff;
+    margin-bottom: 5px;
+    /* Ditingkatkan dari 5px ke 10px untuk sedikit ruang */
+    font-weight: 700;
+    font-size: 1.5rem;
+    /* Menurunkan dari 2rem untuk tampilan yang lebih seimbang */
+}
+
+#printableArea p {
+    text-align: center;
+    color: #555;
+    margin-bottom: 10px;
+    /* Ditingkatkan dari 30px ke 20px */
+    font-size: 0.95rem;
+    /* Menyesuaikan ukuran font */
+}
+
+/* Styling Tabel Statistik */
+#printableArea table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    /* Ditingkatkan dari 30px ke 20px */
+}
+
+#printableArea table th,
+#printableArea table td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
+    /* Mengurangi padding dari 12px 15px ke 10px 12px */
+    text-align: left;
+}
+
+#printableArea table th {
+    background-color: #343a40;
+    color: #fff;
+    width: 30%;
+    font-size: 0.95rem;
+    /* Menurunkan ukuran font dari 1rem ke 0.95rem */
+}
+
+#printableArea table td {
+    background-color: #f8f9fa;
+    font-size: 0.9rem;
+    /* Menurunkan ukuran font dari 0.95rem ke 0.9rem */
+}
+
+/* Styling Tabel Detail Siswa */
+#printableArea table.detail-table th,
+#printableArea table.detail-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px 10px;
+    /* Mengurangi padding dari 10px 12px ke 8px 10px */
+    text-align: left;
+    font-size: 0.85rem;
+    /* Menurunkan ukuran font dari 0.9rem ke 0.85rem */
+}
+
+#printableArea table.detail-table thead th {
+    background-color: #1e90ff;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    /* Menurunkan ukuran font dari 1rem ke 0.95rem */
+}
+
+#printableArea table.detail-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#printableArea table.detail-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Styling Tombol Cetak dan Kembali */
+.btn-print,
+.btn-back {
+    padding: 8px 16px;
+    /* Mengurangi padding dari 12px 24px ke 8px 16px */
+    border: none;
+    border-radius: 25px;
+    /* Mengurangi border-radius dari 30px ke 25px */
+    font-size: 0.95rem;
+    /* Menurunkan ukuran font dari 1rem ke 0.95rem */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 8px;
+    /* Mengurangi margin-right dari 10px ke 8px */
+}
+
+.btn-print {
+    background-color: #1e90ff;
+    color: #fff;
+}
+
+.btn-print:hover {
+    background-color: #1c86ee;
+    transform: scale(1.05);
+}
+
+.btn-back {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+    transform: scale(1.05);
+}
+
+/* Styling Logo Institusi */
+.logo-institusi {
+    max-width: 80px;
+    /* Mengurangi ukuran maksimum dari 100px ke 80px */
+}
+
+/* Styling untuk area cetak */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #printableArea,
+    #printableArea * {
+        visibility: visible;
+    }
+
+    #printableArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .no-print {
+        display: none;
+    }
+}
+
+/* Responsif untuk layar besar (PC) */
+@media (min-width: 1200px) {
+    #printableArea h2 {
+        font-size: 2rem;
+        /* Menurunkan ukuran font dari 2.5rem ke 2rem */
+    }
+
+    #printableArea p {
+        font-size: 1rem;
+        /* Menurunkan ukuran font dari 1.2rem ke 1rem */
+    }
+
+    #printableArea table th,
+    #printableArea table td {
+        padding: 12px 15px;
+        /* Menyesuaikan padding */
+        font-size: 0.95rem;
+    }
+
+    #printableArea table.detail-table th,
+    #printableArea table.detail-table td {
+        padding: 10px 12px;
+        /* Menyesuaikan padding */
+        font-size: 0.9rem;
+    }
+
+    .btn-print,
+    .btn-back {
+        font-size: 1rem;
+        /* Menurunkan ukuran font dari 1.1rem ke 1rem */
+        padding: 10px 20px;
+        /* Mengurangi padding dari 14px 28px ke 10px 20px */
+    }
+
+    .logo-institusi {
+        max-width: 100px;
+        /* Menurunkan ukuran maksimum dari 120px ke 100px */
+    }
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    #printableArea h2 {
+        font-size: 1.75rem;
+    }
+
+    #printableArea p {
+        font-size: 0.9rem;
+    }
+
+    #printableArea table th,
+    #printableArea table td {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    #printableArea table.detail-table th,
+    #printableArea table.detail-table td {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+
+    .btn-print,
+    .btn-back {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        /* Mengurangi padding dari 10px 20px ke 8px 16px */
+    }
+
+    .logo-institusi {
+        max-width: 70px;
+        /* Mengurangi ukuran maksimum dari 80px ke 70px */
+    }
+}

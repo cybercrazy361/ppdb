@@ -1,0 +1,260 @@
+/* File: assets/css/kelola_pembayaran_styles.css */
+
+/* =========================
+   Theme Variables
+   ========================= */
+:root {
+    --clr-primary: #4e73df;
+    --clr-primary-dark: #2e59d9;
+    --clr-success: #1cc88a;
+    --clr-info: #36b9cc;
+    --clr-warning: #f6c23e;
+    --clr-danger: #e74a3b;
+    --clr-dark: #343a40;
+    --clr-secondary: #5a5c69;
+    --clr-light-bg: #f8f9fc;
+    --transition: 0.3s ease;
+}
+
+/* =========================
+   Global Styles
+   ========================= */
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--clr-light-bg);
+    color: var(--clr-dark);
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 1.5rem;
+    transition: margin var(--transition);
+}
+
+.sidebar.collapsed+.main-content {
+    margin-left: 80px;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--clr-secondary);
+    margin-bottom: 1.5rem;
+}
+
+/* =========================
+   Card & Filter Form
+   ========================= */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition), box-shadow var(--transition);
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--clr-dark);
+}
+
+.card-body {
+    padding: 1rem 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--clr-secondary);
+}
+
+.form-control,
+.form-select {
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: .5rem .75rem;
+    transition: box-shadow var(--transition);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* =========================
+   Table Styles
+   ========================= */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.table thead th {
+    background-color: var(--clr-primary);
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: .875rem;
+    border: none;
+    padding: .75rem 1rem;
+}
+
+.table tbody td {
+    background: #fff;
+    vertical-align: middle;
+    padding: .75rem 1rem;
+    color: var(--clr-secondary);
+}
+
+.table-hover tbody tr:hover td {
+    background-color: rgba(78, 115, 223, 0.1);
+}
+
+.table-detail-row td {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* =========================
+   Pagination
+   ========================= */
+.pagination {
+    margin-top: 1rem;
+}
+
+.pagination .page-link {
+    border-radius: .5rem;
+    margin: 0 .25rem;
+    color: var(--clr-dark);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: #fff;
+}
+
+/* =========================
+   Buttons
+   ========================= */
+.btn {
+    border-radius: .5rem;
+    transition: background var(--transition), box-shadow var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
+}
+
+.btn-success {
+    background-color: var(--clr-success);
+    border-color: var(--clr-success);
+}
+
+.btn-info {
+    background-color: var(--clr-info);
+    border-color: var(--clr-info);
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+    color: var(--clr-dark);
+}
+
+/* =========================
+   Modal Styles
+   ========================= */
+.modal-content {
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.3);
+    border: none;
+}
+
+.modal-header {
+    background: linear-gradient(90deg, var(--clr-primary), var(--clr-info));
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    padding: 1rem 1.5rem;
+}
+
+.modal-title {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.btn-close {
+    filter: invert(1);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1rem 1.5rem;
+    justify-content: flex-end;
+}
+
+/* =========================
+   Autocomplete Dropdown
+   ========================= */
+#siswa-suggestions {
+    position: absolute;
+    z-index: 1050;
+    background: #fff;
+    border: 1px solid var(--clr-info);
+    border-radius: .25rem;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: 0 .25rem .5rem rgba(0, 0, 0, 0.1);
+}
+
+#siswa-suggestions .dropdown-item {
+    padding: .5rem 1rem;
+}
+
+#siswa-suggestions .dropdown-item:hover {
+    background-color: rgba(54, 185, 204, 0.1);
+}
+
+/* =========================
+   Responsive Adjustments
+   ========================= */
+@media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 80px !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0 !important;
+    }
+}

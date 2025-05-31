@@ -1,0 +1,268 @@
+/* assets/css/sidebar.css */
+
+/* =========================
+   CSS Variables & Theme
+   ========================= */
+:root {
+    --clr-sidebar-start: #2c3e50;
+    /* Gelap ke biru tua */
+    --clr-sidebar-end: #1abc9c;
+    /* Teal cerah */
+    --clr-text: rgba(255, 255, 255, 0.9);
+    --clr-text-muted: rgba(255, 255, 255, 0.6);
+    --clr-active-bg: rgba(255, 255, 255, 0.15);
+    --clr-active-border: rgba(255, 255, 255, 0.3);
+    --clr-dark: #343a40;
+    --clr-secondary: #5a5c69;
+    --transition: 0.3s ease;
+}
+
+/* =========================
+   Sidebar Container
+   ========================= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--clr-sidebar-start), var(--clr-sidebar-end));
+    display: flex;
+    flex-direction: column;
+    transition: width var(--transition), background var(--transition);
+    z-index: 1000;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* =========================
+   User Info
+   ========================= */
+.sidebar .user-info {
+    padding: 1.5rem 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar .user-info h4,
+.sidebar .user-info p {
+    margin: 0;
+    color: var(--clr-text);
+}
+
+.sidebar .user-info p {
+    margin-top: .25rem;
+    color: var(--clr-text-muted);
+}
+
+.sidebar.collapsed .user-info h4,
+.sidebar.collapsed .user-info p {
+    display: none;
+}
+
+/* =========================
+   Navigation
+   ========================= */
+.sidebar .nav {
+    flex-grow: 1;
+    padding-top: 1rem;
+}
+
+.sidebar .nav-item {
+    margin-bottom: .25rem;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .75rem 1.25rem;
+    color: var(--clr-text);
+    font-weight: 600;
+    border-radius: .5rem;
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition);
+}
+
+.sidebar .nav-link i {
+    min-width: 24px;
+    font-size: 1.1rem;
+    color: var(--clr-text-muted);
+    transition: color var(--transition);
+}
+
+.sidebar .nav-link span {
+    flex-grow: 1;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--clr-active-bg);
+    color: #fff;
+}
+
+.sidebar .nav-link:hover i {
+    color: #fff;
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--clr-active-bg);
+    border-left: 4px solid var(--clr-active-border);
+    color: #fff;
+}
+
+.sidebar .nav-link.active i {
+    color: #fff;
+}
+
+/* =========================
+   Submenu (has-submenu)
+   ========================= */
+.sidebar .has-submenu>.nav-link {
+    position: relative;
+}
+
+.sidebar .has-submenu .fa-chevron-down {
+    margin-left: auto;
+    transition: transform var(--transition);
+}
+
+.sidebar .has-submenu .collapse {
+    margin: .25rem 0;
+    padding-left: 1.25rem;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: .5rem;
+    transition: height var(--transition);
+}
+
+.sidebar .has-submenu .collapse.show+.fa-chevron-down,
+.sidebar .has-submenu .nav-link[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* =========================
+   Toggle-Nav Buttons (nested menus)
+   ========================= */
+.sidebar .btn-toggle-nav .nav-link {
+    padding: .5rem 1rem;
+    font-size: .9rem;
+    color: var(--clr-text-muted);
+    transition: background var(--transition), color var(--transition);
+}
+
+.sidebar .btn-toggle-nav .nav-link:hover,
+.sidebar .btn-toggle-nav .nav-link.active {
+    background-color: var(--clr-active-bg);
+    color: #fff;
+}
+
+/* =========================
+   Logout Link
+   ========================= */
+.sidebar .logout-link {
+    margin-top: auto;
+    padding: 1.5rem 1rem;
+}
+
+.sidebar .logout-link .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    background-color: #e74a3b;
+    color: #fff;
+    font-weight: 700;
+    padding: .75rem 1rem;
+    border-radius: .5rem;
+    transition: background .2s ease;
+}
+
+.sidebar .logout-link .nav-link i {
+    font-size: 1.2rem;
+}
+
+.sidebar .logout-link .nav-link:hover {
+    background-color: #c0392b;
+}
+
+/* =========================
+   Collapsed State Adjustments
+   ========================= */
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: .75rem 0;
+    width: 48px;
+    height: 48px;
+    margin: .5rem auto;
+    border-radius: 50%;
+}
+
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .btn-toggle-nav .nav-link span,
+.sidebar.collapsed .has-submenu .fa-chevron-down {
+    display: none !important;
+}
+
+.sidebar.collapsed .collapse {
+    display: none !important;
+}
+
+.sidebar.collapsed .nav-link.active {
+    border-left: none;
+    background-color: var(--clr-active-bg);
+}
+
+/* =========================
+   Pop-out Submenu on Hover (Collapsed)
+   ========================= */
+.sidebar.collapsed .has-submenu {
+    position: relative;
+}
+
+.sidebar.collapsed .has-submenu:hover>.collapse {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 80px;
+    background: #ffffff;
+    min-width: 180px;
+    border-radius: .5rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.1);
+    padding: .5rem 0;
+    z-index: 1000;
+}
+
+/* Show icons and text, left-aligned */
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: .75rem;
+    padding: .5rem 1rem;
+    color: var(--clr-dark) !important;
+}
+
+/* Icon color */
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link i {
+    color: var(--clr-secondary) !important;
+}
+
+/* Hover on pop-out items */
+.sidebar.collapsed .has-submenu:hover>.collapse .nav-link:hover {
+    background: var(--clr-active-bg) !important;
+    color: #fff !important;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+@media (max-width: 991.98px) {
+    .sidebar {
+        width: 80px;
+    }
+
+    .sidebar.collapsed {
+        width: 0;
+    }
+}

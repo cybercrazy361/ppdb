@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SPMB Online - Halaman Utama</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Navigasi -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">SPMB APPDK</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Informasi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Kontak</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Utama -->
+    <main class="flex-fill">
+        <!-- Hero / Jumbotron -->
+        <header class="jumbotron text-center mt-5 pt-5">
+            <div class="container">
+                <h1 class="display-4">Selamat Datang di</h1>
+                <h1 class="display-2">Sistem Penerimaan Murid Baru(SPMB)</h1>
+                <p class="lead">YAYASAN PENDIDIKAN DHARMA KARYA 2025/2026</p>
+            </div>
+        </header>
+
+        <!-- Login Cards -->
+        <!-- ... (kode sebelum cards tetap, tidak perlu diubah) ... -->
+
+        <section class="container mb-5">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4">
+                <!-- Login Admin -->
+                <div class="col">
+                    <div class="card custom-card text-center h-100">
+                        <div class="card-body d-flex flex-column">
+                            <i class="fas fa-user-shield card-icon mb-3"></i>
+                            <h5 class="card-title">Login Admin</h5>
+                            <p class="card-text">Akses penuh untuk admin.</p>
+                            <a href="admin/admin_login_page" class="btn btn-primary mt-auto">Admin</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Login Pimpinan -->
+                <div class="col">
+                    <div class="card custom-card text-center h-100">
+                        <div class="card-body d-flex flex-column">
+                            <i class="fas fa-user-tie card-icon mb-3"></i>
+                            <h5 class="card-title">Login Pimpinan</h5>
+                            <p class="card-text">Unit SMA &amp; SMK.</p>
+                            <a href="pimpinan/login_pimpinan" class="btn btn-primary mt-auto">Pimpinan</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Login Tim Pendaftaran -->
+                <div class="col">
+                    <div class="card custom-card text-center h-100">
+                        <div class="card-body d-flex flex-column">
+                            <i class="fas fa-user-edit card-icon mb-3"></i>
+                            <h5 class="card-title">Login Pendaftaran</h5>
+                            <p class="card-text">Tim pendaftaran murid baru.</p>
+                            <a href="pendaftaran/login_pendaftaran" class="btn btn-primary mt-auto">Pendaftaran</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Login Petugas Keuangan -->
+                <div class="col">
+                    <div class="card custom-card text-center h-100">
+                        <div class="card-body d-flex flex-column">
+                            <i class="fas fa-money-check-alt card-icon mb-3"></i>
+                            <h5 class="card-title">Login Keuangan</h5>
+                            <p class="card-text">Kelola pembayaran siswa.</p>
+                            <a href="keuangan/login_keuangan" class="btn btn-primary mt-auto">Keuangan</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Login Call Center (Tambahan) -->
+                <div class="col">
+                    <div class="card custom-card text-center h-100">
+                        <div class="card-body d-flex flex-column">
+                            <i class="fas fa-headset card-icon mb-3"></i>
+                            <h5 class="card-title">Login Call Center</h5>
+                            <p class="card-text">Layanan bantuan &amp; informasi.</p>
+                            <a href="callcenter/login_callcenter" class="btn btn-primary mt-auto">Call Center</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2024 SPMB APPLICATION. All Rights Reserved.</p>
+            <p>Dibuat oleh Kartiko Setyoardi</p>
+            <div>
+                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle dengan Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

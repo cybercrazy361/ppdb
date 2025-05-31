@@ -1,0 +1,298 @@
+/* styles.css – Modern & Professional Refresh */
+
+/* 1. Theme Variables */
+:root {
+    --clr-primary: #4a00e0;
+    --clr-secondary: #8e2de2;
+    --clr-accent: #00c6ff;
+    --clr-bg: #f8f9fa;
+    --clr-white: #ffffff;
+    --clr-dark: #212529;
+    --shadow: rgba(0, 0, 0, 0.09);
+    --font-base: 'Inter', sans-serif;
+    --radius-main: 12px;
+}
+
+/* 2. Global Reset & Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-base);
+    background: var(--clr-bg);
+    color: var(--clr-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+    margin-top: 70px;
+    /* space for fixed navbar */
+    overflow-x: hidden;
+}
+
+/* 3. Navbar */
+.navbar {
+    background: var(--clr-white) !important;
+    box-shadow: 0 2px 8px var(--shadow);
+    font-family: var(--font-base);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: var(--clr-primary) !important;
+    letter-spacing: 1px;
+    font-size: 1.7rem;
+}
+
+.navbar-nav .nav-link {
+    color: var(--clr-dark) !important;
+    margin-left: .75rem;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background .3s, color .3s;
+    padding: .4rem .9rem;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    background: var(--clr-primary);
+    color: var(--clr-white) !important;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* Navbar toggler for mobile */
+.navbar-toggler {
+    border: none;
+    outline: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 2px var(--clr-primary) !important;
+}
+
+/* 4. Hero / Jumbotron */
+header.jumbotron {
+    position: relative;
+    background: linear-gradient(135deg, var(--clr-primary), var(--clr-secondary));
+    color: var(--clr-white);
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, .2);
+    padding: 4rem 2rem 3rem 2rem;
+    border-radius: var(--radius-main);
+    box-shadow: 0 4px 16px var(--shadow);
+    margin: 2rem 1rem 2.5rem 1rem;
+    overflow: hidden;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+header.jumbotron::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('banner.jpg') center/cover no-repeat;
+    opacity: 0.18;
+    border-radius: var(--radius-main);
+    z-index: 0;
+    filter: brightness(0.9);
+}
+
+header.jumbotron .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    text-align: center;
+}
+
+header.jumbotron h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 1rem;
+}
+
+header.jumbotron p {
+    font-size: 1.2rem;
+    color: #f3f3f3;
+    margin-bottom: 0;
+}
+
+/* 5. Card Login */
+.custom-card {
+    background: var(--clr-white);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px var(--shadow);
+    transition: transform .3s, box-shadow .3s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 270px;
+    padding: 1.6rem 1.4rem;
+}
+
+.custom-card:hover {
+    transform: translateY(-8px) scale(1.025);
+    box-shadow: 0 12px 28px var(--shadow);
+    border: 1px solid var(--clr-accent);
+}
+
+.custom-card .card-icon {
+    font-size: 2.6rem;
+    color: var(--clr-primary);
+    background: #f3f3fc;
+    border-radius: 50%;
+    width: 62px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.1rem auto;
+    box-shadow: 0 2px 10px rgba(74, 0, 224, 0.07);
+    transition: color .3s, background .3s, transform .3s;
+}
+
+.custom-card:hover .card-icon {
+    color: var(--clr-secondary);
+    background: #e0f4ff;
+    transform: scale(1.13) rotate(-4deg);
+}
+
+.custom-card .card-title {
+    font-weight: 600;
+    color: var(--clr-primary);
+    margin-bottom: .6rem;
+}
+
+.custom-card .card-text {
+    color: #666;
+    font-size: 1.04rem;
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+
+/* 6. Buttons */
+.btn-primary {
+    background: linear-gradient(45deg, var(--clr-secondary), var(--clr-accent)) !important;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: .54rem 1.3rem;
+    border-radius: 8px;
+    box-shadow: 0 3px 14px rgba(76, 0, 255, 0.09);
+    transition: transform .3s, background .3s, box-shadow .3s;
+    color: var(--clr-white);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: linear-gradient(45deg, var(--clr-accent), var(--clr-secondary)) !important;
+    color: var(--clr-white) !important;
+    transform: scale(1.07);
+    box-shadow: 0 6px 22px rgba(0, 198, 255, 0.18);
+    outline: none;
+    text-decoration: none;
+}
+
+/* 7. Footer */
+footer {
+    background: var(--clr-dark);
+    color: var(--clr-white);
+    text-align: center;
+    padding: 2rem 1rem 1.2rem 1rem;
+    font-size: 1rem;
+    margin-top: auto;
+    border-top: 3px solid var(--clr-primary);
+}
+
+footer p {
+    margin: .45rem 0;
+    letter-spacing: 0.1px;
+    font-size: 1rem;
+}
+
+footer .social-icon {
+    color: var(--clr-white);
+    margin: 0 .46rem;
+    font-size: 1.3rem;
+    vertical-align: middle;
+    transition: transform .26s, color .22s;
+}
+
+footer .social-icon:hover {
+    color: var(--clr-accent);
+    transform: scale(1.19) rotate(-10deg);
+}
+
+/* 8. Misc Utility & Responsive */
+@media (max-width: 992px) {
+    .row-cols-lg-4>* {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 768px) {
+    header.jumbotron {
+        padding: 2.1rem .5rem;
+        margin: 1rem .2rem 1.5rem .2rem;
+        min-height: 180px;
+    }
+
+    header.jumbotron h1 {
+        font-size: 1.55rem;
+    }
+
+    header.jumbotron p {
+        font-size: .99rem;
+    }
+
+    .custom-card .card-icon {
+        font-size: 2rem;
+        width: 48px;
+        height: 48px;
+        margin-bottom: .7rem;
+    }
+
+    .custom-card {
+        min-height: 220px;
+        padding: 1rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .row-cols-1>* {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .custom-card {
+        margin-bottom: 1.2rem;
+        min-height: 170px;
+    }
+
+    footer {
+        padding: 1.3rem .3rem .9rem .3rem;
+        font-size: .97rem;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+    background: var(--clr-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e3e3e9;
+    border-radius: 10px;
+}
