@@ -404,20 +404,16 @@ if (!is_dir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti")) {
     mkdir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti", 0777, true);
 }
 
-// Generate PDF
 $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
+// Optional: pakai font standar biar kecil
+$mpdf->SetCompression(true); // <-- BENAR! DI SINI
+
 $mpdf->WriteHTML($html);
 $mpdf->Output($pdf_path, \Mpdf\Output\Destination::FILE);
 chmod($pdf_path, 0644);
 
 // Cukup satu delay!
 sleep(7); // delay biar file benar-benar siap diakses publik
-
-clearstatcache();
-if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) {
-    die("PDF gagal dibuat! Cek permission dan proses generate PDF.");
-}
-
 
     clearstatcache();
     if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) { // < 5KB, anggap gagal
