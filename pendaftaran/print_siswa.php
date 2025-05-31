@@ -400,7 +400,7 @@ function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
         "Authorization: $token.$secret_key",
         "Content-Type: application/json"
     ]);
-    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
+    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/send-document");
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
