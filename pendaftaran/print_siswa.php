@@ -356,27 +356,35 @@ $html = ob_get_clean();
 
 // ========== GENERATE PDF =============
 $pdfFolder = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti";
-$pdfName   = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
-$pdfPath = $pdfFolder . "/bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
+if (!is_dir($pdfFolder)) {
+    mkdir($pdfFolder, 0755, true);
+}
+$pdfName = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
+$pdfPath = $pdfFolder . "/" . $pdfName;
 
 $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
 $mpdf->WriteHTML($html);
 $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
 
 $pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
-$token      = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
-$secret_key = "PAtwrvlV";
-$no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']); // hanya angka saja
-if (substr($no_wa_ortu,0,1) == '0') {
-  $no_wa_ortu = '62'.substr($no_wa_ortu,1); // ubah 0 jadi 62
+
+// Format nomor WA ke internasional (62...)
+$no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
+if (substr($no_wa_ortu, 0, 1) == '0') {
+    $no_wa_ortu = '62' . substr($no_wa_ortu, 1);
 }
-$headers = get_headers($pdfUrl);
-if(strpos($headers[0],'200')===false){
+
+// Cek akses file PDF
+$headers = @get_headers($pdfUrl);
+if (!$headers || strpos($headers[0], '200') === false) {
     die("File PDF tidak bisa diakses publik: $pdfUrl");
 }
 
+// Token Wablas Anda
+$token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
+$secret_key = "PAtwrvlV";
 
-// ========== KIRIM WHATSAPP ============
+// Fungsi kirim dokumen via WA Wablas
 function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
     $curl = curl_init();
     $payload = [
@@ -392,42 +400,44 @@ function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
         "Authorization: $token.$secret_key",
         "Content-Type: application/json"
     ]);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
+    curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+
     $result = curl_exec($curl);
 
     if (curl_errno($curl)) {
-        $err = curl_error($curl);
+        $error_msg = curl_error($curl);
         curl_close($curl);
-        return ['status' => false, 'error' => $err];
+        return ['status' => false, 'error' => $error_msg];
     }
 
+    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
 
-    // Tampilkan response asli untuk debugging
     $response = json_decode($result, true);
-
     if (!$response) {
-        return ['status' => false, 'error' => 'Response dari server tidak valid: ' . $result];
+        return ['status' => false, 'error' => 'Response tidak valid: ' . $result];
+    }
+
+    if ($httpcode !== 200 || empty($response['status'])) {
+        return ['status' => false, 'error' => 'HTTP Code: ' . $httpcode . ', Response: ' . json_encode($response)];
     }
 
     return $response;
 }
+
+// Kirim PDF ke WA
 $hasilKirim = kirimPDFKeWhatsApp($no_wa_ortu, $pdfUrl, $token, $secret_key);
+
 echo "<pre>Response API Wablas:\n" . htmlspecialchars(json_encode($hasilKirim, JSON_PRETTY_PRINT)) . "</pre>";
 
-
 if (!$hasilKirim['status']) {
-    // Tampilkan error response dari server Wablas yang lebih detail
     echo "<pre>Gagal kirim ke WhatsApp: " . htmlspecialchars(json_encode($hasilKirim, JSON_PRETTY_PRINT)) . "</pre>";
 } else {
     echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua.');</script>";
 }
-
-
-// Optional: Redirect, atau tampilkan konfirmasi, dll
 ?>
