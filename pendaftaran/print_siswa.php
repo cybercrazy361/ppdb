@@ -355,10 +355,10 @@ ob_start();
 $html = ob_get_clean();
 
 // ========== GENERATE PDF =============
-$pdfFolder = "/home/pakarinformatika.web.id/ppdbdk/public_html/pendaftaran/bukti";
+$pdfFolder = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti";
 if (!is_dir($pdfFolder)) mkdir($pdfFolder, 0775, true);
 $pdfName   = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
-$pdfPath   = $pdfFolder . "/" . $pdfName;
+$pdfPath = $pdfFolder . "/bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
 
 $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
 $mpdf->WriteHTML($html);
