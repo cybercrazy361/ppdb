@@ -378,8 +378,8 @@ if (file_exists($pdfPath)) {
 }
 echo "</pre>";
 
-// URL publik PDF
-$pdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+// URL publik PDF - **update ke URL server kamu yang benar**
+$pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
 
 // Format nomor WA internasional
 $no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
@@ -400,27 +400,23 @@ echo "</pre>";
 $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
 $secret_key = "PAtwrvlV";
 
-// Fungsi kirim file PDF via WhatsApp Wablas API
+// Fungsi kirim file PDF via WhatsApp Wablas API (pakai form-url-encoded sesuai dokumentasi)
 function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
     $curl = curl_init();
 
-    $payload = [
-        "data" => [
-            [
-                'phone'    => $no_wa,
-                'document' => $pdf_url,
-                'caption'  => 'Bukti Pendaftaran Siswa Baru. Simpan/print sebagai bukti resmi.'
-            ]
-        ]
+    $postData = [
+        'phone'    => $no_wa,
+        'document' => $pdf_url,
+        'caption'  => 'Bukti Pendaftaran Siswa Baru. Simpan/print sebagai bukti resmi.'
     ];
 
     curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/send-document");
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER, [
-        "Authorization: $token.$secret_key",
-        "Content-Type: application/json"
+        "Authorization: $token.$secret_key"
+        // Jangan set Content-Type, biarkan default (application/x-www-form-urlencoded)
     ]);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postData));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
