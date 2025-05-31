@@ -407,13 +407,12 @@ if (empty($_GET['notif'])) {
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_path, \Mpdf\Output\Destination::FILE);
     clearstatcache();
-if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) { // <5KB, gagal
-    die("PDF gagal dibuat! Cek permission dan proses generate PDF.");
-}
-
+    if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) { // <5KB, gagal
+        die("PDF gagal dibuat! Cek permission dan proses generate PDF.");
+    }
 
     // Tambahkan delay biar server luar bisa akses file!
-sleep(3); // Bisa 3-5 detik, coba dulu 3 detik
+    sleep(3); // Bisa 3-5 detik, coba dulu 3 detik
 
     clearstatcache();
     if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) { // < 5KB, anggap gagal
@@ -439,7 +438,6 @@ sleep(3); // Bisa 3-5 detik, coba dulu 3 detik
 
     // Setelah kirim, reload halaman supaya notif admin tampil di atas
     header("Location: " . $_SERVER['PHP_SELF'] . "?id=$id&notif=" . urlencode($notif_admin));
-    // **JANGAN pakai exit;** Supaya HTML tetap keluar di reload berikutnya
-    exit; // <- hanya di sini, habis redirect saja
-} // End if (!notif), jika reload pakai notif_admin di atas
+    exit;
+}
 ?>
