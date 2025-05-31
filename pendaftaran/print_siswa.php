@@ -356,7 +356,6 @@ $html = ob_get_clean();
 
 // ========== GENERATE PDF =============
 $pdfFolder = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti";
-if (!is_dir($pdfFolder)) mkdir($pdfFolder, 0775, true);
 $pdfName   = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
 $pdfPath = $pdfFolder . "/bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
 
@@ -365,6 +364,10 @@ $mpdf->WriteHTML($html);
 $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
 
 $pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
+$token      = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
+$secret_key = "PAtwrvlV";
+$no_wa_ortu = $row['no_hp_ortu'];  // Pastikan formatnya sudah benar
+
 
 // ========== KIRIM WHATSAPP ============
 function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
@@ -389,24 +392,29 @@ function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
     $result = curl_exec($curl);
+
     if (curl_errno($curl)) {
         $err = curl_error($curl);
         curl_close($curl);
-        return ['status'=>false, 'error'=>$err];
+        return ['status' => false, 'error' => $err];
     }
+
     curl_close($curl);
-    return json_decode($result, true);
+
+    // Tampilkan response asli untuk debugging
+    $response = json_decode($result, true);
+
+    if (!$response) {
+        return ['status' => false, 'error' => 'Response dari server tidak valid: ' . $result];
+    }
+
+    return $response;
 }
-
-// Ganti dengan TOKEN asli Wablas kamu
-$token      = "ISI_TOKEN_WABLAS";
-$secret_key = "ISI_SECRET_WABLAS";
-$no_wa_ortu = $row['no_hp_ortu']; // Pastikan format 628xxxxxxxxx
-
 $hasilKirim = kirimPDFKeWhatsApp($no_wa_ortu, $pdfUrl, $token, $secret_key);
 
 if (!$hasilKirim['status']) {
-    echo "<script>alert('Gagal kirim ke WhatsApp: " . htmlspecialchars($hasilKirim['error'] ?? 'Tidak diketahui') . "');</script>";
+    // Tampilkan error response dari server Wablas yang lebih detail
+    echo "<pre>Gagal kirim ke WhatsApp: " . htmlspecialchars(json_encode($hasilKirim, JSON_PRETTY_PRINT)) . "</pre>";
 } else {
     echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua.');</script>";
 }
