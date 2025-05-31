@@ -11,21 +11,25 @@ require_once __DIR__ . '/../vendor/autoload.php'; // mPDF
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
 // === Kirim PDF ke WhatsApp (Wablas) ===
-function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token) {
+function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
     $curl = curl_init();
-
-    $data = [
-        'phone' => $no_wa,
-        'document' => $pdf_url, // LINK file PDF HARUS BISA DIAKSES PUBLIK!
+    $payload = [
+        "data" => [
+            [
+                'phone'    => $no_wa,
+                'document' => $pdf_url,
+                // 'caption' => 'Bukti Pendaftaran', // opsional
+            ]
+        ]
     ];
-
-    curl_setopt($curl, CURLOPT_URL, 'https://bdg.wablas.com/api/send-document');
     curl_setopt($curl, CURLOPT_HTTPHEADER, [
-        "Authorization: $token"
+        "Authorization: $token.$secret_key",
+        "Content-Type: application/json"
     ]);
-    curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 
@@ -35,7 +39,7 @@ function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token) {
 
     return [
         'result' => $result,
-        'error' => $error
+        'error'  => $error
     ];
 }
 
