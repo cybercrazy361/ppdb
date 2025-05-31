@@ -424,6 +424,7 @@ if (empty($_GET['notif'])) {
         $no_wa_ortu = $row['no_hp_ortu'];
 
         $res = kirimPDFKeWhatsApp($no_wa_ortu, $pdf_url, $token, $secret_key);
+        var_dump($res);
         if (!empty($res['error'])) {
             $notif_admin = "Gagal mengirim bukti ke WA ortu: " . htmlspecialchars($res['error']);
         } else {
