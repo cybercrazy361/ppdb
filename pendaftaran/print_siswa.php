@@ -411,7 +411,7 @@ if (empty($_GET['notif'])) {
     } else {
         // KIRIM PDF KE WA ORTU
         $token      = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
-        $secret_key = "M9ICSFld";
+        $secret_key = "kkt9za3q";
         $no_wa_ortu = $row['no_hp_ortu'];
 
         // Ubah http ke https
