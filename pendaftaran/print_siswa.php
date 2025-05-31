@@ -395,7 +395,7 @@ if (empty($_GET['notif'])) {
     // SET PATH & URL PDF
     $pdf_file = "bukti_pendaftaran_{$row['no_formulir']}.pdf";
     $pdf_path = __DIR__ . "/bukti/$pdf_file";
-    $pdf_url  = "https://ppdb.pakarinformatika.web.id/pendaftaran/bukti/$pdf_file";
+    $pdf_url  = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$pdf_file";
 
     // Pastikan folder /bukti ada
     if (!is_dir(__DIR__ . "/bukti")) {
@@ -406,6 +406,11 @@ if (empty($_GET['notif'])) {
     $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_path, \Mpdf\Output\Destination::FILE);
+    clearstatcache();
+if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) { // <5KB, gagal
+    die("PDF gagal dibuat! Cek permission dan proses generate PDF.");
+}
+
 
     // Tambahkan delay biar server luar bisa akses file!
 sleep(3); // Bisa 3-5 detik, coba dulu 3 detik
