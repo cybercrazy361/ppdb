@@ -404,7 +404,14 @@ if (!is_dir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti")) {
     mkdir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti", 0777, true);
 }
 
-$mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
+$mpdf = new \Mpdf\Mpdf([
+    'format' => 'A4',
+    'margin_left' => 0,
+    'margin_right' => 0,
+    'margin_top' => 0,
+    'margin_bottom' => 0,
+]);
+
 // Optional: pakai font standar biar kecil
 $mpdf->SetCompression(true); // <-- BENAR! DI SINI
 
