@@ -16,8 +16,9 @@ function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
     $payload = [
         "data" => [
             [
-                'phone' => $no_wa,
+                'phone'    => $no_wa,
                 'document' => $pdf_url,
+                // 'caption' => 'Bukti Pendaftaran', // opsional
             ]
         ]
     ];
@@ -38,7 +39,7 @@ function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
 
     return [
         'result' => $result,
-        'error' => $error
+        'error'  => $error
     ];
 }
 
@@ -387,54 +388,40 @@ ob_start(); // start buffer output
 </html>
 <?php
 // ==== PROSES EXPORT PDF DAN KIRIM KE WA ====
-// (JALANKAN HANYA JIKA TIDAK SEDANG RELOAD DENGAN NOTIF)
 if (empty($_GET['notif'])) {
-    // Ambil buffer HTML
     $html = ob_get_clean();
-
-    // SET PATH & URL PDF
-// SET PATH & URL PDF - HARUS SAMA DENGAN DOCUMENT ROOT OPENLITESPEED
     $pdf_file = "bukti_pendaftaran_{$row['no_formulir']}.pdf";
-    $pdf_path = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/$pdf_file"; // <-- ABSOLUTE PATH DOCUMENT ROOT
-    $pdf_url = "http://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$pdf_file";
+    $pdf_path = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/$pdf_file";
+    $pdf_url  = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$pdf_file"; // pakai HTTPS
 
-    // Pastikan folder /bukti ada
-// Pastikan folder /bukti ada
-if (!is_dir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti")) {
-    mkdir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti", 0777, true);
-}
+    if (!is_dir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti")) {
+        mkdir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti", 0777, true);
+    }
 
-$mpdf = new \Mpdf\Mpdf([
-    'format' => 'A4',
-    'margin_left' => 0,
-    'margin_right' => 0,
-    'margin_top' => 0,
-    'margin_bottom' => 0,
-]);
-
-// Optional: pakai font standar biar kecil
-$mpdf->SetCompression(true); // <-- BENAR! DI SINI
-
-$mpdf->WriteHTML($html);
-$mpdf->Output($pdf_path, \Mpdf\Output\Destination::FILE);
-chmod($pdf_path, 0644);
-
-// Cukup satu delay!
-sleep(7); // delay biar file benar-benar siap diakses publik
-
+    $mpdf = new \Mpdf\Mpdf(['format' => 'A4', 'margin_left'=>0, 'margin_right'=>0, 'margin_top'=>0, 'margin_bottom'=>0]);
+    $mpdf->SetCompression(true);
+    $mpdf->WriteHTML($html);
+    $mpdf->Output($pdf_path, \Mpdf\Output\Destination::FILE);
+    chmod($pdf_path, 0644);
+    sleep(7);
     clearstatcache();
-    if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) { // < 5KB, anggap gagal
+
+    if (!file_exists($pdf_path) || filesize($pdf_path) < 5000) {
         $notif_admin = "PDF GAGAL atau KOSONG, tidak akan dikirim ke WA! Path: $pdf_path | Size: " . (file_exists($pdf_path) ? filesize($pdf_path) : 0);
     } else {
-        // === KIRIM PDF KE WHATSAPP ORTU ===
-        $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
+        // KIRIM PDF KE WA ORTU
+        $token      = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
         $secret_key = "M9ICSFld";
         $no_wa_ortu = $row['no_hp_ortu'];
-// Tambahkan debug URL PDF
-if (!@file_get_contents($pdf_url)) {
-    die("PDF TIDAK BISA DIAKSES PUBLIK: $pdf_url. Cek permission/folder/domain!");
-}
 
+        // Ubah http ke https
+        if (stripos($pdf_url, 'http://') === 0) {
+            $pdf_url = 'https://' . substr($pdf_url, 7);
+        }
+
+        if (!@file_get_contents($pdf_url)) {
+            die("PDF TIDAK BISA DIAKSES PUBLIK: $pdf_url. Cek permission/folder/domain!");
+        }
 
         $res = kirimPDFKeWhatsApp($no_wa_ortu, $pdf_url, $token, $secret_key);
         var_dump($res);
@@ -449,9 +436,10 @@ if (!@file_get_contents($pdf_url)) {
             }
         }
     }
+}
 
     // Setelah kirim, reload halaman supaya notif admin tampil di atas
     // header("Location: " . $_SERVER['PHP_SELF'] . "?id=$id&notif=" . urlencode($notif_admin));
 // exit;
-}
+
 ?>
