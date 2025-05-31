@@ -422,6 +422,11 @@ if (empty($_GET['notif'])) {
         $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
         $secret_key = "M9ICSFld";
         $no_wa_ortu = $row['no_hp_ortu'];
+// Tambahkan debug URL PDF
+if (!@file_get_contents($pdf_url)) {
+    die("PDF TIDAK BISA DIAKSES PUBLIK: $pdf_url. Cek permission/folder/domain!");
+}
+
 
         $res = kirimPDFKeWhatsApp($no_wa_ortu, $pdf_url, $token, $secret_key);
         var_dump($res);
