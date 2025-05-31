@@ -370,6 +370,10 @@ $no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']); // hanya angka s
 if (substr($no_wa_ortu,0,1) == '0') {
   $no_wa_ortu = '62'.substr($no_wa_ortu,1); // ubah 0 jadi 62
 }
+$headers = get_headers($pdfUrl);
+if(strpos($headers[0],'200')===false){
+    die("File PDF tidak bisa diakses publik: $pdfUrl");
+}
 
 
 // ========== KIRIM WHATSAPP ============
