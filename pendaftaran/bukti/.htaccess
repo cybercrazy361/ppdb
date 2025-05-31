@@ -1,0 +1,6 @@
+<IfModule mod_headers.c>
+    <FilesMatch "\.pdf$">
+        ForceType application/pdf
+        Header set Content-Type "application/pdf"
+    </FilesMatch>
+</IfModule>
