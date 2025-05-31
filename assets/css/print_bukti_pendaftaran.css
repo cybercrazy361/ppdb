@@ -13,22 +13,19 @@ body {
 }
 
 .container {
-    width: 100% !important;
-    /* <<< LEBARKAN PENUH */
-    min-height: 100% !important;
-    /* <<< MINIMALISIR KOSONG */
-    margin: 0 !important;
-    padding: 8mm 10mm 10mm 10mm !important;
-    /* Padding aman buat print */
     background: #fff;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    border: none !important;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    box-shadow: 0 0 12px 1px rgba(42, 70, 131, 0.08);
+    border-radius: 10px;
+    padding: 4mm 7mm 8mm 7mm;
+    /* PADATKAN ATAS: padding atas 4mm saja! */
+    border: 1px solid #dde1ee;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     box-sizing: border-box;
 }
-
 
 @media print {
     .container {
