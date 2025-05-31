@@ -393,14 +393,17 @@ if (empty($_GET['notif'])) {
     $html = ob_get_clean();
 
     // SET PATH & URL PDF
+// SET PATH & URL PDF - HARUS SAMA DENGAN DOCUMENT ROOT OPENLITESPEED
     $pdf_file = "bukti_pendaftaran_{$row['no_formulir']}.pdf";
-    $pdf_path = __DIR__ . "/bukti/$pdf_file";
+    $pdf_path = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/$pdf_file"; // <-- ABSOLUTE PATH DOCUMENT ROOT
     $pdf_url = "http://185.201.8.147/pendaftaran/bukti/$pdf_file";
 
+
     // Pastikan folder /bukti ada
-    if (!is_dir(__DIR__ . "/bukti")) {
-        mkdir(__DIR__ . "/bukti", 0777, true);
-    }
+// Pastikan folder /bukti ada
+if (!is_dir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti")) {
+    mkdir("/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti", 0777, true);
+}
 
     // Generate PDF
     $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
