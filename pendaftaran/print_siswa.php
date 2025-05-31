@@ -366,7 +366,10 @@ $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
 $pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
 $token      = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
 $secret_key = "PAtwrvlV";
-$no_wa_ortu = $row['no_hp_ortu'];  // Pastikan formatnya sudah benar
+$no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']); // hanya angka saja
+if (substr($no_wa_ortu,0,1) == '0') {
+  $no_wa_ortu = '62'.substr($no_wa_ortu,1); // ubah 0 jadi 62
+}
 
 
 // ========== KIRIM WHATSAPP ============
@@ -411,6 +414,8 @@ function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
     return $response;
 }
 $hasilKirim = kirimPDFKeWhatsApp($no_wa_ortu, $pdfUrl, $token, $secret_key);
+echo "<pre>Response API Wablas:\n" . htmlspecialchars(json_encode($hasilKirim, JSON_PRETTY_PRINT)) . "</pre>";
+
 
 if (!$hasilKirim['status']) {
     // Tampilkan error response dari server Wablas yang lebih detail
@@ -418,6 +423,7 @@ if (!$hasilKirim['status']) {
 } else {
     echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua.');</script>";
 }
+
 
 // Optional: Redirect, atau tampilkan konfirmasi, dll
 ?>
