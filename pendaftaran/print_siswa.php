@@ -1,17 +1,25 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
+require_once __DIR__ . '/../vendor/autoload.php'; // mPDF
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
+// Cek session login
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
 
+// Ambil ID siswa dari GET
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
+// Ambil data siswa
 $stmt = $conn->prepare("SELECT * FROM siswa WHERE id=?");
 $stmt->bind_param('i', $id);
 $stmt->execute();
@@ -19,6 +27,7 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
+// Ambil nama petugas
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 if ($username_petugas) {
@@ -31,7 +40,7 @@ if ($username_petugas) {
     $stmt_petugas->close();
 }
 
-// Ambil status & notes dari calon_pendaftar (jika belum ada di tabel siswa)
+// Ambil status & notes dari calon_pendaftar (jika ada)
 $status_pendaftaran = '-';
 $keterangan_pendaftaran = '-';
 if (!empty($row['calon_pendaftar_id'])) {
@@ -44,6 +53,7 @@ if (!empty($row['calon_pendaftar_id'])) {
     $stmtStatus->close();
 }
 
+// Fungsi tanggal Indonesia
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
     $bulan = [
@@ -59,7 +69,6 @@ function tanggal_id($tgl) {
 // Ambil status progres
 $uang_pangkal_id = 1;
 $spp_id = 2;
-
 $query_status = "
     SELECT
         CASE
@@ -155,9 +164,13 @@ if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
 elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
 elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 
-// No Invoice, pastikan kolom ini ada di tabel siswa!
+// No Invoice
 $no_invoice = $row['no_invoice'] ?? '';
+
+// ===== MULAI OUTPUT BUFFER HTML
+ob_start();
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -337,3 +350,66 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
 </body>
 </html>
+<?php
+// ====== END OUTPUT BUFFER, AMBIL HTML
+$html = ob_get_clean();
+
+// ========== GENERATE PDF =============
+$pdfFolder = "/home/pakarinformatika.web.id/ppdbdk/public_html/pendaftaran/bukti";
+if (!is_dir($pdfFolder)) mkdir($pdfFolder, 0775, true);
+$pdfName   = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
+$pdfPath   = $pdfFolder . "/" . $pdfName;
+
+$mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
+$mpdf->WriteHTML($html);
+$mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
+
+$pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
+
+// ========== KIRIM WHATSAPP ============
+function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
+    $curl = curl_init();
+    $payload = [
+        "data" => [
+            [
+                'phone'    => $no_wa,
+                'document' => $pdf_url,
+                'caption'  => 'Bukti Pendaftaran Siswa Baru. Simpan/print sebagai bukti resmi.'
+            ]
+        ]
+    ];
+    curl_setopt($curl, CURLOPT_HTTPHEADER, [
+        "Authorization: $token.$secret_key",
+        "Content-Type: application/json"
+    ]);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+    $result = curl_exec($curl);
+    if (curl_errno($curl)) {
+        $err = curl_error($curl);
+        curl_close($curl);
+        return ['status'=>false, 'error'=>$err];
+    }
+    curl_close($curl);
+    return json_decode($result, true);
+}
+
+// Ganti dengan TOKEN asli Wablas kamu
+$token      = "ISI_TOKEN_WABLAS";
+$secret_key = "ISI_SECRET_WABLAS";
+$no_wa_ortu = $row['no_hp_ortu']; // Pastikan format 628xxxxxxxxx
+
+$hasilKirim = kirimPDFKeWhatsApp($no_wa_ortu, $pdfUrl, $token, $secret_key);
+
+if (!$hasilKirim['status']) {
+    echo "<script>alert('Gagal kirim ke WhatsApp: " . htmlspecialchars($hasilKirim['error'] ?? 'Tidak diketahui') . "');</script>";
+} else {
+    echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua.');</script>";
+}
+
+// Optional: Redirect, atau tampilkan konfirmasi, dll
+?>
