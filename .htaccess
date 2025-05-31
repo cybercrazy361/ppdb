@@ -1,4 +1,9 @@
 DirectoryIndex index.php index.html
+
+# Izinkan akses ke folder .well-known/acme-challenge untuk SSL verification
+RewriteCond %{REQUEST_URI} ^/\.well-known/acme-challenge/ [NC]
+RewriteRule ^ - [L]
+
 RewriteEngine On
 
 # Hilangkan .php dari URL
