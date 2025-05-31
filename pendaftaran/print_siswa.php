@@ -395,7 +395,7 @@ if (empty($_GET['notif'])) {
     // SET PATH & URL PDF
     $pdf_file = "bukti_pendaftaran_{$row['no_formulir']}.pdf";
     $pdf_path = __DIR__ . "/bukti/$pdf_file";
-    $pdf_url  = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$pdf_file";
+    $pdf_url = "http://185.201.8.147/pendaftaran/bukti/$pdf_file";
 
     // Pastikan folder /bukti ada
     if (!is_dir(__DIR__ . "/bukti")) {
