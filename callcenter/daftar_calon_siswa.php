@@ -57,6 +57,20 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
     $stmt->close();
     return $jml > 0;
 }
+
+function tanggal_indo($tgl) {
+    // Deteksi format yang ada waktu
+    if (preg_match('/^\d{4}-\d{2}-\d{2}/', $tgl)) {
+        $bulan = [
+            1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        $exp = explode('-', substr($tgl, 0, 10)); // Ambil 10 karakter pertama
+        return intval($exp[2]) . ' ' . $bulan[intval($exp[1])] . ' ' . $exp[0];
+    }
+    return $tgl;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -143,7 +157,7 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
         <td><?= htmlspecialchars($row['alamat']) ?></td>
         <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
         <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
-        <td><?= htmlspecialchars($row['tanggal_daftar']) ?></td>
+        <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
         <td class="status-col text-center">
             <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
             <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
