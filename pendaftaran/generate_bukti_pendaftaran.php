@@ -4,9 +4,14 @@ date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
-function safe($str) { return htmlspecialchars($str ?? '-'); }
+function safe($str) {
+    return htmlspecialchars($str ?? '-');
+}
 
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') die('Akses tidak diizinkan.');
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
+    die('Akses tidak diizinkan.');
+}
+
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
@@ -45,8 +50,9 @@ if (!empty($row['calon_pendaftar_id'])) {
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
     $bulan = [
-        'January'=>'Januari','February'=>'Februari','March'=>'Maret','April'=>'April','May'=>'Mei','June'=>'Juni',
-        'July'=>'Juli','August'=>'Agustus','September'=>'September','October'=>'Oktober','November'=>'November','December'=>'Desember'
+        'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret', 'April' => 'April',
+        'May' => 'Mei', 'June' => 'Juni', 'July' => 'Juli', 'August' => 'Agustus',
+        'September' => 'September', 'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
     ];
     $date = date('d', strtotime($tgl));
     $month = $bulan[date('F', strtotime($tgl))];
@@ -153,6 +159,8 @@ elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
 elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 
 $no_invoice = $row['no_invoice'] ?? '';
+
+// Lokasi simpan PDF
 $filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
 $save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
 
@@ -167,72 +175,232 @@ $mpdf = new \Mpdf\Mpdf([
 
 ob_start();
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
 <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
 <style>
-/* ---- START OF FULL CSS ---- */
-*,*::before,*::after{box-sizing:border-box;}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f6fb;color:#202b38;margin:0;padding:0;}
-.container{background:#fff;width:210mm;min-height:297mm;margin:0 auto;box-shadow:0 0 12px 1px rgba(42,70,131,0.08);border-radius:10px;padding:4mm 7mm 8mm 7mm;border:1px solid #dde1ee;position:relative;overflow:hidden;box-sizing:border-box;}
-@media print{.container{margin:0!important;box-shadow:none!important;border:none!important;border-radius:0!important;width:210mm!important;min-height:297mm!important;padding:1mm 5mm 7mm 5mm!important;page-break-after:avoid;}#btnPrint{display:none!important;}}
-.kop-surat-rel{display:flex;align-items:center;position:relative;margin-bottom:2mm;min-height:75px;padding-top:0;}
-.kop-logo{width:120px;height:120px;object-fit:contain;position:absolute;left:0;top:0;z-index:10;background:#fff;}
-.kop-info-center{margin:0 auto;width:80%;text-align:center;font-family:'Segoe UI',Arial,sans-serif;}
-.kop-title1{font-size:25px;font-weight:700;color:#163984;margin-bottom:0;margin-top:3px;letter-spacing:0.7px;}
-.kop-title2{font-size:20px;font-weight:800;color:#163984;margin-bottom:2px;letter-spacing:0.8px;}
-.kop-akreditasi{font-size:16px;color:#163984;font-weight:500;margin-bottom:1.5px;}
-.kop-alamat{font-size:14px;color:#163984;font-weight:400;margin-bottom:1px;}
-.kop-garis{border-bottom:2px solid #163984;margin-bottom:7px;margin-top:4px;}
-.header-content{text-align:center;margin-bottom:30px;}
-.sub-title{font-size:20px;letter-spacing:0.1px;color:#163984;margin-bottom:0;}
-.tahun-ajaran{font-size:16px;font-weight:600;color:#163984;margin-bottom:0;margin-top:0;}
-.no-reg-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;gap:14px;width:100%;}
-.callcenter-badge{display:inline-flex;align-items:center;background:linear-gradient(90deg,#e6edfa 60%,#d4f1fd 100%);padding:5px 18px 5px 12px;border-radius:16px;box-shadow:0 2px 10px 0 rgba(65,123,230,0.08);font-size:13.4px;font-weight:600;color:#1a4299;letter-spacing:0.2px;}
-.no-reg-row{display:flex;align-items:center;margin-bottom:2px;font-size:13.3px;}
-.no-reg-label{min-width:152px;font-weight:500;}
-.no-reg-sep{min-width:12px;text-align:center;font-weight:700;}
-.no-reg-val{font-weight:700;font-style:italic;color:#1a53c7;}
-.data-table{border-collapse:collapse;margin-top:8px;margin-bottom:4px;width:100%;background:#f9fafd;font-size:13px;}
-.data-table caption{display:table-caption;caption-side:top;font-weight:bold;font-size:14.5px;color:#163984;background:#e8ecfa;text-align:center;padding:7px 0 6px 0;letter-spacing:0.5px;border-radius:3px 3px 0 0;width:100%;}
-.data-table th,.data-table td{padding:4.5px 6px;border-bottom:1px solid #e8eaf3;text-align:left;}
-.data-table th{width:38%;background:#e8ecfa;color:#163984;font-weight:600;border-right:1px solid #f0f1fa;}
-.data-table td{background:#fff;}
-.tagihan-table{border-collapse:collapse;width:100%;background:#f8fafb;margin-top:6px;font-size:12.5px;}
-.tagihan-table th,.tagihan-table td{border:1px solid #e5e8f2;padding:5px 6px;}
-.tagihan-table th{background:#e3eaf7;color:#183688;font-weight:600;}
-.riwayat-bayar th,.riwayat-bayar td{font-size:11.8px;padding:4px 5px;}
-.status-row{margin:7px 0 5px 0;font-size:13.2px;font-weight:600;}
-.status-row span{padding-left:5px;}
-.note{margin-top:7px;padding:7px 10px 6px 9px;font-size:11.7px;border-radius:5px;background:#f7faff;color:#213052;border-left:3px solid #8190ef;}
-.note.lunas{border-left-color:#24b97a;background:#f5fff9;}
-.note.angsuran{border-left-color:#efb91d;background:#fff9ed;}
-.note.belum-bayar{border-left-color:#e14e4e;background:#fff4f4;}
-.footer-ttd-kanan{width:100%;display:flex;justify-content:flex-end;margin-top:16px;}
-.ttd-block-kanan{text-align:right;font-size:12.7px;}
-.ttd-tanggal-kanan{margin-bottom:15px;}
-.ttd-petugas-kanan{font-weight:700;font-size:13.3px;}
-.ttd-label-kanan{font-size:11px;margin-top:1px;color:#555;}
-.info-contact{font-size:11.5px;margin-top:11px;margin-bottom:0.5px;color:#173575;}
-.tgl-lebar{min-width:60px;}
-/* ---- END OF FULL CSS ---- */
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #202b38;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 5mm 10mm 10mm 10mm;
+    box-sizing: border-box;
+  }
+
+.kop-surat-rel {
+  display: flex;
+  align-items: center;  /* Vertikal sejajar tengah */
+  justify-content: space-between; /* Logo kiri, teks menempel ke kanan */
+  padding: 0 10mm;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.kop-logo-abs {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.kop-info-center {
+  flex-grow: 1;
+  margin-left: 15px; /* Jarak dari logo */
+  text-align: left; /* Rata kiri */
+  font-family: Arial, sans-serif;
+  color: #163984;
+  max-width: calc(100% - 110px); /* Lebar maksimal agar tidak melebihi kertas */
+}
+
+.kop-title1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  letter-spacing: 1.1px;
+}
+
+.kop-title2 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.kop-akreditasi {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+}
+
+.kop-alamat {
+  font-size: 12px;
+  margin: 0 0 2px 0;
+}
+
+.kop-garis {
+  border-bottom: 2px solid #163984;
+  margin: 0 10mm 18px 10mm;
+  width: calc(100% - 20mm); /* Lebar garis sesuai padding kanan kiri */
+}
+
+
+  .header-content {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .sub-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #163984;
+    margin: 0 0 5px 0;
+  }
+  .tahun-ajaran {
+    font-size: 13px;
+    font-weight: 600;
+    color: #163984;
+    margin: 0;
+  }
+  .no-reg-bar {
+    margin-bottom: 12px;
+  }
+  .no-reg-row {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .no-reg-label {
+    font-weight: 600;
+    display: inline-block;
+    min-width: 160px;
+    color: #333;
+  }
+  .no-reg-val {
+    font-style: italic;
+    font-weight: 700;
+    color: #1a53c7;
+  }
+  .callcenter-badge {
+    display: inline-block;
+    background: #d4f1fd;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a4299;
+    margin-left: 20px;
+  }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+  }
+  table.data-table caption {
+    background: #e6edfa;
+    color: #163984;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 7px 0;
+    border-radius: 6px 6px 0 0;
+    text-align: center;
+  }
+  table.data-table th,
+  table.data-table td {
+    border: 1px solid #dbe4f3;
+    padding: 6px 10px;
+    text-align: left;
+  }
+  table.data-table th {
+    background: #e6edfa;
+    color: #163984;
+    font-weight: 600;
+    width: 30%;
+  }
+  table.tagihan-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  table.tagihan-table th,
+  table.tagihan-table td {
+    border: 1px solid #e5e8f2;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  table.tagihan-table th {
+    background: #e3eaf7;
+    color: #183688;
+    font-weight: 600;
+  }
+  table.tagihan-table td {
+    font-weight: 600;
+  }
+  table.riwayat-bayar th,
+  table.riwayat-bayar td {
+    font-size: 11.5px;
+    padding: 5px 8px;
+  }
+  .status-row {
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .status-row span {
+    vertical-align: middle;
+  }
+  .info-contact {
+    font-size: 11px;
+    margin-top: 15px;
+    color: #173575;
+  }
+  .info-contact b {
+    font-weight: 700;
+    color: #113180;
+  }
+  .note {
+    margin-top: 15px;
+    padding: 10px 12px;
+    font-size: 12px;
+    background: #f5fff9;
+    border-left: 5px solid #24b97a;
+    border-radius: 5px;
+    color: #213052;
+  }
+  .footer-ttd-kanan {
+    width: 100%;
+    margin-top: 25px;
+    text-align: right;
+    font-size: 11px;
+  }
+  .footer-ttd-kanan .ttd-petugas-kanan {
+    font-weight: 700;
+    font-size: 13px;
+  }
 </style>
 </head>
 <body>
   <div class="container">
-    <div class="kop-surat-rel">
-      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo" class="kop-logo" />
-      <div class="kop-info-center">
-        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-        <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
-        <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-        <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
-      </div>
-    </div>
-    <div class="kop-garis"></div>
+        <div class="kop-surat-rel">
+        <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" alt="Logo" class="kop-logo-abs" />
+        <div class="kop-info-center">
+            <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+            <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+            <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
+            <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+            <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+        </div>
+        </div>
+        <div class="kop-garis"></div>
 
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
@@ -340,7 +508,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f6fb;color:#202b38;ma
       Hotline SMA : <b>081511519271</b> (Bu Puji)
     </div>
 
-    <div class="note <?= $note_class ?>">
+    <div class="note">
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
         <b>Catatan:</b><br>
         1. Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor Formulir.<br>
@@ -360,15 +528,16 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f6fb;color:#202b38;ma
     </div>
 
     <div class="footer-ttd-kanan">
-      <div class="ttd-block-kanan">
-        <div class="ttd-tanggal-kanan">Jakarta, <?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
-        <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
+      <div class="ttd-petugas-kanan">
+        Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br>
+        <?= safe($petugas) ?><br>
+        (Petugas Pendaftaran)
       </div>
     </div>
   </div>
 </body>
 </html>
+
 <?php
 $html = ob_get_clean();
 $mpdf->WriteHTML($html);
