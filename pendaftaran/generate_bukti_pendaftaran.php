@@ -198,62 +198,57 @@ ob_start();
     box-sizing: border-box;
   }
 
-.kop-surat-rel {
+.kop-surat-flex {
   display: flex;
-  align-items: center;  /* Vertikal sejajar tengah */
-  justify-content: space-between; /* Logo kiri, teks menempel ke kanan */
-  padding: 0 10mm;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+  align-items: center;        /* Vertikal tengah */
+  justify-content: center;    /* Tengah horizontal seluruh konten */
+  margin-bottom: 8px;
   width: 100%;
+  gap: 30px;                  /* Jarak logo dan kop info */
 }
 
 .kop-logo-abs {
-  width: 90px;
-  height: 90px;
+  width: 85px;
+  height: 85px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .kop-info-center {
-  flex-grow: 1;
-  margin-left: 15px; /* Jarak dari logo */
-  text-align: left; /* Rata kiri */
+  text-align: left;
   font-family: Arial, sans-serif;
   color: #163984;
-  max-width: calc(100% - 110px); /* Lebar maksimal agar tidak melebihi kertas */
+  line-height: 1.2;
 }
 
 .kop-title1 {
   font-size: 20px;
   font-weight: 700;
-  margin: 0 0 4px 0;
   letter-spacing: 1.1px;
+  margin-bottom: 2px;
 }
 
 .kop-title2 {
   font-size: 16px;
   font-weight: 700;
-  margin: 0 0 4px 0;
+  margin-bottom: 2px;
 }
 
 .kop-akreditasi {
   font-size: 14px;
   font-weight: 700;
-  margin: 0 0 6px 0;
+  margin-bottom: 5px;
 }
 
 .kop-alamat {
   font-size: 12px;
-  margin: 0 0 2px 0;
+  margin-bottom: 1px;
 }
-
 .kop-garis {
   border-bottom: 2px solid #163984;
   margin: 0 10mm 18px 10mm;
-  width: calc(100% - 20mm); /* Lebar garis sesuai padding kanan kiri */
+  width: calc(100% - 20mm);
 }
-
 
   .header-content {
     text-align: center;
@@ -390,8 +385,8 @@ ob_start();
 </head>
 <body>
   <div class="container">
-        <div class="kop-surat-rel">
-        <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" alt="Logo" class="kop-logo-abs" />
+    <div class="kop-surat-flex">
+        <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" class="kop-logo-abs" alt="Logo" />
         <div class="kop-info-center">
             <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
             <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
@@ -399,8 +394,8 @@ ob_start();
             <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
             <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
         </div>
-        </div>
-        <div class="kop-garis"></div>
+    </div>
+    <div class="kop-garis"></div>
 
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
