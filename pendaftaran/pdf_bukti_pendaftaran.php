@@ -347,23 +347,31 @@ ob_start();
 </body>
 </html>
 <?php
-$html = ob_get_clean();
 
-$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
-$mpdf->WriteHTML($html);
-$mpdf->Output($pdf_fullpath, \Mpdf\Output\Destination::FILE);
+// Bersihkan output buffer sebelum mulai
+ob_end_clean();
+ob_start();
+
+try {
+    $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+    $mpdf->WriteHTML($html);
+    $mpdf->Output($pdf_fullpath, \Mpdf\Output\Destination::FILE);
+} catch (\Mpdf\MpdfException $e) {
+    echo "<b style='color:red'>Gagal membuat PDF: " . htmlspecialchars($e->getMessage()) . "</b>";
+    exit;
+}
 
 // === CEK FILE PDF SUDAH ADA DAN TIDAK KOSONG ===
-$max_wait = 20;         // total maksimal tunggu (detik)
-$min_size = 5 * 1024;   // minimal ukuran file (5KB)
+$max_wait = 30;         // tambah jadi 30 detik
+$min_size = 5 * 1024;
 $waited = 0;
-$delay = 1;             // jeda tiap loop (detik)
+$delay = 1;
 
 while (
     (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size)
     && $waited < $max_wait
 ) {
-    usleep($delay * 1000000); // delay dalam mikrodetik
+    usleep($delay * 1000000);
     clearstatcache();
     $waited += $delay;
 }
@@ -373,7 +381,7 @@ if (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size) {
     exit;
 }
 
-// === CEK AKSES FILE PDF VIA HTTP ===
+// Cek akses HTTP PDF
 $ch = curl_init($pdf_url);
 curl_setopt($ch, CURLOPT_NOBODY, true);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -386,9 +394,11 @@ if ($http_code != 200) {
     echo "<b style='color:red'>File PDF belum bisa diakses publik (HTTP $http_code). Kirim WA dibatalkan.</b>";
     exit;
 }
-sleep(10);
-// === Kirim ke WA Ortu ===
-// === Kirim ke WA Ortu ===
+
+// Tambah delay lebih lama supaya server Wablas bisa akses file
+sleep(15);
+
+// Kirim WA via Wablas
 $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
 $secret_key = "PAtwrvlV";
 $no_wa = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
@@ -421,14 +431,11 @@ $result = curl_exec($curl);
 $err = curl_error($curl);
 curl_close($curl);
 
-
-// Feedback ke user (admin/operator)
+// Output feedback ke user
 echo "<h2>PDF sudah dibuat: <a href='$pdf_url' target='_blank'>$pdf_url</a></h2>";
 echo "<h3>Nomor WA Ortu: $no_wa</h3>";
 echo "<h3>Wablas response:</h3>";
-echo "<pre>";
-echo htmlspecialchars($result);
-echo "</pre>";
+echo "<pre>" . htmlspecialchars($result) . "</pre>";
 if ($err) {
     echo "<br><b style='color:red'>CURL Error:</b> $err";
 }
