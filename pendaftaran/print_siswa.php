@@ -1,27 +1,17 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
-require_once __DIR__ . '/../vendor/autoload.php'; // mPDF
 
-function safe($str) {
-    return htmlspecialchars($str ?? '-');
-}
+function safe($str) { return htmlspecialchars($str ?? '-'); }
 
-// Cek session login
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
 
-// Ambil ID siswa dari GET
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
 
-// Ambil data siswa
 $stmt = $conn->prepare("SELECT * FROM siswa WHERE id=?");
 $stmt->bind_param('i', $id);
 $stmt->execute();
@@ -29,7 +19,6 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-// Ambil nama petugas
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 if ($username_petugas) {
@@ -42,7 +31,7 @@ if ($username_petugas) {
     $stmt_petugas->close();
 }
 
-// Ambil status & notes dari calon_pendaftar (jika ada)
+// Ambil status & notes dari calon_pendaftar (jika belum ada di tabel siswa)
 $status_pendaftaran = '-';
 $keterangan_pendaftaran = '-';
 if (!empty($row['calon_pendaftar_id'])) {
@@ -55,7 +44,6 @@ if (!empty($row['calon_pendaftar_id'])) {
     $stmtStatus->close();
 }
 
-// Fungsi tanggal Indonesia
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
     $bulan = [
@@ -68,17 +56,10 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// Fungsi badge status pembayaran
-function getStatusBadge($status) {
-    $status = strtolower($status);
-    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold"><i class="fas fa-check-circle"></i> Lunas</span>';
-    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold"><i class="fas fa-hourglass-half"></i> Angsuran</span>';
-    return '<span style="color:#e74a3b;font-weight:bold"><i class="fas fa-times-circle"></i> Belum Bayar</span>';
-}
-
-// Ambil status progres pembayaran (sederhana, bisa disesuaikan)
+// Ambil status progres
 $uang_pangkal_id = 1;
 $spp_id = 2;
+
 $query_status = "
     SELECT
         CASE
@@ -128,11 +109,6 @@ $resultStatus = $stmtStatus->get_result();
 $status_pembayaran = $resultStatus->fetch_assoc()['status_pembayaran'] ?? 'Belum Bayar';
 $stmtStatus->close();
 
-$note_class = '';
-if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
-elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
-elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
-
 // Tagihan awal
 $tagihan = [];
 $stmtTagihan = $conn->prepare("
@@ -167,10 +143,21 @@ if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar->close();
 }
 
-// ===== MULAI OUTPUT BUFFER HTML =====
-ob_start();
-?>
+function getStatusBadge($status) {
+    $status = strtolower($status);
+    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold"><i class="fas fa-check-circle"></i> Lunas</span>';
+    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold"><i class="fas fa-hourglass-half"></i> Angsuran</span>';
+    return '<span style="color:#e74a3b;font-weight:bold"><i class="fas fa-times-circle"></i> Belum Bayar</span>';
+}
 
+$note_class = '';
+if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
+elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
+elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
+
+// No Invoice, pastikan kolom ini ada di tabel siswa!
+$no_invoice = $row['no_invoice'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -184,6 +171,7 @@ ob_start();
     <i class="fas fa-print"></i> Cetak / Simpan PDF
   </button>
   <div class="container">
+    <!-- KOP SURAT: Logo kiri, info tetap center -->
     <div class="kop-surat-rel">
       <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
       <div class="kop-info-center">
@@ -207,26 +195,26 @@ ob_start();
       <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
-    <div class="no-reg-bar">
-      <div class="no-reg-row" style="margin-bottom:0;">
-        <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
-        <div class="no-reg-sep">:</div>
-        <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
-      </div>
-      <?php if (!empty($row['reviewed_by'])): ?>
-        <span class="callcenter-badge">
-          <i class="fas fa-headset"></i>
-          <b>Call Center:</b> <?= safe($row['reviewed_by']) ?>
-        </span>
-      <?php endif; ?>
-    </div>
-    <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($row['no_invoice'])): ?>
-      <div class="no-reg-row">
-        <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
-        <div class="no-reg-sep">:</div>
-        <div class="no-reg-val"><b><i><?= safe($row['no_invoice']) ?></i></b></div>
-      </div>
-    <?php endif; ?>
+<div class="no-reg-bar">
+  <div class="no-reg-row" style="margin-bottom:0;">
+    <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
+    <div class="no-reg-sep">:</div>
+    <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
+  </div>
+  <?php if (!empty($row['reviewed_by'])): ?>
+    <span class="callcenter-badge">
+      <i class="fas fa-headset"></i>
+      <b>Call Center:</b> <?= safe($row['reviewed_by']) ?>
+    </span>
+  <?php endif; ?>
+</div>
+<?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+  <div class="no-reg-row">
+    <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
+    <div class="no-reg-sep">:</div>
+    <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
+  </div>
+<?php endif; ?>
 
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
@@ -240,20 +228,20 @@ ob_start();
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-    <div class="status-keterangan-wrap">
-      <table class="status-keterangan-table">
-        <tr>
-          <td class="status-ket-label">Status Pendaftaran</td>
-          <td class="status-ket-sep">:</td>
-          <td class="status-ket-value"><?= safe($status_pendaftaran) ?></td>
-        </tr>
-        <tr>
-          <td class="status-ket-label">Keterangan</td>
-          <td class="status-ket-sep">:</td>
-          <td class="status-ket-value"><?= !empty($keterangan_pendaftaran) ? safe($keterangan_pendaftaran) : '-' ?></td>
-        </tr>
-      </table>
-    </div>
+<div class="status-keterangan-wrap">
+  <table class="status-keterangan-table">
+    <tr>
+      <td class="status-ket-label">Status Pendaftaran</td>
+      <td class="status-ket-sep">:</td>
+      <td class="status-ket-value"><?= htmlspecialchars($status_pendaftaran) ?></td>
+    </tr>
+    <tr>
+      <td class="status-ket-label">Keterangan</td>
+      <td class="status-ket-sep">:</td>
+      <td class="status-ket-value"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '-' ?></td>
+    </tr>
+  </table>
+</div>
 
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
@@ -349,113 +337,3 @@ ob_start();
   </div>
 </body>
 </html>
-
-<?php
-// END OUTPUT BUFFER HTML
-$html = ob_get_clean();
-
-// Buat folder jika belum ada
-$pdfFolder = "/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti";
-if (!is_dir($pdfFolder)) {
-    mkdir($pdfFolder, 0755, true);
-}
-
-$pdfName = "bukti_pendaftaran_" . $row['no_formulir'] . "_test.pdf";
-$pdfPath = $pdfFolder . "/" . $pdfName;
-//$pdfName = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
-//$pdfPath = $pdfFolder . "/" . $pdfName;
-
-// Generate PDF
-$mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
-$mpdf->WriteHTML($html);
-$mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
-
-// Debug info PDF
-echo "<pre>Debug PDF file:\n";
-if (file_exists($pdfPath)) {
-    echo "File berhasil dibuat: $pdfPath\n";
-    echo "Ukuran file: " . filesize($pdfPath) . " bytes\n";
-} else {
-    die("File PDF gagal dibuat: $pdfPath");
-}
-echo "</pre>";
-
-// URL publik PDF - **update ke URL server kamu yang benar**
-//$pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
-$pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
-// Format nomor WA internasional
-$no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
-if (substr($no_wa_ortu, 0, 1) == '0') {
-    $no_wa_ortu = '62' . substr($no_wa_ortu, 1);
-}
-
-// Cek akses file PDF via HTTP
-$headers = @get_headers($pdfUrl);
-echo "<pre>Debug HTTP headers untuk file PDF:\n";
-print_r($headers);
-if (!$headers || strpos($headers[0], '200') === false) {
-    die("File PDF tidak bisa diakses secara publik: $pdfUrl");
-}
-echo "</pre>";
-
-// Token Wablas
-$token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
-$secret_key = "PAtwrvlV";
-
-// Fungsi kirim file PDF via WhatsApp Wablas API (pakai form-url-encoded sesuai dokumentasi)
-function kirimPDFKeWhatsApp($no_wa, $pdf_url, $token, $secret_key) {
-    $curl = curl_init();
-
-    $postData = [
-        'phone'    => $no_wa,
-        'document' => $pdf_url,
-        'caption'  => 'Bukti Pendaftaran Siswa Baru. Simpan/print sebagai bukti resmi.'
-    ];
-
-    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/send-document");
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, [
-        "Authorization: $token.$secret_key"
-        // Jangan set Content-Type, biarkan default (application/x-www-form-urlencoded)
-    ]);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postData));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-
-    $result = curl_exec($curl);
-
-    if (curl_errno($curl)) {
-        $error_msg = curl_error($curl);
-        curl_close($curl);
-        return ['status' => false, 'error' => "Curl error: $error_msg"];
-    }
-
-    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    curl_close($curl);
-
-    echo "<pre>Debug response dari Wablas API (HTTP $httpcode):\n$result\n</pre>";
-
-    $response = json_decode($result, true);
-    if (!$response) {
-        return ['status' => false, 'error' => 'Response JSON dari Wablas tidak valid: ' . $result];
-    }
-
-    if ($httpcode !== 200 || empty($response['status'])) {
-        return ['status' => false, 'error' => 'HTTP Code: ' . $httpcode . ', Response: ' . json_encode($response)];
-    }
-
-    return $response;
-}
-
-// Kirim PDF via WA
-$hasilKirim = kirimPDFKeWhatsApp($no_wa_ortu, $pdfUrl, $token, $secret_key);
-
-echo "<pre>Response API Wablas:\n" . htmlspecialchars(json_encode($hasilKirim, JSON_PRETTY_PRINT)) . "</pre>";
-
-if (!$hasilKirim['status']) {
-    echo "<pre>Gagal kirim ke WhatsApp:\n" . htmlspecialchars(json_encode($hasilKirim, JSON_PRETTY_PRINT)) . "</pre>";
-} else {
-    echo "<script>alert('Bukti pendaftaran berhasil dikirim ke WhatsApp orang tua.');</script>";
-}
-?>
