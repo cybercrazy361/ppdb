@@ -389,10 +389,11 @@ ob_start();
 <table width="100%" style="margin-bottom: 6px;">
   <tr>
     <!-- LOGO -->
-    <td style="width:90px; text-align:left; vertical-align:middle;">
-      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo"
-        style="width:80px; height:80px; object-fit:contain;">
-    </td>
+ <td style="width:110px; text-align:left; vertical-align:middle;">
+  <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
+       alt="Logo"
+       style="height:80px; object-fit:contain;">
+</td>
     <!-- KOP INFO -->
     <td style="text-align:center; vertical-align:middle;">
       <div style="font-size: 23px; font-weight: 700; letter-spacing: 1.1px; color: #163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
