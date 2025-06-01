@@ -223,7 +223,6 @@ ob_start();
 </table>
 <div class="kop-garis" style="border-bottom: 2px solid #163984; margin-bottom: 7px; margin-top: 4px;"></div>
 
-
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
         <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
@@ -353,6 +352,25 @@ $html = ob_get_clean();
 $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
 $mpdf->WriteHTML($html);
 $mpdf->Output($pdf_fullpath, \Mpdf\Output\Destination::FILE);
+
+// === CEK FILE PDF SUDAH ADA DAN TIDAK KOSONG ===
+$max_wait = 20; // detik maksimal tunggu
+$min_size = 5 * 1024; // minimal 5KB
+$waited = 0;
+while (
+    (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size)
+    && $waited < $max_wait
+) {
+    usleep(500000); // 0.5 detik
+    clearstatcache();
+    $waited += 0.5;
+}
+
+// Jika file gagal dibuat, jangan lanjutkan kirim WA
+if (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size) {
+    echo "<b style='color:red'>File PDF belum siap/setelah $max_wait detik masih gagal dibuat. Kirim ke WA DIBATALKAN!</b>";
+    exit;
+}
 
 // === Kirim ke WA Ortu ===
 $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
