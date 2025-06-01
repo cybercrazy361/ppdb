@@ -148,9 +148,9 @@ if ($status_pembayaran !== 'Belum Bayar') {
 
 function getStatusBadge($status) {
     $status = strtolower($status);
-    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold">✅ Lunas</span>';
-    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold">⏳ Angsuran</span>';
-    return '<span style="color:#e74a3b;font-weight:bold">❌ Belum Bayar</span>';
+    if ($status === 'lunas') return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_lunas.png" alt="Lunas" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#1cc88a;font-weight:bold">Lunas</span>';
+    if ($status === 'angsuran') return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_angsuran.png" alt="Angsuran" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#f6c23e;font-weight:bold">Angsuran</span>';
+    return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_belum.png" alt="Belum Bayar" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#e74a3b;font-weight:bold">Belum Bayar</span>';
 }
 
 $note_class = '';
