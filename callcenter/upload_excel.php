@@ -12,6 +12,30 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 header('Content-Type: application/json');
 
 // =========================
+// Fungsi bantu
+// =========================
+function formatHp($hp) {
+    $hp = trim($hp);
+    $hp = preg_replace('/[^0-9]/', '', ltrim($hp, '+')); // hilangkan + dan non-digit
+
+    if (substr($hp, 0, 2) === '62') {
+        return $hp;
+    } elseif (substr($hp, 0, 1) === '0') {
+        return '62' . substr($hp, 1);
+    } elseif (substr($hp, 0, 1) === '8') {
+        return '62' . $hp;
+    }
+    return $hp;
+}
+
+function validJenisKelamin($jk) {
+    $jk = strtolower(trim($jk));
+    if ($jk === 'laki-laki' || $jk === 'l') return 'Laki-laki';
+    if ($jk === 'perempuan' || $jk === 'p') return 'Perempuan';
+    return null;
+}
+
+// =========================
 // 1. Validasi session & role
 // =========================
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
@@ -26,7 +50,6 @@ $unit = null;
 if (isset($_SESSION['unit'])) {
     $unit = $_SESSION['unit'];
 } else {
-    // fallback: query dari DB
     $username = $_SESSION['username'];
     $stmt = $conn->prepare("SELECT unit FROM petugas WHERE username = ?");
     $stmt->bind_param("s", $username);
@@ -45,7 +68,6 @@ if (!$unit) {
 // =========================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     $file = $_FILES['excel_file']['tmp_name'];
-
     try {
         $spreadsheet = IOFactory::load($file);
         $sheet = $spreadsheet->getActiveSheet();
@@ -58,31 +80,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             'Alamat', 'Pendidikan Ortu', 'No HP Ortu', 'Tanggal Daftar'
         ];
         foreach ($expected as $i => $exp) {
-            if (strtolower(trim($header[$i])) !== strtolower($exp)) {
-                echo json_encode(['success' => false, 'message' => 'Header Excel tidak sesuai!<br>Header yang benar:<br><b>'.implode(' | ', $expected).'</b>']);
+            if (strtolower(trim($header[$i] ?? '')) !== strtolower($exp)) {
+                echo json_encode([
+                    'success' => false, 
+                    'message' => 'Header Excel tidak sesuai!<br>Header yang benar:<br><b>'.implode(' | ', $expected).'</b>'
+                ]);
                 exit;
             }
         }
 
         // Import data
-        $count = 0;
+        $count = 0; $rowError = [];
         for ($i = 1; $i < count($rows); $i++) {
             $row = $rows[$i];
-            // Skip baris kosong
-            if (!array_filter($row)) continue;
+            if (!array_filter($row)) continue; // skip baris kosong
 
-            // Data
             $nama             = trim($row[0] ?? '');
-            $jenis_kelamin    = trim($row[1] ?? '');
+            $jenis_kelamin    = validJenisKelamin($row[1] ?? '');
             $asal_sekolah     = trim($row[2] ?? '');
-            $no_hp            = trim($row[3] ?? '');
+            $no_hp            = formatHp(trim($row[3] ?? ''));
             $alamat           = trim($row[4] ?? '');
             $pendidikan_ortu  = trim($row[5] ?? '');
-            $no_hp_ortu       = trim($row[6] ?? '');
+            $no_hp_ortu       = formatHp(trim($row[6] ?? ''));
             $tanggal_daftar   = trim($row[7] ?? '');
 
-            // Validasi minimal nama dan tanggal_daftar
-            if ($nama === '' || $tanggal_daftar === '') continue;
+            // Validasi
+            if ($nama === '' || $tanggal_daftar === '') {
+                $rowError[] = $i+1; // Excel row (1-based)
+                continue;
+            }
+            if (!$jenis_kelamin) {
+                $rowError[] = $i+1; continue;
+            }
+            if (!preg_match('/^628[0-9]{7,13}$/', $no_hp) || !preg_match('/^628[0-9]{7,13}$/', $no_hp_ortu)) {
+                $rowError[] = $i+1; continue;
+            }
 
             $stmt = $conn->prepare("INSERT INTO calon_pendaftar
                 (nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan, tanggal_daftar)
@@ -96,13 +128,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 $alamat,
                 $pendidikan_ortu,
                 $no_hp_ortu,
-                $unit,          // <-- pilihan ISI OTOMATIS dari session
+                $unit,
                 $tanggal_daftar
             );
             if ($stmt->execute()) $count++;
             $stmt->close();
         }
-        echo json_encode(['success' => true, 'message' => "Berhasil mengimpor <b>$count</b> data."]);
+
+        $msg = "Berhasil mengimpor <b>$count</b> data.";
+        if (!empty($rowError)) {
+            $msg .= "<br>Baris <b>".implode(', ', $rowError)."</b> gagal diimpor (data tidak valid atau kosong).";
+        }
+        echo json_encode(['success' => true, 'message' => $msg]);
     } catch(Exception $e) {
         echo json_encode(['success' => false, 'message' => 'File error: '.$e->getMessage()]);
     }
