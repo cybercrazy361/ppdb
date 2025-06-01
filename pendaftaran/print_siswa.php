@@ -360,8 +360,10 @@ if (!is_dir($pdfFolder)) {
     mkdir($pdfFolder, 0755, true);
 }
 
-$pdfName = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
+$pdfName = "bukti_pendaftaran_" . $row['no_formulir'] . "_test.pdf";
 $pdfPath = $pdfFolder . "/" . $pdfName;
+//$pdfName = "bukti_pendaftaran_" . $row['no_formulir'] . ".pdf";
+//$pdfPath = $pdfFolder . "/" . $pdfName;
 
 // Generate PDF
 $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
@@ -379,8 +381,8 @@ if (file_exists($pdfPath)) {
 echo "</pre>";
 
 // URL publik PDF - **update ke URL server kamu yang benar**
+//$pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
 $pdfUrl = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/" . $pdfName;
-
 // Format nomor WA internasional
 $no_wa_ortu = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
 if (substr($no_wa_ortu, 0, 1) == '0') {
