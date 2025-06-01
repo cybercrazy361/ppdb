@@ -165,7 +165,7 @@ $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
 
 $stylesheet = file_get_contents('../assets/css/print_bukti_pendaftaran.css');
 $stylesheet .= '
-/* Tambahan agar tidak split halaman pada tabel/ttd */
+/* Cegah split: */
 .container, table, tr, td, th, .footer-ttd-kanan, .note, .status-row, .status-keterangan-wrap {
   page-break-inside: avoid !important;
   page-break-after: avoid !important;
@@ -353,9 +353,8 @@ ob_start();
 <?php
 $html = ob_get_clean();
 
-// --- APPLY CSS DULU ke mPDF ---
+// CSS harus di-header (HEADER_CSS) lalu body
 $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
-// --- HTML body ---
 $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 
 $mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
