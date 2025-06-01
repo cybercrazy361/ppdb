@@ -156,8 +156,15 @@ $no_invoice = $row['no_invoice'] ?? '';
 $filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
 $save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
 
+// BACA ISI FILE CSS (pastikan path-nya sesuai)
+$css = file_get_contents(__DIR__ . '/../assets/css/print_bukti_pendaftaran.css');
+
 // ----------- GENERATE PDF -----------
-$mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
+$mpdf = new \Mpdf\Mpdf([
+    'format' => 'A4',
+    'mode' => 'utf-8',
+    'default_font' => 'Arial'
+]);
 
 ob_start();
 ?>
@@ -166,12 +173,22 @@ ob_start();
 <head>
   <meta charset="UTF-8" />
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
+  <!-- Font Awesome tidak jalan di PDF, abaikan atau ganti simbol biasa -->
+  <style><?= $css ?></style>
+  <style>
+      /* Font Awesome substitute (hanya untuk PDF) */
+      .fas.fa-check-circle:before { content: "\2714\0020"; color: #1cc88a; font-weight:bold; }
+      .fas.fa-hourglass-half:before { content: "\23F3\0020"; color: #f6c23e; font-weight:bold; }
+      .fas.fa-times-circle:before { content: "\2716\0020"; color: #e74a3b; font-weight:bold; }
+      .fas.fa-headset:before { content: "\260E\0020"; color: #2496db; font-weight:bold; }
+      .fas.fa-coins:before { content: "\1F4B0\0020"; }
+      .fab.fa-whatsapp:before { content: "\1F4F1\0020"; }
+  </style>
 </head>
 <body>
   <div class="container">
     <div class="kop-surat-rel">
-      <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
+      <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" alt="Logo" class="kop-logo-abs" />
       <div class="kop-info-center">
         <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
         <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
@@ -337,7 +354,13 @@ ob_start();
 </html>
 <?php
 $html = ob_get_clean();
+
+// ganti path gambar ke full path untuk PDF (biar tampil di mPDF)
+$html = str_replace('../assets/images/logo_trans.png', __DIR__.'/../assets/images/logo_trans.png', $html);
+
+// CSS sudah di-inline, font awesome pakai unicode
 $mpdf->WriteHTML($html);
+
 $mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
 
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
