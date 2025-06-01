@@ -2,6 +2,7 @@
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
+require_once __DIR__ . '/../vendor/autoload.php'; // pastikan mPDF sudah di-install
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
@@ -152,29 +153,22 @@ elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
 elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 
 $no_invoice = $row['no_invoice'] ?? '';
+$filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
+$save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
+
+// ----------- GENERATE PDF -----------
+$mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
+
+ob_start();
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
 </head>
 <body>
-  <div style="margin-bottom:16px;">
-    <button id="btnPrint" onclick="window.print()" style="padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
-      <i class="fas fa-print"></i> Cetak / Simpan PDF
-    </button>
-    <a href="generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank"
-       style="display:inline-block;margin-left:8px;padding:7px 18px;font-size:14px;background:#1cc88a;color:#fff;border:none;border-radius:6px;text-decoration:none;">
-      <i class="fas fa-file-pdf"></i> Generate & Simpan PDF
-    </a>
-    <a href="kirim_wa_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank"
-       style="display:inline-block;margin-left:8px;padding:7px 18px;font-size:14px;background:green;color:#fff;border:none;border-radius:6px;text-decoration:none;">
-      <i class="fab fa-whatsapp"></i> Kirim PDF ke WA Ortu
-    </a>
-  </div>
   <div class="container">
     <div class="kop-surat-rel">
       <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
@@ -341,3 +335,14 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
 </body>
 </html>
+<?php
+$html = ob_get_clean();
+$mpdf->WriteHTML($html);
+$mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
+
+$pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
+echo "<div style='padding:22px;font-size:16px;font-family:Segoe UI,Arial;'>
+PDF berhasil dibuat:<br>
+<a href='$pdf_url' target='_blank'>$pdf_url</a>
+</div>";
+?>
