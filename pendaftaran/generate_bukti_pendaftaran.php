@@ -445,20 +445,25 @@ ob_start();
     </div>
 
 <div class="no-reg-bar" style="margin-bottom:12px;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <div>
-      <span class="no-reg-label">No. Registrasi Pendaftaran</span>
-      <span class="no-reg-sep">:</span>
-      <span class="no-reg-val"><i><b><?= safe($row['no_formulir']) ?></b></i></span>
-    </div>
-    <?php if (!empty($row['reviewed_by'])): ?>
-    <div>
-      <span class="no-reg-label">Call Center</span>
-      <span class="no-reg-sep">:</span>
-      <span class="callcenter-badge"><?= safe($row['reviewed_by']) ?></span>
-    </div>
-    <?php endif; ?>
-  </div>
+  <table width="100%" style="border-collapse: collapse;">
+    <tr>
+      <td style="width: 50%; padding: 0; vertical-align: middle;">
+        <span class="no-reg-label">No. Registrasi Pendaftaran</span>
+        <span class="no-reg-sep">:</span>
+        <span class="no-reg-val"><i><b><?= safe($row['no_formulir']) ?></b></i></span>
+      </td>
+      <?php if (!empty($row['reviewed_by'])): ?>
+      <td style="width: 50%; padding: 0; vertical-align: middle; text-align: right;">
+        <span class="no-reg-label">Call Center</span>
+        <span class="no-reg-sep">:</span>
+        <span class="callcenter-badge"><?= safe($row['reviewed_by']) ?></span>
+      </td>
+      <?php else: ?>
+      <td style="width: 50%;"></td>
+      <?php endif; ?>
+    </tr>
+  </table>
+
   <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
   <div class="no-reg-row" style="margin-top:8px;">
     <span class="no-reg-label">No. Formulir Pendaftaran</span>
@@ -467,6 +472,7 @@ ob_start();
   </div>
   <?php endif; ?>
 </div>
+
 
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
