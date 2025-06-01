@@ -388,23 +388,25 @@ ob_start();
 <!-- KOP SURAT -->
 <table width="100%" style="margin-bottom: 6px;">
   <tr>
-    <!-- LOGO -->
- <td style="width:110px; text-align:left; vertical-align:middle;">
-  <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
-       alt="Logo"
-       style="height:80px; object-fit:contain;">
-</td>
-    <!-- KOP INFO -->
-    <td style="text-align:center; vertical-align:middle;">
-      <div style="font-size: 23px; font-weight: 700; letter-spacing: 1.1px; color: #163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-      <div style="font-size: 18px; font-weight: 700; color: #163984;">SMA/SMK DHARMA KARYA</div>
-      <div style="font-size: 15px; font-weight: 700; color: #163984;"><b>Terakreditasi “A”</b></div>
-      <div style="font-size: 13px; color: #163984;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-      <div style="font-size: 13px; color: #163984;">Telp. 021-7398578 / 7250224</div>
+    <!-- KIRI: LOGO -->
+    <td style="width:110px; text-align:left; vertical-align:middle;">
+      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
+           alt="Logo"
+           style="height:80px; object-fit:contain;">
     </td>
+    <!-- TENGAH: KOP INFO (CENTER, FULL WIDTH) -->
+    <td style="text-align:center; vertical-align:middle;">
+      <div style="font-size: 33px; font-weight: 500; letter-spacing: 4px; color: #163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+      <div style="font-size: 26px; font-weight: 500; letter-spacing: 2px; color: #163984;">SMA/SMK DHARMA KARYA</div>
+      <div style="font-size: 18px; font-weight: 700; color: #163984;"><b>Terakreditasi “A”</b></div>
+      <div style="font-size: 15px; color: #163984;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+      <div style="font-size: 15px; color: #163984;">Telp. 021-7398578 / 7250224</div>
+    </td>
+    <!-- KANAN: DUMMY (BIAR CENTER SEMPURNA) -->
+    <td style="width:110px;"></td>
   </tr>
 </table>
-<div style="border-bottom: 2px solid #163984; margin: 0 10mm 18px 10mm; width: calc(100% - 20mm);"></div>
+<div style="border-bottom: 4px solid #163984; margin: 0 10mm 18px 10mm; width: calc(100% - 20mm);"></div>
 
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
