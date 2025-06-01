@@ -395,13 +395,14 @@ ob_start();
            style="height:80px; object-fit:contain;">
     </td>
     <!-- TENGAH: KOP INFO (CENTER, FULL WIDTH) -->
-    <td style="text-align:center; vertical-align:middle;">
-      <div style="font-size: 33px; font-weight: 500; letter-spacing: 4px; color: #163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-      <div style="font-size: 26px; font-weight: 500; letter-spacing: 2px; color: #163984;">SMA/SMK DHARMA KARYA</div>
-      <div style="font-size: 18px; font-weight: 700; color: #163984;"><b>Terakreditasi “A”</b></div>
-      <div style="font-size: 15px; color: #163984;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-      <div style="font-size: 15px; color: #163984;">Telp. 021-7398578 / 7250224</div>
-    </td>
+<td style="text-align:center; vertical-align:middle;">
+  <div style="font-size: 22px; font-weight: 700; letter-spacing: 2px; color: #163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+  <div style="font-size: 17px; font-weight: 700; letter-spacing: 1px; color: #163984;">SMA/SMK DHARMA KARYA</div>
+  <div style="font-size: 14px; font-weight: 700; color: #163984; margin-bottom: 2px;"><b>Terakreditasi “A”</b></div>
+  <div style="font-size: 12px; color: #163984;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+  <div style="font-size: 12px; color: #163984;">Telp. 021-7398578 / 7250224</div>
+</td>
+
     <!-- KANAN: DUMMY (BIAR CENTER SEMPURNA) -->
     <td style="width:110px;"></td>
   </tr>
