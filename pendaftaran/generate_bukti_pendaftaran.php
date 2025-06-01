@@ -2,7 +2,7 @@
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
-require_once __DIR__ . '/../vendor/autoload.php'; // pastikan mPDF sudah di-install
+require_once __DIR__ . '/../vendor/autoload.php'; // mPDF
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
@@ -159,6 +159,17 @@ $save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filena
 // ----------- GENERATE PDF -----------
 $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
 
+$stylesheet = file_get_contents('../assets/css/print_bukti_pendaftaran.css');
+$stylesheet .= '
+/* Tambahan agar tidak split halaman pada tabel/ttd */
+.container, table, tr, td, th, .footer-ttd-kanan, .note, .status-row, .status-keterangan-wrap {
+  page-break-inside: avoid !important;
+  page-break-after: avoid !important;
+}
+body { background: #fff !important; }
+.container { box-shadow: none !important; border-radius: 10px !important; }
+';
+
 ob_start();
 ?>
 <!DOCTYPE html>
@@ -166,12 +177,12 @@ ob_start();
 <head>
   <meta charset="UTF-8" />
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
+  <style><?= $stylesheet ?></style>
 </head>
 <body>
   <div class="container">
     <div class="kop-surat-rel">
-      <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
+      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
       <div class="kop-info-center">
         <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
         <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
@@ -337,7 +348,12 @@ ob_start();
 </html>
 <?php
 $html = ob_get_clean();
-$mpdf->WriteHTML($html);
+
+// --- APPLY CSS DULU ke mPDF ---
+$mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
+// --- HTML body ---
+$mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+
 $mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
 
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
