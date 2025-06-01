@@ -168,7 +168,7 @@ $no_invoice = $row['no_invoice'] ?? '';
     </button>
     <a href="generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank"
        style="display:inline-block;margin-left:8px;padding:7px 18px;font-size:14px;background:#1cc88a;color:#fff;border:none;border-radius:6px;text-decoration:none;">
-      <i class="fas fa-file-pdf"></i> Generate & Simpan PDF
+      <i class="fas fa-file-pdf"></i> Generate jika cetak gagal
     </a>
     <a href="kirim_wa_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank"
        style="display:inline-block;margin-left:8px;padding:7px 18px;font-size:14px;background:green;color:#fff;border:none;border-radius:6px;text-decoration:none;">
