@@ -388,6 +388,7 @@ if ($http_code != 200) {
 }
 sleep(10);
 // === Kirim ke WA Ortu ===
+// === Kirim ke WA Ortu ===
 $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
 $secret_key = "PAtwrvlV";
 $no_wa = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
@@ -395,22 +396,31 @@ if (substr($no_wa, 0, 1) === '0') $no_wa = '62' . substr($no_wa, 1);
 if (substr($no_wa, 0, 2) !== '62') $no_wa = '62' . ltrim($no_wa, '0');
 
 $data = [
-    'phone' => $no_wa,
-    'document' => $pdf_url,
-    'caption' => 'Bukti Pendaftaran Siswa'
+    "data" => [
+        [
+            "phone" => $no_wa,
+            "document" => $pdf_url,
+            "caption" => "Bukti Pendaftaran Siswa"
+        ]
+    ]
 ];
+
 $curl = curl_init();
-curl_setopt($curl, CURLOPT_HTTPHEADER, ["Authorization: $token.$secret_key"]);
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+    "Authorization: $token.$secret_key",
+    "Content-Type: application/json"
+]);
 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-curl_setopt($curl, CURLOPT_URL,  "https://bdg.wablas.com/api/send-document");
+curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 
 $result = curl_exec($curl);
 $err = curl_error($curl);
 curl_close($curl);
+
 
 // Feedback ke user (admin/operator)
 echo "<h2>PDF sudah dibuat: <a href='$pdf_url' target='_blank'>$pdf_url</a></h2>";
