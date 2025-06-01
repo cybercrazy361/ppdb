@@ -385,17 +385,21 @@ ob_start();
 </head>
 <body>
   <div class="container">
-    <div class="kop-surat-flex">
-        <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" class="kop-logo-abs" alt="Logo" />
-        <div class="kop-info-center">
-            <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-            <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-            <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
-            <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-            <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
-        </div>
-    </div>
-    <div class="kop-garis"></div>
+<table class="kop-table" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
+  <tr>
+    <td style="width:95px;vertical-align:top;">
+      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo" style="width:85px; height:85px; object-fit:contain;">
+    </td>
+    <td style="text-align:center;vertical-align:middle;">
+      <div style="font-size:20px;font-weight:700;letter-spacing:1.1px; color:#163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+      <div style="font-size:16px;font-weight:700; color:#163984;">SMA/SMK DHARMA KARYA</div>
+      <div style="font-size:14px;font-weight:700; color:#163984;"><b>Terakreditasi “A”</b></div>
+      <div style="font-size:12px; color:#163984;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+      <div style="font-size:12px; color:#163984;">Telp. 021-7398578 / 7250224</div>
+    </td>
+  </tr>
+</table>
+<div class="kop-garis"></div>
 
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
