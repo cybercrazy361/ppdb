@@ -171,7 +171,7 @@ ob_start();
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
   <style>
     body { font-family: 'Arial', sans-serif; font-size: 12px; color: #202b38; background: #fff; margin:0; }
-    .container { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 4mm 7mm 8mm 7mm; border: 1px solid #dde1ee; border-radius: 10px;}
+    .container { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 2mm 2mm 2mm 2mm; border: 1px solid #dde1ee; border-radius: 10px;}
     .kop-surat-rel { display: flex; align-items: center; min-height: 75px; margin-bottom: 4mm; }
     .kop-logo-abs { width: 90px; height: 90px; object-fit: contain; }
     .kop-info-center { margin: 0 auto; width: 75%; text-align: center; }
@@ -203,6 +203,15 @@ ob_start();
     .ttd-tanggal-kanan { margin-bottom: 15px; }
     .ttd-petugas-kanan { font-weight: 700; font-size: 13px; }
     .ttd-label-kanan { font-size: 11px; margin-top: 1px; color: #555; }
+    @media (max-width: 600px) {
+  .container {
+    width: 100vw !important;
+    min-width: 0 !important;
+    min-height: 100vh !important;
+    padding: 1vw !important;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -350,7 +359,15 @@ ob_start();
 <?php
 $html = ob_get_clean();
 
-$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+$mpdf = new \Mpdf\Mpdf([
+    'mode' => 'utf-8',
+    'format' => 'A4',
+    'margin_left' => 4,      // sempitkan kiri
+    'margin_right' => 4,     // sempitkan kanan
+    'margin_top' => 5,       // sempitkan atas
+    'margin_bottom' => 5,    // sempitkan bawah
+]);
+
 $mpdf->WriteHTML($html);
 $mpdf->Output($pdf_fullpath, \Mpdf\Output\Destination::FILE);
 
