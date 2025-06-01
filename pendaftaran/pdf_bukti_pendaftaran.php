@@ -244,47 +244,23 @@ ob_start();
       <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
-    <div class="no-reg-row" style="margin-bottom:0;">
-      <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
-      <div class="no-reg-sep">:</div>
-      <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
-    </div>
-    <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
-      <div class="no-reg-row">
-        <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
-        <div class="no-reg-sep">:</div>
-        <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
-      </div>
-    <?php endif; ?>
-
-    <table class="data-table">
-      <caption>DATA CALON PESERTA DIDIK BARU</caption>
-      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
-      <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
-      <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
-      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
-      <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
-      <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
-      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
-      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
-    </table>
-
-    <table class="tagihan-table" style="margin-top:9px;">
-      <tr>
-        <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
-          Keterangan Pembayaran
-        </th>
+    <table border="1" cellpadding="5" cellspacing="0" width="100%" style="margin: 6px 0 12px 0; font-size:13px;">
+      <tr style="background:#e8ecfa;">
+        <td width="32%"><b>Status Pendaftaran</b></td>
+        <td><?= safe($status_pendaftaran) ?></td>
       </tr>
-      <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
       <tr>
-        <td><?= safe($tg['jenis']) ?></td>
-        <td style="text-align:right;font-weight:600">
-          Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
-        </td>
+        <td><b>Keterangan</b></td>
+        <td><?= safe($keterangan_pendaftaran) ?></td>
       </tr>
-      <?php endforeach; else: ?>
+      <tr style="background:#e8ecfa;">
+        <td><b>No. Registrasi Pendaftaran</b></td>
+        <td><b><i><?= safe($row['no_formulir']) ?></i></b></td>
+      </tr>
+      <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
       <tr>
-        <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
+        <td><b>No. Formulir Pendaftaran</b></td>
+        <td><b><i><?= safe($no_invoice) ?></i></b></td>
       </tr>
       <?php endif; ?>
     </table>
@@ -327,32 +303,38 @@ ob_start();
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
 
-    <div class="note <?= $note_class ?>">
+<table width="100%" style="margin-top:18px; border:1px solid #e74a3b; background:#fff7f7; font-size:12px;">
+  <tr>
+    <td>
+      <b>Catatan:</b><br>
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
-        <b>Catatan:</b><br>
-        1. Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor Formulir.<br>
-        2. Form Registrasi ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor Formulir.
+      1. Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor Formulir.<br>
+      2. Form Registrasi ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor Formulir.
       <?php elseif ($status_pembayaran === 'Angsuran'): ?>
-        <b>Catatan:</b><br>
-        Siswa telah melakukan pembayaran sebagian (angsuran).<br>
-        Simpan bukti ini sebagai tanda terima pembayaran.
+      Siswa telah melakukan pembayaran sebagian (angsuran).<br>
+      Simpan bukti ini sebagai tanda terima pembayaran.
       <?php elseif ($status_pembayaran === 'Lunas'): ?>
-        <b>Catatan:</b><br>
-        Siswa telah menyelesaikan seluruh pembayaran.<br>
-        Simpan bukti ini sebagai tanda lunas dan konfirmasi pendaftaran.
+      Siswa telah menyelesaikan seluruh pembayaran.<br>
+      Simpan bukti ini sebagai tanda lunas dan konfirmasi pendaftaran.
       <?php else: ?>
-        <b>Catatan:</b><br>
-        Status pembayaran tidak diketahui.
+      Status pembayaran tidak diketahui.
       <?php endif; ?>
-    </div>
+    </td>
+  </tr>
+</table>
 
-    <div class="footer-ttd-kanan">
-      <div class="ttd-block-kanan">
-        <div class="ttd-tanggal-kanan">Jakarta, <?= tanggal_id(date('Y-m-d')) ?></div>
-        <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
-        <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
-      </div>
-    </div>
+
+<table width="100%" style="margin-top:28px; font-size:13px;">
+  <tr>
+    <td width="60%"></td>
+    <td align="center">
+      Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br><br>
+      <b><?= safe($petugas) ?></b><br>
+      <span style="font-size:11px;">(Petugas Pendaftaran)</span>
+    </td>
+  </tr>
+</table>
+
   </div>
 </body>
 </html>
