@@ -209,6 +209,15 @@ ob_start();
         .ps-sep { color: #2470c6; font-weight: 600; width: 10px; }
         .ps-value { color: #1976b6; font-weight: 500; font-size: 16px; }
         /* PANEL KETERANGAN PEMBAYARAN */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 97%; /* Biar tidak terlalu mepet kiri-kanan */
+}
         .panel-keterangan {
             background: #f4f8fc;
             border: 1px solid #dde8f4;
@@ -310,7 +319,7 @@ ob_start();
     </table>
 
     <!-- KETERANGAN PEMBAYARAN -->
-    <div class="panel-keterangan">
+    <div class="panel-keterangan center-panel">
         <div class="pk-title"><span class="pk-icon">&#9432;</span> Keterangan Pembayaran</div>
         <div class="pk-isi">
             <?php if(count($tagihan)): ?>
