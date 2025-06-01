@@ -385,21 +385,27 @@ ob_start();
 </head>
 <body>
   <div class="container">
-<table class="kop-table" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
-  <tr>
-    <td style="width:95px;vertical-align:top;">
-      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo" style="width:85px; height:85px; object-fit:contain;">
-    </td>
-    <td style="text-align:center;vertical-align:middle;">
-      <div style="font-size:20px;font-weight:700;letter-spacing:1.1px; color:#163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-      <div style="font-size:16px;font-weight:700; color:#163984;">SMA/SMK DHARMA KARYA</div>
-      <div style="font-size:14px;font-weight:700; color:#163984;"><b>Terakreditasi “A”</b></div>
-      <div style="font-size:12px; color:#163984;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-      <div style="font-size:12px; color:#163984;">Telp. 021-7398578 / 7250224</div>
-    </td>
-  </tr>
-</table>
-<div class="kop-garis"></div>
+<!-- KOP SURAT -->
+<div style="position: relative; height: 95px; margin-bottom: 6px;">
+  <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
+       alt="Logo"
+       style="position: absolute; left: 0; top: 0; width: 85px; height: 85px; object-fit:contain; z-index:2;">
+  <div style="
+      text-align: center;
+      font-family: Arial, sans-serif;
+      color: #163984;
+      line-height: 1.2;
+      position: relative;
+      z-index:1;">
+      <div style="font-size: 23px; font-weight: 700; letter-spacing: 1.1px;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+      <div style="font-size: 18px; font-weight: 700;">SMA/SMK DHARMA KARYA</div>
+      <div style="font-size: 15px; font-weight: 700;"><b>Terakreditasi “A”</b></div>
+      <div style="font-size: 13px;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+      <div style="font-size: 13px;">Telp. 021-7398578 / 7250224</div>
+  </div>
+</div>
+<div style="border-bottom: 2px solid #163984; margin: 0 10mm 18px 10mm; width: calc(100% - 20mm);"></div>
+
 
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
