@@ -210,7 +210,7 @@ ob_start();
 <table style="width:100%; border:none; margin-bottom:0; border-collapse:collapse;">
   <tr>
     <td style="width:100px;vertical-align:top;text-align:left;">
-<img src="<?= $_SERVER['DOCUMENT_ROOT'] . '/ppdbdk/assets/images/logo_trans.png' ?>" alt="Logo" style="width:90px; height:90px; object-fit:contain;" />
+        <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo" style="width:90px; height:90px; object-fit:contain;" />
     </td>
     <td style="vertical-align:top; text-align:center;">
       <div style="font-size:19px;font-weight:700;color:#163984;margin-bottom:0;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
