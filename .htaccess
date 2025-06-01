@@ -1,9 +1,12 @@
 DirectoryIndex index.php index.html
 
+# Jangan ganggu file PDF, biarkan bisa diakses dari mana saja
 <IfModule mod_headers.c>
     <FilesMatch "\.pdf$">
         ForceType application/pdf
         Header set Content-Type "application/pdf"
+        # Pastikan file PDF boleh diakses publik
+        Require all granted
     </FilesMatch>
 </IfModule>
 
@@ -13,7 +16,11 @@ RewriteRule ^ - [L]
 
 RewriteEngine On
 
-# Hilangkan .php dari URL
+# Khusus file PDF, JANGAN DI-REWRITE (biar diakses langsung, no .php)
+RewriteCond %{REQUEST_URI} \.pdf$ [NC]
+RewriteRule ^ - [L]
+
+# Hilangkan .php dari URL (file selain .pdf tetap di-rewrite)
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.+)$ $1.php [L,QSA]
