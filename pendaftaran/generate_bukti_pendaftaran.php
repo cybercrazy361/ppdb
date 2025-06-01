@@ -396,7 +396,10 @@ ob_start();
       color: #163984;
       line-height: 1.2;
       position: relative;
-      z-index:1;">
+      z-index:1;
+      margin-left: 20px;
+      margin-top: 8px;   /* Tambah ini, tuning nilainya */
+      ">
       <div style="font-size: 23px; font-weight: 700; letter-spacing: 1.1px;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
       <div style="font-size: 18px; font-weight: 700;">SMA/SMK DHARMA KARYA</div>
       <div style="font-size: 15px; font-weight: 700;"><b>Terakreditasi “A”</b></div>
