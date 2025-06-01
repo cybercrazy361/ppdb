@@ -161,7 +161,7 @@ $pdf_filename = "bukti_pendaftaran_" . safe($row['no_formulir']) . ".pdf";
 $pdf_fullpath = $pdf_folder . $pdf_filename;
 $pdf_url = $pdf_public_url . $pdf_filename;
 
-// Render HTML
+// Render HTML and capture to $html
 ob_start();
 ?>
 <!DOCTYPE html>
@@ -347,10 +347,7 @@ ob_start();
 </body>
 </html>
 <?php
-
-// Bersihkan output buffer sebelum mulai
-ob_end_clean();
-ob_start();
+$html = ob_get_clean();
 
 try {
     $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
