@@ -143,7 +143,6 @@ ob_start();
     <style>
         body { font-family: Arial, sans-serif; font-size: 11pt; margin: 0; }
         .container { background: #fff; width: 98%; margin: 0 auto; border-radius: 11px; border: 1.6px solid #d5deef; padding: 16px 18px 18px 18px; }
-        /* HEADER */
         .kop-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
         .kop-table td { vertical-align: top; }
         .kop-logo { width: 70px; height: 70px; }
@@ -154,11 +153,38 @@ ob_start();
         .kop-alamat { font-size: 10.6px; color: #173c88; }
         .kop-garis { border-bottom: 2.7px solid #193e92; margin: 8px 0 15px 0; }
         /* NO REGISTRASI & CALL CENTER */
-        .row-reg { width: 100%; display: flex; align-items: center; margin-bottom: 7px; }
-        .reg-label { font-size: 12.2px; font-weight: 600; color: #222; }
-        .reg-value { color: #0d3eaa; font-weight: 700; font-size: 12.2px; }
-        .cc-badge { display: inline-block; background: #e6f3fd; border-radius: 12px; font-size: 11px; color: #1942a3; font-weight: 600; padding: 2.5px 11px 2.5px 8px; margin-left: 9px; }
-        .cc-badge:before { content: "\1F4DE"; font-size: 12.5px; vertical-align: middle; margin-right: 3px; }
+        .reg-row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+        .reg-left {
+            font-size: 12.2px;
+            font-weight: 600;
+            color: #222;
+        }
+        .reg-value {
+            color: #0d3eaa;
+            font-weight: 700;
+            font-size: 12.2px;
+        }
+        .reg-right {
+            font-size: 11.7px;
+            color: #1455ad;
+            font-weight: 500;
+            text-align: right;
+            min-width: 180px;
+        }
+        .cc-badge {
+            font-size: 11.7px;
+            font-weight: 600;
+            color: #0d3eaa;
+            background: none;
+            border-radius: 0;
+            padding: 0;
+        }
         /* JUDUL */
         .judul-bukti { font-size: 18px; font-weight: 800; color: #1942a3; text-align: center; letter-spacing: 0.5px; margin-top: 10px; margin-bottom:0;}
         .judul-sub { font-size: 13.3px; font-weight: 700; color: #1942a3; text-align: center; margin-bottom:0;}
@@ -169,19 +195,41 @@ ob_start();
         .data-table th { background: #e6edfa; color: #1643a4; font-weight: 600; width: 32%; padding: 5px 10px; border-right: 1.5px solid #f4f6ff; text-align: left;}
         .data-table td { background: #fff; color: #232a3c; font-weight: 500; padding: 5px 10px; border-bottom: 1.3px solid #f1f3fa; }
         /* PANEL STATUS PENDAFTARAN */
-        .status-panel { background: #e7f2fc; border-radius: 8px; margin: 16px 0 5px 0; padding: 10px 13px 8px 13px; font-size: 12.2px; width: 100%; }
-        .status-panel th, .status-panel td { border: none; background: transparent; padding: 2px 7px 2px 1px; font-size: 12.2px;}
-        .status-label { color: #156bc4; font-weight: 700; width:120px;}
-        .status-value { font-weight: 600; color: #293d67; }
+        .panel-status {
+            width: 100%;
+            background: #e9f3fc;
+            border-radius: 5px;
+            margin: 0 0 14px 0;
+            padding: 12px 13px 9px 13px;
+            font-size: 15px;
+            border: none;
+        }
+        .panel-status td { border: none; background: none; }
+        .ps-label { color: #2470c6; font-weight: 600; font-size: 16px; width: 155px; }
+        .ps-sep { color: #2470c6; font-weight: 600; width: 10px; }
+        .ps-value { color: #1976b6; font-weight: 500; font-size: 16px; }
         /* PANEL KETERANGAN PEMBAYARAN */
-        .keterangan-panel { background: #f3f7fb; border: 1.1px solid #e6e9ee; border-radius: 5px 5px 7px 7px; margin: 7px 0 5px 0; width: 100%;}
-        .keterangan-panel th, .keterangan-panel td { border: none; background: transparent; padding: 5px 10px; text-align: left; font-size: 11.4px;}
-        .panel-title { font-weight:700; color: #225da7; font-size: 12px; display: flex; align-items:center;}
-        .panel-title .icon-info { display: inline-block; background:#d4eafd; border-radius:50%; width:17px; height:17px; text-align:center; margin-right:6px; font-size:12.6px;}
-        .keterangan-warning { color: #c31e1e; font-size: 11.1px; font-weight: 500; padding:2px 2px 6px 0;}
+        .panel-keterangan {
+            background: #f4f8fc;
+            border: 1px solid #dde8f4;
+            border-radius: 4px;
+            margin: 0 0 15px 0;
+            padding: 10px 14px 7px 14px;
+        }
+        .pk-title { color: #2570c6; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .pk-icon { font-size: 15px; margin-right: 5px; color: #2570c6;}
+        .pk-isi { color: #ca1818; font-size: 14px; font-weight: 500; }
+        .pk-merah { color: #ca1818; }
         /* STATUS PEMBAYARAN */
-        .status-row { font-size: 12.7px; font-weight: 700; color: #c31e1e; margin:12px 0 2px 0;}
-        .status-row .status-icon { display:inline-block; vertical-align:middle; font-size:13px; margin-right:4px;}
+        .panel-status-bayar {
+            font-size: 15.3px; 
+            font-weight: 600; 
+            color: #be2020; 
+            margin: 15px 0 3px 0;
+        }
+        .sb-icon { color: #be2020; font-size: 17px; vertical-align: middle; margin-right: 5px; }
+        .sb-label { color: #be2020; font-weight: 700; margin-right: 4px; }
+        .sb-value { color: #be2020; font-weight: 700; }
         /* INFO KONTAK */
         .info-contact { font-size: 10.1px; color: #173575; margin-top: 9px; margin-bottom: 4px; }
         .info-contact b { font-weight: bold; font-size: 11.5px; color: #113180; }
@@ -218,13 +266,14 @@ ob_start();
     <div class="kop-garis"></div>
 
     <!-- NOMOR REGISTRASI DAN CALL CENTER -->
-    <div class="row-reg">
-        <div class="reg-label">
+    <div class="reg-row">
+        <div class="reg-left">
             No. Registrasi Pendaftaran : <span class="reg-value"><?= safe($row['no_formulir']) ?></span>
         </div>
-        <div style="flex:1"></div>
         <?php if (!empty($row['reviewed_by'])): ?>
-            <span class="cc-badge">Call Center: <?= safe($row['reviewed_by']) ?></span>
+        <div class="reg-right">
+            Call Center: <span class="cc-badge"><?= safe($row['reviewed_by']) ?></span>
+        </div>
         <?php endif; ?>
     </div>
 
@@ -247,40 +296,38 @@ ob_start();
     </table>
 
     <!-- PANEL STATUS PENDAFTARAN -->
-    <table class="status-panel">
+    <table class="panel-status">
         <tr>
-            <th class="status-label">Status Pendaftaran</th>
-            <td class="status-value">: <?= safe($status_pendaftaran) ?></td>
+            <td class="ps-label">Status Pendaftaran</td>
+            <td class="ps-sep">:</td>
+            <td class="ps-value"><?= safe($status_pendaftaran) ?></td>
         </tr>
         <tr>
-            <th class="status-label">Keterangan</th>
-            <td class="status-value">: <?= safe($keterangan_pendaftaran) ?></td>
+            <td class="ps-label">Keterangan</td>
+            <td class="ps-sep">:</td>
+            <td class="ps-value"><?= safe($keterangan_pendaftaran) ?></td>
         </tr>
     </table>
 
     <!-- KETERANGAN PEMBAYARAN -->
-    <table class="keterangan-panel">
-        <tr>
-            <th colspan="2" class="panel-title">
-                <span class="icon-info">&#9432;</span> Keterangan Pembayaran
-            </th>
-        </tr>
-        <tr>
-            <td colspan="2" class="keterangan-warning">
-                <?php if(count($tagihan)): ?>
-                    <?php foreach($tagihan as $tg): ?>
-                        <?= safe($tg['jenis']) ?>: <b>Rp <?= number_format($tg['nominal'], 0, ',', '.') ?></b><br>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    Belum ada tagihan yang diverifikasi.
-                <?php endif; ?>
-            </td>
-        </tr>
-    </table>
+    <div class="panel-keterangan">
+        <div class="pk-title"><span class="pk-icon">&#9432;</span> Keterangan Pembayaran</div>
+        <div class="pk-isi">
+            <?php if(count($tagihan)): ?>
+                <?php foreach($tagihan as $tg): ?>
+                    <?= safe($tg['jenis']) ?>: <b>Rp <?= number_format($tg['nominal'], 0, ',', '.') ?></b><br>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <span class="pk-merah">Belum ada tagihan yang diverifikasi.</span>
+            <?php endif; ?>
+        </div>
+    </div>
 
     <!-- STATUS PEMBAYARAN -->
-    <div class="status-row">
-        <span class="status-icon">&#128308;</span> Status Pembayaran: <b><?= $status_pembayaran ?></b>
+    <div class="panel-status-bayar">
+        <span class="sb-icon">&#9888;</span>
+        <span class="sb-label">Status Pembayaran:</span>
+        <span class="sb-value"><?= strtoupper($status_pembayaran) ?></span>
     </div>
 
     <div class="info-contact">
@@ -305,7 +352,6 @@ ob_start();
             <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
         </div>
     </div>
-
 </div>
 </body>
 </html>
