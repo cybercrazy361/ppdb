@@ -2,6 +2,7 @@
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
+require_once __DIR__ . '/../vendor/autoload.php'; // mPDF
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
@@ -141,9 +142,9 @@ if ($status_pembayaran !== 'Belum Bayar') {
 
 function getStatusBadge($status) {
     $status = strtolower($status);
-    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold"><i class="fas fa-check-circle"></i> Lunas</span>';
-    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold"><i class="fas fa-hourglass-half"></i> Angsuran</span>';
-    return '<span style="color:#e74a3b;font-weight:bold"><i class="fas fa-times-circle"></i> Belum Bayar</span>';
+    if ($status === 'lunas') return '<b style="color:#1cc88a;">Lunas</b>';
+    if ($status === 'angsuran') return '<b style="color:#f6c23e;">Angsuran</b>';
+    return '<b style="color:#e74a3b;">Belum Bayar</b>';
 }
 
 $note_class = '';
@@ -152,22 +153,59 @@ elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
 elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 
 $no_invoice = $row['no_invoice'] ?? '';
+
+// PDF path & url
+$pdf_folder = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/';
+$pdf_public_url = 'https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/';
+$pdf_filename = "bukti_pendaftaran_" . safe($row['no_formulir']) . ".pdf";
+$pdf_fullpath = $pdf_folder . $pdf_filename;
+$pdf_url = $pdf_public_url . $pdf_filename;
+
+// Render HTML
+ob_start();
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
+  <style>
+    body { font-family: 'Arial', sans-serif; font-size: 12px; color: #202b38; background: #fff; margin:0; }
+    .container { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 4mm 7mm 8mm 7mm; border: 1px solid #dde1ee; border-radius: 10px;}
+    .kop-surat-rel { display: flex; align-items: center; min-height: 75px; margin-bottom: 4mm; }
+    .kop-logo-abs { width: 90px; height: 90px; object-fit: contain; }
+    .kop-info-center { margin: 0 auto; width: 75%; text-align: center; }
+    .kop-title1 { font-size: 19px; font-weight: 700; color: #163984;}
+    .kop-title2 { font-size: 17px; font-weight: 800; color: #163984;}
+    .kop-akreditasi { font-size: 15px; color: #163984; font-weight: 500; }
+    .kop-alamat { font-size: 12px; color: #163984; font-weight: 400; }
+    .kop-garis { border-bottom: 2px solid #163984; margin-bottom: 7px; margin-top: 4px; }
+    .header-content { text-align: center; margin-bottom: 24px; }
+    .sub-title { font-size: 18px; letter-spacing: 0.1px; color: #163984;}
+    .tahun-ajaran { font-size: 13px; font-weight: 600; color: #163984;}
+    .no-reg-row { display: flex; align-items: center; font-size: 12px; margin-bottom: 3px;}
+    .no-reg-label { min-width: 120px; font-weight: 500;}
+    .no-reg-sep { min-width: 12px; text-align: center; }
+    .no-reg-val { font-weight: 700; font-style: italic; color: #1a53c7;}
+    .data-table { border-collapse: collapse; margin-top: 8px; width: 100%; font-size: 12px;}
+    .data-table caption { font-weight: bold; font-size: 13px; color: #163984; background: #e8ecfa; text-align: center; padding: 6px 0;}
+    .data-table th, .data-table td { padding: 4px 6px; border-bottom: 1px solid #e8eaf3; text-align: left;}
+    .data-table th { width: 37%; background: #e8ecfa; color: #163984;}
+    .data-table td { background: #fff; }
+    .tagihan-table { border-collapse: collapse; width: 100%; background: #f8fafb; margin-top: 6px; font-size: 12px;}
+    .tagihan-table th, .tagihan-table td { border: 1px solid #e5e8f2; padding: 5px 6px;}
+    .tagihan-table th { background: #e3eaf7; color: #183688;}
+    .riwayat-bayar th, .riwayat-bayar td { font-size: 11px; padding: 4px 5px; }
+    .status-row { margin: 7px 0 5px 0; font-size: 12px; font-weight: 600;}
+    .note { margin-top: 7px; padding: 7px 10px 6px 9px; font-size: 11px; border-radius: 5px; background: #f7faff; color: #213052; border-left: 3px solid #8190ef;}
+    .footer-ttd-kanan { width: 100%; display: flex; justify-content: flex-end; margin-top: 16px;}
+    .ttd-block-kanan { text-align: right; font-size: 12px; }
+    .ttd-tanggal-kanan { margin-bottom: 15px; }
+    .ttd-petugas-kanan { font-weight: 700; font-size: 13px; }
+    .ttd-label-kanan { font-size: 11px; margin-top: 1px; color: #555; }
+  </style>
 </head>
 <body>
-  <button id="btnPrint" onclick="window.print()" style="display:inline-block;margin:10px 0 16px 0;padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
-    <i class="fas fa-print"></i> Cetak / Simpan PDF
-  </button>
-  <a href="pdf_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank" style="display:inline-block;margin:10px 0 16px 10px;padding:7px 18px;font-size:14px;background:green;color:#fff;border:none;border-radius:6px;text-decoration:none;">
-    <i class="fas fa-file-pdf"></i> Kirim PDF ke WA Ortu
-  </a>
   <div class="container">
     <div class="kop-surat-rel">
       <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
@@ -192,18 +230,10 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
-    <div class="no-reg-bar">
-      <div class="no-reg-row" style="margin-bottom:0;">
-        <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
-        <div class="no-reg-sep">:</div>
-        <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
-      </div>
-      <?php if (!empty($row['reviewed_by'])): ?>
-        <span class="callcenter-badge">
-          <i class="fas fa-headset"></i>
-          <b>Call Center:</b> <?= safe($row['reviewed_by']) ?>
-        </span>
-      <?php endif; ?>
+    <div class="no-reg-row" style="margin-bottom:0;">
+      <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
+      <div class="no-reg-sep">:</div>
+      <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
     </div>
     <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
       <div class="no-reg-row">
@@ -225,25 +255,10 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-    <div class="status-keterangan-wrap">
-      <table class="status-keterangan-table">
-        <tr>
-          <td class="status-ket-label">Status Pendaftaran</td>
-          <td class="status-ket-sep">:</td>
-          <td class="status-ket-value"><?= htmlspecialchars($status_pendaftaran) ?></td>
-        </tr>
-        <tr>
-          <td class="status-ket-label">Keterangan</td>
-          <td class="status-ket-sep">:</td>
-          <td class="status-ket-value"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '-' ?></td>
-        </tr>
-      </table>
-    </div>
-
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
-          <i class="fas fa-coins"></i> Keterangan Pembayaran
+          Keterangan Pembayaran
         </th>
       </tr>
       <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
@@ -288,7 +303,7 @@ $no_invoice = $row['no_invoice'] ?? '';
           </td>
           <td><?= safe($b['status_pembayaran']) ?></td>
           <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
-          <td class="tgl-lebar"><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
+          <td><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
         </tr>
         <?php endforeach; ?>
       </table>
@@ -296,13 +311,6 @@ $no_invoice = $row['no_invoice'] ?? '';
 
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
-    </div>
-
-    <div class="row-btm">
-      <div class="info-contact">
-        Informasi lebih lanjut hubungi:<br>
-        Hotline SMA : <b>081511519271</b> (Bu Puji)
-      </div>
     </div>
 
     <div class="note <?= $note_class ?>">
@@ -334,3 +342,46 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
 </body>
 </html>
+<?php
+$html = ob_get_clean();
+
+$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+$mpdf->WriteHTML($html);
+$mpdf->Output($pdf_fullpath, \Mpdf\Output\Destination::FILE);
+
+// === Kirim ke WA Ortu ===
+$token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
+$secret_key = "PAtwrvlV";
+$no_wa = preg_replace('/[^0-9]/', '', $row['no_hp_ortu']);
+if (substr($no_wa, 0, 1) === '0') $no_wa = '62' . substr($no_wa, 1);
+if (substr($no_wa, 0, 2) !== '62') $no_wa = '62' . ltrim($no_wa, '0');
+
+$data = [
+    'phone' => $no_wa,
+    'document' => $pdf_url,
+    'caption' => 'Bukti Pendaftaran Siswa'
+];
+$curl = curl_init();
+curl_setopt($curl, CURLOPT_HTTPHEADER, ["Authorization: $token.$secret_key"]);
+curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+curl_setopt($curl, CURLOPT_URL,  "https://bdg.wablas.com/api/send-document");
+curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+
+$result = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+
+// Feedback ke user (admin/operator)
+echo "<h2>PDF sudah dibuat: <a href='$pdf_url' target='_blank'>$pdf_url</a></h2>";
+echo "<h3>Nomor WA Ortu: $no_wa</h3>";
+echo "<h3>Wablas response:</h3>";
+echo "<pre>";
+echo htmlspecialchars($result);
+echo "</pre>";
+if ($err) {
+    echo "<br><b style='color:red'>CURL Error:</b> $err";
+}
+?>
