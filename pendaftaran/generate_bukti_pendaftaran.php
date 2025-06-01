@@ -199,52 +199,57 @@ ob_start();
   }
 
 .kop-surat-rel {
-    text-align: center;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
-.kop-logo-center {
-    width: 90px;
-    height: 90px;
-    object-fit: contain;
-    margin: 0 auto 10px auto;
-    display: block;
+.kop-logo-abs {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .kop-info-center {
-    font-family: Arial, sans-serif;
-    color: #163984;
+  flex-grow: 1;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #163984;
+  padding-left: 15px;
+  box-sizing: border-box;
 }
 
 .kop-title1 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    letter-spacing: 1.1px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 3px 0;
+  letter-spacing: 1.1px;
 }
 
 .kop-title2 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 3px 0;
 }
 
 .kop-akreditasi {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
 }
 
 .kop-alamat {
-    font-size: 12px;
-    margin-bottom: 2px;
+  font-size: 12px;
+  margin: 0 0 2px 0;
 }
 
 .kop-garis {
-    border-bottom: 2px solid #163984;
-    margin: 0 10mm 20px 10mm;
+  border-bottom: 2px solid #163984;
+  margin: 0 20px 18px 20px;
 }
-
 
   .header-content {
     text-align: center;
@@ -381,17 +386,17 @@ ob_start();
 </head>
 <body>
   <div class="container">
-<div class="kop-surat-rel">
-  <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" alt="Logo" class="kop-logo-center" />
-  <div class="kop-info-center">
-    <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-    <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-    <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
-    <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-    <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
-  </div>
-</div>
-<div class="kop-garis"></div>
+    <div class="kop-surat-rel">
+    <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" alt="Logo" class="kop-logo-abs" />
+    <div class="kop-info-center">
+        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+        <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
+        <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+        <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+    </div>
+    </div>
+    <div class="kop-garis"></div>
 
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
