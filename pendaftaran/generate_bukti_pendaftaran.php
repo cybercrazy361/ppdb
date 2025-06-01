@@ -386,20 +386,11 @@ ob_start();
 <body>
   <div class="container">
 <!-- KOP SURAT -->
-<div style="position: relative; height: 95px; margin-bottom: 6px;">
+<div style="display: flex; align-items: center; height: 95px; margin-bottom: 6px; position:relative;">
   <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
        alt="Logo"
-       style="position: absolute; left: 0; top: 0; width: 85px; height: 85px; object-fit:contain; z-index:2;">
-  <div style="
-      text-align: center;
-      font-family: Arial, sans-serif;
-      color: #163984;
-      line-height: 1.2;
-      position: relative;
-      z-index:1;
-      margin-left: 20px;
-      margin-top: 8px;   /* Tambah ini, tuning nilainya */
-      ">
+       style="width: 85px; height: 85px; object-fit:contain; margin-right: 25px;">
+  <div style="text-align: center; width:100%;">
       <div style="font-size: 23px; font-weight: 700; letter-spacing: 1.1px;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
       <div style="font-size: 18px; font-weight: 700;">SMA/SMK DHARMA KARYA</div>
       <div style="font-size: 15px; font-weight: 700;"><b>Terakreditasi “A”</b></div>
@@ -407,6 +398,7 @@ ob_start();
       <div style="font-size: 13px;">Telp. 021-7398578 / 7250224</div>
   </div>
 </div>
+
 <div style="border-bottom: 2px solid #163984; margin: 0 10mm 18px 10mm; width: calc(100% - 20mm);"></div>
 
 
