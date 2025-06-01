@@ -354,25 +354,26 @@ $mpdf->WriteHTML($html);
 $mpdf->Output($pdf_fullpath, \Mpdf\Output\Destination::FILE);
 
 // === CEK FILE PDF SUDAH ADA DAN TIDAK KOSONG ===
-$max_wait = 20; // detik maksimal tunggu
-$min_size = 5 * 1024; // minimal 5KB
+$max_wait = 20;         // total maksimal tunggu (detik)
+$min_size = 5 * 1024;   // minimal ukuran file (5KB)
 $waited = 0;
+$delay = 1;             // jeda tiap loop (detik)
+
 while (
     (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size)
     && $waited < $max_wait
 ) {
-    usleep(20000000); // 
+    usleep($delay * 1000000); // delay dalam mikrodetik
     clearstatcache();
-    $waited += 0.5;
+    $waited += $delay;
 }
 
-// Jika file gagal dibuat, jangan lanjutkan kirim WA
 if (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size) {
-    echo "<b style='color:red'>File PDF belum siap/setelah $max_wait detik masih gagal dibuat. Kirim ke WA DIBATALKAN!</b>";
+    echo "<b style='color:red'>File PDF belum siap atau ukurannya terlalu kecil. Kirim WA dibatalkan.</b>";
     exit;
 }
 
-// Tambahan: cek file bisa diakses publik (HTTP), bukan hanya di disk
+// === CEK AKSES FILE PDF VIA HTTP ===
 $ch = curl_init($pdf_url);
 curl_setopt($ch, CURLOPT_NOBODY, true);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -380,8 +381,9 @@ curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 curl_exec($ch);
 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
+
 if ($http_code != 200) {
-    echo "<b style='color:red'>File PDF tidak bisa diakses publik (HTTP $http_code)!</b>";
+    echo "<b style='color:red'>File PDF belum bisa diakses publik (HTTP $http_code). Kirim WA dibatalkan.</b>";
     exit;
 }
 
