@@ -17,7 +17,6 @@ header('Content-Type: application/json');
 function formatHp($hp) {
     $hp = trim($hp);
     $hp = preg_replace('/[^0-9]/', '', ltrim($hp, '+')); // hilangkan + dan non-digit
-
     if (substr($hp, 0, 2) === '62') {
         return $hp;
     } elseif (substr($hp, 0, 1) === '0') {
@@ -49,6 +48,22 @@ function normalisasiPendidikan($input) {
     if (strpos($str, 's2') !== false) return 'S2';
     if (strpos($str, 's3') !== false) return 'S3';
     return 'Lainnya';
+}
+
+// Parse tanggal dari excel, apapun format, ke YYYY-MM-DD
+function parseTanggalDaftar($tgl) {
+    $tgl = trim($tgl);
+    // Jika excel number format
+    if (is_numeric($tgl) && strlen($tgl) < 8) {
+        // Format excel serial date
+        $UNIX_DATE = ($tgl - 25569) * 86400;
+        return date('Y-m-d', $UNIX_DATE);
+    }
+    // Cek format: 4/12/2025 19.28.30 atau 5/8/2025 7.23.53 dst
+    $tgl = preg_replace('/ (\d{1,2})\.(\d{2})\.(\d{2})$/', ' $1:$2:$3', $tgl);
+    $time = strtotime($tgl);
+    if (!$time) return null;
+    return date('Y-m-d', $time);
 }
 
 // =========================
@@ -118,10 +133,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             $alamat           = trim($row[4] ?? '');
             $pendidikan_ortu  = normalisasiPendidikan(trim($row[5] ?? ''));
             $no_hp_ortu       = formatHp(trim($row[6] ?? ''));
-            $tanggal_daftar   = trim($row[7] ?? '');
+            $tanggal_daftar   = parseTanggalDaftar(trim($row[7] ?? ''));
 
             // Validasi
-            if ($nama === '' || $tanggal_daftar === '') {
+            if ($nama === '' || !$tanggal_daftar) {
                 $rowError[] = $i+1; // Excel row (1-based)
                 continue;
             }
@@ -136,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 (nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan, tanggal_daftar)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param(
-                "ssssssss",
+                "sssssssss",
                 $nama,
                 $jenis_kelamin,
                 $asal_sekolah,
