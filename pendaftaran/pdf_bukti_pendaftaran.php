@@ -207,18 +207,20 @@ ob_start();
 </head>
 <body>
   <div class="container">
-    <div class="kop-surat-rel" style="display: flex; align-items: flex-start; margin-bottom: 2mm;">
-    <div style="flex: 0 0 95px; text-align:left;">
-        <img src="../assets/images/logo_trans.png" alt="Logo" style="width:90px; height:90px; object-fit:contain;"/>
-    </div>
-    <div style="flex: 1; text-align:center;">
-        <div style="font-size:19px;font-weight:700;color:#163984;margin-bottom:0;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-        <div style="font-size:17px;font-weight:800;color:#163984;margin-bottom:2px;">SMA/SMK DHARMA KARYA</div>
-        <div style="font-size:15px;color:#163984;font-weight:500;margin-bottom:1px;"><b>Terakreditasi “A”</b></div>
-        <div style="font-size:12px;color:#163984;font-weight:400;margin-bottom:0;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-        <div style="font-size:12px;color:#163984;font-weight:400;">Telp. 021-7398578 / 7250224</div>
-    </div>
-</div>
+<table style="width:100%; border:none; margin-bottom:0; border-collapse:collapse;">
+  <tr>
+    <td style="width:100px;vertical-align:top;text-align:left;">
+<img src="<?= $_SERVER['DOCUMENT_ROOT'] . '/ppdbdk/assets/images/logo_trans.png' ?>" alt="Logo" style="width:90px; height:90px; object-fit:contain;" />
+    </td>
+    <td style="vertical-align:top; text-align:center;">
+      <div style="font-size:19px;font-weight:700;color:#163984;margin-bottom:0;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+      <div style="font-size:17px;font-weight:800;color:#163984;margin-bottom:2px;">SMA/SMK DHARMA KARYA</div>
+      <div style="font-size:15px;color:#163984;font-weight:500;margin-bottom:1px;"><b>Terakreditasi “A”</b></div>
+      <div style="font-size:12px;color:#163984;font-weight:400;margin-bottom:0;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+      <div style="font-size:12px;color:#163984;font-weight:400;">Telp. 021-7398578 / 7250224</div>
+    </td>
+  </tr>
+</table>
 <div class="kop-garis" style="border-bottom: 2px solid #163984; margin-bottom: 7px; margin-top: 4px;"></div>
 
 
