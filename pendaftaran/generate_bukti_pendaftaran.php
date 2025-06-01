@@ -444,27 +444,29 @@ ob_start();
       <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
-    <div class="no-reg-bar">
-      <div class="no-reg-row">
-        <span class="no-reg-label">No. Registrasi Pendaftaran</span>
-        <span class="no-reg-sep">:</span>
-        <span class="no-reg-val"><i><b><?= safe($row['no_formulir']) ?></b></i></span>
-      </div>
-      <?php if (!empty($row['reviewed_by'])): ?>
-      <div class="no-reg-row">
-        <span class="no-reg-label">Call Center</span>
-        <span class="no-reg-sep">:</span>
-        <span class="callcenter-badge"><?= safe($row['reviewed_by']) ?></span>
-      </div>
-      <?php endif; ?>
-      <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
-      <div class="no-reg-row">
-        <span class="no-reg-label">No. Formulir Pendaftaran</span>
-        <span class="no-reg-sep">:</span>
-        <span class="no-reg-val"><i><b><?= safe($no_invoice) ?></b></i></span>
-      </div>
-      <?php endif; ?>
+<div class="no-reg-bar" style="margin-bottom:12px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <span class="no-reg-label">No. Registrasi Pendaftaran</span>
+      <span class="no-reg-sep">:</span>
+      <span class="no-reg-val"><i><b><?= safe($row['no_formulir']) ?></b></i></span>
     </div>
+    <?php if (!empty($row['reviewed_by'])): ?>
+    <div>
+      <span class="no-reg-label">Call Center</span>
+      <span class="no-reg-sep">:</span>
+      <span class="callcenter-badge"><?= safe($row['reviewed_by']) ?></span>
+    </div>
+    <?php endif; ?>
+  </div>
+  <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+  <div class="no-reg-row" style="margin-top:8px;">
+    <span class="no-reg-label">No. Formulir Pendaftaran</span>
+    <span class="no-reg-sep">:</span>
+    <span class="no-reg-val"><i><b><?= safe($no_invoice) ?></b></i></span>
+  </div>
+  <?php endif; ?>
+</div>
 
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
