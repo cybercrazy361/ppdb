@@ -1,5 +1,8 @@
 <?php
 // receive_from_gsheet.php
+
+file_put_contents(__DIR__.'/debug_receive.txt', json_encode($_POST) . PHP_EOL, FILE_APPEND);
+
 header('Content-Type: application/json');
 include '../database_connection.php';
 
@@ -10,10 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Helper function
+// Helper functions
 function formatHp($hp) {
     $hp = trim($hp);
-    $hp = preg_replace('/[^0-9]/', '', ltrim($hp, '+')); // hilangkan + dan non-digit
+    $hp = preg_replace('/[^0-9]/', '', ltrim($hp, '+'));
     if (substr($hp, 0, 2) === '62') {
         return $hp;
     } elseif (substr($hp, 0, 1) === '0') {
@@ -44,7 +47,6 @@ function normalisasiPendidikan($input) {
 }
 function parseTanggalDaftar($tgl) {
     $tgl = trim($tgl);
-    // Format: 4/12/2025 atau 2025-04-12 dst
     if (preg_match('#^\d{1,2}/\d{1,2}/\d{2,4}#', $tgl)) {
         $arr = explode('/', $tgl);
         if (strlen($arr[2]) == 2) $arr[2] = '20' . $arr[2];
@@ -65,7 +67,7 @@ $alamat          = trim($_POST['alamat'] ?? '');
 $pendidikan_ortu = normalisasiPendidikan(trim($_POST['pendidikan_ortu'] ?? ''));
 $no_hp_ortu      = formatHp(trim($_POST['no_hp_ortu'] ?? ''));
 $tanggal_daftar  = parseTanggalDaftar(trim($_POST['tanggal_daftar'] ?? ''));
-$unit            = trim($_POST['unit'] ?? ''); // Boleh kosong, tapi diisi kalau ada
+$unit            = trim($_POST['unit'] ?? ''); // <- AMBIL LANGSUNG DARI SPREADSHEET
 
 // Validasi minimal wajib
 if ($nama === '' || !$jenis_kelamin || $tanggal_daftar === null) {
@@ -74,6 +76,10 @@ if ($nama === '' || !$jenis_kelamin || $tanggal_daftar === null) {
 }
 if (!preg_match('/^628[0-9]{7,13}$/', $no_hp) || !preg_match('/^628[0-9]{7,13}$/', $no_hp_ortu)) {
     echo json_encode(['success' => false, 'message' => 'Format no HP/Ortu salah']);
+    exit;
+}
+if ($unit === '') {
+    echo json_encode(['success' => false, 'message' => 'Unit/pilihan wajib diisi!']);
     exit;
 }
 
@@ -101,7 +107,7 @@ $stmt->bind_param(
     $alamat,
     $pendidikan_ortu,
     $no_hp_ortu,
-    $unit,
+    $unit, // <- SIMPAN SESUAI YANG DIPILIH DI SPREADSHEET
     $tanggal_daftar
 );
 if ($stmt->execute()) {
