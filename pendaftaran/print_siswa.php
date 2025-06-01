@@ -166,22 +166,18 @@ $no_invoice = $row['no_invoice'] ?? '';
     <button id="btnPrint" type="button" style="padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
       <i class="fas fa-print"></i> Cetak / Simpan PDF
     </button>
-    <a href="generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank"
-       style="display:inline-block;margin-left:8px;padding:7px 18px;font-size:14px;background:#1cc88a;color:#fff;border:none;border-radius:6px;text-decoration:none;">
+    <button id="btnGenerateOnly" type="button" style="margin-left:8px;padding:7px 18px;font-size:14px;background:#1cc88a;color:#fff;border:none;border-radius:6px;cursor:pointer;">
       <i class="fas fa-file-pdf"></i> Generate jika cetak gagal
-    </a>
-    <a href="kirim_wa_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank"
-       style="display:inline-block;margin-left:8px;padding:7px 18px;font-size:14px;background:green;color:#fff;border:none;border-radius:6px;text-decoration:none;">
+    </button>
+    <button id="btnKirimWA" type="button" style="margin-left:8px;padding:7px 18px;font-size:14px;background:green;color:#fff;border:none;border-radius:6px;cursor:pointer;">
       <i class="fab fa-whatsapp"></i> Kirim PDF ke WA Ortu
-    </a>
+    </button>
   </div>
 
-  <!-- MODAL SUKSES GENERATE PDF -->
+  <!-- MODAL SUKSES GENERATE PDF/WA -->
   <div id="modalSuccess" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.30);">
     <div style="background:#fff;max-width:350px;margin:110px auto;padding:28px 22px;border-radius:12px;box-shadow:0 5px 16px #213b8230;text-align:center;">
-      <div style="font-size:16px;font-weight:700;color:#1cc88a;margin-bottom:13px;">
-        PDF Bukti Pendaftaran Berhasil Dibuat!
-      </div>
+      <div id="modalMessage" style="font-size:16px;font-weight:700;color:#1cc88a;margin-bottom:13px;"></div>
       <div id="pdfLinkBox" style="margin-bottom:18px"></div>
       <button onclick="document.getElementById('modalSuccess').style.display='none'" style="background:#213b82;color:#fff;padding:7px 22px;border-radius:7px;border:none;cursor:pointer;font-size:14px">Tutup</button>
     </div>
@@ -353,33 +349,71 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
 
   <script>
-    // Handle tombol Cetak/Generate
-    document.getElementById('btnPrint').onclick = function() {
-      this.disabled = true;
-      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuat PDF...';
-      fetch('generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>', { method:'GET' })
-        .then(res => res.text())
-        .then(html => {
-          // Ambil URL PDF dari respons (harus ada echo <a href=...> di PHP generate)
-          let pdfLink = '';
-          const regex = /href=['"]([^'"]+\.pdf)['"]/i;
-          const m = html.match(regex);
-          if(m && m[1]) {
-            pdfLink = m[1];
-          }
-          document.getElementById('pdfLinkBox').innerHTML = pdfLink 
-            ? '<a href="'+pdfLink+'" target="_blank" style="font-size:15px;font-weight:600;color:#213b82;">Download PDF</a>'
-            : 'PDF berhasil dibuat. Silakan cek folder Bukti Pendaftaran.';
-          document.getElementById('modalSuccess').style.display = '';
-        })
-        .catch(e=>{
-          alert('Gagal membuat PDF!');
-        })
-        .finally(()=>{
-          document.getElementById('btnPrint').disabled = false;
-          document.getElementById('btnPrint').innerHTML = '<i class="fas fa-print"></i> Cetak / Simpan PDF';
-        });
-    };
+  function showModalSuccess(judul, html) {
+    document.getElementById('modalMessage').innerHTML = judul;
+    document.getElementById('pdfLinkBox').innerHTML = html;
+    document.getElementById('modalSuccess').style.display = '';
+  }
+
+  // Tombol Cetak/Generate PDF
+  document.getElementById('btnPrint').onclick = function() {
+    this.disabled = true;
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuat PDF...';
+    fetch('generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>', { method:'GET' })
+      .then(res => res.text())
+      .then(html => {
+        let pdfLink = '';
+        const regex = /href=['"]([^'"]+\.pdf)['"]/i;
+        const m = html.match(regex);
+        if(m && m[1]) pdfLink = m[1];
+        showModalSuccess('PDF Bukti Pendaftaran Berhasil Dibuat!', pdfLink
+          ? '<a href="'+pdfLink+'" target="_blank" style="font-size:15px;font-weight:600;color:#213b82;">Download PDF</a>'
+          : 'PDF berhasil dibuat. Silakan cek folder Bukti Pendaftaran.');
+      })
+      .catch(()=>{ alert('Gagal membuat PDF!'); })
+      .finally(()=>{
+        this.disabled = false;
+        this.innerHTML = '<i class="fas fa-print"></i> Cetak / Simpan PDF';
+      });
+  };
+
+  // Tombol Generate jika cetak gagal
+  document.getElementById('btnGenerateOnly').onclick = function() {
+    this.disabled = true;
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Meng-generate PDF...';
+    fetch('generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>', { method:'GET' })
+      .then(res => res.text())
+      .then(html => {
+        let pdfLink = '';
+        const regex = /href=['"]([^'"]+\.pdf)['"]/i;
+        const m = html.match(regex);
+        if(m && m[1]) pdfLink = m[1];
+        showModalSuccess('PDF Bukti Pendaftaran Berhasil Dibuat!', pdfLink
+          ? '<a href="'+pdfLink+'" target="_blank" style="font-size:15px;font-weight:600;color:#213b82;">Download PDF</a>'
+          : 'PDF berhasil dibuat. Silakan cek folder Bukti Pendaftaran.');
+      })
+      .catch(()=>{ alert('Gagal generate PDF!'); })
+      .finally(()=>{
+        this.disabled = false;
+        this.innerHTML = '<i class="fas fa-file-pdf"></i> Generate jika cetak gagal';
+      });
+  };
+
+  // Tombol Kirim ke WA Ortu
+  document.getElementById('btnKirimWA').onclick = function() {
+    this.disabled = true;
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim ke WA...';
+    fetch('kirim_wa_bukti_pendaftaran.php?id=<?= $row['id'] ?>', { method:'GET' })
+      .then(res => res.text())
+      .then(html => {
+        showModalSuccess('Kirim PDF ke WhatsApp Ortu', html);
+      })
+      .catch(()=>{ alert('Gagal mengirim ke WhatsApp!'); })
+      .finally(()=>{
+        this.disabled = false;
+        this.innerHTML = '<i class="fab fa-whatsapp"></i> Kirim PDF ke WA Ortu';
+      });
+  };
   </script>
 </body>
 </html>
