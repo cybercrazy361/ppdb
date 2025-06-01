@@ -361,7 +361,7 @@ while (
     (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size)
     && $waited < $max_wait
 ) {
-    usleep(500000); // 0.5 detik
+    usleep(20000000); // 
     clearstatcache();
     $waited += 0.5;
 }
