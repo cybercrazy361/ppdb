@@ -54,7 +54,7 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// Status progres
+// Status progres pembayaran
 $uang_pangkal_id = 1;
 $spp_id = 2;
 $query_status = "
@@ -142,56 +142,59 @@ ob_start();
     <title>Bukti Pendaftaran Siswa Baru</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 11pt; margin: 0; }
-        .container { background: #fff; width: 98%; margin: 0 auto; border-radius: 12px; border: 1.5px solid #d5deef; padding: 13px 16px 15px 16px; }
-        .kop-table { width: 100%; border-collapse: collapse; }
+        .container { background: #fff; width: 98%; margin: 0 auto; border-radius: 11px; border: 1.6px solid #d5deef; padding: 16px 18px 18px 18px; }
+        /* HEADER */
+        .kop-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
         .kop-table td { vertical-align: top; }
         .kop-logo { width: 70px; height: 70px; }
         .kop-tengah { text-align: center; }
-        .kop-title1 { font-size: 20px; font-weight: 700; color: #173c88; letter-spacing: 1.3px; }
-        .kop-title2 { font-size: 16px; font-weight: 700; color: #173c88; margin-bottom: 1px; }
-        .kop-akreditasi { font-size: 13px; color: #173c88; font-weight: 700; }
-        .kop-alamat { font-size: 11px; color: #173c88; margin-top: 2px;}
-        .kop-garis { border-bottom: 2.5px solid #193e92; margin: 8px 0 15px 0; }
-        .judul-bukti { font-size: 18px; font-weight: 800; color: #1942a3; text-align: center; letter-spacing: 0.4px; margin-top: 10px; margin-bottom:0;}
-        .judul-sub { font-size: 13px; font-weight: 700; color: #1942a3; text-align: center; }
-        .judul-thn { font-size: 10.6px; font-weight: 700; color: #1942a3; text-align: center; margin-bottom: 12px; }
-        .row-reg { width: 100%; margin-bottom: 5px; display: flex; align-items: center; }
-        .reg-label { font-size: 12px; font-weight: 600; }
-        .reg-value { color: #1044af; font-weight: 700; font-size: 12.2px; }
+        .kop-title1 { font-size: 21px; font-weight: 700; color: #173c88; letter-spacing: 1.2px; }
+        .kop-title2 { font-size: 16px; font-weight: 700; color: #173c88; }
+        .kop-akreditasi { font-size: 13.3px; color: #173c88; font-weight: 700; }
+        .kop-alamat { font-size: 10.6px; color: #173c88; }
+        .kop-garis { border-bottom: 2.7px solid #193e92; margin: 8px 0 15px 0; }
+        /* NO REGISTRASI & CALL CENTER */
+        .row-reg { width: 100%; display: flex; align-items: center; margin-bottom: 7px; }
+        .reg-label { font-size: 12.2px; font-weight: 600; color: #222; }
+        .reg-value { color: #0d3eaa; font-weight: 700; font-size: 12.2px; }
         .cc-badge { display: inline-block; background: #e6f3fd; border-radius: 12px; font-size: 11px; color: #1942a3; font-weight: 600; padding: 2.5px 11px 2.5px 8px; margin-left: 9px; }
         .cc-badge:before { content: "\1F4DE"; font-size: 12.5px; vertical-align: middle; margin-right: 3px; }
-        /* TABLE DATA SISWA */
-        .data-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+        /* JUDUL */
+        .judul-bukti { font-size: 18px; font-weight: 800; color: #1942a3; text-align: center; letter-spacing: 0.5px; margin-top: 10px; margin-bottom:0;}
+        .judul-sub { font-size: 13.3px; font-weight: 700; color: #1942a3; text-align: center; margin-bottom:0;}
+        .judul-thn { font-size: 10.7px; font-weight: 700; color: #1942a3; text-align: center; margin-bottom: 14px; }
+        /* TABEL DATA SISWA */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 11.3px; margin-top: 6px; margin-bottom: 8px;}
         .data-table caption { background: #e6edfa; color: #173e8e; font-size: 13px; font-weight: 700; padding: 6px 0 6px 0; border-radius: 5px 5px 0 0; letter-spacing: 0.2px; }
-        .data-table th { background: #e6edfa; color: #1643a4; font-weight: 600; width: 31%; padding: 4px 8px; border-right: 1.5px solid #f4f6ff; text-align: left;}
-        .data-table td { background: #fff; color: #1a2336; font-weight: 500; padding: 4px 8px; border-bottom: 1.3px solid #f1f3fa; }
+        .data-table th { background: #e6edfa; color: #1643a4; font-weight: 600; width: 32%; padding: 5px 10px; border-right: 1.5px solid #f4f6ff; text-align: left;}
+        .data-table td { background: #fff; color: #232a3c; font-weight: 500; padding: 5px 10px; border-bottom: 1.3px solid #f1f3fa; }
         /* PANEL STATUS PENDAFTARAN */
-        .status-panel { background: #e7f2fc; border-radius: 8px; margin: 16px 0 6px 0; padding: 10px 13px 8px 13px; font-size: 12px; }
+        .status-panel { background: #e7f2fc; border-radius: 8px; margin: 16px 0 5px 0; padding: 10px 13px 8px 13px; font-size: 12.2px; width: 100%; }
         .status-panel th, .status-panel td { border: none; background: transparent; padding: 2px 7px 2px 1px; font-size: 12.2px;}
         .status-label { color: #156bc4; font-weight: 700; width:120px;}
         .status-value { font-weight: 600; color: #293d67; }
         /* PANEL KETERANGAN PEMBAYARAN */
-        .keterangan-panel { background: #f3f7fb; border: 1.1px solid #e6e9ee; border-radius: 5px 5px 7px 7px; margin: 7px 0 7px 0;}
-        .keterangan-panel th, .keterangan-panel td { border: none; background: transparent; padding: 5px 8px; text-align: left; font-size: 11.4px;}
+        .keterangan-panel { background: #f3f7fb; border: 1.1px solid #e6e9ee; border-radius: 5px 5px 7px 7px; margin: 7px 0 5px 0; width: 100%;}
+        .keterangan-panel th, .keterangan-panel td { border: none; background: transparent; padding: 5px 10px; text-align: left; font-size: 11.4px;}
         .panel-title { font-weight:700; color: #225da7; font-size: 12px; display: flex; align-items:center;}
         .panel-title .icon-info { display: inline-block; background:#d4eafd; border-radius:50%; width:17px; height:17px; text-align:center; margin-right:6px; font-size:12.6px;}
         .keterangan-warning { color: #c31e1e; font-size: 11.1px; font-weight: 500; padding:2px 2px 6px 0;}
         /* STATUS PEMBAYARAN */
-        .status-row { font-size: 12px; font-weight: 600; color: #c31e1e; margin:10px 0 2px 0;}
+        .status-row { font-size: 12.7px; font-weight: 700; color: #c31e1e; margin:12px 0 2px 0;}
         .status-row .status-icon { display:inline-block; vertical-align:middle; font-size:13px; margin-right:4px;}
         /* INFO KONTAK */
-        .info-contact { font-size: 10px; color: #173575; margin-top: 9px; margin-bottom: 4px; }
-        .info-contact b { font-weight: bold; font-size: 11.3px; color: #113180; }
+        .info-contact { font-size: 10.1px; color: #173575; margin-top: 9px; margin-bottom: 4px; }
+        .info-contact b { font-weight: bold; font-size: 11.5px; color: #113180; }
         /* BOX CATATAN */
-        .note { margin-top: 12px; padding: 9px 12px 8px 12px; font-size: 11px; border-radius: 7px; background: #fff6f6; color: #1a2336; border-left: 4px solid #e9402e; }
+        .note { margin-top: 13px; padding: 9px 13px 9px 13px; font-size: 11.2px; border-radius: 7px; background: #fff6f6; color: #1a2336; border-left: 4px solid #e9402e; }
         .note-title { font-weight: 700; margin-bottom: 5px; }
         .note-list { margin-left: 15px; margin-bottom: 0; }
         /* FOOTER */
-        .footer-ttd-kanan { width: 100%; margin-top: 26px;}
+        .footer-ttd-kanan { width: 100%; margin-top: 28px;}
         .ttd-block-kanan { text-align: right; font-size: 11px;}
-        .ttd-tanggal-kanan { margin-bottom: 11px; color:#1942a3; font-size:11.6px;}
-        .ttd-petugas-kanan { font-weight: 700; font-size: 13px;}
-        .ttd-label-kanan { font-size: 10px; margin-top: 1px; color: #555;}
+        .ttd-tanggal-kanan { margin-bottom: 11px; color:#1942a3; font-size:11.7px;}
+        .ttd-petugas-kanan { font-weight: 700; font-size: 13.5px;}
+        .ttd-label-kanan { font-size: 10.3px; margin-top: 1px; color: #555;}
     </style>
 </head>
 <body>
@@ -277,7 +280,7 @@ ob_start();
 
     <!-- STATUS PEMBAYARAN -->
     <div class="status-row">
-        <span class="status-icon">&#128308;</span> Status Pembayaran: <b>Belum Bayar</b>
+        <span class="status-icon">&#128308;</span> Status Pembayaran: <b><?= $status_pembayaran ?></b>
     </div>
 
     <div class="info-contact">
