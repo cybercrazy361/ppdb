@@ -2,7 +2,7 @@
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
-require_once __DIR__ . '/../vendor/autoload.php'; // pastikan mPDF sudah di-install
+require_once __DIR__ . '/../vendor/autoload.php';
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
@@ -147,8 +147,8 @@ $save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filena
 $mpdf = new \Mpdf\Mpdf([
     'format' => 'A4',
     'margin_top' => 12,
-    'margin_left' => 8,
-    'margin_right' => 8,
+    'margin_left' => 10,
+    'margin_right' => 10,
     'margin_bottom' => 12,
     'default_font' => 'Arial'
 ]);
@@ -162,70 +162,80 @@ ob_start();
     <title>Bukti Pendaftaran Siswa Baru</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #202b38; margin: 0; background: #f4f6fb;}
-        .container { background: #fff; width: 100%; min-height: 270mm; margin: 0; border-radius: 10px; padding: 4mm 7mm 8mm 7mm; border: 1px solid #dde1ee; position: relative; }
-        .kop-surat-rel { display: flex; align-items: center; margin-bottom: 2mm; min-height: 75px; }
-        .kop-logo-abs { width: 100px; height: 100px; object-fit: contain; }
-        .kop-info-center { margin: 0 auto; width: 90%; text-align: center; }
-        .kop-title1 { font-size: 20pt; font-weight: 700; color: #163984; margin-bottom: 0; margin-top: 3px; letter-spacing: 0.7px; }
-        .kop-title2 { font-size: 15pt; font-weight: 800; color: #163984; margin-bottom: 2px; letter-spacing: 0.8px; }
-        .kop-akreditasi { font-size: 12pt; color: #163984; font-weight: 500; margin-bottom: 1.5px; }
-        .kop-alamat { font-size: 11pt; color: #163984; font-weight: 400; margin-bottom: 1px; }
-        .kop-garis { border-bottom: 2px solid #163984; margin-bottom: 8px; margin-top: 4px; }
-        .header-content { text-align: center; margin-bottom: 22px; }
-        .sub-title { font-size: 15pt; letter-spacing: 0.1px; color: #163984; margin-bottom: 0; }
-        .tahun-ajaran { font-size: 13.5pt; font-weight: 600; color: #163984; margin-bottom: 0; margin-top: 0; }
-        .no-reg-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; gap: 14px; width: 100%; }
-        .callcenter-badge { display: inline-flex; align-items: center; background: #e6edfa; padding: 5px 18px 5px 12px; border-radius: 16px; font-size: 12pt; font-weight: 600; color: #1a4299; letter-spacing: 0.2px; }
-        .callcenter-badge i { margin-right: 7px; color: #2496db; font-size: 13pt; }
-        .no-reg-row { display: flex; align-items: center; margin-bottom: 2px; font-size: 12pt; }
-        .no-reg-label { min-width: 140px; font-weight: 500; }
+        .container { background: #fff; width: 185mm; min-height: 270mm; margin: 0 auto; border-radius: 10px; border: 1px solid #dde1ee; padding: 8mm 12mm 7mm 12mm; }
+        .kop-table { width: 100%; border-collapse: collapse; margin-bottom: 7px; }
+        .kop-table td { vertical-align: top; }
+        .kop-logo { width: 75px; height: 75px; }
+        .kop-kanan { text-align: left; }
+        .kop-title1 { font-size: 19px; font-weight: 700; color: #163984; }
+        .kop-title2 { font-size: 16px; font-weight: 800; color: #163984; }
+        .kop-akreditasi { font-size: 13px; color: #163984; font-weight: 500; }
+        .kop-alamat { font-size: 12px; color: #163984; }
+        .kop-garis { border-bottom: 2px solid #163984; margin-bottom: 7px; margin-top: 2px; }
+        .header-content { text-align: center; margin-bottom: 15px; }
+        .sub-title { font-size: 15px; letter-spacing: 0.1px; color: #163984; margin-bottom: 0; font-weight: bold;}
+        .tahun-ajaran { font-size: 13px; font-weight: 600; color: #163984; margin-bottom: 0; margin-top: 0; }
+        .no-reg-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; gap: 10px; width: 100%; }
+        .callcenter-badge { display: inline-flex; align-items: center; background: #e6edfa; padding: 4px 12px 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #1a4299; }
+        .callcenter-badge i { margin-right: 6px; color: #2496db; font-size: 12px; }
+        .no-reg-row { display: flex; align-items: center; margin-bottom: 2px; font-size: 12px; }
+        .no-reg-label { min-width: 148px; font-weight: 500; }
         .no-reg-sep { min-width: 12px; text-align: center; font-weight: 700; }
         .no-reg-val { font-weight: 700; font-style: italic; color: #1a53c7; }
-        .data-table { border-collapse: collapse; margin-top: 8px; margin-bottom: 4px; width: 100%; background: #f9fafd; font-size: 12pt;}
-        .data-table caption { caption-side: top; font-weight: bold; font-size: 13pt; color: #163984; background: #e8ecfa; text-align: center; padding: 7px 0 6px 0; border-radius: 3px 3px 0 0; }
-        .data-table th, .data-table td { padding: 5px 6px; border-bottom: 1px solid #e8eaf3; text-align: left; }
-        .data-table th { width: 38%; background: #e8ecfa; color: #163984; font-weight: 600; border-right: 1px solid #f0f1fa; }
+        .data-table { border-collapse: collapse; margin-top: 7px; margin-bottom: 3px; width: 100%; background: #f9fafd; font-size: 11px;}
+        .data-table caption { caption-side: top; font-weight: bold; font-size: 12.5px; color: #163984; background: #e8ecfa; text-align: center; padding: 4px 0 4px 0; border-radius: 3px 3px 0 0; }
+        .data-table th, .data-table td { padding: 4px 6px; border-bottom: 1px solid #e8eaf3; text-align: left; }
+        .data-table th { width: 39%; background: #e8ecfa; color: #163984; font-weight: 600; border-right: 1px solid #f0f1fa; }
         .data-table td { background: #fff; }
-        .tagihan-table { border-collapse: collapse; width: 100%; background: #f8fafb; margin-top: 6px; font-size: 11pt;}
-        .tagihan-table th, .tagihan-table td { border: 1px solid #e5e8f2; padding: 5px 6px; }
+        .tagihan-table { border-collapse: collapse; width: 100%; background: #f8fafb; margin-top: 6px; font-size: 10.5px;}
+        .tagihan-table th, .tagihan-table td { border: 1px solid #e5e8f2; padding: 4px 6px; }
         .tagihan-table th { background: #e3eaf7; color: #183688; font-weight: 600; }
-        .riwayat-bayar th, .riwayat-bayar td { font-size: 10pt; padding: 4px 5px;}
-        .status-row { margin: 7px 0 5px 0; font-size: 12pt; font-weight: 600; }
-        .note { margin-top: 7px; padding: 7px 10px 6px 9px; font-size: 11pt; border-radius: 5px; background: #f7faff; color: #213052; border-left: 3px solid #8190ef;}
+        .riwayat-bayar th, .riwayat-bayar td { font-size: 10px; padding: 3px 5px;}
+        .status-row { margin: 7px 0 5px 0; font-size: 12px; font-weight: 600; }
+        .note { margin-top: 7px; padding: 6px 10px 6px 9px; font-size: 10px; border-radius: 5px; background: #f7faff; color: #213052; border-left: 3px solid #8190ef;}
         .note.lunas { border-left-color: #24b97a; background: #f5fff9; }
         .note.angsuran { border-left-color: #efb91d; background: #fff9ed; }
         .note.belum-bayar { border-left-color: #e14e4e; background: #fff4f4; }
-        .footer-ttd-kanan { width: 100%; display: flex; justify-content: flex-end; margin-top: 16px;}
-        .ttd-block-kanan { text-align: right; font-size: 12pt;}
-        .ttd-tanggal-kanan { margin-bottom: 15px; }
-        .ttd-petugas-kanan { font-weight: 700; font-size: 13pt;}
-        .ttd-label-kanan { font-size: 11pt; margin-top: 1px; color: #555;}
-        .info-contact { font-size: 11pt; margin-top: 11px; margin-bottom: 0.5px; color: #173575;}
+        .footer-ttd-kanan { width: 100%; display: flex; justify-content: flex-end; margin-top: 12px;}
+        .ttd-block-kanan { text-align: right; font-size: 11px;}
+        .ttd-tanggal-kanan { margin-bottom: 12px; }
+        .ttd-petugas-kanan { font-weight: 700; font-size: 12px;}
+        .ttd-label-kanan { font-size: 10px; margin-top: 1px; color: #555;}
+        .info-contact { font-size: 10px; margin-top: 7px; margin-bottom: 0.5px; color: #173575;}
         .tgl-lebar { min-width: 60px;}
+        .status-keterangan-wrap { margin: 13px 0 7px 0; background: #eef6fa; border-radius: 10px; padding: 8px 14px; }
+        .status-keterangan-table { border-collapse: collapse; width: auto;}
+        .status-ket-label { font-weight: bold; color: #1564be; white-space: nowrap; font-size: 1em; padding-right: 17px !important; vertical-align: top;}
+        .status-ket-sep { padding: 0 7px 0 0; font-weight: normal; color: #444; vertical-align: top;}
+        .status-ket-value { color: #1a4299; font-weight: 500; vertical-align: top; word-break: break-word; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="kop-surat-rel">
-        <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" class="kop-logo-abs" />
-        <div class="kop-info-center">
-            <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-            <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-            <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
-            <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-            <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
-        </div>
-    </div>
+    <table class="kop-table">
+        <tr>
+            <td style="width:90px;">
+                <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" class="kop-logo">
+            </td>
+            <td class="kop-kanan">
+                <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+                <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+                <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
+                <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+                <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+            </td>
+        </tr>
+    </table>
     <div class="kop-garis"></div>
     <div class="header-content">
         <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-            <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
+            <div class="sub-title">BUKTI PENDAFTARAN MURID BARU</div>
         <?php else: ?>
-            <div class="sub-title"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
+            <div class="sub-title">BUKTI PENDAFTARAN CALON MURID BARU</div>
         <?php endif; ?>
-        <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
-        <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
-        <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
+        <div class="tahun-ajaran">SISTEM PENERIMAAN MURID BARU (SPMB)</div>
+        <div class="tahun-ajaran">SMA DHARMA KARYA JAKARTA</div>
+        <div class="tahun-ajaran" style="font-size:11px;">TAHUN AJARAN 2025/2026</div>
     </div>
     <div class="no-reg-bar">
         <div class="no-reg-row" style="margin-bottom:0;">
@@ -277,7 +287,7 @@ ob_start();
 
     <table class="tagihan-table" style="margin-top:9px;">
         <tr>
-            <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
+            <th colspan="2" style="background:#e3eaf7;font-size:11px;text-align:center">
                 <i class="fas fa-coins"></i> Keterangan Pembayaran
             </th>
         </tr>
@@ -296,7 +306,7 @@ ob_start();
     </table>
 
     <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
-        <div style="margin:9px 0 2px 0;font-size:12.5px;font-weight:500;">Riwayat Pembayaran:</div>
+        <div style="margin:9px 0 2px 0;font-size:10.5px;font-weight:500;">Riwayat Pembayaran:</div>
         <table class="tagihan-table riwayat-bayar" style="margin-bottom:9px;">
             <colgroup>
                 <col style="width:18%">
@@ -333,11 +343,9 @@ ob_start();
         Status Pembayaran: <?= htmlspecialchars($status_pembayaran) ?>
     </div>
 
-    <div class="row-btm">
-        <div class="info-contact">
-            Informasi lebih lanjut hubungi:<br>
-            Hotline SMA : <b>081511519271</b> (Bu Puji)
-        </div>
+    <div class="info-contact">
+        Informasi lebih lanjut hubungi:<br>
+        Hotline SMA : <b>081511519271</b> (Bu Puji)
     </div>
 
     <?php
