@@ -159,8 +159,7 @@ $pdf_folder = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/';
 $pdf_public_url = 'https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/';
 $pdf_filename = "bukti_pendaftaran_" . safe($row['no_formulir']) . ".pdf";
 $pdf_fullpath = $pdf_folder . $pdf_filename;
-$pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/bukti_pendaftaran_REG053025001.pdf";
-
+$pdf_url = $pdf_public_url . $pdf_filename;
 
 // Render HTML and capture to $html
 ob_start();
