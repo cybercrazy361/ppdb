@@ -315,13 +315,15 @@ ob_start();
   }
   table.data-table caption {
     background: #e6edfa;
-    color: #163984;
-    font-weight: 700;
-    font-size: 13px;
-    padding: 7px 0;
+    color: #1a53c7;      /* Warna biru lebih terang */
+    font-weight: 900;    /* Lebih tebal */
+    font-size: 18px;     /* Lebih besar */
+    padding: 10px 0;     /* Padding lebih besar */
     border-radius: 6px 6px 0 0;
     text-align: center;
-  }
+    text-transform: uppercase; /* Opsional: huruf kapital semua */
+}
+
   table.data-table th,
   table.data-table td {
     border: 1px solid #dbe4f3;
