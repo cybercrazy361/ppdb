@@ -164,6 +164,11 @@ $save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filena
 $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
 
 $stylesheet = file_get_contents('../assets/css/print_bukti_pendaftaran.css');
+// Hapus flex/grid/float kalau ada
+$stylesheet = preg_replace('/display\s*:\s*flex\s*;?/i', '', $stylesheet);
+$stylesheet = preg_replace('/display\s*:\s*grid\s*;?/i', '', $stylesheet);
+$stylesheet = preg_replace('/float\s*:\s*\w+\s*;?/i', '', $stylesheet);
+
 $stylesheet .= '
 /* Cegah split: */
 .container, table, tr, td, th, .footer-ttd-kanan, .note, .status-row, .status-keterangan-wrap {
@@ -353,7 +358,7 @@ ob_start();
 <?php
 $html = ob_get_clean();
 
-// CSS harus di-header (HEADER_CSS) lalu body
+// CSS ke header, body ke HTML
 $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
 $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 
