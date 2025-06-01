@@ -396,7 +396,7 @@ ob_start();
     </td>
     <!-- TENGAH: KOP INFO (CENTER, FULL WIDTH) -->
     <td style="text-align:center; vertical-align:middle;">
-    <div style="font-size: 20px; font-weight: bold; letter-spacing: 2px; color: #163984;">
+    <div style="font-size: 18px; font-weight: bold; letter-spacing: 2px; color: #163984;">
         YAYASAN PENDIDIKAN DHARMA KARYA
     </div>
     <div style="font-size: 17px; font-weight: bold; letter-spacing: 1px; color: #163984;">
