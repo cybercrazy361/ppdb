@@ -142,9 +142,9 @@ if ($status_pembayaran !== 'Belum Bayar') {
 
 function getStatusBadge($status) {
     $status = strtolower($status);
-    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold"><i class="fas fa-check-circle"></i> Lunas</span>';
-    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold"><i class="fas fa-hourglass-half"></i> Angsuran</span>';
-    return '<span style="color:#e74a3b;font-weight:bold"><i class="fas fa-times-circle"></i> Belum Bayar</span>';
+    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold">✅ Lunas</span>';
+    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold">⏳ Angsuran</span>';
+    return '<span style="color:#e74a3b;font-weight:bold">❌ Belum Bayar</span>';
 }
 
 $note_class = '';
@@ -352,7 +352,6 @@ ob_start();
 <?php
 $html = ob_get_clean();
 $mpdf->WriteHTML($html);
-// Simpan PDF
 $mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
 
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
