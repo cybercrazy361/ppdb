@@ -372,6 +372,19 @@ if (!file_exists($pdf_fullpath) || filesize($pdf_fullpath) < $min_size) {
     exit;
 }
 
+// Tambahan: cek file bisa diakses publik (HTTP), bukan hanya di disk
+$ch = curl_init($pdf_url);
+curl_setopt($ch, CURLOPT_NOBODY, true);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+curl_exec($ch);
+$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+if ($http_code != 200) {
+    echo "<b style='color:red'>File PDF tidak bisa diakses publik (HTTP $http_code)!</b>";
+    exit;
+}
+
 // === Kirim ke WA Ortu ===
 $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
 $secret_key = "PAtwrvlV";
