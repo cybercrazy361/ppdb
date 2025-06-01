@@ -121,254 +121,238 @@ $res = $stmtTagihan->get_result();
 while ($t = $res->fetch_assoc()) $tagihan[] = $t;
 $stmtTagihan->close();
 
+// Riwayat pembayaran terakhir + cashback
+$pembayaran_terakhir = [];
+if ($status_pembayaran !== 'Belum Bayar') {
+    $stmtBayar = $conn->prepare("
+        SELECT jp.nama AS jenis, pd.jumlah, pd.status_pembayaran, pd.bulan, p.tanggal_pembayaran, pd.cashback
+        FROM pembayaran_detail pd
+        JOIN pembayaran p ON pd.pembayaran_id = p.id
+        JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
+        WHERE p.siswa_id = ?
+        ORDER BY p.tanggal_pembayaran DESC, pd.id DESC
+        LIMIT 6
+    ");
+    $stmtBayar->bind_param('i', $id);
+    $stmtBayar->execute();
+    $resBayar = $stmtBayar->get_result();
+    while ($b = $resBayar->fetch_assoc()) $pembayaran_terakhir[] = $b;
+    $stmtBayar->close();
+}
+
+function getStatusBadge($status) {
+    $status = strtolower($status);
+    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold"><i class="fas fa-check-circle"></i> Lunas</span>';
+    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold"><i class="fas fa-hourglass-half"></i> Angsuran</span>';
+    return '<span style="color:#e74a3b;font-weight:bold"><i class="fas fa-times-circle"></i> Belum Bayar</span>';
+}
+
+$note_class = '';
+if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
+elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
+elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
+
+$no_invoice = $row['no_invoice'] ?? '';
+
+// Lokasi simpan PDF
 $filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
 $save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
 
 $mpdf = new \Mpdf\Mpdf([
     'format' => 'A4',
-    'margin_top' => 8,
-    'margin_left' => 8,
-    'margin_right' => 8,
-    'margin_bottom' => 10,
+    'margin_top' => 4,
+    'margin_left' => 7,
+    'margin_right' => 7,
+    'margin_bottom' => 8,
     'default_font' => 'Arial'
 ]);
 
 ob_start();
 ?>
+
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <title>Bukti Pendaftaran Siswa Baru</title>
-    <style>
-        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 0; }
-        .container { background: #fff; width: 98%; margin: 0 auto; border-radius: 11px; border: 1.6px solid #d5deef; padding: 16px 18px 18px 18px; }
-        .kop-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
-        .kop-table td { vertical-align: top; }
-        .kop-logo { width: 70px; height: 70px; }
-        .kop-tengah { text-align: center; }
-        .kop-title1 { font-size: 21px; font-weight: 700; color: #173c88; letter-spacing: 1.2px; }
-        .kop-title2 { font-size: 16px; font-weight: 700; color: #173c88; }
-        .kop-akreditasi { font-size: 13.3px; color: #173c88; font-weight: 700; }
-        .kop-alamat { font-size: 10.6px; color: #173c88; }
-        .kop-garis { border-bottom: 2.7px solid #193e92; margin: 8px 0 15px 0; }
-        /* NO REGISTRASI & CALL CENTER */
-        .reg-row {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 7px;
-        }
-        .reg-left {
-            font-size: 12.2px;
-            font-weight: 600;
-            color: #222;
-        }
-        .reg-value {
-            color: #0d3eaa;
-            font-weight: 700;
-            font-size: 12.2px;
-        }
-        .reg-right {
-            font-size: 11.7px;
-            color: #1455ad;
-            font-weight: 500;
-            text-align: right;
-            min-width: 180px;
-        }
-        .cc-badge {
-            font-size: 11.7px;
-            font-weight: 600;
-            color: #0d3eaa;
-            background: none;
-            border-radius: 0;
-            padding: 0;
-        }
-        /* JUDUL */
-        .judul-bukti { font-size: 18px; font-weight: 800; color: #1942a3; text-align: center; letter-spacing: 0.5px; margin-top: 10px; margin-bottom:0;}
-        .judul-sub { font-size: 13.3px; font-weight: 700; color: #1942a3; text-align: center; margin-bottom:0;}
-        .judul-thn { font-size: 10.7px; font-weight: 700; color: #1942a3; text-align: center; margin-bottom: 14px; }
-        /* TABEL DATA SISWA */
-        .data-table { width: 100%; border-collapse: collapse; font-size: 11.3px; margin-top: 6px; margin-bottom: 8px;}
-        .data-table caption { background: #e6edfa; color: #173e8e; font-size: 13px; font-weight: 700; padding: 6px 0 6px 0; border-radius: 5px 5px 0 0; letter-spacing: 0.2px; }
-        .data-table th { background: #e6edfa; color: #1643a4; font-weight: 600; width: 32%; padding: 5px 10px; border-right: 1.5px solid #f4f6ff; text-align: left;}
-        .data-table td { background: #fff; color: #232a3c; font-weight: 500; padding: 5px 10px; border-bottom: 1.3px solid #f1f3fa; }
-        /* PANEL STATUS PENDAFTARAN */
-        .panel-status {
-            width: 100%;
-            background: #e9f3fc;
-            border-radius: 5px;
-            margin: 0 0 14px 0;
-            padding: 12px 13px 9px 13px;
-            font-size: 15px;
-            border: none;
-        }
-        .panel-status td { border: none; background: none; }
-        .ps-label { color: #2470c6; font-weight: 600; font-size: 16px; width: 155px; }
-        .ps-sep { color: #2470c6; font-weight: 600; width: 10px; }
-        .ps-value { color: #1976b6; font-weight: 500; font-size: 16px; }
-        /* PANEL KETERANGAN PEMBAYARAN */
-        .center-panel {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 15px auto;
-        }
-        .panel-keterangan {
-            background: #f4f8fc;
-            border: 1px solid #dde8f4;
-            border-radius: 4px;
-            padding: 10px 18px 7px 18px;
-            width: 92%;      
-            max-width: 650px; 
-            box-sizing: border-box;
-        }
-        .pk-title { color: #2570c6; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-        .pk-icon { font-size: 15px; margin-right: 5px; color: #2570c6;}
-        .pk-isi { color: #ca1818; font-size: 14px; font-weight: 500; }
-        .pk-merah { color: #ca1818; }
-        /* STATUS PEMBAYARAN */
-        .panel-status-bayar {
-            font-size: 15.3px; 
-            font-weight: 600; 
-            color: #be2020; 
-            margin: 15px 0 3px 0;
-        }
-        .sb-icon { color: #be2020; font-size: 17px; vertical-align: middle; margin-right: 5px; }
-        .sb-label { color: #be2020; font-weight: 700; margin-right: 4px; }
-        .sb-value { color: #be2020; font-weight: 700; }
-        /* INFO KONTAK */
-        .info-contact { font-size: 10.1px; color: #173575; margin-top: 9px; margin-bottom: 4px; }
-        .info-contact b { font-weight: bold; font-size: 11.5px; color: #113180; }
-        /* BOX CATATAN */
-        .note { margin-top: 13px; padding: 9px 13px 9px 13px; font-size: 11.2px; border-radius: 7px; background: #fff6f6; color: #1a2336; border-left: 4px solid #e9402e; }
-        .note-title { font-weight: 700; margin-bottom: 5px; }
-        .note-list { margin-left: 15px; margin-bottom: 0; }
-        /* FOOTER */
-        .footer-ttd-kanan { width: 100%; margin-top: 28px;}
-        .ttd-block-kanan { text-align: right; font-size: 11px;}
-        .ttd-tanggal-kanan { margin-bottom: 11px; color:#1942a3; font-size:11.7px;}
-        .ttd-petugas-kanan { font-weight: 700; font-size: 13.5px;}
-        .ttd-label-kanan { font-size: 10.3px; margin-top: 1px; color: #555;}
-    </style>
+  <meta charset="UTF-8" />
+  <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
+  <style>
+  <?php
+  // Tempel langsung CSS utama dari print_siswa (CSS dari postingan kamu di awal)
+  echo file_get_contents(__DIR__.'/../assets/css/print_bukti_pendaftaran.css');
+  ?>
+  </style>
 </head>
 <body>
-<div class="container">
-
-    <!-- HEADER -->
-    <table class="kop-table">
-        <tr>
-            <td style="width:80px;">
-                <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" class="kop-logo">
-            </td>
-            <td class="kop-tengah">
-                <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-                <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-                <div class="kop-akreditasi">Terakreditasi “A”</div>
-                <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-                <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
-            </td>
-        </tr>
-    </table>
+  <div class="container">
+    <div class="kop-surat-rel">
+      <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" alt="Logo" class="kop-logo-abs" />
+      <div class="kop-info-center">
+        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+        <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
+        <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+        <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+      </div>
+    </div>
     <div class="kop-garis"></div>
 
-    <!-- NOMOR REGISTRASI DAN CALL CENTER -->
-    <div class="reg-row">
-        <div class="reg-left">
-            No. Registrasi Pendaftaran : <span class="reg-value"><?= safe($row['no_formulir']) ?></span>
-        </div>
-        <?php if (!empty($row['reviewed_by'])): ?>
-        <div class="reg-right">
-            Call Center: <span class="cc-badge"><?= safe($row['reviewed_by']) ?></span>
-        </div>
-        <?php endif; ?>
+    <div class="header-content">
+      <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
+        <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
+      <?php else: ?>
+        <div class="sub-title"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
+      <?php endif; ?>
+      <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
+      <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
+      <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
-    <!-- JUDUL UTAMA -->
-    <div class="judul-bukti">BUKTI PENDAFTARAN CALON MURID BARU</div>
-    <div class="judul-sub">SISTEM PENERIMAAN MURID BARU (SPMB)<br>SMA DHARMA KARYA JAKARTA</div>
-    <div class="judul-thn">TAHUN AJARAN 2025/2026</div>
+    <div class="no-reg-bar">
+      <div class="no-reg-row" style="margin-bottom:0;">
+        <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
+        <div class="no-reg-sep">:</div>
+        <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
+      </div>
+      <?php if (!empty($row['reviewed_by'])): ?>
+        <span class="callcenter-badge">
+          <b>Call Center:</b> <?= safe($row['reviewed_by']) ?>
+        </span>
+      <?php endif; ?>
+    </div>
+    <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
+      <div class="no-reg-row">
+        <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
+        <div class="no-reg-sep">:</div>
+        <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
+      </div>
+    <?php endif; ?>
 
-    <!-- TABEL DATA SISWA -->
     <table class="data-table">
-        <caption>DATA CALON PESERTA DIDIK BARU</caption>
-        <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
-        <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
-        <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
-        <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
-        <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
-        <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
-        <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
-        <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
+      <caption>DATA CALON PESERTA DIDIK BARU</caption>
+      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
+      <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
+      <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
+      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
+      <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
+      <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
+      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
+      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-    <!-- PANEL STATUS PENDAFTARAN -->
-    <table class="panel-status">
+    <div class="status-keterangan-wrap">
+      <table class="status-keterangan-table">
         <tr>
-            <td class="ps-label">Status Pendaftaran</td>
-            <td class="ps-sep">:</td>
-            <td class="ps-value"><?= safe($status_pendaftaran) ?></td>
+          <td class="status-ket-label">Status Pendaftaran</td>
+          <td class="status-ket-sep">:</td>
+          <td class="status-ket-value"><?= htmlspecialchars($status_pendaftaran) ?></td>
         </tr>
         <tr>
-            <td class="ps-label">Keterangan</td>
-            <td class="ps-sep">:</td>
-            <td class="ps-value"><?= safe($keterangan_pendaftaran) ?></td>
+          <td class="status-ket-label">Keterangan</td>
+          <td class="status-ket-sep">:</td>
+          <td class="status-ket-value"><?= !empty($keterangan_pendaftaran) ? htmlspecialchars($keterangan_pendaftaran) : '-' ?></td>
         </tr>
+      </table>
+    </div>
+
+    <table class="tagihan-table" style="margin-top:9px;">
+      <tr>
+        <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
+          Keterangan Pembayaran
+        </th>
+      </tr>
+      <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
+      <tr>
+        <td><?= safe($tg['jenis']) ?></td>
+        <td style="text-align:right;font-weight:600">
+          Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
+        </td>
+      </tr>
+      <?php endforeach; else: ?>
+      <tr>
+        <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
+      </tr>
+      <?php endif; ?>
     </table>
 
-    <!-- KETERANGAN PEMBAYARAN (CENTER) -->
-    <div class="center-panel">
-        <div class="panel-keterangan">
-            <div class="pk-title"><span class="pk-icon">&#9432;</span> Keterangan Pembayaran</div>
-            <div class="pk-isi">
-                <?php if(count($tagihan)): ?>
-                    <?php foreach($tagihan as $tg): ?>
-                        <?= safe($tg['jenis']) ?>: <b>Rp <?= number_format($tg['nominal'], 0, ',', '.') ?></b><br>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <span class="pk-merah">Belum ada tagihan yang diverifikasi.</span>
-                <?php endif; ?>
-            </div>
-        </div>
+    <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
+      <div style="margin:9px 0 2px 0;font-size:12.5px;font-weight:500;">Riwayat Pembayaran:</div>
+      <table class="tagihan-table riwayat-bayar" style="margin-bottom:9px;">
+        <colgroup>
+          <col style="width:18%">
+          <col style="width:18%">
+          <col style="width:18%">
+          <col style="width:14%">
+          <col style="width:10%">
+          <col style="width:22%">
+        </colgroup>
+        <tr>
+          <th>Jenis</th>
+          <th>Nominal</th>
+          <th>Cashback</th>
+          <th>Status</th>
+          <th>Bulan</th>
+          <th>Tanggal</th>
+        </tr>
+        <?php foreach($pembayaran_terakhir as $b): ?>
+        <tr>
+          <td><?= safe($b['jenis']) ?></td>
+          <td style="text-align:right;">Rp <?= number_format($b['jumlah'],0,',','.') ?></td>
+          <td style="text-align:right;">
+            <?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'],0,',','.') : '-' ?>
+          </td>
+          <td><?= safe($b['status_pembayaran']) ?></td>
+          <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
+          <td class="tgl-lebar"><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </table>
+    <?php endif; ?>
+
+    <div class="status-row">
+      Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
 
-    <!-- STATUS PEMBAYARAN -->
-    <div class="panel-status-bayar">
-        <span class="sb-icon">&#9888;</span>
-        <span class="sb-label">Status Pembayaran:</span>
-        <span class="sb-value"><?= strtoupper($status_pembayaran) ?></span>
-    </div>
-
-    <div class="info-contact">
+    <div class="row-btm">
+      <div class="info-contact">
         Informasi lebih lanjut hubungi:<br>
         Hotline SMA : <b>081511519271</b> (Bu Puji)
+      </div>
     </div>
 
-    <!-- CATATAN -->
-    <div class="note">
-        <div class="note-title">Catatan:</div>
-        <ol class="note-list">
-            <li>Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor Formulir.</li>
-            <li>Form Registrasi ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor Formulir.</li>
-        </ol>
+    <div class="note <?= $note_class ?>">
+      <?php if ($status_pembayaran === 'Belum Bayar'): ?>
+        <b>Catatan:</b><br>
+        1. Apabila telah menyelesaikan administrasi, serahkan kembali form pendaftaran ini ke bagian pendaftaran untuk mendapatkan nomor Formulir.<br>
+        2. Form Registrasi ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor Formulir.
+      <?php elseif ($status_pembayaran === 'Angsuran'): ?>
+        <b>Catatan:</b><br>
+        Siswa telah melakukan pembayaran sebagian (angsuran).<br>
+        Simpan bukti ini sebagai tanda terima pembayaran.
+      <?php elseif ($status_pembayaran === 'Lunas'): ?>
+        <b>Catatan:</b><br>
+        Siswa telah menyelesaikan seluruh pembayaran.<br>
+        Simpan bukti ini sebagai tanda lunas dan konfirmasi pendaftaran.
+      <?php else: ?>
+        <b>Catatan:</b><br>
+        Status pembayaran tidak diketahui.
+      <?php endif; ?>
     </div>
 
-    <!-- FOOTER TTD -->
     <div class="footer-ttd-kanan">
-        <div class="ttd-block-kanan">
-            <div class="ttd-tanggal-kanan">Jakarta, <?= tanggal_id(date('Y-m-d')) ?></div>
-            <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
-            <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
-        </div>
+      <div class="ttd-block-kanan">
+        <div class="ttd-tanggal-kanan">Jakarta, <?= tanggal_id(date('Y-m-d')) ?></div>
+        <div class="ttd-petugas-kanan"><?= safe($petugas) ?></div>
+        <div class="ttd-label-kanan">(Petugas Pendaftaran)</div>
+      </div>
     </div>
-</div>
+  </div>
 </body>
 </html>
+
 <?php
 $html = ob_get_clean();
 $mpdf->WriteHTML($html);
+// Simpan PDF
 $mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
 
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
