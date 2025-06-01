@@ -16,7 +16,8 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-$filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
+$versi = 2; // Ambil dari database misal kolom `versi_pdf`
+$filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '_v' . $versi . '.pdf';
 $filepath = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
 
@@ -63,7 +64,8 @@ if ($err) {
     echo "<div style='color:red;font-size:16px;padding:16px;'>Gagal mengirim ke WhatsApp: $err</div>";
 } else {
     echo "<div style='color:green;font-size:16px;padding:16px;'>PDF berhasil dikirim ke WhatsApp orang tua!<br>
-    <a href='$pdf_url' target='_blank'>Download PDF</a></div>
-    <pre style='background:#eee;padding:12px;border-radius:7px;'>$result</pre>";
+    <a href='$pdf_url' target='_blank'>Download PDF</a></div>";
+    // <pre>$result</pre> dihapus!
 }
+
 ?>
