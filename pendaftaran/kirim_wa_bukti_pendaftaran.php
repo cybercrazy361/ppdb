@@ -16,8 +16,24 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-$filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
-$filepath = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
+$dir = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/';
+$base = 'bukti_pendaftaran_' . safe($row['no_formulir']);
+$filename = $base . '.pdf';
+
+// Cari file versi terbesar (bukti_pendaftaran_XXX_v3.pdf, v2, v1 dst)
+$max_version = 0;
+foreach (glob($dir . $base . '_v*.pdf') as $f) {
+    if (preg_match('/_v(\d+)\.pdf$/', $f, $m)) {
+        $ver = intval($m[1]);
+        if ($ver > $max_version) {
+            $max_version = $ver;
+            $filename = $base . '_v' . $ver . '.pdf';
+        }
+    }
+}
+
+// Path file final
+$filepath = $dir . $filename;
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
 
 // --- Cek file exist ---
@@ -66,5 +82,4 @@ if ($err) {
     <a href='$pdf_url' target='_blank'>Download PDF</a></div>";
     // <pre>$result</pre> dihapus!
 }
-
 ?>
