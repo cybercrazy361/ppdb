@@ -475,9 +475,11 @@ ob_start();
   <?php endif; ?>
 </div>
 
+<div style="font-weight:900; font-size:18px; color:#1a53c7; text-align:center; margin-bottom:5px; text-transform:uppercase;">
+  DATA CALON PESERTA DIDIK BARU
+</div>
 
     <table class="data-table">
-      <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
       <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
       <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
