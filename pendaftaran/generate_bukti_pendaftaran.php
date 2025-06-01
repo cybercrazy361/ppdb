@@ -4,13 +4,8 @@ date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
-function safe($str) {
-    return htmlspecialchars($str ?? '-');
-}
-
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
-    die('Akses tidak diizinkan.');
-}
+function safe($str) { return htmlspecialchars($str ?? '-'); }
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') die('Akses tidak diizinkan.');
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) die('ID siswa tidak valid.');
@@ -148,19 +143,12 @@ if ($status_pembayaran !== 'Belum Bayar') {
 
 function getStatusBadge($status) {
     $status = strtolower($status);
-    if ($status === 'lunas') return '<span style="color:#1cc88a;font-weight:bold">✅ Lunas</span>';
-    if ($status === 'angsuran') return '<span style="color:#f6c23e;font-weight:bold">⏳ Angsuran</span>';
-    return '<span style="color:#e74a3b;font-weight:bold">❌ Belum Bayar</span>';
+    if ($status === 'lunas') return '<span style="color:#10b556;font-weight:600">🟢 Lunas</span>';
+    if ($status === 'angsuran') return '<span style="color:#e5ac17;font-weight:600">🟡 Angsuran</span>';
+    return '<span style="color:#e74a3b;font-weight:600">🔴 Belum Bayar</span>';
 }
 
-$note_class = '';
-if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
-elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
-elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
-
 $no_invoice = $row['no_invoice'] ?? '';
-
-// Lokasi simpan PDF
 $filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
 $save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
 
@@ -182,259 +170,315 @@ ob_start();
 <meta charset="UTF-8" />
 <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    font-size: 12px;
-    color: #202b38;
-    margin: 0;
-    padding: 0;
-  }
-  .container {
-    background: #fff;
-    width: 210mm;
-    min-height: 297mm;
-    margin: 0 auto;
-    padding: 5mm 10mm 10mm 10mm;
-    box-sizing: border-box;
-  }
-
+body {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: #1e293b;
+  background: #f4f7fa;
+}
+.container {
+  background: #fff;
+  width: 97%;
+  min-height: 297mm;
+  margin: 0 auto;
+  border-radius: 14px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+  padding: 0;
+}
 .kop-surat-rel {
   display: flex;
   align-items: center;
-  padding-left: 20px;
+  padding: 22px 36px 0 30px;
   gap: 20px;
-  margin-bottom: 10px;
 }
-
 .kop-logo {
-  width: 90px;
-  height: 90px;
+  width: 75px;
+  height: 75px;
   object-fit: contain;
   flex-shrink: 0;
+  border-radius: 100px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
 }
-
 .kop-info-center {
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;  /* Ini bikin isi teks center horizontal */
-  font-family: Arial, sans-serif;
-  color: #163984;
-  text-align: center;   /* Teks juga center */
-  max-width: calc(100% - 110px);
+  text-align: center;
+  color: #174aa1;
 }
-
 .kop-title1 {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  margin: 0 0 4px 0;
+  margin: 0 0 3px 0;
   letter-spacing: 1.1px;
+  color: #194293;
+  text-transform: uppercase;
 }
-
 .kop-title2 {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
+  letter-spacing: .8px;
+  color: #1751be;
+  text-transform: uppercase;
 }
-
 .kop-akreditasi {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  margin: 0 0 6px 0;
+  margin: 0 0 5px 0;
+  color: #212c5e;
 }
-
 .kop-alamat {
   font-size: 12px;
   margin: 0 0 2px 0;
+  color: #2e3643;
 }
-
 .kop-garis {
-  border-bottom: 2px solid #163984;
-  margin: 0 20px 18px 20px;
-  width: calc(100% - 40px);
+  border-bottom: 2px solid #1d3787;
+  margin: 12px 32px 14px 32px;
+  width: calc(100% - 64px);
 }
 
-  .header-content {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .sub-title {
-    font-size: 17px;
-    font-weight: 700;
-    color: #163984;
-    margin: 0 0 5px 0;
-  }
-  .tahun-ajaran {
-    font-size: 13px;
-    font-weight: 600;
-    color: #163984;
-    margin: 0;
-  }
-  .no-reg-bar {
-    margin-bottom: 12px;
-  }
-  .no-reg-row {
-    font-size: 12px;
-    margin-bottom: 4px;
-  }
-  .no-reg-label {
-    font-weight: 600;
-    display: inline-block;
-    min-width: 160px;
-    color: #333;
-  }
-  .no-reg-val {
-    font-style: italic;
-    font-weight: 700;
-    color: #1a53c7;
-  }
-  .callcenter-badge {
-    display: inline-block;
-    background: #d4f1fd;
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #1a4299;
-    margin-left: 20px;
-  }
-  table.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 12px;
-  }
-  table.data-table caption {
-    background: #e6edfa;
-    color: #163984;
-    font-weight: 700;
-    font-size: 13px;
-    padding: 7px 0;
-    border-radius: 6px 6px 0 0;
-    text-align: center;
-  }
-  table.data-table th,
-  table.data-table td {
-    border: 1px solid #dbe4f3;
-    padding: 6px 10px;
-    text-align: left;
-  }
-  table.data-table th {
-    background: #e6edfa;
-    color: #163984;
-    font-weight: 600;
-    width: 30%;
-  }
-  table.tagihan-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 12px;
-    font-size: 12px;
-  }
-  table.tagihan-table th,
-  table.tagihan-table td {
-    border: 1px solid #e5e8f2;
-    padding: 6px 8px;
-    text-align: left;
-  }
-  table.tagihan-table th {
-    background: #e3eaf7;
-    color: #183688;
-    font-weight: 600;
-  }
-  table.tagihan-table td {
-    font-weight: 600;
-  }
-  table.riwayat-bayar th,
-  table.riwayat-bayar td {
-    font-size: 11.5px;
-    padding: 5px 8px;
-  }
-  .status-row {
-    font-weight: 700;
-    font-size: 14px;
-    margin-top: 12px;
-  }
-  .status-row span {
-    vertical-align: middle;
-  }
-  .info-contact {
-    font-size: 11px;
-    margin-top: 15px;
-    color: #173575;
-  }
-  .info-contact b {
-    font-weight: 700;
-    color: #113180;
-  }
-  .note {
-    margin-top: 15px;
-    padding: 10px 12px;
-    font-size: 12px;
-    background: #f5fff9;
-    border-left: 5px solid #24b97a;
-    border-radius: 5px;
-    color: #213052;
-  }
-  .footer-ttd-kanan {
-    width: 100%;
-    margin-top: 25px;
-    text-align: right;
-    font-size: 11px;
-  }
-  .footer-ttd-kanan .ttd-petugas-kanan {
-    font-weight: 700;
-    font-size: 13px;
-  }
+.header-content {
+  text-align: center;
+  margin-bottom: 7px;
+}
+.header-content .sub-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1751be;
+  margin: 0 0 3px 0;
+}
+.header-content .tahun-ajaran {
+  font-size: 13px;
+  font-weight: 600;
+  color: #174aa1;
+  margin: 0 0 2px 0;
+  letter-spacing: .3px;
+}
+
+.info-box, .status-pendaftaran-box {
+  background: #e8f3fd;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 12px 24px 10px 22px;
+}
+.status-pendaftaran-box {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+.status-pendaftaran-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #155ea7;
+  margin-right: 14px;
+  min-width: 145px;
+  display: inline-block;
+}
+.status-pendaftaran-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #194293;
+}
+.status-pendaftaran-keterangan {
+  margin-left: 40px;
+  font-size: 13px;
+}
+.no-reg-bar {
+  margin-bottom: 6px;
+  margin-left: 1px;
+  display: flex;
+  gap: 20px;
+}
+.no-reg-row {
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 3px;
+  display: flex;
+  gap: 8px;
+}
+.no-reg-label {
+  color: #36394b;
+  min-width: 180px;
+}
+.no-reg-val {
+  color: #1958b5;
+  font-weight: bold;
+  font-style: italic;
+}
+.no-formulir-row {
+  margin-left: 40px;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 15px;
+  background: #f5f9ff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.data-table caption {
+  background: #e1eafe;
+  color: #133a72;
+  font-weight: 700;
+  font-size: 13.2px;
+  padding: 8px 0 7px 0;
+  border-radius: 12px 12px 0 0;
+  text-align: left;
+  text-indent: 22px;
+  letter-spacing: .6px;
+}
+.data-table th,
+.data-table td {
+  border: none;
+  padding: 7px 15px 7px 16px;
+  text-align: left;
+  font-size: 12.3px;
+}
+.data-table th {
+  background: #e8f3fd;
+  color: #174aa1;
+  font-weight: 600;
+  width: 33%;
+}
+.data-table tr {
+  background: #fff;
+  border-bottom: 1px solid #e6eaf6;
+}
+.data-table tr:last-child {
+  border-bottom: none;
+}
+.data-table td {
+  color: #293350;
+  font-weight: 600;
+}
+.tagihan-table, .riwayat-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 7px;
+  background: #f6faff;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 12px;
+}
+.tagihan-table th,
+.tagihan-table td,
+.riwayat-table th,
+.riwayat-table td {
+  border: none;
+  padding: 6.5px 12px;
+}
+.tagihan-table th {
+  background: #e4eefb;
+  color: #1958b5;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+}
+.riwayat-table th {
+  background: #e4eefb;
+  color: #1958b5;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+}
+.riwayat-table td {
+  text-align: center;
+  font-size: 12px;
+}
+.riwayat-table td,
+.tagihan-table td {
+  font-weight: 600;
+}
+.status-row {
+  font-weight: 700;
+  font-size: 14px;
+  margin: 14px 0 4px 1px;
+}
+.status-row span {
+  vertical-align: middle;
+}
+.info-contact {
+  font-size: 11.8px;
+  margin: 13px 0 6px 2px;
+  color: #174aa1;
+}
+.info-contact b {
+  font-weight: 700;
+  color: #164290;
+}
+.note {
+  margin: 10px 0 0 1px;
+  padding: 11px 18px;
+  font-size: 12.5px;
+  background: #e4f9ee;
+  border-radius: 10px;
+  color: #16402d;
+  border-left: 6px solid #21b883;
+}
+.footer-ttd-kanan {
+  width: 100%;
+  margin-top: 34px;
+  margin-bottom: 10px;
+  text-align: right;
+  font-size: 11.2px;
+  color: #273765;
+}
+.footer-ttd-kanan .ttd-petugas-kanan {
+  font-weight: 700;
+  font-size: 14px;
+  color: #1340aa;
+  margin-top: 37px;
+}
 </style>
 </head>
 <body>
   <div class="container">
-<div class="kop-surat-rel">
-  <img src="<?= __DIR__ . '/../assets/images/logo_trans.png' ?>" alt="Logo" class="kop-logo" />
-  <div class="kop-info-center">
-    <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-    <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
-    <div class="kop-akreditasi"><b>Terakreditasi “A”</b></div>
-    <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-    <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
-  </div>
-</div>
-<div class="kop-garis"></div>
-
-
+    <div class="kop-surat-rel">
+      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo" class="kop-logo" />
+      <div class="kop-info-center">
+        <div class="kop-title1">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+        <div class="kop-title2">SMA/SMK DHARMA KARYA</div>
+        <div class="kop-akreditasi">Terakreditasi “A”</div>
+        <div class="kop-alamat">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+        <div class="kop-alamat">Telp. 021-7398578 / 7250224</div>
+      </div>
+    </div>
+    <div class="kop-garis"></div>
     <div class="header-content">
-      <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-        <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
-      <?php else: ?>
-        <div class="sub-title"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
-      <?php endif; ?>
+      <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
       <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
       <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
-      <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
+      <div class="tahun-ajaran" style="font-size:12.3px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
-
     <div class="no-reg-bar">
       <div class="no-reg-row">
-        <span class="no-reg-label">No. Registrasi Pendaftaran</span>
-        <span class="no-reg-sep">:</span>
-        <span class="no-reg-val"><i><b><?= safe($row['no_formulir']) ?></b></i></span>
+        <span class="no-reg-label">No. Registrasi Pendaftaran :</span>
+        <span class="no-reg-val"><?= safe($row['no_formulir']) ?></span>
       </div>
-      <?php if (!empty($row['reviewed_by'])): ?>
-      <div class="no-reg-row">
-        <span class="no-reg-label">Call Center</span>
-        <span class="no-reg-sep">:</span>
-        <span class="callcenter-badge"><?= safe($row['reviewed_by']) ?></span>
-      </div>
-      <?php endif; ?>
       <?php if ($status_pembayaran !== 'Belum Bayar' && !empty($no_invoice)): ?>
       <div class="no-reg-row">
-        <span class="no-reg-label">No. Formulir Pendaftaran</span>
-        <span class="no-reg-sep">:</span>
-        <span class="no-reg-val"><i><b><?= safe($no_invoice) ?></b></i></span>
+        <span class="no-reg-label">No. Formulir Pendaftaran :</span>
+        <span class="no-reg-val"><?= safe($no_invoice) ?></span>
       </div>
       <?php endif; ?>
     </div>
-
+    <div class="status-pendaftaran-box">
+      <div>
+        <div class="status-pendaftaran-label">Status Pendaftaran</div>
+        <div class="status-pendaftaran-label">Keterangan</div>
+      </div>
+      <div>
+        <div class="status-pendaftaran-value">: <?= safe($status_pendaftaran) ?></div>
+        <div class="status-pendaftaran-keterangan">: <?= safe($keterangan_pendaftaran) ?></div>
+      </div>
+    </div>
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
@@ -446,10 +490,9 @@ ob_start();
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
-
     <table class="tagihan-table">
       <tr>
-        <th colspan="2" style="text-align:center; font-weight:bold; font-size:14px; background:#e3eaf7;">
+        <th colspan="2" style="text-align:center; font-weight:bold; font-size:14px;">
           Keterangan Pembayaran
         </th>
       </tr>
@@ -457,7 +500,7 @@ ob_start();
         <?php foreach($tagihan as $tg): ?>
           <tr>
             <td><?= safe($tg['jenis']) ?></td>
-            <td style="text-align:right; font-weight:600;">
+            <td style="text-align:right; font-weight:700;">
               Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
             </td>
           </tr>
@@ -466,18 +509,9 @@ ob_start();
         <tr><td colspan="2" style="text-align:center; color:#bb2222;">Belum ada tagihan yang diverifikasi.</td></tr>
       <?php endif; ?>
     </table>
-
     <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
-      <div style="margin:10px 0 3px 0; font-weight:600;">Riwayat Pembayaran:</div>
-      <table class="tagihan-table riwayat-bayar" style="font-size:11px;">
-        <colgroup>
-          <col style="width:20%">
-          <col style="width:20%">
-          <col style="width:15%">
-          <col style="width:15%">
-          <col style="width:10%">
-          <col style="width:20%">
-        </colgroup>
+      <div style="margin:10px 0 3px 0; font-weight:600; color:#1958b5">Riwayat Pembayaran:</div>
+      <table class="riwayat-table">
         <tr>
           <th>Jenis</th>
           <th>Nominal</th>
@@ -498,16 +532,13 @@ ob_start();
         <?php endforeach; ?>
       </table>
     <?php endif; ?>
-
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
-
     <div class="info-contact">
       Informasi lebih lanjut hubungi:<br>
       Hotline SMA : <b>081511519271</b> (Bu Puji)
     </div>
-
     <div class="note">
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
         <b>Catatan:</b><br>
@@ -526,13 +557,10 @@ ob_start();
         Status pembayaran tidak diketahui.
       <?php endif; ?>
     </div>
-
     <div class="footer-ttd-kanan">
-      <div class="ttd-petugas-kanan">
-        Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br>
-        <?= safe($petugas) ?><br>
-        (Petugas Pendaftaran)
-      </div>
+      Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br>
+      <span class="ttd-petugas-kanan"><?= safe($petugas) ?></span><br>
+      (Petugas Pendaftaran)
     </div>
   </div>
 </body>
