@@ -2,6 +2,7 @@
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
+require_once __DIR__ . '/../vendor/autoload.php'; // mPDF
 
 function safe($str) { return htmlspecialchars($str ?? '-'); }
 
@@ -31,7 +32,6 @@ if ($username_petugas) {
     $stmt_petugas->close();
 }
 
-// Ambil status & notes dari calon_pendaftar (jika belum ada di tabel siswa)
 $status_pendaftaran = '-';
 $keterangan_pendaftaran = '-';
 if (!empty($row['calon_pendaftar_id'])) {
@@ -56,7 +56,6 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// Ambil status progres
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
@@ -109,7 +108,6 @@ $resultStatus = $stmtStatus->get_result();
 $status_pembayaran = $resultStatus->fetch_assoc()['status_pembayaran'] ?? 'Belum Bayar';
 $stmtStatus->close();
 
-// Tagihan awal
 $tagihan = [];
 $stmtTagihan = $conn->prepare("
     SELECT jp.nama AS jenis, sta.nominal
@@ -124,7 +122,6 @@ $res = $stmtTagihan->get_result();
 while ($t = $res->fetch_assoc()) $tagihan[] = $t;
 $stmtTagihan->close();
 
-// Riwayat pembayaran terakhir + cashback
 $pembayaran_terakhir = [];
 if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar = $conn->prepare("
@@ -155,8 +152,16 @@ if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
 elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
 elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 
-// No Invoice, pastikan kolom ini ada di tabel siswa!
 $no_invoice = $row['no_invoice'] ?? '';
+
+// =========== GENERATE PDF ==============
+$pdf_folder = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/';
+$pdf_public_url = 'https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/';
+$pdf_filename = "bukti_pendaftaran_" . safe($row['no_formulir']) . ".pdf";
+$pdf_fullpath = $pdf_folder . $pdf_filename;
+$pdf_url = $pdf_public_url . $pdf_filename;
+
+ob_start();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -165,13 +170,12 @@ $no_invoice = $row['no_invoice'] ?? '';
   <title>Bukti Pendaftaran Siswa Baru (<?= safe($row['no_formulir']) ?>)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/print_bukti_pendaftaran.css" />
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; }
+  </style>
 </head>
 <body>
-  <button id="btnPrint" onclick="window.print()" style="display:inline-block;margin:10px 0 16px 0;padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
-    <i class="fas fa-print"></i> Cetak / Simpan PDF
-  </button>
   <div class="container">
-    <!-- KOP SURAT: Logo kiri, info tetap center -->
     <div class="kop-surat-rel">
       <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
       <div class="kop-info-center">
@@ -183,7 +187,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       </div>
     </div>
     <div class="kop-garis"></div>
-
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
         <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
@@ -194,7 +197,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
       <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
-
 <div class="no-reg-bar">
   <div class="no-reg-row" style="margin-bottom:0;">
     <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
@@ -215,7 +217,6 @@ $no_invoice = $row['no_invoice'] ?? '';
     <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
   </div>
 <?php endif; ?>
-
     <table class="data-table">
       <caption>DATA CALON PESERTA DIDIK BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
@@ -227,7 +228,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
-
 <div class="status-keterangan-wrap">
   <table class="status-keterangan-table">
     <tr>
@@ -242,7 +242,6 @@ $no_invoice = $row['no_invoice'] ?? '';
     </tr>
   </table>
 </div>
-
     <table class="tagihan-table" style="margin-top:9px;">
       <tr>
         <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
@@ -262,7 +261,6 @@ $no_invoice = $row['no_invoice'] ?? '';
       </tr>
       <?php endif; ?>
     </table>
-
     <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
       <div style="margin:9px 0 2px 0;font-size:12.5px;font-weight:500;">Riwayat Pembayaran:</div>
       <table class="tagihan-table riwayat-bayar" style="margin-bottom:9px;">
@@ -296,18 +294,15 @@ $no_invoice = $row['no_invoice'] ?? '';
         <?php endforeach; ?>
       </table>
     <?php endif; ?>
-
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
-
     <div class="row-btm">
       <div class="info-contact">
         Informasi lebih lanjut hubungi:<br>
         Hotline SMA : <b>081511519271</b> (Bu Puji)
       </div>
     </div>
-
     <div class="note <?= $note_class ?>">
       <?php if ($status_pembayaran === 'Belum Bayar'): ?>
         <b>Catatan:</b><br>
@@ -326,7 +321,6 @@ $no_invoice = $row['no_invoice'] ?? '';
         Status pembayaran tidak diketahui.
       <?php endif; ?>
     </div>
-
     <div class="footer-ttd-kanan">
       <div class="ttd-block-kanan">
         <div class="ttd-tanggal-kanan">Jakarta, <?= tanggal_id(date('Y-m-d')) ?></div>
@@ -337,3 +331,56 @@ $no_invoice = $row['no_invoice'] ?? '';
   </div>
 </body>
 </html>
+<?php
+$html = ob_get_clean();
+
+$mpdf = new \Mpdf\Mpdf([
+    'mode' => 'utf-8',
+    'format' => 'A4',
+    'margin_left' => 8,
+    'margin_right' => 8,
+    'margin_top' => 10,
+    'margin_bottom' => 10,
+]);
+$mpdf->WriteHTML($html);
+$mpdf->Output($pdf_fullpath, \Mpdf\Output\Destination::FILE);
+
+// =====================
+// == KIRIM PDF KE WA ORTU ==
+// =====================
+$token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
+$secret_key = "PAtwrvlV";
+$wa_ortu = preg_replace('/\D/', '', $row['no_hp_ortu']);
+if (substr($wa_ortu, 0, 1) === '0') $wa_ortu = '62' . substr($wa_ortu, 1);
+if (substr($wa_ortu, 0, 2) !== '62') $wa_ortu = '62' . ltrim($wa_ortu, '0');
+
+$data = [
+    'phone' => $wa_ortu,
+    'document' => $pdf_url,
+    'caption' => 'Bukti Pendaftaran Siswa',
+];
+$curl = curl_init();
+curl_setopt($curl, CURLOPT_HTTPHEADER,
+    array(
+        "Authorization: $token.$secret_key",
+    )
+);
+curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+curl_setopt($curl, CURLOPT_URL,  "https://bdg.wablas.com/api/send-document");
+curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+
+$result = curl_exec($curl);
+$error = curl_error($curl);
+curl_close($curl);
+
+echo "<b>PDF sudah dibuat:</b> <a href='$pdf_url' target='_blank'>$pdf_url</a><br>";
+echo "<b>Nomor WA Ortu:</b> $wa_ortu<br>";
+if ($error) {
+    echo "<b>CURL Error:</b> $error";
+} else {
+    echo "<b>Wablas response:</b><pre>$result</pre>";
+}
+?>
