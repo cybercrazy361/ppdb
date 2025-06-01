@@ -95,7 +95,21 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
                     <?php endforeach; ?>
                     <span class="badge bg-dark filter-status-badge" data-status="">Semua</span>
                 </div>
-
+                
+                <!-- Tombol Download Template Excel -->
+                <a href="../assets/template/template_calon_pendaftar.xlsx" class="btn btn-success btn-sm mb-2" download>
+                  <i class="fas fa-download"></i> Download Template Excel
+                </a>
+                <!-- =========================== -->
+                <!--     Form Upload Excel       -->
+                <!-- =========================== -->
+                <div class="mb-3">
+                  <form id="formUploadExcel" enctype="multipart/form-data" method="post" action="upload_excel.php" class="d-flex align-items-center gap-2">
+                    <input type="file" name="excel_file" accept=".xlsx,.xls" class="form-control form-control-sm" required>
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload Excel</button>
+                  </form>
+                  <div id="uploadResult" class="mt-2"></div>
+                </div>
                 <div class="table-responsive">
                     <table id="calonTable" class="table table-hover table-bordered align-middle">
     <thead>
@@ -334,6 +348,32 @@ $('#calonTable').on('click', '.btn-kirim', function(){
   }, 'json');
 });
 });
+
+$('#formUploadExcel').on('submit', function(e){
+  e.preventDefault();
+  var formData = new FormData(this);
+  $('#uploadResult').html('<i class="fas fa-spinner fa-spin"></i> Upload...');
+  $.ajax({
+    url: 'upload_excel.php',
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: 'json',
+    success: function(res){
+      if(res.success){
+        $('#uploadResult').html('<span class="text-success">'+res.message+'</span>');
+        setTimeout(() => location.reload(), 1500);
+      } else {
+        $('#uploadResult').html('<span class="text-danger">'+res.message+'</span>');
+      }
+    },
+    error: function(){
+      $('#uploadResult').html('<span class="text-danger">Terjadi kesalahan server!</span>');
+    }
+  });
+});
+
 </script>
 </body>
 </html>
