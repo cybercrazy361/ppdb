@@ -163,7 +163,7 @@ $no_invoice = $row['no_invoice'] ?? '';
 </head>
 <body>
   <div style="margin-bottom:16px;">
-    <button id="btnPrint" onclick="window.print()" style="padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+    <button id="btnPrint" type="button" style="padding:7px 18px;font-size:14px;background:#213b82;color:#fff;border:none;border-radius:6px;cursor:pointer;">
       <i class="fas fa-print"></i> Cetak / Simpan PDF
     </button>
     <a href="generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>" target="_blank"
@@ -175,6 +175,18 @@ $no_invoice = $row['no_invoice'] ?? '';
       <i class="fab fa-whatsapp"></i> Kirim PDF ke WA Ortu
     </a>
   </div>
+
+  <!-- MODAL SUKSES GENERATE PDF -->
+  <div id="modalSuccess" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.30);">
+    <div style="background:#fff;max-width:350px;margin:110px auto;padding:28px 22px;border-radius:12px;box-shadow:0 5px 16px #213b8230;text-align:center;">
+      <div style="font-size:16px;font-weight:700;color:#1cc88a;margin-bottom:13px;">
+        PDF Bukti Pendaftaran Berhasil Dibuat!
+      </div>
+      <div id="pdfLinkBox" style="margin-bottom:18px"></div>
+      <button onclick="document.getElementById('modalSuccess').style.display='none'" style="background:#213b82;color:#fff;padding:7px 22px;border-radius:7px;border:none;cursor:pointer;font-size:14px">Tutup</button>
+    </div>
+  </div>
+
   <div class="container">
     <div class="kop-surat-rel">
       <img src="../assets/images/logo_trans.png" alt="Logo" class="kop-logo-abs" />
@@ -339,5 +351,35 @@ $no_invoice = $row['no_invoice'] ?? '';
       </div>
     </div>
   </div>
+
+  <script>
+    // Handle tombol Cetak/Generate
+    document.getElementById('btnPrint').onclick = function() {
+      this.disabled = true;
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuat PDF...';
+      fetch('generate_bukti_pendaftaran.php?id=<?= $row['id'] ?>', { method:'GET' })
+        .then(res => res.text())
+        .then(html => {
+          // Ambil URL PDF dari respons (harus ada echo <a href=...> di PHP generate)
+          let pdfLink = '';
+          const regex = /href=['"]([^'"]+\.pdf)['"]/i;
+          const m = html.match(regex);
+          if(m && m[1]) {
+            pdfLink = m[1];
+          }
+          document.getElementById('pdfLinkBox').innerHTML = pdfLink 
+            ? '<a href="'+pdfLink+'" target="_blank" style="font-size:15px;font-weight:600;color:#213b82;">Download PDF</a>'
+            : 'PDF berhasil dibuat. Silakan cek folder Bukti Pendaftaran.';
+          document.getElementById('modalSuccess').style.display = '';
+        })
+        .catch(e=>{
+          alert('Gagal membuat PDF!');
+        })
+        .finally(()=>{
+          document.getElementById('btnPrint').disabled = false;
+          document.getElementById('btnPrint').innerHTML = '<i class="fas fa-print"></i> Cetak / Simpan PDF';
+        });
+    };
+  </script>
 </body>
 </html>
