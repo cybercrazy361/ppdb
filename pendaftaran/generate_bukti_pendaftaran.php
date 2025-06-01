@@ -386,21 +386,24 @@ ob_start();
 <body>
   <div class="container">
 <!-- KOP SURAT -->
-<div style="display: flex; align-items: center; height: 95px; margin-bottom: 6px; position:relative;">
-  <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
-       alt="Logo"
-       style="width: 85px; height: 85px; object-fit:contain; margin-right: 25px;">
-  <div style="text-align: center; width:100%;">
-      <div style="font-size: 23px; font-weight: 700; letter-spacing: 1.1px;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
-      <div style="font-size: 18px; font-weight: 700;">SMA/SMK DHARMA KARYA</div>
-      <div style="font-size: 15px; font-weight: 700;"><b>Terakreditasi “A”</b></div>
-      <div style="font-size: 13px;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
-      <div style="font-size: 13px;">Telp. 021-7398578 / 7250224</div>
-  </div>
-</div>
-
+<table width="100%" style="margin-bottom: 6px;">
+  <tr>
+    <!-- LOGO -->
+    <td style="width:90px; text-align:left; vertical-align:middle;">
+      <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo"
+        style="width:80px; height:80px; object-fit:contain;">
+    </td>
+    <!-- KOP INFO -->
+    <td style="text-align:center; vertical-align:middle;">
+      <div style="font-size: 23px; font-weight: 700; letter-spacing: 1.1px; color: #163984;">YAYASAN PENDIDIKAN DHARMA KARYA</div>
+      <div style="font-size: 18px; font-weight: 700; color: #163984;">SMA/SMK DHARMA KARYA</div>
+      <div style="font-size: 15px; font-weight: 700; color: #163984;"><b>Terakreditasi “A”</b></div>
+      <div style="font-size: 13px; color: #163984;">Jalan Melawai XII No.2 Kav. 207A Kebayoran Baru Jakarta Selatan</div>
+      <div style="font-size: 13px; color: #163984;">Telp. 021-7398578 / 7250224</div>
+    </td>
+  </tr>
+</table>
 <div style="border-bottom: 2px solid #163984; margin: 0 10mm 18px 10mm; width: calc(100% - 20mm);"></div>
-
 
     <div class="header-content">
       <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
