@@ -161,8 +161,22 @@ elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
 $no_invoice = $row['no_invoice'] ?? '';
 
 // Lokasi simpan PDF
-$filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
-$save_path = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
+$no_formulir = safe($row['no_formulir']);
+$dir_pdf = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/';
+$pattern = $dir_pdf . "bukti_pendaftaran_{$no_formulir}_v*.pdf";
+
+// Cari versi terakhir
+$versi_tertinggi = 1;
+foreach (glob($pattern) as $file) {
+    if (preg_match('/_v(\d+)\.pdf$/', $file, $m)) {
+        $v = intval($m[1]);
+        if ($v > $versi_tertinggi) $versi_tertinggi = $v;
+    }
+}
+$versi_tertinggi++; // Versi baru untuk file baru
+$filename = "bukti_pendaftaran_{$no_formulir}_v{$versi_tertinggi}.pdf";
+$save_path = $dir_pdf . $filename;
+
 
 $mpdf = new \Mpdf\Mpdf([
     'format' => 'A4',
