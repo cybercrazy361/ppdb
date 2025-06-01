@@ -35,6 +35,22 @@ function validJenisKelamin($jk) {
     return null;
 }
 
+// Mapping pendidikan ortu agar konsisten sesuai di sistem
+function normalisasiPendidikan($input) {
+    $str = strtolower(str_replace(['-', '.', ','], ['', '', '/'], $input));
+    $str = preg_replace('/\s+/', '', $str); // hilangkan spasi
+
+    if (strpos($str, 'sd') !== false) return 'SD/Sederajat';
+    if (strpos($str, 'smp') !== false || strpos($str, 'mts') !== false) return 'SMP/Sederajat';
+    if (strpos($str, 'sma') !== false || strpos($str, 'smk') !== false || strpos($str, 'ma') !== false) return 'SMA/Sederajat';
+    if (strpos($str, 'd3') !== false) return 'D3';
+    if (strpos($str, 'd1') !== false || strpos($str, 'd2') !== false) return 'D3'; // semua D1/D2 ke D3
+    if (strpos($str, 's1') !== false) return 'S1';
+    if (strpos($str, 's2') !== false) return 'S2';
+    if (strpos($str, 's3') !== false) return 'S3';
+    return 'Lainnya';
+}
+
 // =========================
 // 1. Validasi session & role
 // =========================
@@ -100,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             $asal_sekolah     = trim($row[2] ?? '');
             $no_hp            = formatHp(trim($row[3] ?? ''));
             $alamat           = trim($row[4] ?? '');
-            $pendidikan_ortu  = trim($row[5] ?? '');
+            $pendidikan_ortu  = normalisasiPendidikan(trim($row[5] ?? ''));
             $no_hp_ortu       = formatHp(trim($row[6] ?? ''));
             $tanggal_daftar   = trim($row[7] ?? '');
 
