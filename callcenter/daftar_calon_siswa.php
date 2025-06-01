@@ -78,7 +78,7 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
             <div class="title">Progres Pendaftaran Calon Siswa</div>
             <div class="user-menu">
                 <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
-                <a href="../logout/logout_callcenter.php" class="btn-logout">Logout</a>
+                <a href="../callcenter/logout_callcenter.php" class="btn-logout">Logout</a>
             </div>
         </header>
         <div class="main-container">
