@@ -16,8 +16,7 @@ $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die('Data siswa tidak ditemukan.');
 
-$versi = 2; // Ambil dari database misal kolom `versi_pdf`
-$filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '_v' . $versi . '.pdf';
+$filename = 'bukti_pendaftaran_' . safe($row['no_formulir']) . '.pdf';
 $filepath = '/home/pakarinformatika.web.id/ppdbdk/pendaftaran/bukti/' . $filename;
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
 
