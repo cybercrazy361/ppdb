@@ -386,7 +386,7 @@ if ($http_code != 200) {
     echo "<b style='color:red'>File PDF belum bisa diakses publik (HTTP $http_code). Kirim WA dibatalkan.</b>";
     exit;
 }
-
+sleep(10);
 // === Kirim ke WA Ortu ===
 $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
 $secret_key = "PAtwrvlV";
