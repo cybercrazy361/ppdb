@@ -314,14 +314,14 @@ ob_start();
     margin-bottom: 12px;
   }
   table.data-table caption {
-    background: #e6edfa;
-    color: #1a53c7;      /* Warna biru lebih terang */
-    font-weight: 900;    /* Lebih tebal */
-    font-size: 18px;     /* Lebih besar */
-    padding: 10px 0;     /* Padding lebih besar */
-    border-radius: 6px 6px 0 0;
-    text-align: center;
-    text-transform: uppercase; /* Opsional: huruf kapital semua */
+    background: #e6edfa !important;
+    color: #1a53c7 !important;
+    font-weight: 900 !important;
+    font-size: 18px !important;
+    padding: 10px 0 !important;
+    border-radius: 6px 6px 0 0 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
 }
 
   table.data-table th,
