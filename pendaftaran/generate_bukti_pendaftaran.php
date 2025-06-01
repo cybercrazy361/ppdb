@@ -219,15 +219,12 @@ ob_start();
         .panel-keterangan {
             background: #f4f8fc;
             border: 1px solid #dde8f4;
-            border-radius: 8px;
-            padding: 16px 22px 13px 22px;
-            width: 500px;           /* atau 480px kalau mau lebih kecil */
-            max-width: 95vw;
-            margin-left: auto;
-            margin-right: auto;
+            border-radius: 4px;
+            padding: 10px 18px 7px 18px;
+            width: 92%;      
+            max-width: 650px; 
             box-sizing: border-box;
         }
-
         .pk-title { color: #2570c6; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
         .pk-icon { font-size: 15px; margin-right: 5px; color: #2570c6;}
         .pk-isi { color: #ca1818; font-size: 14px; font-weight: 500; }
@@ -322,7 +319,7 @@ ob_start();
     </table>
 
     <!-- KETERANGAN PEMBAYARAN (CENTER) -->
-
+    <div class="center-panel">
         <div class="panel-keterangan">
             <div class="pk-title"><span class="pk-icon">&#9432;</span> Keterangan Pembayaran</div>
             <div class="pk-isi">
@@ -335,6 +332,7 @@ ob_start();
                 <?php endif; ?>
             </div>
         </div>
+    </div>
 
     <!-- STATUS PEMBAYARAN -->
     <div class="panel-status-bayar">
