@@ -5,7 +5,6 @@ DirectoryIndex index.php index.html
     <FilesMatch "\.pdf$">
         ForceType application/pdf
         Header set Content-Type "application/pdf"
-        # Pastikan file PDF boleh diakses publik
         Require all granted
     </FilesMatch>
 </IfModule>
