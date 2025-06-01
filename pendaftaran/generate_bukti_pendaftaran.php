@@ -210,21 +210,21 @@ ob_start();
         .ps-value { color: #1976b6; font-weight: 500; font-size: 16px; }
         /* PANEL KETERANGAN PEMBAYARAN */
         .center-panel {
+            width: 100%;
             display: flex;
             justify-content: center;
+            align-items: center;
             margin: 0 auto 15px auto;
         }
-
         .panel-keterangan {
             background: #f4f8fc;
             border: 1px solid #dde8f4;
             border-radius: 4px;
             padding: 10px 18px 7px 18px;
-            width: 92%;      /* GANTI dari 100% ke 92% agar tidak full */
-            max-width: 650px; /* Maksimal 650px agar selalu elegan di tengah */
+            width: 92%;      
+            max-width: 650px; 
             box-sizing: border-box;
         }
-
         .pk-title { color: #2570c6; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
         .pk-icon { font-size: 15px; margin-right: 5px; color: #2570c6;}
         .pk-isi { color: #ca1818; font-size: 14px; font-weight: 500; }
@@ -318,22 +318,21 @@ ob_start();
         </tr>
     </table>
 
-    <!-- KETERANGAN PEMBAYARAN -->
- <div class="center-panel">
-    <div class="panel-keterangan">
-        <div class="pk-title"><span class="pk-icon">&#9432;</span> Keterangan Pembayaran</div>
-        <div class="pk-isi">
-            <?php if(count($tagihan)): ?>
-                <?php foreach($tagihan as $tg): ?>
-                    <?= safe($tg['jenis']) ?>: <b>Rp <?= number_format($tg['nominal'], 0, ',', '.') ?></b><br>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <span class="pk-merah">Belum ada tagihan yang diverifikasi.</span>
-            <?php endif; ?>
+    <!-- KETERANGAN PEMBAYARAN (CENTER) -->
+    <div class="center-panel">
+        <div class="panel-keterangan">
+            <div class="pk-title"><span class="pk-icon">&#9432;</span> Keterangan Pembayaran</div>
+            <div class="pk-isi">
+                <?php if(count($tagihan)): ?>
+                    <?php foreach($tagihan as $tg): ?>
+                        <?= safe($tg['jenis']) ?>: <b>Rp <?= number_format($tg['nominal'], 0, ',', '.') ?></b><br>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <span class="pk-merah">Belum ada tagihan yang diverifikasi.</span>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
-</div>
-
 
     <!-- STATUS PEMBAYARAN -->
     <div class="panel-status-bayar">
