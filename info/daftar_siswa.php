@@ -32,6 +32,10 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             font-weight: 700;
             color: #4a00e0;
         }
+        @media (max-width: 575.98px) {
+            .unit-card .card-title { font-size: 1.2rem; }
+            .unit-card { padding: 1.2rem 0 !important; }
+            }
     </style>
 </head>
 <body class="bg-light">
