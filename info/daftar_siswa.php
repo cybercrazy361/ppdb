@@ -141,7 +141,7 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
         </div>
         <?php endif; ?>
     </div>
-    <a href="index.php" class="btn btn-secondary mt-4">Kembali ke Beranda</a>
+    <a href="/" class="btn btn-secondary mt-4">Kembali ke Beranda</a>
 </div>
 
 <!-- Bootstrap & font-awesome -->
