@@ -45,7 +45,9 @@ body {
 
 .logo-gradient {
     background: linear-gradient(90deg, var(--clr-primary), var(--clr-accent));
+    background-clip: text;
     -webkit-background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
 }
 
@@ -113,7 +115,9 @@ body {
 
 .hero-section .text-gradient {
     background: linear-gradient(90deg, #fff, #c1c8ff 50%, #fff 95%);
+    background-clip: text;
     -webkit-background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
 }
 
@@ -215,7 +219,9 @@ body {
 /* 6. Informasi Section */
 #info .text-gradient {
     background: linear-gradient(90deg, var(--clr-primary), var(--clr-accent));
+    background-clip: text;
     -webkit-background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
 }
 
