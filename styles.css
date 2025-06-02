@@ -331,6 +331,10 @@ footer .social-icon:hover {
     border-radius: 14px;
     box-shadow: 0 3px 18px var(--shadow);
     transition: transform .24s, box-shadow .24s;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    height: 100%;
 }
 
 .team-card:hover {
@@ -353,19 +357,29 @@ footer .social-icon:hover {
     box-shadow: 0 2px 10px rgba(74, 0, 224, 0.11);
 }
 
+.team-list {
+    padding-left: 22px;
+    /* geser isi lebih kiri */
+    padding-right: 18px;
+    /* geser isi lebih ke dalam kanan */
+    margin-bottom: 0;
+    margin-top: 10px;
+    width: 100%;
+}
+
 .team-name {
     font-weight: 500;
     color: var(--clr-dark);
     text-align: left;
     word-break: break-all;
     font-size: 0.93em;
-    /* <<< atau 0.90em, 0.85em dst sesuai keinginan */
+    /* <<< kecil */
+    /* bisa tambahkan padding-left di sini jika mau nama lebih kiri lagi */
 }
 
 .team-list li {
     display: grid;
     grid-template-columns: 150px 1fr;
-    /* <--- DARI 130px JADI 150px */
     gap: 8px;
     align-items: center;
     font-size: 0.96rem;
@@ -375,28 +389,33 @@ footer .social-icon:hover {
     border-bottom: 1px dashed #f0f0f6;
 }
 
+.team-list li:last-child {
+    border-bottom: none;
+}
+
 .team-phone {
     font-weight: 400;
     color: #6c757d;
     font-size: 0.82em;
-    /* <<< lebih kecil, ubah sesuai keinginan (misal 0.8em, 0.75em, dst) */
     text-align: right;
     white-space: nowrap;
     letter-spacing: 0.01em;
-    /* opsional, biar tetap mudah dibaca */
     padding-right: 8px;
+    /* geser nomor HP lebih kiri */
 }
 
 @media (max-width: 576px) {
     .team-phone {
         font-size: 0.74em;
     }
-}
 
-@media (max-width: 576px) {
+    .team-list {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
     .team-list li {
         grid-template-columns: 110px 1fr;
-        /* responsive, dari 95px */
         font-size: 0.92rem;
         gap: 4px;
         padding: 1px 0;
