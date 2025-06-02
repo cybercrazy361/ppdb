@@ -353,21 +353,15 @@ footer .social-icon:hover {
     box-shadow: 0 2px 10px rgba(74, 0, 224, 0.11);
 }
 
-.team-list {
-    padding-left: 0;
-    margin-bottom: 0;
-    margin-top: 10px;
-    width: 100%;
-}
-
 .team-list li {
     display: grid;
-    grid-template-columns: 140px 1fr;
-    /* <--- kunci di sini! */
-    gap: 10px;
+    grid-template-columns: 130px 1fr;
+    /* (bisa adjust, misal 120px) */
+    gap: 8px;
     align-items: center;
-    font-size: 1.04rem;
-    padding: 2px 0;
+    font-size: 0.97rem;
+    /* <<< LEBIH KECIL */
+    padding: 1.5px 0;
     text-align: left;
     width: 100%;
     border-bottom: 1px dashed #f0f0f6;
@@ -378,7 +372,8 @@ footer .social-icon:hover {
 }
 
 .team-name {
-    font-weight: 600;
+    font-weight: 500;
+    /* <<< LEBIH TIPIS, biar tidak optik "tumpuk" */
     color: var(--clr-dark);
     text-align: left;
     word-break: break-all;
@@ -387,17 +382,16 @@ footer .social-icon:hover {
 .team-phone {
     font-weight: 400;
     color: #6c757d;
-    font-size: 0.99em;
+    font-size: 0.95em;
     text-align: right;
     white-space: nowrap;
 }
 
 @media (max-width: 576px) {
     .team-list li {
-        grid-template-columns: 105px 1fr;
-        /* responsive min lebar nama */
-        font-size: 0.98rem;
-        gap: 6px;
+        grid-template-columns: 95px 1fr;
+        font-size: 0.93rem;
+        gap: 4px;
         padding: 1px 0;
     }
 }
