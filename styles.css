@@ -366,6 +366,23 @@ footer .social-icon:hover {
     border-bottom: 1px dashed #f0f0f6;
 }
 
+.team-phone {
+    font-weight: 400;
+    color: #6c757d;
+    font-size: 0.82em;
+    /* <<< lebih kecil, ubah sesuai keinginan (misal 0.8em, 0.75em, dst) */
+    text-align: right;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+    /* opsional, biar tetap mudah dibaca */
+}
+
+@media (max-width: 576px) {
+    .team-phone {
+        font-size: 0.74em;
+    }
+}
+
 @media (max-width: 576px) {
     .team-list li {
         grid-template-columns: 110px 1fr;
