@@ -30,7 +30,7 @@ function safe($str) {
 // Lokasi & nama file
 $dir_pdf = __DIR__ . '/bukti/';
 if (!is_dir($dir_pdf)) mkdir($dir_pdf, 0777, true);
-$filename = "bukti_pendaftaran_CALON_{$id}_" . date('YmdHis') . ".pdf";
+$filename = "bukti_contoh_CALON_{$id}_" . date('YmdHis') . ".pdf";
 $save_path = $dir_pdf . $filename;
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/callcenter/bukti/" . $filename;
 
