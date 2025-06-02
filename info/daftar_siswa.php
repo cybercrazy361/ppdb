@@ -97,7 +97,6 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                     $res_nom->fetch();
                     $res_nom->close();
                 }
-
                 $sql = "SELECT s.*, 
                             COALESCE((SELECT SUM(jumlah) FROM pembayaran WHERE siswa_id=s.id),0) AS total_bayar,
                             (SELECT metode_pembayaran FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS metode_terakhir,
