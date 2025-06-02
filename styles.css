@@ -353,6 +353,15 @@ footer .social-icon:hover {
     box-shadow: 0 2px 10px rgba(74, 0, 224, 0.11);
 }
 
+.team-name {
+    font-weight: 500;
+    color: var(--clr-dark);
+    text-align: left;
+    word-break: break-all;
+    font-size: 0.93em;
+    /* <<< atau 0.90em, 0.85em dst sesuai keinginan */
+}
+
 .team-list li {
     display: grid;
     grid-template-columns: 150px 1fr;
