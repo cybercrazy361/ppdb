@@ -345,7 +345,16 @@
             <span class="chatbot-close" id="chatbotClose" title="Tutup"><i class="fas fa-times"></i></span>
         </div>
         <div class="chatbot-body" id="chatbotBody">
-            <div class="chatbot-msg bot">Halo! Ada yang bisa kami bantu tentang SPMB atau pendaftaran siswa baru?</div>
+            <div class="chatbot-msg bot">
+                Halo! Ada yang bisa kami bantu tentang pendaftaran siswa baru?
+                <div style="margin-top:8px;">
+                    <button class="chatbot-quick" data-q="Bagaimana cara daftar?">Daftar Siswa Baru</button>
+                    <button class="chatbot-quick" data-q="Apa saja syarat pendaftaran?">Syarat Pendaftaran</button>
+                    <button class="chatbot-quick" data-q="Bagaimana status pendaftaran saya?">Status
+                        Pendaftaran</button>
+                    <button class="chatbot-quick" data-q="Kontak panitia">Kontak Panitia</button>
+                </div>
+            </div>
         </div>
         <form class="chatbot-input-area" id="chatbotForm" autocomplete="off">
             <input type="text" id="chatbotInput" placeholder="Tulis pertanyaan Anda..." required />
@@ -354,7 +363,27 @@
     </div>
     <!-- /Floating Chatbot -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .chatbot-quick {
+            background: linear-gradient(90deg, #e8e5ff, #eafcff 80%);
+            border: 1px solid #d6d2ff;
+            color: #4a00e0;
+            border-radius: 7px;
+            padding: 4px 10px;
+            margin: 2px 4px 2px 0;
+            font-size: .97em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background .2s, color .2s;
+        }
+
+        .chatbot-quick:hover {
+            background: #4a00e0;
+            color: #fff;
+            border-color: #4a00e0;
+        }
+    </style>
+
     <script>
         // Floating Chatbot Logic
         const btn = document.getElementById('chatbotBtn');
@@ -364,6 +393,10 @@
         const form = document.getElementById('chatbotForm');
         const input = document.getElementById('chatbotInput');
 
+        // WhatsApp call center, ganti dengan nomor SPMB kamu
+        const waNumber = "6281511519271"; // <--- ganti sesuai kebutuhan!
+        const waUrl = `https://wa.me/${waNumber}?text=Halo%20Admin%20SPMB,%20saya%20ingin%20bertanya%20tentang%20pendaftaran.`;
+
         btn.onclick = function () {
             win.style.display = 'block';
             setTimeout(() => { input.focus(); }, 250);
@@ -371,31 +404,56 @@
         closeBtn.onclick = function () {
             win.style.display = 'none';
         };
+
+        // Quick Reply logic
+        body.addEventListener('click', function (e) {
+            if (e.target.classList.contains('chatbot-quick')) {
+                const question = e.target.getAttribute('data-q');
+                input.value = question;
+                form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            }
+        });
+
         form.onsubmit = function (e) {
             e.preventDefault();
             const msg = input.value.trim();
             if (!msg) return;
-            // User message
             body.innerHTML += `<div class="chatbot-msg user">${msg}</div>`;
             input.value = '';
-            // Auto scroll
             body.scrollTop = body.scrollHeight;
+
             setTimeout(() => {
-                // Dummy reply, ganti sesuai kebutuhan
-                let balasan = 'Terima kasih atas pertanyaannya. Tim kami akan segera menghubungi Anda, atau silakan cek FAQ SPMB.';
+                let balasan = 'Terima kasih atas pertanyaannya. Jika ingin bertanya langsung ke admin, <a href="' + waUrl + '" target="_blank" style="color:#25d366;font-weight:600">klik di sini untuk chat WhatsApp Call Center</a>.';
+
+                // Kata kunci - balasan langsung
                 if (/daftar|pendaftaran|bagaimana/i.test(msg)) balasan =
                     'Untuk mendaftar, silakan klik link berikut:<br><a href="http://bit.ly/DAFTAR-SPMB-2025" target="_blank" style="color:#4a00e0;font-weight:600">DAFTAR SPMB 2025</a>';
-                if (/syarat|dokumen/i.test(msg)) balasan = 'Syarat pendaftaran: fotokopi ijazah, KK, akta kelahiran, dan pas foto. Dokumen diupload saat mendaftar.';
-                if (/kontak|hubungi/i.test(msg)) balasan = 'Hubungi tim SPMB di nomor pada halaman informasi, atau klik menu "Call Center".';
+                if (/syarat|dokumen/i.test(msg)) balasan =
+                    'Syarat pendaftaran: fotokopi ijazah, KK, akta kelahiran, dan pas foto. Semua dokumen diupload saat mendaftar.';
+                if (/status|cek/i.test(msg)) balasan =
+                    'Cek status pendaftaran Anda melalui menu login atau hubungi call center SPMB.<br><a href="' + waUrl + '" target="_blank" style="color:#25d366;font-weight:600">Chat WhatsApp Call Center</a>';
+                if (/kontak|hubungi|panitia|call\s*center/i.test(msg)) balasan =
+                    `Hubungi tim SPMB lewat WhatsApp berikut:<br>
+                <a href="${waUrl}" target="_blank" style="color:#25d366;font-weight:600">Chat WA Call Center</a><br>
+                Atau langsung ke: <br>
+                Tri Puji: 0815-1151-9271<br>
+                Pak Rio: 0812-8888-2233`;
+
+                // Fallback jika pertanyaan tidak terdeteksi
+                if (!/daftar|pendaftaran|bagaimana|syarat|dokumen|status|cek|kontak|hubungi|panitia|call\s*center/i.test(msg)) {
+                    balasan += '<br><br><span style="font-size:0.97em;">Jika jawaban belum sesuai, klik tombol di atas atau hubungi <a href="' + waUrl + '" target="_blank" style="color:#25d366;font-weight:600">Call Center WA</a>.</span>';
+                }
                 body.innerHTML += `<div class="chatbot-msg bot">${balasan}</div>`;
                 body.scrollTop = body.scrollHeight;
-            }, 700);
+            }, 500);
         };
+
         // ESC key to close chatbot
         document.addEventListener('keydown', function (e) {
             if (e.key === "Escape") win.style.display = 'none';
         });
     </script>
+
 </body>
 
 </html>
