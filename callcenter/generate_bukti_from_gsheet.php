@@ -20,6 +20,8 @@ file_put_contents(__DIR__.'/bukti/debug.txt', "PROSES PDF UNTUK ID: $id\n", FILE
 
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
+    // Ambil hanya bagian tanggal, buang waktu jika ada
+    $tgl = substr($tgl, 0, 10); // Ambil 'Y-m-d'
     $bulan = [
         '01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni',
         '07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'
@@ -27,6 +29,7 @@ function tanggal_id($tgl) {
     $p = explode('-', $tgl);
     return isset($p[2]) ? $p[2] . ' ' . $bulan[$p[1]] . ' ' . $p[0] : $tgl;
 }
+
 function safe($str) {
     return htmlspecialchars($str ?? '-');
 }
@@ -34,7 +37,7 @@ function safe($str) {
 // Lokasi & nama file
 $dir_pdf = __DIR__ . '/bukti/';
 if (!is_dir($dir_pdf)) mkdir($dir_pdf, 0777, true);
-$filename = "bukti_contoh_CALON_{$id}_" . date('YmdHis') . ".pdf";
+$filename = "bukti__{$id}_" . date('YmdHis') . ".pdf";
 $save_path = $dir_pdf . $filename;
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/callcenter/bukti/" . $filename;
 
