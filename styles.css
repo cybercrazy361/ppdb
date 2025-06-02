@@ -362,7 +362,8 @@ footer .social-icon:hover {
 
 .team-list li {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 140px 1fr;
+    /* <--- kunci di sini! */
     gap: 10px;
     align-items: center;
     font-size: 1.04rem;
@@ -392,18 +393,9 @@ footer .social-icon:hover {
 }
 
 @media (max-width: 576px) {
-    .team-card {
-        padding: 1.1rem 0.7rem !important;
-    }
-
-    .team-avatar {
-        width: 42px;
-        height: 42px;
-        font-size: 1.25rem;
-        margin-bottom: 8px;
-    }
-
     .team-list li {
+        grid-template-columns: 105px 1fr;
+        /* responsive min lebar nama */
         font-size: 0.98rem;
         gap: 6px;
         padding: 1px 0;
