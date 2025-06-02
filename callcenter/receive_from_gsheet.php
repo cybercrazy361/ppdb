@@ -47,11 +47,16 @@ function normalisasiPendidikan($input) {
 }
 function parseTanggalDaftar($tgl) {
     $tgl = trim($tgl);
-    if (preg_match('#^\d{1,2}/\d{1,2}/\d{2,4}#', $tgl)) {
-        $arr = explode('/', $tgl);
-        if (strlen($arr[2]) == 2) $arr[2] = '20' . $arr[2];
-        return sprintf('%04d-%02d-%02d', $arr[2], $arr[1], $arr[0]);
+    // Jika format: m/d/Y atau m/d/yy (dari Google Sheet/Forms, region default US)
+    if (preg_match('#^(\d{1,2})/(\d{1,2})/(\d{2,4})$#', $tgl, $m)) {
+        // US region biasanya: month/day/year
+        $mth = intval($m[1]);
+        $day = intval($m[2]);
+        $yr  = intval($m[3]);
+        if ($yr < 100) $yr += 2000;
+        return sprintf('%04d-%02d-%02d', $yr, $mth, $day);
     }
+    // Jika format: yyyy-mm-dd
     if (preg_match('#^\d{4}-\d{2}-\d{2}#', $tgl)) return $tgl;
     $time = strtotime($tgl);
     if ($time) return date('Y-m-d', $time);
