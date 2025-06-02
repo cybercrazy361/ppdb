@@ -1,19 +1,17 @@
-/* styles.css – Modern & Professional Refresh */
-
-/* 1. Theme Variables */
+/* 1. Variables */
 :root {
     --clr-primary: #4a00e0;
     --clr-secondary: #8e2de2;
     --clr-accent: #00c6ff;
     --clr-bg: #f8f9fa;
-    --clr-white: #ffffff;
     --clr-dark: #212529;
+    --clr-white: #ffffff;
     --shadow: rgba(0, 0, 0, 0.09);
     --font-base: 'Inter', sans-serif;
-    --radius-main: 12px;
+    --radius-main: 14px;
 }
 
-/* 2. Global Reset & Base */
+/* 2. Reset & Base */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -31,29 +29,36 @@ body {
     color: var(--clr-dark);
     line-height: 1.6;
     min-height: 100vh;
-    margin-top: 70px;
-    /* space for fixed navbar */
     overflow-x: hidden;
 }
 
+.bg-main {
+    background: var(--clr-bg);
+}
+
 /* 3. Navbar */
-.navbar {
-    background: var(--clr-white) !important;
-    box-shadow: 0 2px 8px var(--shadow);
-    font-family: var(--font-base);
+.nav-blur {
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(6px);
+    border-bottom: 1.5px solid #e4e2fa;
+}
+
+.logo-gradient {
+    background: linear-gradient(90deg, var(--clr-primary), var(--clr-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .navbar-brand {
-    font-weight: 700;
-    color: var(--clr-primary) !important;
-    letter-spacing: 1px;
+    font-weight: 800;
     font-size: 1.7rem;
+    letter-spacing: 1px;
 }
 
 .navbar-nav .nav-link {
     color: var(--clr-dark) !important;
-    margin-left: .75rem;
     font-weight: 500;
+    margin-left: .75rem;
     border-radius: 4px;
     transition: background .3s, color .3s;
     padding: .4rem .9rem;
@@ -66,120 +71,8 @@ body {
     box-shadow: 0 2px 8px var(--shadow);
 }
 
-/* Navbar toggler for mobile */
-.navbar-toggler {
-    border: none;
-    outline: none;
-}
-
-.navbar-toggler:focus {
-    box-shadow: 0 0 0 2px var(--clr-primary) !important;
-}
-
-/* 4. Hero / Jumbotron */
-header.jumbotron {
-    position: relative;
-    background: linear-gradient(135deg, var(--clr-primary), var(--clr-secondary));
-    color: var(--clr-white);
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, .2);
-    padding: 4rem 2rem 3rem 2rem;
-    border-radius: var(--radius-main);
-    box-shadow: 0 4px 16px var(--shadow);
-    margin: 2rem 1rem 2.5rem 1rem;
-    overflow: hidden;
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-header.jumbotron::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url('banner.jpg') center/cover no-repeat;
-    opacity: 0.18;
-    border-radius: var(--radius-main);
-    z-index: 0;
-    filter: brightness(0.9);
-}
-
-header.jumbotron .container {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    text-align: center;
-}
-
-header.jumbotron h1 {
-    font-size: 2.8rem;
-    font-weight: 700;
-    letter-spacing: .5px;
-    margin-bottom: 1rem;
-}
-
-header.jumbotron p {
-    font-size: 1.2rem;
-    color: #f3f3f3;
-    margin-bottom: 0;
-}
-
-/* 5. Card Login */
-.custom-card {
-    background: var(--clr-white);
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 14px var(--shadow);
-    transition: transform .3s, box-shadow .3s;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    min-height: 270px;
-    padding: 1.6rem 1.4rem;
-}
-
-.custom-card:hover {
-    transform: translateY(-8px) scale(1.025);
-    box-shadow: 0 12px 28px var(--shadow);
-    border: 1px solid var(--clr-accent);
-}
-
-.custom-card .card-icon {
-    font-size: 2.6rem;
-    color: var(--clr-primary);
-    background: #f3f3fc;
-    border-radius: 50%;
-    width: 62px;
-    height: 62px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.1rem auto;
-    box-shadow: 0 2px 10px rgba(74, 0, 224, 0.07);
-    transition: color .3s, background .3s, transform .3s;
-}
-
-.custom-card:hover .card-icon {
-    color: var(--clr-secondary);
-    background: #e0f4ff;
-    transform: scale(1.13) rotate(-4deg);
-}
-
-.custom-card .card-title {
-    font-weight: 600;
-    color: var(--clr-primary);
-    margin-bottom: .6rem;
-}
-
-.custom-card .card-text {
-    color: #666;
-    font-size: 1.04rem;
-    margin-bottom: 1.5rem;
-    flex: 1;
-}
-
-/* 6. Buttons */
-.btn-primary {
+/* Button Main Gradient */
+.btn-main {
     background: linear-gradient(45deg, var(--clr-secondary), var(--clr-accent)) !important;
     border: none;
     font-weight: 600;
@@ -187,21 +80,143 @@ header.jumbotron p {
     padding: .54rem 1.3rem;
     border-radius: 8px;
     box-shadow: 0 3px 14px rgba(76, 0, 255, 0.09);
-    transition: transform .3s, background .3s, box-shadow .3s;
     color: var(--clr-white);
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    transition: transform .3s, background .3s, box-shadow .3s;
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
+.btn-main:hover,
+.btn-main:focus {
     background: linear-gradient(45deg, var(--clr-accent), var(--clr-secondary)) !important;
     color: var(--clr-white) !important;
-    transform: scale(1.07);
-    box-shadow: 0 6px 22px rgba(0, 198, 255, 0.18);
+    transform: scale(1.06);
+    box-shadow: 0 6px 22px rgba(0, 198, 255, 0.15);
     outline: none;
     text-decoration: none;
+}
+
+/* 4. Hero Section */
+.hero-section {
+    min-height: 400px;
+    padding-top: 110px;
+    padding-bottom: 50px;
+    background: linear-gradient(115deg, #8e2de2 0%, #4a00e0 65%, #00c6ff 100%);
+    position: relative;
+    z-index: 1;
+    border-radius: 0 0 50px 50px / 0 0 32px 32px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .08);
+}
+
+.hero-section .text-gradient {
+    background: linear-gradient(90deg, #fff, #c1c8ff 50%, #fff 95%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-section .btn-main {
+    font-size: 1.18rem;
+    font-weight: 700;
+    padding: .72rem 2.3rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+}
+
+.bg-shape {
+    position: absolute;
+    right: -80px;
+    bottom: -120px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #00c6ff55 40%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Fade in animation */
+.animate-fadein {
+    animation: fadeInUp 1s cubic-bezier(.19, 1, .22, 1);
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 5. Card Login */
+.custom-card {
+    background: var(--clr-white);
+    border: none;
+    border-radius: 13px;
+    box-shadow: 0 4px 14px var(--shadow);
+    transition: transform .3s, box-shadow .3s, border .3s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 260px;
+    padding: 1.6rem 1.2rem;
+}
+
+.custom-card:hover {
+    transform: translateY(-7px) scale(1.04);
+    box-shadow: 0 12px 28px var(--shadow);
+    border: 1px solid var(--clr-accent);
+}
+
+.custom-card .card-icon {
+    font-size: 2.8rem;
+    color: var(--clr-primary);
+    background: #f3f3fc;
+    border-radius: 50%;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.05rem auto;
+    box-shadow: 0 2px 10px rgba(74, 0, 224, 0.09);
+    transition: color .3s, background .3s, transform .3s;
+}
+
+.custom-card:hover .card-icon {
+    color: var(--clr-secondary);
+    background: #e0f4ff;
+    transform: scale(1.12) rotate(-4deg);
+}
+
+.custom-card .card-title {
+    font-weight: 600;
+    color: var(--clr-primary);
+    margin-bottom: .6rem;
+    font-size: 1.14rem;
+}
+
+.custom-card .card-text {
+    color: #666;
+    font-size: 1.04rem;
+    margin-bottom: 1.45rem;
+    flex: 1;
+}
+
+.custom-card .btn-main {
+    margin-top: auto;
+}
+
+/* 6. Informasi Section */
+#info .text-gradient {
+    background: linear-gradient(90deg, var(--clr-primary), var(--clr-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* 7. Footer */
@@ -209,7 +224,7 @@ footer {
     background: var(--clr-dark);
     color: var(--clr-white);
     text-align: center;
-    padding: 2rem 1rem 1.2rem 1rem;
+    padding: 2rem 1rem 1.1rem 1rem;
     font-size: 1rem;
     margin-top: auto;
     border-top: 3px solid var(--clr-primary);
@@ -218,7 +233,6 @@ footer {
 footer p {
     margin: .45rem 0;
     letter-spacing: 0.1px;
-    font-size: 1rem;
 }
 
 footer .social-icon {
@@ -226,47 +240,50 @@ footer .social-icon {
     margin: 0 .46rem;
     font-size: 1.3rem;
     vertical-align: middle;
-    transition: transform .26s, color .22s;
+    transition: transform .23s, color .19s;
 }
 
 footer .social-icon:hover {
     color: var(--clr-accent);
-    transform: scale(1.19) rotate(-10deg);
+    transform: scale(1.15) rotate(-7deg);
 }
 
-/* 8. Misc Utility & Responsive */
+/* 8. Responsive */
 @media (max-width: 992px) {
-    .row-cols-lg-4>* {
+    .row-cols-lg-5>* {
         flex: 0 0 50%;
         max-width: 50%;
+    }
+
+    .hero-section {
+        padding-top: 90px;
+        min-height: 290px;
     }
 }
 
 @media (max-width: 768px) {
-    header.jumbotron {
-        padding: 2.1rem .5rem;
-        margin: 1rem .2rem 1.5rem .2rem;
-        min-height: 180px;
-    }
-
-    header.jumbotron h1 {
-        font-size: 1.55rem;
-    }
-
-    header.jumbotron p {
-        font-size: .99rem;
+    .hero-section {
+        padding-top: 60px;
+        padding-bottom: 30px;
+        min-height: 170px;
     }
 
     .custom-card .card-icon {
-        font-size: 2rem;
-        width: 48px;
-        height: 48px;
-        margin-bottom: .7rem;
+        font-size: 2.1rem;
+        width: 44px;
+        height: 44px;
     }
 
     .custom-card {
-        min-height: 220px;
-        padding: 1rem 1rem;
+        min-height: 180px;
+        padding: 1rem .8rem;
+    }
+
+    .bg-shape {
+        width: 180px;
+        height: 180px;
+        right: -30px;
+        bottom: -40px;
     }
 }
 
@@ -277,16 +294,21 @@ footer .social-icon:hover {
     }
 
     .custom-card {
-        margin-bottom: 1.2rem;
-        min-height: 170px;
+        margin-bottom: 1.05rem;
+        min-height: 130px;
     }
 
     footer {
-        padding: 1.3rem .3rem .9rem .3rem;
-        font-size: .97rem;
+        padding: 1.1rem .2rem .6rem .2rem;
+        font-size: .98rem;
+    }
+
+    .hero-section {
+        border-radius: 0 0 25px 25px / 0 0 18px 18px;
     }
 }
 
+/* Scrollbar */
 ::-webkit-scrollbar {
     width: 7px;
     background: var(--clr-bg);
