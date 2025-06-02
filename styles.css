@@ -325,6 +325,7 @@ footer .social-icon:hover {
     border-radius: 10px;
 }
 
+/* === TEAM CARD & LIST: GRID FIXED === */
 .team-card {
     background: var(--clr-white);
     border-radius: 14px;
@@ -352,19 +353,42 @@ footer .social-icon:hover {
     box-shadow: 0 2px 10px rgba(74, 0, 224, 0.11);
 }
 
-.team-card ul {
+.team-list {
     padding-left: 0;
     margin-bottom: 0;
-    margin-top: 8px;
+    margin-top: 10px;
+    width: 100%;
 }
 
-.team-card ul li {
-    padding: 2px 0;
-    font-size: 1.01rem;
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
+.team-list li {
+    display: grid;
+    grid-template-columns: 1fr auto;
     gap: 10px;
+    align-items: center;
+    font-size: 1.04rem;
+    padding: 2px 0;
+    text-align: left;
+    width: 100%;
+    border-bottom: 1px dashed #f0f0f6;
+}
+
+.team-list li:last-child {
+    border-bottom: none;
+}
+
+.team-name {
+    font-weight: 600;
+    color: var(--clr-dark);
+    text-align: left;
+    word-break: break-all;
+}
+
+.team-phone {
+    font-weight: 400;
+    color: #6c757d;
+    font-size: 0.99em;
+    text-align: right;
+    white-space: nowrap;
 }
 
 @media (max-width: 576px) {
@@ -379,7 +403,9 @@ footer .social-icon:hover {
         margin-bottom: 8px;
     }
 
-    .team-card ul li {
+    .team-list li {
         font-size: 0.98rem;
+        gap: 6px;
+        padding: 1px 0;
     }
 }
