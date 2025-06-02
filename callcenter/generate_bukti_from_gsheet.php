@@ -1,4 +1,6 @@
 <?php
+file_put_contents(__DIR__.'/bukti/debug.txt', date('c').' '.json_encode($_POST).PHP_EOL, FILE_APPEND);
+
 date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 require_once __DIR__ . '/../vendor/autoload.php'; // mPDF
@@ -13,6 +15,8 @@ $stmt->execute();
 $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 if (!$row) die(json_encode(['success'=>false, 'message'=>'Data tidak ditemukan.']));
+
+file_put_contents(__DIR__.'/bukti/debug.txt', "PROSES PDF UNTUK ID: $id\n", FILE_APPEND);
 
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
@@ -182,6 +186,7 @@ curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 $result = curl_exec($curl);
 $err = curl_error($curl);
 curl_close($curl);
+file_put_contents(__DIR__.'/bukti/debug.txt', "WA RESPONSE: ".$result.PHP_EOL, FILE_APPEND);
 
 if ($err) {
     echo json_encode(['success'=>false, 'message'=>"PDF ok, tapi gagal WA: $err", 'pdf'=>$pdf_url]);
