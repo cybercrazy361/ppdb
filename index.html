@@ -13,6 +13,163 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* --- Chatbot Floating --- */
+        .chatbot-float-btn {
+            position: fixed;
+            right: 22px;
+            bottom: 30px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #4a00e0, #00c6ff 80%);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0 6px 24px rgba(74, 0, 224, .13);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 2.2rem;
+            cursor: pointer;
+            border: none;
+            transition: background .3s, transform .19s;
+        }
+
+        .chatbot-float-btn:hover {
+            background: linear-gradient(135deg, #00c6ff, #8e2de2 85%);
+            transform: scale(1.06) rotate(-8deg);
+        }
+
+        .chatbot-window {
+            display: none;
+            position: fixed;
+            bottom: 105px;
+            right: 22px;
+            z-index: 10000;
+            width: 340px;
+            max-width: 94vw;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(74, 0, 224, 0.19);
+            border: 1.5px solid #e6e6f8;
+            overflow: hidden;
+            animation: chatbot-pop .5s cubic-bezier(.19, 1, .22, 1);
+        }
+
+        @keyframes chatbot-pop {
+            0% {
+                transform: scale(0.7) translateY(80px);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.04) translateY(-8px);
+            }
+
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .chatbot-header {
+            background: linear-gradient(90deg, #4a00e0, #00c6ff 80%);
+            color: #fff;
+            padding: 15px 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chatbot-header i {
+            font-size: 1.3em;
+        }
+
+        .chatbot-close {
+            margin-left: auto;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.3em;
+        }
+
+        .chatbot-body {
+            background: #fff;
+            padding: 14px 12px;
+            min-height: 120px;
+            max-height: 260px;
+            overflow-y: auto;
+            font-size: 1.07rem;
+        }
+
+        .chatbot-msg {
+            background: #f3f3fc;
+            border-radius: 8px 12px 12px 0;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            max-width: 85%;
+            word-break: break-word;
+        }
+
+        .chatbot-msg.bot {
+            background: linear-gradient(135deg, #e6e8fd, #eafcff 75%);
+            color: #223;
+            margin-right: auto;
+        }
+
+        .chatbot-msg.user {
+            background: linear-gradient(135deg, #4a00e0 70%, #00c6ff 100%);
+            color: #fff;
+            margin-left: auto;
+            border-radius: 12px 8px 0 12px;
+            text-align: right;
+        }
+
+        .chatbot-input-area {
+            display: flex;
+            padding: 8px;
+            background: #f7f9fd;
+            border-top: 1px solid #ece8fc;
+            gap: 5px;
+        }
+
+        .chatbot-input-area input {
+            border: none;
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            outline: none;
+            background: #f0f3ff;
+        }
+
+        .chatbot-input-area button {
+            border: none;
+            background: #4a00e0;
+            color: #fff;
+            padding: 0 16px;
+            border-radius: 8px;
+            font-size: 1.18em;
+            transition: background .21s;
+        }
+
+        .chatbot-input-area button:hover {
+            background: #00c6ff;
+        }
+
+        @media (max-width: 576px) {
+            .chatbot-window {
+                width: 99vw;
+                right: 0;
+                bottom: 0;
+            }
+
+            .chatbot-float-btn {
+                right: 16px;
+                bottom: 18px;
+            }
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-main">
@@ -69,16 +226,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="col">
-                <div class="card custom-card text-center h-100">
-                    <div class="card-body d-flex flex-column">
-                        <i class="fas fa-user-tie card-icon mb-3"></i>
-                        <h5 class="card-title">Pimpinan</h5>
-                        <p class="card-text">Unit SMA &amp; SMK.</p>
-                        <a href="pimpinan/login_pimpinan" class="btn btn-main mt-auto">Login Pimpinan</a>
-                    </div>
-                </div>
-            </div> -->
             <div class="col">
                 <div class="card custom-card text-center h-100">
                     <div class="card-body d-flex flex-column">
@@ -187,7 +334,68 @@
             </div>
         </div>
     </footer>
+
+    <!-- Floating Chatbot -->
+    <button class="chatbot-float-btn" id="chatbotBtn" aria-label="ChatBot">
+        <i class="fas fa-comments"></i>
+    </button>
+    <div class="chatbot-window" id="chatbotWindow" aria-live="polite">
+        <div class="chatbot-header">
+            <i class="fas fa-robot"></i> ChatBot SPMB
+            <span class="chatbot-close" id="chatbotClose" title="Tutup"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="chatbot-body" id="chatbotBody">
+            <div class="chatbot-msg bot">Halo! Ada yang bisa kami bantu tentang SPMB atau pendaftaran siswa baru?</div>
+        </div>
+        <form class="chatbot-input-area" id="chatbotForm" autocomplete="off">
+            <input type="text" id="chatbotInput" placeholder="Tulis pertanyaan Anda..." required />
+            <button type="submit" title="Kirim"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+    <!-- /Floating Chatbot -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Floating Chatbot Logic
+        const btn = document.getElementById('chatbotBtn');
+        const win = document.getElementById('chatbotWindow');
+        const closeBtn = document.getElementById('chatbotClose');
+        const body = document.getElementById('chatbotBody');
+        const form = document.getElementById('chatbotForm');
+        const input = document.getElementById('chatbotInput');
+
+        btn.onclick = function () {
+            win.style.display = 'block';
+            setTimeout(() => { input.focus(); }, 250);
+        };
+        closeBtn.onclick = function () {
+            win.style.display = 'none';
+        };
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            const msg = input.value.trim();
+            if (!msg) return;
+            // User message
+            body.innerHTML += `<div class="chatbot-msg user">${msg}</div>`;
+            input.value = '';
+            // Auto scroll
+            body.scrollTop = body.scrollHeight;
+            setTimeout(() => {
+                // Dummy reply, ganti sesuai kebutuhan
+                let balasan = 'Terima kasih atas pertanyaannya. Tim kami akan segera menghubungi Anda, atau silakan cek FAQ SPMB.';
+                if (/daftar|pendaftaran|bagaimana/i.test(msg)) balasan =
+                    'Untuk mendaftar, silakan klik link berikut:<br><a href="http://bit.ly/DAFTAR-SPMB-2025" target="_blank" style="color:#4a00e0;font-weight:600">DAFTAR SPMB 2025</a>';
+                if (/syarat|dokumen/i.test(msg)) balasan = 'Syarat pendaftaran: fotokopi ijazah, KK, akta kelahiran, dan pas foto. Dokumen diupload saat mendaftar.';
+                if (/kontak|hubungi/i.test(msg)) balasan = 'Hubungi tim SPMB di nomor pada halaman informasi, atau klik menu "Call Center".';
+                body.innerHTML += `<div class="chatbot-msg bot">${balasan}</div>`;
+                body.scrollTop = body.scrollHeight;
+            }, 700);
+        };
+        // ESC key to close chatbot
+        document.addEventListener('keydown', function (e) {
+            if (e.key === "Escape") win.style.display = 'none';
+        });
+    </script>
 </body>
 
 </html>
