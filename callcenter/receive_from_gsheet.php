@@ -116,7 +116,20 @@ $stmt->bind_param(
     $tanggal_daftar
 );
 if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => 'Data berhasil disimpan!']);
+    $insert_id = $stmt->insert_id;
+
+    // --- CALL PDF GENERATE & WA KIRIM OTOMATIS ---
+    $url = "https://ppdbdk.pakarinformatika.web.id/callcenter/generate_bukti_from_gsheet.php";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['id' => $insert_id]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 7);
+    $res = curl_exec($ch);
+    curl_close($ch);
+
+    echo json_encode(['success' => true, 'message' => 'Data berhasil disimpan & PDF dikirim!', 'id' => $insert_id]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Gagal simpan: '.$stmt->error]);
 }
