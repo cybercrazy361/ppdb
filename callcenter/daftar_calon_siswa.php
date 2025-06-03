@@ -1,7 +1,5 @@
 <?php
 session_start();
-echo "<pre>SESSION UNIT: [" . $unit . "]</pre>";
-
 include '../database_connection.php';
 
 // 1) Validasi login
@@ -9,26 +7,24 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
     header('Location: login_callcenter.php');
     exit();
 }
+$unit = $_SESSION['unit'];
 
 // 2) Ambil unit petugas
 $username = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT TRIM(UPPER(unit)) FROM petugas WHERE username = ?");
+$stmt = $conn->prepare("SELECT unit FROM petugas WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $stmt->bind_result($unit);
 $stmt->fetch();
 $stmt->close();
 
-// Standarisasi unit ke uppercase dan trim
-$unit = trim(strtoupper($unit));
-
 // 3) Query data calon_pendaftar (TANPA EMAIL)
 $sql = "SELECT id, nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, pekerjaan_ortu, no_hp_ortu, pilihan, tanggal_daftar, status, notes
         FROM calon_pendaftar " .
-       ($unit !== 'YAYASAN' ? "WHERE TRIM(UPPER(pilihan)) = ? " : "") .
+       ($unit !== 'Yayasan' ? "WHERE pilihan = ? " : "") .
        "ORDER BY id DESC";
 $stmt = $conn->prepare($sql);
-if ($unit !== 'YAYASAN') {
+if ($unit !== 'Yayasan') {
     $stmt->bind_param("s", $unit);
 }
 $stmt->execute();
