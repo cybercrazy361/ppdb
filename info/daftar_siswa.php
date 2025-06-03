@@ -195,7 +195,25 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                     <td><?= htmlspecialchars($row['nama']) ?></td>
                     <td><?= substr($row['jenis_kelamin'], 0, 1) ?></td>
                     <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-                    <td><span class="badge bg-<?= $badge ?>"><?= htmlspecialchars($status) ?></span></td>
+                    <td>
+                        <?php
+                        $status_ppdb = '-';
+                        if (!empty($row['calon_pendaftar_id'])) {
+                            $res_status = $conn->prepare("SELECT status FROM calon_pendaftar WHERE id=? LIMIT 1");
+                            $res_status->bind_param("i", $row['calon_pendaftar_id']);
+                            $res_status->execute();
+                            $res_status->bind_result($status_ppdb);
+                            $res_status->fetch();
+                            $res_status->close();
+                            $status_ppdb = trim(strtolower($status_ppdb));
+                        }
+                        if ($status_ppdb === 'ppdb bersama') {
+                            echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
+                        } else {
+                            echo '<span class="badge bg-'.$badge.'">'.htmlspecialchars($status).'</span>';
+                        }
+                        ?>
+                        </td>
                     <td><?= htmlspecialchars($metode) ?></td>
                     <td><?= htmlspecialchars($row['tanggal_pendaftaran']) ?></td>
                 </tr>
