@@ -21,6 +21,9 @@ file_put_contents(__DIR__.'/bukti/debug.txt', "PROSES PDF UNTUK ID: $id\n", FILE
 $maps_url = "https://maps.app.goo.gl/izLRvezWYUbgx2mu5";
 $qr_url = "https://chart.googleapis.com/chart?chs=110x110&cht=qr&chl=" . urlencode($maps_url);
 
+// Download gambar QR dan encode ke base64 (langsung siap tempel di <img>)
+$qr_image_data = @file_get_contents($qr_url);
+$qr_base64 = $qr_image_data ? 'data:image/png;base64,' . base64_encode($qr_image_data) : '';
 
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
@@ -132,7 +135,7 @@ ob_start();
     </div>
 
     <div style="font-weight:bold; font-size:18px; color:#1a53c7; text-align:center; margin-bottom:5px; text-transform:uppercase;">
-      DATA CALON PESERTA DIDIK BARU
+      DATA CALON MURID BARU
     </div>
     <table class="data-table">
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_daftar']) ?></td></tr>
@@ -162,7 +165,11 @@ ob_start();
 <div style="width:100%;margin-top:28px;text-align:right;font-size:12px;">
   <div style="text-align:right;margin-bottom:8px;">
     <div style="font-size:11px;color:#163984;font-weight:bold;margin-bottom:2px;">Scan Lokasi</div>
-    <img src="<?= $qr_url ?>" alt="QR Lokasi Sekolah" style="height:64px;width:64px;border:1.5px solid #163984;padding:2px;">
+    <?php if ($qr_base64): ?>
+      <img src="<?= $qr_base64 ?>" alt="QR Lokasi Sekolah" style="height:64px;width:64px;border:1.5px solid #163984;padding:2px;">
+    <?php else: ?>
+      <div style="color:red;">QR gagal di-generate</div>
+    <?php endif; ?>
     <div style="font-size:10px;color:#888;">Scan lokasi sekolah</div>
   </div>
   Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br>
