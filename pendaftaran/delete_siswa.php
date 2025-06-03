@@ -6,29 +6,25 @@ error_reporting(E_ALL);
 include '../database_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST['id'];
+    $id = intval($_POST['id']); // selalu gunakan intval
 
-    // Hapus data berdasarkan ID
-    $query = "DELETE FROM siswa WHERE id = $id";
+    // Hapus data berdasarkan ID dengan prepared statement
+    $stmt = $conn->prepare("DELETE FROM siswa WHERE id = ?");
+    $stmt->bind_param('i', $id);
 
-    if ($conn->query($query)) {
-        // Reset auto increment hanya jika tabel kosong
-        $resetQuery = "SET @num := 0; 
-                       UPDATE siswa SET id = (@num := @num + 1); 
-                       ALTER TABLE siswa AUTO_INCREMENT = 1;";
-        if ($conn->multi_query($resetQuery)) {
-            do {
-                // Consume all results
-                if ($result = $conn->store_result()) {
-                    $result->free();
-                }
-            } while ($conn->next_result());
+    if ($stmt->execute()) {
+        // Cek apakah tabel siswa sudah kosong, kalau iya reset auto increment
+        $result = $conn->query("SELECT COUNT(*) AS total FROM siswa");
+        $row = $result->fetch_assoc();
+        if ($row['total'] == 0) {
+            $conn->query("ALTER TABLE siswa AUTO_INCREMENT = 1");
         }
-
+        // Redirect
         header('Location: daftar_siswa.php');
+        exit();
     } else {
-        echo "Error: " . $conn->error;
+        echo "Error: " . $stmt->error;
     }
+    $stmt->close();
 }
-
 ?>
