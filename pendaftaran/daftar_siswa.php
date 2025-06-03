@@ -229,7 +229,17 @@ function getStatusPembayaranLabel($status) {
                   <td><?= htmlspecialchars($row['alamat']           ?? '') ?></td>
                   <td><?= htmlspecialchars($row['no_hp']            ?? '') ?></td>
                   <td><?= htmlspecialchars($row['no_hp_ortu']       ?? '') ?></td>
-                  <td><?= getStatusPembayaranLabel($row['status_pembayaran'] ?? '') ?></td>
+                  <td>
+                    <?php
+                      $statusPendaftaran = strtolower(trim($row['status_pendaftaran'] ?? ''));
+                      if ($statusPendaftaran === 'ppdb bersama') {
+                        echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
+                      } else {
+                        echo getStatusPembayaranLabel($row['status_pembayaran'] ?? '');
+                      }
+                    ?>
+                  </td>
+
                   <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '') ?></td>
                   <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') ?></td>
                   <td>
