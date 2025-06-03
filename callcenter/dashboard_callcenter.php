@@ -1,6 +1,8 @@
 <?php
 session_start();
 include '../database_connection.php';
+echo "<pre>UNIT LOGIN: [$unit]</pre>";
+
 
 // Validasi login call center
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
