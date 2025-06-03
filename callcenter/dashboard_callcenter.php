@@ -1,8 +1,6 @@
 <?php
 session_start();
 include '../database_connection.php';
-echo "<pre>UNIT LOGIN: [$unit]</pre>";
-
 
 // Validasi login call center
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
@@ -10,15 +8,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
     exit();
 }
 
-$username = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT TRIM(UPPER(unit)) FROM petugas WHERE username = ?");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$stmt->bind_result($unit);
-$stmt->fetch();
-$stmt->close();
-$unit = trim(strtoupper($unit));
-
+$unit = $_SESSION['unit'];
 
 // Statistik utama calon pendaftar
 function getCallCenterStats($conn, $unit) {
