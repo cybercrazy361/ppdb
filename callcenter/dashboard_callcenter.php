@@ -8,7 +8,15 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
     exit();
 }
 
-$unit = $_SESSION['unit'];
+$username = $_SESSION['username'];
+$stmt = $conn->prepare("SELECT TRIM(UPPER(unit)) FROM petugas WHERE username = ?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$stmt->bind_result($unit);
+$stmt->fetch();
+$stmt->close();
+$unit = trim(strtoupper($unit));
+
 
 // Statistik utama calon pendaftar
 function getCallCenterStats($conn, $unit) {
