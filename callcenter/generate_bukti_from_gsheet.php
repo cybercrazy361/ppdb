@@ -121,10 +121,10 @@ ob_start();
     <div style="border-bottom: 4px solid #163984; margin: 0 10mm 18px 10mm; width: calc(100% - 20mm);"></div>
 
     <div class="header-content" style="text-align:center;margin-bottom:18px;">
-      <div style="font-size: 17px; font-weight: 700; color: #163984; margin: 0 0 5px 0;"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
-      <div style="font-size:13px;font-weight:600;color:#163984;margin:0;">SISTEM PENERIMAAN MURID BARU (SPMB)</div>
-      <div style="font-size:13px;font-weight:600;color:#163984;margin:0;">SMA/SMK DHARMA KARYA JAKARTA</div>
-      <div style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
+      <div style="font-size: 18px; font-weight: 700; color: #163984; margin: 0 0 5px 0;"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
+      <div style="font-size:14px;font-weight:600;color:#163984;margin:0;">SISTEM PENERIMAAN MURID BARU (SPMB)</div>
+      <div style="font-size:14px;font-weight:600;color:#163984;margin:0;">SMA/SMK DHARMA KARYA JAKARTA</div>
+      <div style="font-size:14px;"><b>TAHUN AJARAN 2025/2026</b></div>
     </div>
 
     <div style="font-weight:bold; font-size:18px; color:#1a53c7; text-align:center; margin-bottom:5px; text-transform:uppercase;">
