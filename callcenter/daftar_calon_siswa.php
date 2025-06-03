@@ -1,5 +1,7 @@
 <?php
 session_start();
+echo "<pre>SESSION UNIT: [" . $unit . "]</pre>";
+
 include '../database_connection.php';
 
 // 1) Validasi login
