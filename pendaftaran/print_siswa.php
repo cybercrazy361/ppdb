@@ -311,9 +311,11 @@ $no_invoice = $row['no_invoice'] ?? '';
   <?php endif; ?>
 <?php endif; ?>
 
-<div class="status-row">
-  Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
-</div>
+<?php if (strtoupper($status_pendaftaran) !== 'PPDB BERSAMA'): ?>
+  <div class="status-row">
+    Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
+  </div>
+<?php endif; ?>
 
     <div class="row-btm">
       <div class="info-contact">
