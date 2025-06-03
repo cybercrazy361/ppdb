@@ -50,25 +50,43 @@ $spp_id = 2;
 
 // Ambil data siswa dengan status pembayaran terbaru
 $query = "
-    SELECT 
-        s.*, 
-        COALESCE(
-            (SELECT p.metode_pembayaran 
-             FROM pembayaran p 
-             WHERE p.siswa_id = s.id 
-             ORDER BY p.tanggal_pembayaran DESC 
-             LIMIT 1),
-            'Belum Ada'
-        ) AS metode_pembayaran,
-        CASE
-            WHEN 
+SELECT 
+    s.*, 
+    cp.status AS status_pendaftaran,
+    COALESCE(
+        (SELECT p.metode_pembayaran 
+         FROM pembayaran p 
+         WHERE p.siswa_id = s.id 
+         ORDER BY p.tanggal_pembayaran DESC 
+         LIMIT 1),
+        'Belum Ada'
+    ) AS metode_pembayaran,
+    CASE
+        WHEN 
+            (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                WHERE p1.siswa_id = s.id 
+                  AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                  AND pd1.status_pembayaran = 'Lunas'
+            ) > 0
+        AND
+            (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                WHERE p2.siswa_id = s.id 
+                  AND pd2.jenis_pembayaran_id = $spp_id
+                  AND pd2.bulan = 'Juli'
+                  AND pd2.status_pembayaran = 'Lunas'
+            ) > 0
+        THEN 'Lunas'
+        WHEN 
+            (
                 (SELECT COUNT(*) FROM pembayaran_detail pd1 
                     JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
                     WHERE p1.siswa_id = s.id 
                       AND pd1.jenis_pembayaran_id = $uang_pangkal_id
                       AND pd1.status_pembayaran = 'Lunas'
                 ) > 0
-            AND
+                OR
                 (SELECT COUNT(*) FROM pembayaran_detail pd2 
                     JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
                     WHERE p2.siswa_id = s.id 
@@ -76,32 +94,16 @@ $query = "
                       AND pd2.bulan = 'Juli'
                       AND pd2.status_pembayaran = 'Lunas'
                 ) > 0
-            THEN 'Lunas'
-            WHEN 
-                (
-                    (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                        WHERE p1.siswa_id = s.id 
-                          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                          AND pd1.status_pembayaran = 'Lunas'
-                    ) > 0
-                    OR
-                    (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                        WHERE p2.siswa_id = s.id 
-                          AND pd2.jenis_pembayaran_id = $spp_id
-                          AND pd2.bulan = 'Juli'
-                          AND pd2.status_pembayaran = 'Lunas'
-                    ) > 0
-                )
-            THEN 'Angsuran'
-            ELSE 'Belum Bayar'
-        END AS status_pembayaran
-    FROM siswa s
-    WHERE s.unit = ?
-    $searchSql
-    ORDER BY s.id DESC
-    LIMIT ? OFFSET ?
+            )
+        THEN 'Angsuran'
+        ELSE 'Belum Bayar'
+    END AS status_pembayaran
+FROM siswa s
+LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+WHERE s.unit = ?
+$searchSql
+ORDER BY s.id DESC
+LIMIT ? OFFSET ?
 ";
 $stmt = $conn->prepare($query);
 if ($search !== '') {
@@ -206,6 +208,7 @@ function getStatusPembayaranLabel($status) {
         <th style="min-width:180px;">Progres Pembayaran</th>
         <th style="min-width:150px;">Metode Pembayaran</th>
         <th style="min-width:160px;">Tgl Pendaftaran</th>
+        <th style="min-width:130px;">Status Pendaftaran</th>
         <th style="min-width:150px;">Aksi</th>
       </tr>
     </thead>
@@ -229,6 +232,7 @@ function getStatusPembayaranLabel($status) {
                   <td><?= getStatusPembayaranLabel($row['status_pembayaran'] ?? '') ?></td>
                   <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '') ?></td>
                   <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['status_pendaftaran'] ?? '-') ?></td>
                   <td class="text-center">
                   <a href="print_siswa.php?id=<?= $row['id'] ?>"
                     class="btn btn-success btn-sm" target="_blank">
