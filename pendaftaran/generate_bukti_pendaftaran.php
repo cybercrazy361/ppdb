@@ -489,6 +489,7 @@ ob_start();
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
+<?php if (strtoupper($status_pendaftaran) !== 'PPDB BERSAMA'): ?>
     <table class="tagihan-table">
       <tr>
         <th colspan="2" style="text-align:center; font-weight:bold; font-size:14px; background:#e3eaf7;">
@@ -544,6 +545,8 @@ ob_start();
     <div class="status-row">
       Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
     </div>
+<?php endif; ?>
+
 
     <div class="info-contact">
       Informasi lebih lanjut hubungi:<br>
