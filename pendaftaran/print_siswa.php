@@ -255,63 +255,65 @@ $no_invoice = $row['no_invoice'] ?? '';
       </table>
     </div>
 
-    <table class="tagihan-table" style="margin-top:9px;">
-      <tr>
-        <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
-          <i class="fas fa-coins"></i> Keterangan Pembayaran
-        </th>
-      </tr>
-      <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
-      <tr>
-        <td><?= safe($tg['jenis']) ?></td>
-        <td style="text-align:right;font-weight:600">
-          Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
-        </td>
-      </tr>
-      <?php endforeach; else: ?>
-      <tr>
-        <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
-      </tr>
-      <?php endif; ?>
-    </table>
-
-    <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
-      <div style="margin:9px 0 2px 0;font-size:12.5px;font-weight:500;">Riwayat Pembayaran:</div>
-      <table class="tagihan-table riwayat-bayar" style="margin-bottom:9px;">
-        <colgroup>
-          <col style="width:18%">
-          <col style="width:18%">
-          <col style="width:18%">
-          <col style="width:14%">
-          <col style="width:10%">
-          <col style="width:22%">
-        </colgroup>
-        <tr>
-          <th>Jenis</th>
-          <th>Nominal</th>
-          <th>Cashback</th>
-          <th>Status</th>
-          <th>Bulan</th>
-          <th>Tanggal</th>
-        </tr>
-        <?php foreach($pembayaran_terakhir as $b): ?>
-        <tr>
-          <td><?= safe($b['jenis']) ?></td>
-          <td style="text-align:right;">Rp <?= number_format($b['jumlah'],0,',','.') ?></td>
-          <td style="text-align:right;">
-            <?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'],0,',','.') : '-' ?>
-          </td>
-          <td><?= safe($b['status_pembayaran']) ?></td>
-          <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
-          <td class="tgl-lebar"><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
-        </tr>
-        <?php endforeach; ?>
-      </table>
+<?php if (strtoupper($status_pendaftaran) !== 'PPDB BERSAMA'): ?>
+  <table class="tagihan-table" style="margin-top:9px;">
+    <tr>
+      <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
+        <i class="fas fa-coins"></i> Keterangan Pembayaran
+      </th>
+    </tr>
+    <?php if(count($tagihan)): foreach($tagihan as $tg): ?>
+    <tr>
+      <td><?= safe($tg['jenis']) ?></td>
+      <td style="text-align:right;font-weight:600">
+        Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
+      </td>
+    </tr>
+    <?php endforeach; else: ?>
+    <tr>
+      <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
+    </tr>
     <?php endif; ?>
+  </table>
 
-    <div class="status-row">
-      Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
-    </div>
+  <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
+    <div style="margin:9px 0 2px 0;font-size:12.5px;font-weight:500;">Riwayat Pembayaran:</div>
+    <table class="tagihan-table riwayat-bayar" style="margin-bottom:9px;">
+      <colgroup>
+        <col style="width:18%">
+        <col style="width:18%">
+        <col style="width:18%">
+        <col style="width:14%">
+        <col style="width:10%">
+        <col style="width:22%">
+      </colgroup>
+      <tr>
+        <th>Jenis</th>
+        <th>Nominal</th>
+        <th>Cashback</th>
+        <th>Status</th>
+        <th>Bulan</th>
+        <th>Tanggal</th>
+      </tr>
+      <?php foreach($pembayaran_terakhir as $b): ?>
+      <tr>
+        <td><?= safe($b['jenis']) ?></td>
+        <td style="text-align:right;">Rp <?= number_format($b['jumlah'],0,',','.') ?></td>
+        <td style="text-align:right;">
+          <?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'],0,',','.') : '-' ?>
+        </td>
+        <td><?= safe($b['status_pembayaran']) ?></td>
+        <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
+        <td class="tgl-lebar"><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
+      </tr>
+      <?php endforeach; ?>
+    </table>
+  <?php endif; ?>
+<?php endif; ?>
+
+<div class="status-row">
+  Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
+</div>
 
     <div class="row-btm">
       <div class="info-contact">
