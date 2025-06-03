@@ -18,6 +18,10 @@ if (!$row) die(json_encode(['success'=>false, 'message'=>'Data tidak ditemukan.'
 
 file_put_contents(__DIR__.'/bukti/debug.txt', "PROSES PDF UNTUK ID: $id\n", FILE_APPEND);
 
+$maps_url = "https://maps.app.goo.gl/izLRvezWYUbgx2mu5";
+$qr_url = "https://chart.googleapis.com/chart?chs=110x110&cht=qr&chl=" . urlencode($maps_url);
+
+
 function tanggal_id($tgl) {
     if (!$tgl || $tgl == '0000-00-00') return '-';
     // Ambil hanya bagian tanggal, buang waktu jika ada
@@ -145,15 +149,27 @@ ob_start();
 
 
     <div style="margin-top:12px; font-size:12.5px;">
+      Terima kasih Anda telah melakukan registrasi Penerimaan Murid Baru <b><?= safe($row['pilihan']) ?> Dharma Karya</b> Tahun Pelajaran 2025/2026.<br><br>
       <b>Catatan:</b><br>
-      1. Simpan file ini sebagai bukti telah mengisi form pendaftaran.<br>
-      2. Panitia akan menghubungi Anda untuk proses selanjutnya.
+      1. Formulir registrasi ini <b>bukan merupakan bukti diterima</b> sebagai siswa di <b><?= safe($row['pilihan']) ?> Dharma Karya</b>. Siswa dinyatakan diterima setelah menyelesaikan administrasi dan mendapatkan nomor formulir pendaftaran.<br>
+      2. Simpan formulir ini sebagai bukti bahwa Anda telah melakukan pendaftaran.<br>
+      <br>
+      <b>Informasi lebih lanjut:</b><br>
+      Hotline SMA: Ibu Puji / 0815-1151-9271
     </div>
 
-    <div style="width:100%;margin-top:28px;text-align:right;font-size:12px;">
-      Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br>
-      (Panitia SPMB)
-    </div>
+
+<div style="width:100%;margin-top:28px;text-align:right;font-size:12px;">
+  <div style="text-align:right;margin-bottom:8px;">
+    <div style="font-size:11px;color:#163984;font-weight:bold;margin-bottom:2px;">Scan Lokasi</div>
+    <img src="<?= $qr_url ?>" alt="QR Lokasi Sekolah" style="height:64px;width:64px;border:1.5px solid #163984;padding:2px;">
+    <div style="font-size:10px;color:#888;">Scan lokasi sekolah</div>
+  </div>
+  Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br>
+  (Panitia SPMB)
+</div>
+
+
   </div>
 </body>
 </html>
