@@ -138,8 +138,11 @@ ob_start();
       <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
       <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
       <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
+      <tr><th>Pendidikan Orang Tua/Wali</th><td><?= safe($row['pendidikan_ortu']) ?></td></tr>
+      <tr><th>Pekerjaan Orang Tua/Wali</th><td><?= safe($row['pekerjaan_ortu'] ?? '-') ?></td></tr>
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['pilihan']) ?></td></tr>
     </table>
+
 
     <div style="margin-top:12px; font-size:12.5px;">
       <b>Catatan:</b><br>

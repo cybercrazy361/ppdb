@@ -70,6 +70,7 @@ $asal_sekolah    = trim($_POST['asal_sekolah'] ?? '');
 $no_hp           = formatHp(trim($_POST['no_hp'] ?? ''));
 $alamat          = trim($_POST['alamat'] ?? '');
 $pendidikan_ortu = normalisasiPendidikan(trim($_POST['pendidikan_ortu'] ?? ''));
+$pekerjaan_ortu  = trim($_POST['pekerjaan_ortu'] ?? ''); // <<== TAMBAH INI
 $no_hp_ortu      = formatHp(trim($_POST['no_hp_ortu'] ?? ''));
 $tanggal_daftar  = parseTanggalDaftar(trim($_POST['tanggal_daftar'] ?? ''));
 $unit            = trim($_POST['unit'] ?? ''); // <- AMBIL LANGSUNG DARI SPREADSHEET
@@ -101,16 +102,17 @@ if ($cek['jml'] > 0) {
 
 // Insert ke database
 $stmt = $conn->prepare("INSERT INTO calon_pendaftar
-    (nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan, tanggal_daftar)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    (nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, pekerjaan_ortu, no_hp_ortu, pilihan, tanggal_daftar)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $stmt->bind_param(
-    "sssssssss",
+    "ssssssssss",
     $nama,
     $jenis_kelamin,
     $asal_sekolah,
     $no_hp,
     $alamat,
     $pendidikan_ortu,
+    $pekerjaan_ortu, // <<== TAMBAH INI
     $no_hp_ortu,
     $unit, // <- SIMPAN SESUAI YANG DIPILIH DI SPREADSHEET
     $tanggal_daftar

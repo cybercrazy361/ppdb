@@ -18,7 +18,7 @@ $stmt->fetch();
 $stmt->close();
 
 // 3) Query data calon_pendaftar (TANPA EMAIL)
-$sql = "SELECT id, nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, no_hp_ortu, pilihan, tanggal_daftar, status, notes
+$sql = "SELECT id, nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, pekerjaan_ortu, no_hp_ortu, pilihan, tanggal_daftar, status, notes
         FROM calon_pendaftar " .
        ($unit !== 'Yayasan' ? "WHERE pilihan = ? " : "") .
        "ORDER BY id DESC";
@@ -135,6 +135,7 @@ function tanggal_indo($tgl) {
             <th>No HP</th>
             <th>Alamat</th>
             <th>Pendidikan Ortu/Wali</th>
+            <th>Pekerjaan Ortu/Wali</th>
             <th>No HP Ortu/Wali</th>
             <th>Tanggal Daftar</th>
             <th class="status-col">Status</th>
@@ -156,6 +157,7 @@ function tanggal_indo($tgl) {
         <td><?= htmlspecialchars($row['no_hp']) ?></td>
         <td><?= htmlspecialchars($row['alamat']) ?></td>
         <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
+        <td><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
         <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
         <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
         <td class="status-col text-center">
