@@ -254,6 +254,8 @@ function tanggal_indo($tgl) {
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script>
 $(function(){
+  // Global status filter
+  let statusFilter = '';
   const table = $('#calonTable').DataTable({
     pageLength: 10,
     lengthMenu: [5,10,25,50],
@@ -265,16 +267,31 @@ $(function(){
       paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
     }
   });
+
+  // Custom filter agar badge filter status berfungsi meskipun kolom status berupa <select>
+  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+    if(settings.nTable.id !== 'calonTable') return true;
+    if(!statusFilter) return true; // jika "Semua", lolos semua
+    // Ambil value di select (status) pada baris
+    var row = table.row(dataIndex).node();
+    var val = $(row).find('select.status-select').val();
+    return val === statusFilter;
+  });
+
+  // Klik badge filter status
+  $('.filter-status-badge').on('click', function(){
+    statusFilter = $(this).data('status') || '';
+    table.draw();
+  });
+
+  // Nomor urut update setiap sorting, search, pagination
   table.on('order.dt search.dt draw.dt', function() {
     table.column(0, { search: 'applied', order: 'applied', page: 'current' })
       .nodes()
       .each(function(cell, i) { cell.innerHTML = i + 1; });
   });
-  $('.filter-status-badge').on('click', function(){
-    const status = $(this).data('status');
-    table.column(9).search(status, false, false).draw();
-  });
-  // Notes modal
+
+  // Modal notes
   let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
   $('#calonTable').on('click', '.btn-notes', function(){
     const id   = $(this).data('id');
@@ -323,61 +340,62 @@ $(function(){
     }, 'json');
   });
 
-// Kirim ke siswa (AJAX)
-$('#calonTable').on('click', '.btn-kirim', function(){
-  const btn = $(this);
-  btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Proses...');
-  $.post('kirim_calon_ke_siswa.php', {
-    id: btn.data('id'),
-    nama: btn.data('nama'),
-    jenis_kelamin: btn.data('jenis_kelamin'),
-    asal_sekolah: btn.data('asal_sekolah'),
-    no_hp: btn.data('no_hp'),
-    alamat: btn.data('alamat'),
-    pendidikan_ortu: btn.data('pendidikan_ortu'),
-    no_hp_ortu: btn.data('no_hp_ortu'),
-    tanggal_daftar: btn.data('tanggal_daftar'),
-    unit: btn.data('unit')
-  }, function(res){
-    if(res.success){
-      btn.parent().html('<span class="badge bg-success">Terkirim</span>');
-      $('#notifModalLabel').text('Berhasil');
-      $('#notifModalBody').html('Data calon pendaftar berhasil dikirim ke tabel siswa.<br><b>No Formulir:</b> ' + res.no_formulir);
-    } else {
-      btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Kirim');
-      $('#notifModalLabel').text('Gagal Mengirim');
-      $('#notifModalBody').html(res.message || 'Gagal mengirim data. Silakan coba lagi.');
-    }
-    $('#notifModal').modal('show');
-  }, 'json');
-});
-});
-
-$('#formUploadExcel').on('submit', function(e){
-  e.preventDefault();
-  var formData = new FormData(this);
-  $('#uploadResult').html('<i class="fas fa-spinner fa-spin"></i> Upload...');
-  $.ajax({
-    url: 'upload_excel.php',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: 'json',
-    success: function(res){
+  // Kirim ke siswa (AJAX)
+  $('#calonTable').on('click', '.btn-kirim', function(){
+    const btn = $(this);
+    btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Proses...');
+    $.post('kirim_calon_ke_siswa.php', {
+      id: btn.data('id'),
+      nama: btn.data('nama'),
+      jenis_kelamin: btn.data('jenis_kelamin'),
+      asal_sekolah: btn.data('asal_sekolah'),
+      no_hp: btn.data('no_hp'),
+      alamat: btn.data('alamat'),
+      pendidikan_ortu: btn.data('pendidikan_ortu'),
+      no_hp_ortu: btn.data('no_hp_ortu'),
+      tanggal_daftar: btn.data('tanggal_daftar'),
+      unit: btn.data('unit')
+    }, function(res){
       if(res.success){
-        $('#uploadResult').html('<span class="text-success">'+res.message+'</span>');
-        setTimeout(() => location.reload(), 1500);
+        btn.parent().html('<span class="badge bg-success">Terkirim</span>');
+        $('#notifModalLabel').text('Berhasil');
+        $('#notifModalBody').html('Data calon pendaftar berhasil dikirim ke tabel siswa.<br><b>No Formulir:</b> ' + res.no_formulir);
       } else {
-        $('#uploadResult').html('<span class="text-danger">'+res.message+'</span>');
+        btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Kirim');
+        $('#notifModalLabel').text('Gagal Mengirim');
+        $('#notifModalBody').html(res.message || 'Gagal mengirim data. Silakan coba lagi.');
       }
-    },
-    error: function(){
-      $('#uploadResult').html('<span class="text-danger">Terjadi kesalahan server!</span>');
-    }
+      $('#notifModal').modal('show');
+    }, 'json');
+  });
+
+  // Upload Excel
+  $('#formUploadExcel').on('submit', function(e){
+    e.preventDefault();
+    var formData = new FormData(this);
+    $('#uploadResult').html('<i class="fas fa-spinner fa-spin"></i> Upload...');
+    $.ajax({
+      url: 'upload_excel.php',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(res){
+        if(res.success){
+          $('#uploadResult').html('<span class="text-success">'+res.message+'</span>');
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          $('#uploadResult').html('<span class="text-danger">'+res.message+'</span>');
+        }
+      },
+      error: function(){
+        $('#uploadResult').html('<span class="text-danger">Terjadi kesalahan server!</span>');
+      }
+    });
   });
 });
-
 </script>
+
 </body>
 </html>
