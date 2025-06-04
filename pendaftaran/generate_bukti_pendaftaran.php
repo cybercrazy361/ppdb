@@ -435,16 +435,12 @@ ob_start();
 </table>
 <div style="border-bottom: 4px solid #163984; margin: 0 10mm 18px 10mm; width: calc(100% - 20mm);"></div>
 
-    <div class="header-content">
-      <?php if ($status_pembayaran === 'Lunas' || $status_pembayaran === 'Angsuran'): ?>
-        <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
-      <?php else: ?>
-        <div class="sub-title"><b>BUKTI PENDAFTARAN CALON MURID BARU</b></div>
-      <?php endif; ?>
-      <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
-      <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
-      <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
-    </div>
+<div class="header-content">
+  <div class="sub-title"><b>BUKTI PENDAFTARAN MURID BARU</b></div>
+  <div class="tahun-ajaran"><b>SISTEM PENERIMAAN MURID BARU (SPMB)</b></div>
+  <div class="tahun-ajaran"><b>SMA DHARMA KARYA JAKARTA</b></div>
+  <div class="tahun-ajaran" style="font-size:12px;"><b>TAHUN AJARAN 2025/2026</b></div>
+</div>
 
 <div class="no-reg-bar" style="margin-bottom:12px;">
   <table width="100%" style="border-collapse: collapse;">
