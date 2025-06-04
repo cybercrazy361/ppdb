@@ -254,42 +254,55 @@ function tanggal_indo($tgl) {
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script>
 
+// Satu kali saja deklarasi
 let statusFilter = '';
 
-let statusFilter = '';
+$(function() {
+  // Custom filter status DataTables
+  $.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex) {
+      if(settings.nTable.id !== 'calonTable') return true;
+      if(!statusFilter) return true;
+      const td = settings.aoData[dataIndex].anCells[9];
+      // Coba ambil value dari select, kalau gagal ambil dari status-search-text
+      let value = $(td).find('select').val();
+      if (!value) value = $(td).find('.status-search-text').text().trim();
+      // DEBUG
+      console.log('Baris:', dataIndex, '| Value:', value, '| StatusFilter:', statusFilter);
+      return value === statusFilter;
+    }
+  );
 
-$.fn.dataTable.ext.search.push(
-  function(settings, data, dataIndex) {
-    if(settings.nTable.id !== 'calonTable') return true;
-    if(!statusFilter) return true;
-    const td = settings.aoData[dataIndex].anCells[9];
-    let value = $(td).find('select').val();
-    // DEBUG
-    console.log('Baris:', dataIndex, '| Value:', value, '| StatusFilter:', statusFilter);
-    return value === statusFilter;
-  }
-);
+  // Inisialisasi DataTables
+  const table = $('#calonTable').DataTable({
+    pageLength: 10,
+    lengthMenu: [5,10,25,50],
+    order: [[0,'asc']],
+    language:{
+      search:     "Cari:",
+      lengthMenu: "_MENU_ entri per halaman",
+      info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+      paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
+    }
+  });
 
-const table = $('#calonTable').DataTable({
-  pageLength: 10,
-  lengthMenu: [5,10,25,50],
-  order: [[0,'asc']],
-  language:{
-    search:     "Cari:",
-    lengthMenu: "_MENU_ entri per halaman",
-    info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-    paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
-  }
+  // Reset nomor urut setiap search/order/draw
+  table.on('order.dt search.dt draw.dt', function() {
+    table.column(0, { search: 'applied', order: 'applied', page: 'current' })
+      .nodes()
+      .each(function(cell, i) { cell.innerHTML = i + 1; });
+  });
+
+  // Event click badge - pakai event delegation jika badge dinamis
+  $(document).on('click', '.filter-status-badge', function(){
+      statusFilter = $(this).data('status') || '';
+      console.log('Badge diklik:', statusFilter);
+      table.draw();
+      $('.filter-status-badge').removeClass('active');
+      $(this).addClass('active');
+  });
+
 });
-
-$('.filter-status-badge').on('click', function(){
-    statusFilter = $(this).data('status') || '';
-    console.log('Badge diklik:', statusFilter);
-    table.draw();
-    $('.filter-status-badge').removeClass('active');
-    $(this).addClass('active');
-});
-
 
   // Notes modal
   let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
