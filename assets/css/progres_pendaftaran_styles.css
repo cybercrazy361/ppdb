@@ -555,3 +555,12 @@ body {
     background: #ffe9ed !important;
     color: #a82536 !important;
 }
+
+.table th.alamat-col,
+.table td.alamat-col {
+    min-width: 220px !important;
+    width: 340px !important;
+    max-width: 520px !important;
+    white-space: pre-line;
+    word-break: break-word;
+}

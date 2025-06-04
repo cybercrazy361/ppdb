@@ -148,7 +148,7 @@ function tanggal_indo($tgl) {
             <th>Jenis Kelamin</th>
             <th>Asal Sekolah</th>
             <th>No HP</th>
-            <th>Alamat</th>
+            <th class="alamat-col">Alamat</th>
             <th>Pendidikan Ortu/Wali</th>
             <th>Pekerjaan Ortu/Wali</th>
             <th>No HP Ortu/Wali</th>
@@ -171,7 +171,7 @@ function tanggal_indo($tgl) {
     <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
     <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
     <td><?= htmlspecialchars($row['no_hp']) ?></td>
-    <td><?= htmlspecialchars($row['alamat']) ?></td>
+    <td class="alamat-col"><?= htmlspecialchars($row['alamat']) ?></td>
     <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
     <td><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
     <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
