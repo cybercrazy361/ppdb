@@ -128,7 +128,7 @@ ob_start();
     </div>
 
     <div style="font-weight:bold; font-size:18px; color:#1a53c7; text-align:center; margin-bottom:5px; text-transform:uppercase;">
-      DATA CALON MURID BARU
+      DATA MURID BARU
     </div>
     <table class="data-table">
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_daftar']) ?></td></tr>
