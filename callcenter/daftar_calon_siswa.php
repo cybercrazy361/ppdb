@@ -18,11 +18,14 @@ $stmt->bind_result($unit);
 $stmt->fetch();
 $stmt->close();
 
-// 3) Query data calon_pendaftar (TANPA EMAIL)
-$sql = "SELECT id, nama, jenis_kelamin, asal_sekolah, no_hp, alamat, pendidikan_ortu, pekerjaan_ortu, no_hp_ortu, pilihan, tanggal_daftar, status, notes
-        FROM calon_pendaftar " .
-       ($unit !== 'Yayasan' ? "WHERE pilihan = ? " : "") .
-       "ORDER BY id DESC";
+// 3) Query data calon_pendaftar (TANPA EMAIL), JOIN callcenter untuk ambil nama PJ
+$sql = "SELECT cp.id, cp.nama, cp.jenis_kelamin, cp.asal_sekolah, cp.no_hp, cp.alamat, 
+               cp.pendidikan_ortu, cp.pekerjaan_ortu, cp.no_hp_ortu, cp.pilihan, cp.tanggal_daftar, 
+               cp.status, cp.notes, cc.nama as pj_nama
+        FROM calon_pendaftar cp
+        LEFT JOIN callcenter cc ON cp.pj_username = cc.username
+        " . ($unit !== 'Yayasan' ? "WHERE cp.pilihan = ? " : "") . "
+        ORDER BY cp.id DESC";
 $stmt = $conn->prepare($sql);
 if ($unit !== 'Yayasan') {
     $stmt->bind_param("s", $unit);
@@ -140,65 +143,68 @@ function tanggal_indo($tgl) {
             <th>No HP Ortu/Wali</th>
             <th>Tanggal Daftar</th>
             <th class="status-col">Status</th>
+            <th>**PJ**</th>
             <th>Keterangan</th>
             <th>Kirim</th>
         </tr>
     </thead>
-    <tbody>
-    <?php $no=1; foreach ($calon as $row):
-        $current = $row['status'];
-        $notes   = $row['notes'];
-        $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
-    ?>
-    <tr data-id="<?= $row['id'] ?>">
-        <td><?= $no++ ?></td>
-        <td><?= htmlspecialchars($row['nama']) ?></td>
-        <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
-        <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-        <td><?= htmlspecialchars($row['no_hp']) ?></td>
-        <td><?= htmlspecialchars($row['alamat']) ?></td>
-        <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
-        <td><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
-        <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
-        <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
-        <td class="status-col text-center">
-            <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
-            <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
-            <?php foreach ($status_list as $st => $desc): ?>
-                <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $st ?></option>
-            <?php endforeach; ?>
-            </select>
-        </td>
-        <td class="text-center">
-            <button type="button"
-                class="btn btn-sm btn-outline-primary btn-notes"
+<tbody>
+<?php $no=1; foreach ($calon as $row):
+    $current = $row['status'];
+    $notes   = $row['notes'];
+    $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
+?>
+<tr data-id="<?= $row['id'] ?>">
+    <td><?= $no++ ?></td>
+    <td><?= htmlspecialchars($row['nama']) ?></td>
+    <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
+    <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
+    <td><?= htmlspecialchars($row['no_hp']) ?></td>
+    <td><?= htmlspecialchars($row['alamat']) ?></td>
+    <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
+    <td><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
+    <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
+    <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
+    <td class="status-col text-center">
+        <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
+        <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
+        <?php foreach ($status_list as $st => $desc): ?>
+            <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $st ?></option>
+        <?php endforeach; ?>
+        </select>
+    </td>
+    <td><?= htmlspecialchars($row['pj_nama'] ?? '-') ?></td> <!-- Kolom PJ -->
+    <td class="text-center">
+        <button type="button"
+            class="btn btn-sm btn-outline-primary btn-notes"
+            data-id="<?= $row['id'] ?>"
+            data-nama="<?= htmlspecialchars($row['nama']) ?>"
+            data-notes="<?= htmlspecialchars($notes) ?>">
+            <i class="fas fa-sticky-note"></i> Lihat/Edit
+        </button>
+    </td>
+    <td class="text-center">
+        <?php if ($terkirim): ?>
+        <span class="badge bg-success">Terkirim</span>
+        <?php else: ?>
+        <button class="btn btn-sm btn-success btn-kirim"
                 data-id="<?= $row['id'] ?>"
                 data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                data-notes="<?= htmlspecialchars($notes) ?>">
-                <i class="fas fa-sticky-note"></i> Lihat/Edit
-            </button>
-        </td>
-        <td class="text-center">
-            <?php if ($terkirim): ?>
-            <span class="badge bg-success">Terkirim</span>
-            <?php else: ?>
-            <button class="btn btn-sm btn-success btn-kirim"
-                    data-id="<?= $row['id'] ?>"
-                    data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                    data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin']) ?>"
-                    data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah']) ?>"
-                    data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
-                    data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
-                    data-pendidikan_ortu="<?= htmlspecialchars($row['pendidikan_ortu']) ?>"
-                    data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
-                    data-tanggal_daftar="<?= htmlspecialchars($row['tanggal_daftar']) ?>"
-                    data-unit="<?= htmlspecialchars($unit) ?>"
-            ><i class="fas fa-paper-plane"></i> Kirim</button>
-            <?php endif; ?>
-        </td>
-    </tr>
-    <?php endforeach; ?>
-    </tbody>
+                data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin']) ?>"
+                data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah']) ?>"
+                data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
+                data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
+                data-pendidikan_ortu="<?= htmlspecialchars($row['pendidikan_ortu']) ?>"
+                data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
+                data-tanggal_daftar="<?= htmlspecialchars($row['tanggal_daftar']) ?>"
+                data-unit="<?= htmlspecialchars($unit) ?>"
+        ><i class="fas fa-paper-plane"></i> Kirim</button>
+        <?php endif; ?>
+    </td>
+</tr>
+<?php endforeach; ?>
+</tbody>
+
 </table>
                 </div>
             </div>
@@ -268,15 +274,15 @@ $(function(){
     }
   });
 
-  // Custom filter agar badge filter status berfungsi meskipun kolom status berupa <select>
-  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-    if(settings.nTable.id !== 'calonTable') return true;
-    if(!statusFilter) return true; // jika "Semua", lolos semua
-    // Ambil value di select (status) pada baris
-    var row = table.row(dataIndex).node();
-    var val = $(row).find('select.status-select').val();
-    return val === statusFilter;
-  });
+// Custom filter agar badge filter status berfungsi meskipun kolom status berupa <select>
+$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  if(settings.nTable.id !== 'calonTable') return true;
+  if(!statusFilter) return true;
+  var row = table.row(dataIndex).node();
+  var val = $(row).find('select.status-select').val();
+  return val === statusFilter;
+});
+
 
   // Klik badge filter status
   $('.filter-status-badge').on('click', function(){
