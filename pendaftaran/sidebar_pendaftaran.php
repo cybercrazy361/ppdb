@@ -16,20 +16,25 @@
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
-    <!-- LABEL PEMBAYARAN -->
     <div class="sidebar-section-label">PROGRES PEMBAYARAN</div>
+    <!-- HILANGKAN INPUT PEMBAYARAN -->
+    <!--
     <a href="form_pendaftaran.php"
       class="nav-link <?= ($active=='form'?'active':'') ?>">
       <i class="fas fa-user-plus"></i>
       <span>Input Progres Pembayaran</span>
     </a>
+    -->
     <a href="daftar_siswa.php"
       class="nav-link <?= ($active=='progres'?'active':'') ?>">
       <i class="fas fa-users"></i>
       <span>Progres Pembayaran</span>
     </a>
-    
-    <!-- Untuk kebutuhan lain tinggal tambahkan menu di sini -->
+    <a href="laporan_detail.php"
+      class="nav-link <?= ($active=='laporan'?'active':'') ?>">
+      <i class="fas fa-file-alt"></i>
+      <span>Detail Laporan</span>
+    </a>
   </div>
 </nav>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
