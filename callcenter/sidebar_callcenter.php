@@ -16,27 +16,20 @@
     </a>
      <!-- LABEL CALON SISWA -->
     <div class="sidebar-section-label">Progres siswa</div>
-    <a href="input_progres_pendaftaran" class="nav-link <?= ($active=='progressiswa'?'active':'') ?>">
-      <i class="fas fa-user-plus"></i>
-      <span>Input Daftar Calon Siswa</span>
-    </a>
+    <!--
+<a href="input_progres_pendaftaran" class="nav-link <?= ($active=='progressiswa'?'active':'') ?>">
+  <i class="fas fa-user-plus"></i>
+  <span>Input Daftar Calon Siswa</span>
+</a>
+-->
+
     <!-- LABEL CALON SISWA -->
     <div class="sidebar-section-label">CALON SISWA</div>
     <a href="daftar_calon_siswa.php" class="nav-link <?= ($active=='calonsiswa'?'active':'') ?>">
       <i class="fas fa-user-graduate"></i>
       <span>Daftar Calon Siswa</span>
     </a>
-    <!-- LABEL KOMUNIKASI -->
-    <div class="sidebar-section-label">KOMUNIKASI</div>
-    <a href="kontak_masuk.php" class="nav-link <?= ($active=='kontakmasuk'?'active':'') ?>">
-      <i class="fas fa-inbox"></i>
-      <span>Kontak Masuk</span>
-    </a>
-    <a href="riwayat_komunikasi.php" class="nav-link <?= ($active=='riwayat'?'active':'') ?>">
-      <i class="fas fa-history"></i>
-      <span>Riwayat Komunikasi</span>
-    </a>
-    <!-- Tambah menu lain sesuai kebutuhan -->
+    
   </div>
 </nav>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
