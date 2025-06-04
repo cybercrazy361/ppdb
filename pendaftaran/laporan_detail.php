@@ -162,11 +162,10 @@ $conn->close();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css" />
+  <link rel="stylesheet" href="../assets/css/laporan_detail.css" />
 </head>
 <body>
-<?php $active = 'laporan'; ?>
-<?php include 'sidebar_pendaftaran.php'; ?>
-
+<?php $active = 'laporan'; include 'sidebar_pendaftaran.php'; ?>
 <div class="main">
   <header class="navbar">
     <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
@@ -186,17 +185,54 @@ $conn->close();
       <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><?=$rekap['belum']?></div></div>
     </div>
 
-    <h5>Rekap Hari Ini (<?= date('d-m-Y') ?>)</h5>
-    <div class="row g-2 mb-4">
-      <div class="col"><div class="card p-3"><b>Daftar Hari Ini</b><br><?=$hariini['total']?></div></div>
-      <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><?=$hariini['lunas']?></div></div>
-      <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><?=$hariini['angsuran']?></div></div>
-      <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><?=$hariini['belum']?></div></div>
+    <h5>Rekap Harian</h5>
+    <form id="formCariTanggal" class="d-flex align-items-center mb-2" style="gap:12px;">
+      <label for="tanggalCari" class="form-label mb-0">Pilih Tanggal:</label>
+      <input type="date" id="tanggalCari" class="form-control" style="max-width:170px" value="<?=date('Y-m-d')?>">
+    </form>
+    <div id="rekapHarian">
+      <!-- Ini diisi via JS/AJAX -->
+      <div class="row g-2 mb-4">
+        <div class="col"><div class="card p-3"><b>Daftar Hari Ini</b><br>…</div></div>
+        <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br>…</div></div>
+        <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br>…</div></div>
+        <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br>…</div></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/sidebar_pendaftaran.js"></script>
+<script>
+function loadRekapHarian(tgl) {
+  const rekapDiv = document.getElementById('rekapHarian');
+  rekapDiv.innerHTML = `
+    <div class="row g-2 mb-4">
+      <div class="col"><div class="card p-3"><b>Daftar Hari Ini</b><br><span class="text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="text-muted">Memuat...</span></div></div>
+    </div>`;
+  fetch('rekap_harian.php?tanggal='+encodeURIComponent(tgl))
+    .then(r=>r.json()).then(d=>{
+      rekapDiv.innerHTML = `
+      <div class="row g-2 mb-4">
+        <div class="col"><div class="card p-3"><b>Daftar</b><br>${d.total}</div></div>
+        <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br>${d.lunas}</div></div>
+        <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br>${d.angsuran}</div></div>
+        <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br>${d.belum}</div></div>
+      </div>`;
+    }).catch(_=>{
+      rekapDiv.innerHTML = `<div class="alert alert-danger">Gagal memuat data!</div>`;
+    });
+}
+document.getElementById('tanggalCari').addEventListener('change',function(){
+  loadRekapHarian(this.value);
+});
+window.addEventListener('DOMContentLoaded',function(){
+  loadRekapHarian(document.getElementById('tanggalCari').value);
+});
+</script>
 </body>
 </html>
