@@ -185,14 +185,15 @@ function tanggal_indo($tgl) {
         </select>
     </td>
     <td>
-  <select class="pj-select form-select form-select-sm form-select-lg mb-1" data-id="<?= $row['id'] ?>" style="font-size:1.2rem;min-width:180px;">
-  <option value="">- Pilih PJ -</option>
-  <?php foreach($pj_list as $pj): ?>
-    <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
-      <?= htmlspecialchars($pj['nama']) ?>
-    </option>
-  <?php endforeach; ?>
+<select class="pj-select form-select form-select-lg" data-id="<?= $row['id'] ?>">
+    <option value="">- Pilih PJ -</option>
+    <?php foreach($pj_list as $pj): ?>
+      <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
+        <?= htmlspecialchars($pj['nama']) ?>
+      </option>
+    <?php endforeach; ?>
 </select>
+
 
 </td>
 

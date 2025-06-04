@@ -513,8 +513,45 @@ body {
     }
 }
 
+/* PJ Select Custom Style */
 .pj-select {
-    font-size: 1.3rem !important;
-    min-width: 200px;
-    padding: 0.5rem 1.2rem;
+    font-size: 1.14rem !important;
+    min-width: 210px;
+    max-width: 100%;
+    padding: 0.57em 1.2em 0.57em 0.9em;
+    border-radius: 10px;
+    background: #e9f4ff;
+    color: #234485;
+    border: 1.4px solid #8dc6fc;
+    font-weight: 600;
+    transition: border .13s, background .13s, box-shadow .13s;
+    box-shadow: 0 1.5px 7px #85a8d623;
+}
+
+.pj-select:focus {
+    background: #d1eaff;
+    border-color: #287ded;
+    color: #1e2e4a;
+    outline: none;
+    box-shadow: 0 2px 14px #56a2fa34;
+}
+
+.pj-select option {
+    font-size: 1.08rem;
+    color: #1d2957;
+    background: #e6f1ff;
+    font-weight: 500;
+}
+
+/* Tambahan efek valid/invalid jika pakai JS validasi */
+.pj-select.is-valid {
+    border-color: #1cc88a !important;
+    background: #e6fff4 !important;
+    color: #14865d !important;
+}
+
+.pj-select.is-invalid {
+    border-color: #dc3545 !important;
+    background: #ffe9ed !important;
+    color: #a82536 !important;
 }
