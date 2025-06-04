@@ -220,7 +220,7 @@ $no_invoice = $row['no_invoice'] ?? '';
         </span>
       <?php endif; ?>
     </div>
-    <?php
+<?php
 $is_ppdb_bersama = (strtoupper($status_pendaftaran) === 'PPDB BERSAMA');
 if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_invoice)): ?>
   <div class="no-reg-row">
