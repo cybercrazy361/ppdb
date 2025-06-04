@@ -33,9 +33,16 @@ if ($unit !== 'Yayasan') {
 }
 $stmt->execute();
 $result = $stmt->get_result();
+// Ambil daftar PJ sesuai unit login saja
 $pj_list = [];
-$res_pj = $conn->query("SELECT username, nama FROM callcenter ORDER BY nama ASC");
+$sql_pj = "SELECT username, nama FROM callcenter WHERE unit = ? ORDER BY nama ASC";
+$stmt_pj = $conn->prepare($sql_pj);
+$stmt_pj->bind_param("s", $unit);
+$stmt_pj->execute();
+$res_pj = $stmt_pj->get_result();
 while($pj = $res_pj->fetch_assoc()) $pj_list[] = $pj;
+$stmt_pj->close();
+
 $calon = [];
 while ($row = $result->fetch_assoc()) $calon[] = $row;
 $stmt->close();
@@ -178,14 +185,15 @@ function tanggal_indo($tgl) {
         </select>
     </td>
     <td>
-  <select class="pj-select form-select form-select-sm" data-id="<?= $row['id'] ?>">
-    <option value="">- Pilih PJ -</option>
-    <?php foreach($pj_list as $pj): ?>
-      <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
-        <?= htmlspecialchars($pj['nama']) ?>
-      </option>
-    <?php endforeach; ?>
-  </select>
+  <select class="pj-select form-select form-select-sm form-select-lg mb-1" data-id="<?= $row['id'] ?>" style="font-size:1.2rem;min-width:180px;">
+  <option value="">- Pilih PJ -</option>
+  <?php foreach($pj_list as $pj): ?>
+    <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
+      <?= htmlspecialchars($pj['nama']) ?>
+    </option>
+  <?php endforeach; ?>
+</select>
+
 </td>
 
     <td class="text-center">

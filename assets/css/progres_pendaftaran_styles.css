@@ -512,3 +512,9 @@ body {
         gap: 7px;
     }
 }
+
+.pj-select {
+    font-size: 1.3rem !important;
+    min-width: 200px;
+    padding: 0.5rem 1.2rem;
+}
