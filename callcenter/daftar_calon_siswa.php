@@ -254,18 +254,6 @@ function tanggal_indo($tgl) {
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script>
 $(function(){
-  // DataTable dan event badge filter tetap
-  $.fn.dataTable.ext.search.push(
-    function(settings, data, dataIndex) {
-      if(settings.nTable.id !== 'calonTable') return true;
-      var statusFilter = settings.aoPreSearchCols[9]?.sSearch || "";
-      if(!statusFilter) return true;
-      var td = settings.aoData[dataIndex].anCells[9];
-      let value = $(td).find('.status-search-text').text().trim();
-      if(!value) value = $(td).find('select').val();
-      return value === statusFilter;
-    }
-  );
   const table = $('#calonTable').DataTable({
     pageLength: 10,
     lengthMenu: [5,10,25,50],
@@ -284,9 +272,8 @@ $(function(){
   });
   $('.filter-status-badge').on('click', function(){
     const status = $(this).data('status');
-    table.column(9).search(status).draw();
+    table.column(9).search(status, false, false).draw();
   });
-
   // Notes modal
   let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
   $('#calonTable').on('click', '.btn-notes', function(){
