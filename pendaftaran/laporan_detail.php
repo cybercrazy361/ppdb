@@ -92,7 +92,6 @@ function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id) {
     $lunas = $angsuran = $belum = $total = 0;
     while ($row = $result->fetch_assoc()) {
         $id = $row['id'];
-        // CEK status pembayaran sama seperti total
         $cek = "
         SELECT
         CASE
@@ -179,10 +178,30 @@ $conn->close();
 
     <h5>Rekap Total (Semua Data)</h5>
     <div class="row g-2 mb-4">
-      <div class="col"><div class="card p-3"><b>Total Siswa</b><br><?=$rekap['total']?></div></div>
-      <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><?=$rekap['lunas']?></div></div>
-      <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><?=$rekap['angsuran']?></div></div>
-      <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><?=$rekap['belum']?></div></div>
+      <div class="col">
+        <div class="card p-3">
+          <b>Total Siswa</b><br>
+          <span class="count"><?=$rekap['total']?></span>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card p-3 text-success">
+          <b>Lunas</b><br>
+          <span class="count"><?=$rekap['lunas']?></span>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card p-3 text-warning">
+          <b>Angsuran</b><br>
+          <span class="count"><?=$rekap['angsuran']?></span>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card p-3 text-danger">
+          <b>Belum Bayar</b><br>
+          <span class="count"><?=$rekap['belum']?></span>
+        </div>
+      </div>
     </div>
 
     <h5>Rekap Harian</h5>
@@ -191,12 +210,11 @@ $conn->close();
       <input type="date" id="tanggalCari" class="form-control" style="max-width:170px" value="<?=date('Y-m-d')?>">
     </form>
     <div id="rekapHarian">
-      <!-- Ini diisi via JS/AJAX -->
       <div class="row g-2 mb-4">
-        <div class="col"><div class="card p-3"><b>Daftar Hari Ini</b><br>…</div></div>
-        <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br>…</div></div>
-        <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br>…</div></div>
-        <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br>…</div></div>
+        <div class="col"><div class="card p-3"><b>Daftar Hari Ini</b><br><span class="count">…</span></div></div>
+        <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="count">…</span></div></div>
+        <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="count">…</span></div></div>
+        <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="count">…</span></div></div>
       </div>
     </div>
   </div>
@@ -209,19 +227,19 @@ function loadRekapHarian(tgl) {
   const rekapDiv = document.getElementById('rekapHarian');
   rekapDiv.innerHTML = `
     <div class="row g-2 mb-4">
-      <div class="col"><div class="card p-3"><b>Daftar Hari Ini</b><br><span class="text-muted">Memuat...</span></div></div>
-      <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="text-muted">Memuat...</span></div></div>
-      <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="text-muted">Memuat...</span></div></div>
-      <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3"><b>Daftar Hari Ini</b><br><span class="count text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="count text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="count text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="count text-muted">Memuat...</span></div></div>
     </div>`;
   fetch('rekap_harian.php?tanggal='+encodeURIComponent(tgl))
     .then(r=>r.json()).then(d=>{
       rekapDiv.innerHTML = `
       <div class="row g-2 mb-4">
-        <div class="col"><div class="card p-3"><b>Daftar</b><br>${d.total}</div></div>
-        <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br>${d.lunas}</div></div>
-        <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br>${d.angsuran}</div></div>
-        <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br>${d.belum}</div></div>
+        <div class="col"><div class="card p-3"><b>Daftar</b><br><span class="count">${d.total}</span></div></div>
+        <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="count">${d.lunas}</span></div></div>
+        <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="count">${d.angsuran}</span></div></div>
+        <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="count">${d.belum}</span></div></div>
       </div>`;
     }).catch(_=>{
       rekapDiv.innerHTML = `<div class="alert alert-danger">Gagal memuat data!</div>`;
