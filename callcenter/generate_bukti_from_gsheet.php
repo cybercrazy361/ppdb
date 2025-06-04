@@ -132,7 +132,7 @@ ob_start();
     </div>
     <table class="data-table">
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_daftar']) ?></td></tr>
-      <tr><th>Nama Calon Murid Baruk</th><td><?= safe($row['nama']) ?></td></tr>
+      <tr><th>Nama Murid Baru</th><td><?= safe($row['nama']) ?></td></tr>
       <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
       <tr><th>Asal Sekolah</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
       <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
@@ -164,8 +164,6 @@ ob_start();
   Jakarta, <?= tanggal_id(date('Y-m-d')) ?><br><br>
   (Panitia SPMB)
 </div>
-
-
 
   </div>
 </body>

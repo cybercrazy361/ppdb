@@ -479,7 +479,7 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
 </div>
     <table class="data-table">
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
-      <tr><th>Nama Calon Murid Baru</th><td><?= safe($row['nama']) ?></td></tr>
+      <tr><th>Nama Murid Baru</th><td><?= safe($row['nama']) ?></td></tr>
       <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
       <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
       <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
