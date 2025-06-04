@@ -544,11 +544,11 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
         <?php endforeach; ?>
       </table>
     <?php endif; ?>
-
+<?php endif; ?>
 <div class="status-row">
   Status Pembayaran: 
   <?php
-  echo "<pre>Status: [$status_pendaftaran]</pre>";
+
     if (strtoupper($status_pendaftaran) === 'PPDB BERSAMA') {
         echo '<span style="color:#31708f;font-weight:600;">PPDB Bersama</span>';
     } else {
@@ -557,7 +557,7 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
   ?>
 </div>
 
-<?php endif; ?>
+
 
 
     <div class="info-contact">
