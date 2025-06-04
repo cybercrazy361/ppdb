@@ -344,6 +344,14 @@ body.bg-main {
     }
 }
 
+.tim-section-desc {
+    margin-bottom: 32px;
+    /* atau 40px untuk lebih longgar */
+    font-size: 1.23rem;
+    /* jika mau lebih besar */
+    color: #353b57;
+}
+
 /* Social Icon */
 .social-icon {
     display: inline-block;
