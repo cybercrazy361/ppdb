@@ -19,19 +19,23 @@ $stmt->fetch();
 $stmt->close();
 
 // 3) Query data calon_pendaftar (TANPA EMAIL), JOIN callcenter untuk ambil nama PJ
-$sql = "SELECT cp.id, cp.nama, cp.jenis_kelamin, cp.asal_sekolah, cp.no_hp, cp.alamat, 
-               cp.pendidikan_ortu, cp.pekerjaan_ortu, cp.no_hp_ortu, cp.pilihan, cp.tanggal_daftar, 
-               cp.status, cp.notes, cc.nama as pj_nama
+$sql = "SELECT cp.id, cp.nama, cp.jenis_kelamin, cp.asal_sekolah, cp.no_hp, cp.alamat,
+               cp.pendidikan_ortu, cp.pekerjaan_ortu, cp.no_hp_ortu, cp.pilihan, cp.tanggal_daftar,
+               cp.status, cp.notes, cp.pj_username, cc.nama as pj_nama
         FROM calon_pendaftar cp
         LEFT JOIN callcenter cc ON cp.pj_username = cc.username
         " . ($unit !== 'Yayasan' ? "WHERE cp.pilihan = ? " : "") . "
         ORDER BY cp.id DESC";
+
 $stmt = $conn->prepare($sql);
 if ($unit !== 'Yayasan') {
     $stmt->bind_param("s", $unit);
 }
 $stmt->execute();
 $result = $stmt->get_result();
+$pj_list = [];
+$res_pj = $conn->query("SELECT username, nama FROM callcenter ORDER BY nama ASC");
+while($pj = $res_pj->fetch_assoc()) $pj_list[] = $pj;
 $calon = [];
 while ($row = $result->fetch_assoc()) $calon[] = $row;
 $stmt->close();
@@ -173,7 +177,17 @@ function tanggal_indo($tgl) {
         <?php endforeach; ?>
         </select>
     </td>
-    <td><?= htmlspecialchars($row['pj_nama'] ?? '-') ?></td> <!-- Kolom PJ -->
+    <td>
+  <select class="pj-select form-select form-select-sm" data-id="<?= $row['id'] ?>">
+    <option value="">- Pilih PJ -</option>
+    <?php foreach($pj_list as $pj): ?>
+      <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
+        <?= htmlspecialchars($pj['nama']) ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+</td>
+
     <td class="text-center">
         <button type="button"
             class="btn btn-sm btn-outline-primary btn-notes"
@@ -274,15 +288,14 @@ $(function(){
     }
   });
 
-// Custom filter agar badge filter status berfungsi meskipun kolom status berupa <select>
-$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-  if(settings.nTable.id !== 'calonTable') return true;
-  if(!statusFilter) return true;
-  var row = table.row(dataIndex).node();
-  var val = $(row).find('select.status-select').val();
-  return val === statusFilter;
-});
-
+  // Custom filter: Badge filter status berfungsi walau kolom status berupa <select>
+  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+    if(settings.nTable.id !== 'calonTable') return true;
+    if(!statusFilter) return true;
+    var row = table.row(dataIndex).node();
+    var val = $(row).find('select.status-select').val();
+    return val === statusFilter;
+  });
 
   // Klik badge filter status
   $('.filter-status-badge').on('click', function(){
@@ -308,6 +321,7 @@ $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
     $('#notes_text').val(notes);
     notesModal.show();
   });
+
   $('#formNotesModal').on('submit', function(e){
     e.preventDefault();
     const id = $('#notes_id').val();
@@ -343,6 +357,21 @@ $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
       } else {
         alert('Error menyimpan status');
       }
+    }, 'json');
+  });
+
+  // PJ select update
+  $('#calonTable').on('change', '.pj-select', function(){
+    var $sel = $(this);
+    var id = $sel.data('id');
+    var pj_username = $sel.val();
+    $.post('update_pj.php', {id: id, pj_username: pj_username}, function(res){
+        if(res.success){
+            $sel.removeClass('is-invalid').addClass('is-valid');
+        } else {
+            $sel.addClass('is-invalid');
+            alert('Gagal update PJ!');
+        }
     }, 'json');
   });
 
@@ -400,8 +429,8 @@ $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
       }
     });
   });
+
 });
 </script>
-
 </body>
 </html>
