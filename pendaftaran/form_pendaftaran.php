@@ -31,7 +31,7 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 $bulan = date('m');    // 05
 $tanggal = date('d');  // 29
 $tahun = date('y');    // 25
-$prefix = "REG{$bulan}{$tanggal}{$tahun}";
+$prefix = "REG{$tanggal}{$bulan}{$tahun}";
 
 // Hitung urutan hari ini di tabel siswa
 $today = date('Y-m-d');
