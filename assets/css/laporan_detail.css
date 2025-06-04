@@ -133,6 +133,30 @@ h5:first-child,
     animation: fadeInCard .48s .05s both;
 }
 
+/* Warna spesifik: */
+.card.p-3.bg-blue {
+    background: linear-gradient(120deg, #e9f1ff 80%, #e0edff 100%);
+    border-left: 7px solid #3180e040;
+}
+
+.card.p-3.bg-green,
+.card.p-3.text-success {
+    background: linear-gradient(120deg, #e9fff3 80%, #ddfff0 100%);
+    border-left: 7px solid #16b56c40;
+}
+
+.card.p-3.bg-yellow,
+.card.p-3.text-warning {
+    background: linear-gradient(120deg, #fff9e9 80%, #fff5d7 100%);
+    border-left: 7px solid #ffad3340;
+}
+
+.card.p-3.bg-red,
+.card.p-3.text-danger {
+    background: linear-gradient(120deg, #fff0f0 80%, #ffeaea 100%);
+    border-left: 7px solid #e03e3e40;
+}
+
 .card.p-3:hover {
     transform: translateY(-5px) scale(1.035);
     box-shadow: 0 8px 40px 0 rgba(40, 80, 150, 0.12), 0 3px 16px 0 rgba(20, 50, 80, .07);

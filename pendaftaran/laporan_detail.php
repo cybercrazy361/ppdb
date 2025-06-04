@@ -177,32 +177,32 @@ $conn->close();
   <div class="container mt-4">
 
     <h5>Rekap Total (Semua Data)</h5>
-    <div class="row g-2 mb-4">
-      <div class="col">
-        <div class="card p-3">
-          <b>Total Siswa</b><br>
-          <span class="count"><?=$rekap['total']?></span>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card p-3 text-success">
-          <b>Lunas</b><br>
-          <span class="count"><?=$rekap['lunas']?></span>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card p-3 text-warning">
-          <b>Angsuran</b><br>
-          <span class="count"><?=$rekap['angsuran']?></span>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card p-3 text-danger">
-          <b>Belum Bayar</b><br>
-          <span class="count"><?=$rekap['belum']?></span>
-        </div>
-      </div>
+<div class="row g-2 mb-4">
+  <div class="col">
+    <div class="card p-3 bg-blue">
+      <b>Total Siswa</b><br>
+      <span class="count"><?=$rekap['total']?></span>
     </div>
+  </div>
+  <div class="col">
+    <div class="card p-3 bg-green">
+      <b>Lunas</b><br>
+      <span class="count"><?=$rekap['lunas']?></span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card p-3 bg-yellow">
+      <b>Angsuran</b><br>
+      <span class="count"><?=$rekap['angsuran']?></span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card p-3 bg-red">
+      <b>Belum Bayar</b><br>
+      <span class="count"><?=$rekap['belum']?></span>
+    </div>
+  </div>
+</div>
 
     <h5>Rekap Harian</h5>
     <form id="formCariTanggal" class="d-flex align-items-center mb-2" style="gap:12px;">
