@@ -515,7 +515,7 @@ body {
 
 /* PJ Select Custom Style */
 .pj-select {
-    font-size: 1.14rem !important;
+    font-size: 1rem !important;
     min-width: 210px;
     max-width: 100%;
     padding: 0.57em 1.2em 0.57em 0.9em;
