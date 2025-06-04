@@ -558,9 +558,9 @@ body {
 
 .table th.alamat-col,
 .table td.alamat-col {
-    min-width: 220px !important;
-    width: 340px !important;
-    max-width: 520px !important;
+    min-width: 320px !important;
+    width: 520px !important;
+    max-width: 900px !important;
     white-space: pre-line;
     word-break: break-word;
 }
