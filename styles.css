@@ -119,50 +119,96 @@ body.bg-main {
 
 /* Card Login */
 .custom-card {
-    background: rgba(255, 255, 255, 0.91);
-    border-radius: 1.18rem;
-    box-shadow: 0 4px 30px #355cfc0f, 0 1.5px 10px #13afe018;
-    border: 1.3px solid #e6eafd;
-    transition: transform .15s, box-shadow .16s;
-    min-height: 315px;
-    padding-bottom: 6px;
-    overflow: hidden;
+    background: rgba(255, 255, 255, 0.78);
+    border-radius: 1.4rem;
+    box-shadow: 0 8px 32px #355cfc1f, 0 2px 24px #13afe020;
+    border: 1.5px solid rgba(74, 160, 255, 0.12);
+    backdrop-filter: blur(10px);
+    min-height: 325px;
+    transition: transform .18s cubic-bezier(.44, .13, .48, .87), box-shadow .19s;
     position: relative;
+    overflow: visible;
 }
 
-.custom-card:hover,
-.custom-card:focus-within {
-    transform: translateY(-8px) scale(1.027);
-    box-shadow: 0 8px 32px #4a00e035, 0 2.5px 16px #13afe029;
-    z-index: 2;
+.custom-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 1.3rem;
+    border: 1.5px solid rgba(74, 160, 255, 0.18);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.custom-card:hover {
+    transform: translateY(-12px) scale(1.035);
+    box-shadow: 0 16px 44px #4a00e038, 0 8px 36px #13afe028;
 }
 
 .card-icon {
-    color: #13afe0;
-    font-size: 2.3em;
-    background: linear-gradient(135deg, #f4f8ff 70%, #eafcff 100%);
-    border-radius: 14px;
-    width: 57px;
-    height: 57px;
-    line-height: 57px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 3px 12px #13afe01c;
+    margin: 0 auto 19px auto;
+    font-size: 2.6em;
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #eaf6ff 65%, #f3f7ff 100%);
+    box-shadow: 0 3px 14px #13afe01f;
+    position: relative;
+    transition: box-shadow .18s, transform .22s cubic-bezier(.41, .37, .49, 1.37);
+}
+
+.custom-card:hover .card-icon {
+    box-shadow: 0 6px 22px #4a00e037;
+    transform: scale(1.11) rotate(-4deg);
+}
+
+.btn-main {
+    background: linear-gradient(90deg, #355cfc 55%, #13afe0 100%);
+    color: #fff;
+    border-radius: 2.1rem;
+    font-weight: 800;
+    font-size: 1.13rem;
+    padding: 14px 0 12px 0;
+    margin-top: 32px;
+    box-shadow: 0 3px 17px #13afe020;
+    width: 90%;
+    transition: background .21s, box-shadow .17s, transform .13s;
+    border: none;
+    letter-spacing: .03em;
+    outline: none;
+    position: relative;
+    z-index: 3;
+}
+
+.btn-main:active {
+    transform: scale(.97);
+}
+
+.btn-main:hover,
+.btn-main:focus {
+    background: linear-gradient(90deg, #13afe0 0%, #4a00e0 100%);
+    box-shadow: 0 6px 28px #4a00e03a;
+    color: #fff;
 }
 
 .card-title {
-    font-weight: 700;
-    font-size: 1.19em;
-    color: #23305c;
-    margin-bottom: 0.2rem;
+    font-weight: 800;
+    font-size: 1.3em;
+    color: #1b2246;
+    margin-bottom: 0.32rem;
+    letter-spacing: .015em;
 }
 
 .card-text {
-    color: #7b859e;
-    font-size: 1.05em;
-    margin-bottom: 1.1rem;
+    color: #7c8aad;
+    font-size: 1.07em;
+    margin-bottom: 2.1rem;
+    font-weight: 500;
 }
+
 
 @media (max-width: 700px) {
     .custom-card {
