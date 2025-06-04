@@ -253,39 +253,47 @@ function tanggal_indo($tgl) {
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script>
+
+let statusFilter = '';
+
 $(function(){
   // DataTable dan event badge filter tetap
-  $.fn.dataTable.ext.search.push(
-    function(settings, data, dataIndex) {
-      if(settings.nTable.id !== 'calonTable') return true;
-      var statusFilter = settings.aoPreSearchCols[9]?.sSearch || "";
-      if(!statusFilter) return true;
-      var td = settings.aoData[dataIndex].anCells[9];
-      let value = $(td).find('.status-search-text').text().trim();
-      if(!value) value = $(td).find('select').val();
-      return value === statusFilter;
-    }
-  );
-  const table = $('#calonTable').DataTable({
-    pageLength: 10,
-    lengthMenu: [5,10,25,50],
-    order: [[0,'asc']],
-    language:{
-      search:     "Cari:",
-      lengthMenu: "_MENU_ entri per halaman",
-      info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-      paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
-    }
-  });
-  table.on('order.dt search.dt draw.dt', function() {
-    table.column(0, { search: 'applied', order: 'applied', page: 'current' })
-      .nodes()
-      .each(function(cell, i) { cell.innerHTML = i + 1; });
-  });
-  $('.filter-status-badge').on('click', function(){
-    const status = $(this).data('status');
-    table.column(9).search(status).draw();
-  });
+$.fn.dataTable.ext.search.push(
+  function(settings, data, dataIndex) {
+    if(settings.nTable.id !== 'calonTable') return true; // Hanya tabel ini
+    if(!statusFilter) return true; // Kalau filter kosong, tampilkan semua
+    const td = settings.aoData[dataIndex].anCells[9]; // Kolom status
+    // Ambil value dari select
+    let value = $(td).find('select').val();
+    return value === statusFilter;
+  }
+);
+
+const table = $('#calonTable').DataTable({
+  pageLength: 10,
+  lengthMenu: [5,10,25,50],
+  order: [[0,'asc']],
+  language:{
+    search:     "Cari:",
+    lengthMenu: "_MENU_ entri per halaman",
+    info:       "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+    paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
+  }
+});
+table.on('order.dt search.dt draw.dt', function() {
+  table.column(0, { search: 'applied', order: 'applied', page: 'current' })
+    .nodes()
+    .each(function(cell, i) { cell.innerHTML = i + 1; });
+});
+
+ $('.filter-status-badge').on('click', function(){
+    statusFilter = $(this).data('status') || '';
+    table.draw();
+    // Highlight badge yang aktif
+    $('.filter-status-badge').removeClass('active');
+    $(this).addClass('active');
+});
+
 
   // Notes modal
   let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
