@@ -24,12 +24,14 @@ if (!$id) {
 // 4. Status yang diperbolehkan (HARUS SAMA dengan ENUM di database!)
 $allowed = [
     'PPDB Bersama',
+    'Sudah Bayar',           // <-- TAMBAHKAN INI!
     'Uang Titipan',
     'Akan Bayar',
     'Menunggu Negeri',
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ];
+
 $updates = [];
 $params  = [];
 $types   = '';

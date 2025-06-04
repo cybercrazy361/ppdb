@@ -35,12 +35,14 @@ $stmt->close();
 // 4) Daftar status dinamis & inisialisasi rekap
 $status_list = [
     'PPDB Bersama'        => 'Sudah melakukan pembayaran/PPDB Bersama',
+    'Sudah Bayar'         => 'Sudah Bayar', // Tambahkan di sini
     'Uang Titipan'        => 'Uang titipan sudah masuk',
     'Akan Bayar'          => 'Akan melakukan pembayaran',
     'Menunggu Negeri'     => 'Menunggu sekolah negeri',
     'Tidak Ada Konfirmasi'=> 'Tidak ada konfirmasi',
     'Tidak Jadi'          => 'Tidak jadi daftar'
 ];
+
 $rekap = array_fill_keys(array_keys($status_list), 0);
 foreach ($calon as $row) {
     $st = $row['status'];
