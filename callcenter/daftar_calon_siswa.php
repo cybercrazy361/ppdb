@@ -49,7 +49,8 @@ $stmt->close();
 
 // 4) Daftar status dinamis & inisialisasi rekap
 $status_list = [
-    'PPDB Bersama'        => 'Sudah melakukan pembayaran/PPDB Bersama',
+    'PPDB Bersama'        => 'PPDB Bersama',
+    'Sudah Bayar'         => 'Sudah Bayar',        // <-- Tambahan baru
     'Uang Titipan'        => 'Uang titipan sudah masuk',
     'Akan Bayar'          => 'Akan melakukan pembayaran',
     'Menunggu Negeri'     => 'Menunggu sekolah negeri',
@@ -142,22 +143,22 @@ function tanggal_indo($tgl) {
                 <div class="table-responsive">
                     <table id="calonTable" class="table table-hover table-bordered align-middle">
     <thead>
-        <tr>
-            <th>No</th>
-            <th>Nama</th>
-            <th>Jenis Kelamin</th>
-            <th>Asal Sekolah</th>
-            <th>No HP</th>
-            <th class="alamat-col">Alamat</th>
-            <th>Pendidikan Ortu/Wali</th>
-            <th>Pekerjaan Ortu/Wali</th>
-            <th>No HP Ortu/Wali</th>
-            <th>Tanggal Daftar</th>
-            <th class="status-col">Status</th>
-            <th>Penanggung Jawab</th>
-            <th>Keterangan</th>
-            <th>Kirim</th>
-        </tr>
+    <tr>
+        <th class="no-col">No</th>
+        <th class="nama-col">Nama</th>
+        <th class="jk-col">Jenis Kelamin</th>
+        <th class="asal-col">Asal Sekolah</th>
+        <th class="hp-col">No HP</th>
+        <th class="alamat-col">Alamat</th>
+        <th class="pendidikan-col">Pendidikan Ortu/Wali</th>
+        <th class="pekerjaan-col">Pekerjaan Ortu/Wali</th>
+        <th class="hp-ortu-col">No HP Ortu/Wali</th>
+        <th class="tgl-col">Tanggal Daftar</th>
+        <th class="status-col">Status</th>
+        <th class="pj-col">Penanggung Jawab</th>
+        <th class="ket-col">Keterangan</th>
+        <th class="kirim-col">Kirim</th>
+    </tr>
     </thead>
 <tbody>
 <?php $no=1; foreach ($calon as $row):
@@ -178,11 +179,12 @@ function tanggal_indo($tgl) {
     <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
     <td class="status-col text-center">
         <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
-        <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
-        <?php foreach ($status_list as $st => $desc): ?>
-            <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $st ?></option>
-        <?php endforeach; ?>
-        </select>
+<select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
+<?php foreach ($status_list as $st => $desc): ?>
+    <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $desc ?></option>
+<?php endforeach; ?>
+</select>
+
     </td>
     <td>
 <select class="pj-select form-select form-select-lg" data-id="<?= $row['id'] ?>">
@@ -348,12 +350,14 @@ $(function(){
   // Status select update
   const classes = {
     'PPDB Bersama':'status-ppdb-bersama',
+    'Sudah Bayar':'status-sudah-bayar',
     'Uang Titipan':'status-uang-titipan',
     'Akan Bayar':'status-akan-bayar',
     'Menunggu Negeri':'status-menunggu-negeri',
     'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
     'Tidak Jadi':'status-tidak-jadi'
-  };
+};
+
   $('#calonTable').on('change', '.status-select', function(){
     const $sel = $(this),
           $row = $sel.closest('tr'),

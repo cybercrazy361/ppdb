@@ -18,14 +18,16 @@ function getCallCenterStats($conn, $unit) {
     $total = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
 
-    $statusList = [
-        'PPDB Bersama'         => 0,
-        'Uang Titipan'         => 0,
-        'Akan Bayar'           => 0,
-        'Menunggu Negeri'      => 0,
-        'Tidak Ada Konfirmasi' => 0,
-        'Tidak Jadi'           => 0
-    ];
+$statusList = [
+    'PPDB Bersama'         => 0,
+    'Sudah Bayar'          => 0,  // <--- Tambah di sini
+    'Uang Titipan'         => 0,
+    'Akan Bayar'           => 0,
+    'Menunggu Negeri'      => 0,
+    'Tidak Ada Konfirmasi' => 0,
+    'Tidak Jadi'           => 0
+];
+
     $stmt2 = $conn->prepare("SELECT status, COUNT(*) as jumlah FROM calon_pendaftar WHERE pilihan = ? GROUP BY status");
     $stmt2->bind_param("s", $unit);
     $stmt2->execute();
@@ -73,6 +75,12 @@ $conn->close();
 
     <!-- Dashboard Cards -->
     <section class="dashboard-cards">
+        <div class="card shadow" onclick="showModal('sudahbayar')" style="cursor:pointer;">
+            <div class="icon text-success"><i class="fas fa-cash-register"></i></div>
+            <div class="title">Sudah Bayar</div>
+            <div class="count"><?=$stat['status']['Sudah Bayar']?></div>
+            <div class="subtext">Sudah Melunasi</div>
+        </div>
         <div class="card shadow" onclick="showModal('all')" style="cursor:pointer;">
             <div class="icon text-primary"><i class="fas fa-users"></i></div>
             <div class="title">Total Calon Pendaftar</div>
@@ -156,6 +164,7 @@ function showModal(status) {
     body.innerHTML = '<tr><td colspan="5" class="text-center">Memuat...</td></tr>';
     let url = `fetch_calon_pendaftar.php?unit=<?=urlencode($unit)?>`;
     if (status === 'ppdb') url += "&status=PPDB%20Bersama";
+    else if (status === 'sudahbayar') url += "&status=Sudah%20Bayar";
     else if (status === 'titipan') url += "&status=Uang%20Titipan";
     else if (status === 'akanbayar') url += "&status=Akan%20Bayar";
     else if (status === 'nunggunegeri') url += "&status=Menunggu%20Negeri";
@@ -188,33 +197,36 @@ const ctx = document.getElementById('chartStatus').getContext('2d');
 new Chart(ctx, {
     type: 'doughnut',
     data: {
-        labels: [
-            'PPDB Bersama',
-            'Uang Titipan',
-            'Akan Bayar',
-            'Menunggu Negeri',
-            'Tidak Ada Konfirmasi',
-            'Tidak Jadi'
-        ],
-        datasets: [{
-            data: [
-                <?=$stat['status']['PPDB Bersama']?>,
-                <?=$stat['status']['Uang Titipan']?>,
-                <?=$stat['status']['Akan Bayar']?>,
-                <?=$stat['status']['Menunggu Negeri']?>,
-                <?=$stat['status']['Tidak Ada Konfirmasi']?>,
-                <?=$stat['status']['Tidak Jadi']?>
-            ],
-            backgroundColor: [
-                '#3ec86b', // Hijau - follow up sukses
-                '#36b9cc', // Biru - uang titipan
-                '#f6c23e', // Kuning - akan bayar
-                '#8f9dff', // Biru muda - menunggu negeri
-                '#e75151', // Merah - belum follow up
-                '#727a86'  // Abu - cancel
-            ],
-            hoverOffset: 18
-        }]
+labels: [
+    'PPDB Bersama',
+    'Sudah Bayar',           // <-- Tambah
+    'Uang Titipan',
+    'Akan Bayar',
+    'Menunggu Negeri',
+    'Tidak Ada Konfirmasi',
+    'Tidak Jadi'
+],
+datasets: [{
+    data: [
+        <?=$stat['status']['PPDB Bersama']?>,
+        <?=$stat['status']['Sudah Bayar']?>,   // <-- Tambah
+        <?=$stat['status']['Uang Titipan']?>,
+        <?=$stat['status']['Akan Bayar']?>,
+        <?=$stat['status']['Menunggu Negeri']?>,
+        <?=$stat['status']['Tidak Ada Konfirmasi']?>,
+        <?=$stat['status']['Tidak Jadi']?>
+    ],
+    backgroundColor: [
+        '#3ec86b', // PPDB Bersama
+        '#12c15c', // Sudah Bayar (pilih warna baru)
+        '#36b9cc', // Uang Titipan
+        '#f6c23e', // Akan Bayar
+        '#8f9dff', // Menunggu Negeri
+        '#e75151', // Tidak Ada Konfirmasi
+        '#727a86'  // Tidak Jadi
+    ],
+    hoverOffset: 18
+}]
     },
     options: {
         responsive: true,

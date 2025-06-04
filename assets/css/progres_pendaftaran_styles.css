@@ -657,3 +657,15 @@ body {
         min-width: 70px;
     }
 }
+
+.status-sudah-bayar {
+    background: #12c15c !important;
+    /* hijau muda atau sesuai keinginan */
+    color: #fff !important;
+}
+
+.table td .status-select.status-sudah-bayar {
+    background: #e6fff0 !important;
+    color: #198754 !important;
+    border-color: #80f0bc !important;
+}
