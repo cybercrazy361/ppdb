@@ -183,53 +183,68 @@ $conn->close();
   <script src="../assets/js/sidebar_pendaftaran.js"></script>
   <script>
     function showModal(status) {
-      const body = document.getElementById('modalBody');
-      body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
-      fetch(`fetch_siswa.php?status=${status}&unit=<?=urlencode($unit)?>`)
-        .then(r => r.json())
-        .then(data => {
-          if(!data.length) {
-            body.innerHTML = '<tr><td colspan="3" class="text-center">Tidak ada data.</td></tr>';
-            return;
-          }
-          body.innerHTML = data.map((s,i) =>
-            `<tr><td>${i+1}</td><td>${s.nama}</td><td>${s.status_pembayaran}</td></tr>`
-          ).join('');
-        })
-        .catch(() => {
-          body.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat.</td></tr>';
-        });
-      new bootstrap.Modal('#statusModal').show();
-    }
+  const body = document.getElementById('modalBody');
+  body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
+  fetch(`fetch_siswa.php?status=${status}&unit=<?=urlencode($unit)?>`)
+    .then(r => r.json())
+    .then(data => {
+      if(!data.length) {
+        body.innerHTML = '<tr><td colspan="3" class="text-center">Tidak ada data.</td></tr>';
+        return;
+      }
+      body.innerHTML = data.map((s,i) =>
+        `<tr><td>${i+1}</td><td>${s.nama}</td><td>${s.status_pembayaran}</td></tr>`
+      ).join('');
+    })
+    .catch(() => {
+      body.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat.</td></tr>';
+    });
+  new bootstrap.Modal('#statusModal').show();
+}
 
-    const ctx = document.getElementById('chartBayar').getContext('2d');
-    new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Lunas','Angsuran','Belum Bayar'],
-        datasets: [{
-          data: [<?=$stat['lunas']?>, <?=$stat['angsuran']?>, <?=$stat['belum']?>],
-          backgroundColor: ['#198754','#ffc107','#dc3545'],
-          hoverOffset: 20
-        }]
+// Chart.js: Atur legend agar lebih terang & modern
+const ctx = document.getElementById('chartBayar').getContext('2d');
+new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Lunas','Angsuran','Belum Bayar'],
+    datasets: [{
+      data: [<?=$stat['lunas']?>, <?=$stat['angsuran']?>, <?=$stat['belum']?>],
+      backgroundColor: ['#198754','#ffc107','#dc3545'],
+      hoverOffset: 20
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: '#f7fbff',         // Warna putih terang
+          font: {
+            family: "'Poppins', 'Segoe UI', Arial, sans-serif", // Sesuaikan dengan dashboard
+            weight: 'bold',
+            size: 16
+          },
+          boxWidth: 28,
+          padding: 18,
+          usePointStyle: true // Lebih modern (bisa diaktifkan/disable sesuai selera)
+        }
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' },
-          tooltip: {
-            callbacks: {
-              label: ctx => {
-                const v = ctx.raw,
-                      t = ctx.dataset.data.reduce((a,b) => a+b, 0),
-                      p = ((v/t)*100).toFixed(1);
-                return `${ctx.label}: ${v} (${p}%)`;
-              }
-            }
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const v = ctx.raw,
+                  t = ctx.dataset.data.reduce((a,b) => a+b, 0),
+                  p = ((v/t)*100).toFixed(1);
+            return `${ctx.label}: ${v} (${p}%)`;
           }
         }
       }
-    });
+    }
+  }
+});
+
   </script>
 </body>
 </html>
