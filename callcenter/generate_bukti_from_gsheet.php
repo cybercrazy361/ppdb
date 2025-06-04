@@ -176,40 +176,47 @@ $mpdf->WriteHTML($html);
 $mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
 
 // ==== Kirim ke WhatsApp siswa & ortu (Wablas) ====
-$token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
-$secret_key = "PAtwrvlV";
-$wa_numbers = [];
-if (preg_match('/^628[0-9]{7,13}$/', $row['no_hp'])) $wa_numbers[] = $row['no_hp'];
-if (preg_match('/^628[0-9]{7,13}$/', $row['no_hp_ortu'])) $wa_numbers[] = $row['no_hp_ortu'];
+// Hanya kirim WA jika unit/pilihan adalah "SMA"
+if (strtoupper(trim($row['pilihan'])) === 'SMA') {
+    $token = "iMfsMR63WRfAMjEuVCEu2CJKpSZYVrQoW6TKlShzENJN2YNy2cZAwL2";
+    $secret_key = "PAtwrvlV";
+    $wa_numbers = [];
+    if (preg_match('/^628[0-9]{7,13}$/', $row['no_hp'])) $wa_numbers[] = $row['no_hp'];
+    if (preg_match('/^628[0-9]{7,13}$/', $row['no_hp_ortu'])) $wa_numbers[] = $row['no_hp_ortu'];
 
-$payload = ['data' => []];
-foreach ($wa_numbers as $no_wa) {
-    $payload['data'][] = [
-        "phone" => $no_wa,
-        "document" => $pdf_url,
-        "caption" => "Bukti Pendaftaran Siswa Baru atas nama " . $row['nama']
-    ];
-}
+    $payload = ['data' => []];
+    foreach ($wa_numbers as $no_wa) {
+        $payload['data'][] = [
+            "phone" => $no_wa,
+            "document" => $pdf_url,
+            "caption" => "Bukti Pendaftaran Siswa Baru atas nama " . $row['nama']
+        ];
+    }
 
-$curl = curl_init();
-curl_setopt($curl, CURLOPT_HTTPHEADER, [
-    "Authorization: $token.$secret_key",
-    "Content-Type: application/json"
-]);
-curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
-curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-$result = curl_exec($curl);
-$err = curl_error($curl);
-curl_close($curl);
-file_put_contents(__DIR__.'/bukti/debug.txt', "WA RESPONSE: ".$result.PHP_EOL, FILE_APPEND);
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_HTTPHEADER, [
+        "Authorization: $token.$secret_key",
+        "Content-Type: application/json"
+    ]);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($curl, CURLOPT_URL, "https://bdg.wablas.com/api/v2/send-document");
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+    $result = curl_exec($curl);
+    $err = curl_error($curl);
+    curl_close($curl);
+    file_put_contents(__DIR__.'/bukti/debug.txt', "WA RESPONSE: ".$result.PHP_EOL, FILE_APPEND);
 
-if ($err) {
-    echo json_encode(['success'=>false, 'message'=>"PDF ok, tapi gagal WA: $err", 'pdf'=>$pdf_url]);
+    if ($err) {
+        echo json_encode(['success'=>false, 'message'=>"PDF ok, tapi gagal WA: $err", 'pdf'=>$pdf_url]);
+    } else {
+        echo json_encode(['success'=>true, 'message'=>'PDF & WA sukses!', 'pdf'=>$pdf_url]);
+    }
 } else {
-    echo json_encode(['success'=>true, 'message'=>'PDF & WA sukses!', 'pdf'=>$pdf_url]);
+    // Jika bukan SMA, hanya kirim PDF saja
+    echo json_encode(['success'=>true, 'message'=>'PDF sukses! (tidak dikirim WA karena bukan unit SMA)', 'pdf'=>$pdf_url]);
 }
+
 ?>
