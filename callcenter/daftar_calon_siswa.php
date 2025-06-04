@@ -256,15 +256,16 @@ function tanggal_indo($tgl) {
 
 let statusFilter = '';
 
-$(function(){
-  // DataTable dan event badge filter tetap
+let statusFilter = '';
+
 $.fn.dataTable.ext.search.push(
   function(settings, data, dataIndex) {
-    if(settings.nTable.id !== 'calonTable') return true; // Hanya tabel ini
-    if(!statusFilter) return true; // Kalau filter kosong, tampilkan semua
-    const td = settings.aoData[dataIndex].anCells[9]; // Kolom status
-    // Ambil value dari select
+    if(settings.nTable.id !== 'calonTable') return true;
+    if(!statusFilter) return true;
+    const td = settings.aoData[dataIndex].anCells[9];
     let value = $(td).find('select').val();
+    // DEBUG
+    console.log('Baris:', dataIndex, '| Value:', value, '| StatusFilter:', statusFilter);
     return value === statusFilter;
   }
 );
@@ -280,16 +281,11 @@ const table = $('#calonTable').DataTable({
     paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
   }
 });
-table.on('order.dt search.dt draw.dt', function() {
-  table.column(0, { search: 'applied', order: 'applied', page: 'current' })
-    .nodes()
-    .each(function(cell, i) { cell.innerHTML = i + 1; });
-});
 
- $('.filter-status-badge').on('click', function(){
+$('.filter-status-badge').on('click', function(){
     statusFilter = $(this).data('status') || '';
+    console.log('Badge diklik:', statusFilter);
     table.draw();
-    // Highlight badge yang aktif
     $('.filter-status-badge').removeClass('active');
     $(this).addClass('active');
 });
