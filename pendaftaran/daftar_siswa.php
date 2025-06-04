@@ -151,6 +151,15 @@ function getStatusPembayaranLabel($status) {
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
   <link rel="stylesheet" href="../assets/css/daftar_siswa_styles.css">
+  <style>
+/* Hide No Registrasi, No Formulir, Tempat/Tgl Lahir, dan Alamat */
+th.no-regis-col, td.no-regis-col,
+th.ttl-col, td.ttl-col,
+th.alamat-col, td.alamat-col {
+  display: none !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -196,13 +205,13 @@ function getStatusPembayaranLabel($status) {
     <thead>
       <tr>
         <th style="min-width:50px;">No</th>
-        <th style="min-width:120px;">No Registrrasi</th>
+        <th class="no-regis-col" style="min-width:120px;">No Registrasi</th>
         <th style="min-width:120px;">No Formulir</th>
         <th style="min-width:180px;">Nama</th>
         <th style="min-width:120px;">Jenis Kelamin</th>
-        <th style="min-width:180px;">Tempat/Tgl Lahir</th>
+        <th class="ttl-col" style="min-width:180px;">Tempat/Tgl Lahir</th>
         <th style="min-width:160px;">Asal Sekolah</th>
-        <th style="min-width:220px;">Alamat</th>
+        <th class="alamat-col" style="min-width:220px;">Alamat</th>
         <th style="min-width:120px;">No HP</th>
         <th style="min-width:130px;">No HP Ortu</th>
         <th style="min-width:180px;">Progres Pembayaran</th>
@@ -217,16 +226,16 @@ function getStatusPembayaranLabel($status) {
               while ($row = $result->fetch_assoc()): ?>
                 <tr>
                   <td><?= $no++ ?></td>
-                  <td><?= htmlspecialchars($row['no_formulir']   ?? '') ?></td>
+                  <td class="no-regis-col"><?= htmlspecialchars($row['no_registrasi'] ?? '') ?></td>
                   <td><?= htmlspecialchars($row['no_invoice']   ?? '') ?></td>
                   <td><?= htmlspecialchars($row['nama']          ?? '') ?></td>
                   <td><?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?></td>
-                  <td>
-                    <?= htmlspecialchars($row['tempat_lahir']   ?? '') ?>,
+                  <td class="ttl-col">
+                    <?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>,
                     <?= formatTanggalIndonesia($row['tanggal_lahir'] ?? '') ?>
                   </td>
                   <td><?= htmlspecialchars($row['asal_sekolah']    ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['alamat']           ?? '') ?></td>
+                  <td class="alamat-col"><?= htmlspecialchars($row['alamat'] ?? '') ?></td>
                   <td><?= htmlspecialchars($row['no_hp']            ?? '') ?></td>
                   <td><?= htmlspecialchars($row['no_hp_ortu']       ?? '') ?></td>
                   <td>
