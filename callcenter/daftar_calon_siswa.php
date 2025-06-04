@@ -149,9 +149,9 @@ function tanggal_indo($tgl) {
         <th class="jk-col">Jenis Kelamin</th>
         <th class="asal-col">Asal Sekolah</th>
         <th class="hp-col">No HP</th>
-        <th class="alamat-col">Alamat</th>
-        <th class="pendidikan-col">Pendidikan Ortu/Wali</th>
-        <th class="pekerjaan-col">Pekerjaan Ortu/Wali</th>
+        <th class="alamat-col d-none">Alamat</th>
+        <th class="pendidikan-col d-none">Pendidikan Ortu/Wali</th>
+        <th class="pekerjaan-col d-none">Pekerjaan Ortu/Wali</th>
         <th class="hp-ortu-col">No HP Ortu/Wali</th>
         <th class="tgl-col">Tanggal Daftar</th>
         <th class="status-col">Status</th>
@@ -172,9 +172,9 @@ function tanggal_indo($tgl) {
     <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
     <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
     <td><?= htmlspecialchars($row['no_hp']) ?></td>
-    <td class="alamat-col"><?= htmlspecialchars($row['alamat']) ?></td>
-    <td><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
-    <td><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
+    <td class="alamat-col d-none"><?= htmlspecialchars($row['alamat']) ?></td>
+    <td class="pendidikan-col d-none"><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
+    <td class="pekerjaan-col d-none"><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
     <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
     <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
     <td class="status-col text-center">

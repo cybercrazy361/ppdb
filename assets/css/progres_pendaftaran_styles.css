@@ -669,3 +669,9 @@ body {
     color: #198754 !important;
     border-color: #80f0bc !important;
 }
+
+.alamat-col,
+.pendidikan-col,
+.pekerjaan-col {
+    display: none !important;
+}
