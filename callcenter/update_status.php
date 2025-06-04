@@ -30,6 +30,7 @@ $allowed = [
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ];
+
 $updates = [];
 $params  = [];
 $types   = '';
