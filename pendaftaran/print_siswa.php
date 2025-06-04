@@ -229,7 +229,7 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
 
 
     <table class="data-table">
-      <caption>DATA CALON PESERTA DIDIK BARU</caption>
+      <caption>DATA CALON PESERTA MURID BARU</caption>
       <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
       <tr><th>Nama Calon Peserta Didik</th><td><?= safe($row['nama']) ?></td></tr>
       <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
