@@ -15,13 +15,13 @@
       <span>Dashboard</span>
     </a>
      <!-- LABEL CALON SISWA -->
-   <!--  <div class="sidebar-section-label">Progres siswa</div>
-   
-<a href="input_progres_pendaftaran" class="nav-link <?= ($active=='progressiswa'?'active':'') ?>">
-  <i class="fas fa-user-plus"></i>
-  <span>Input Daftar Calon Siswa</span>
-</a>
--->
+      <!--  <div class="sidebar-section-label">Progres siswa</div>
+      
+    <a href="input_progres_pendaftaran" class="nav-link <?= ($active=='progressiswa'?'active':'') ?>">
+      <i class="fas fa-user-plus"></i>
+      <span>Input Daftar Calon Siswa</span>
+    </a>
+    -->
 
     <!-- LABEL CALON SISWA -->
     <div class="sidebar-section-label">CALON SISWA</div>
