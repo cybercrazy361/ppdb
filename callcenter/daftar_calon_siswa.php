@@ -50,7 +50,7 @@ $stmt->close();
 // 4) Daftar status dinamis & inisialisasi rekap
 $status_list = [
     'PPDB Bersama'        => 'PPDB Bersama',
-    'Sudah Bayar'         => 'Sudah Bayar',        // <-- Tambahan baru
+    'Sudah Bayar'         => 'Sudah Bayar',
     'Uang Titipan'        => 'Uang titipan sudah masuk',
     'Akan Bayar'          => 'Akan melakukan pembayaran',
     'Menunggu Negeri'     => 'Menunggu sekolah negeri',
@@ -196,7 +196,6 @@ function tanggal_indo($tgl) {
     <?php endforeach; ?>
 </select>
 
-
 </td>
 
     <td class="text-center">
@@ -309,10 +308,10 @@ $(function(){
   });
 
   // Klik badge filter status
-  $('.filter-status-badge').on('click', function(){
+$('.filter-status-badge').on('click', function(){
     statusFilter = $(this).data('status') || '';
     table.draw();
-  });
+});
 
   // Nomor urut update setiap sorting, search, pagination
   table.on('order.dt search.dt draw.dt', function() {
@@ -348,7 +347,7 @@ $(function(){
   });
 
   // Status select update
-  const classes = {
+const classes = {
     'PPDB Bersama':'status-ppdb-bersama',
     'Sudah Bayar':'status-sudah-bayar',
     'Uang Titipan':'status-uang-titipan',
