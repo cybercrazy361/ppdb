@@ -154,7 +154,7 @@ function tanggal_indo($tgl) {
             <th>No HP Ortu/Wali</th>
             <th>Tanggal Daftar</th>
             <th class="status-col">Status</th>
-            <th>**PJ**</th>
+            <th>Penanggung Jawab</th>
             <th>Keterangan</th>
             <th>Kirim</th>
         </tr>
