@@ -253,27 +253,19 @@ function tanggal_indo($tgl) {
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script>
-
-// Satu kali saja deklarasi
-let statusFilter = '';
-
-$(function() {
-  // Custom filter status DataTables
+$(function(){
+  // DataTable dan event badge filter tetap
   $.fn.dataTable.ext.search.push(
     function(settings, data, dataIndex) {
       if(settings.nTable.id !== 'calonTable') return true;
+      var statusFilter = settings.aoPreSearchCols[9]?.sSearch || "";
       if(!statusFilter) return true;
-      const td = settings.aoData[dataIndex].anCells[9];
-      // Coba ambil value dari select, kalau gagal ambil dari status-search-text
-      let value = $(td).find('select').val();
-      if (!value) value = $(td).find('.status-search-text').text().trim();
-      // DEBUG
-      console.log('Baris:', dataIndex, '| Value:', value, '| StatusFilter:', statusFilter);
+      var td = settings.aoData[dataIndex].anCells[9];
+      let value = $(td).find('.status-search-text').text().trim();
+      if(!value) value = $(td).find('select').val();
       return value === statusFilter;
     }
   );
-
-  // Inisialisasi DataTables
   const table = $('#calonTable').DataTable({
     pageLength: 10,
     lengthMenu: [5,10,25,50],
@@ -285,24 +277,15 @@ $(function() {
       paginate:{ previous:"Sebelumnya", next:"Berikutnya" }
     }
   });
-
-  // Reset nomor urut setiap search/order/draw
   table.on('order.dt search.dt draw.dt', function() {
     table.column(0, { search: 'applied', order: 'applied', page: 'current' })
       .nodes()
       .each(function(cell, i) { cell.innerHTML = i + 1; });
   });
-
-  // Event click badge - pakai event delegation jika badge dinamis
-  $(document).on('click', '.filter-status-badge', function(){
-      statusFilter = $(this).data('status') || '';
-      console.log('Badge diklik:', statusFilter);
-      table.draw();
-      $('.filter-status-badge').removeClass('active');
-      $(this).addClass('active');
+  $('.filter-status-badge').on('click', function(){
+    const status = $(this).data('status');
+    table.column(9).search(status).draw();
   });
-
-});
 
   // Notes modal
   let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
