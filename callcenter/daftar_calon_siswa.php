@@ -180,9 +180,10 @@ function tanggal_indo($tgl) {
     <td class="status-col text-center">
         <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
 <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
-<?php foreach ($status_list as $st => $desc): ?>
-    <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $desc ?></option>
-<?php endforeach; ?>
+    <option value="">- Pilih Status -</option> <!-- Tambahkan ini sebagai opsi default -->
+    <?php foreach ($status_list as $st => $desc): ?>
+        <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $desc ?></option>
+    <?php endforeach; ?>
 </select>
 
     </td>
