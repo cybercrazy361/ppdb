@@ -57,10 +57,11 @@ $reviewed_by = $_SESSION['nama'] ?? $_SESSION['username'] ?? '-';
 // Jika mau catat waktu review juga:
 $reviewed_at = date('Y-m-d H:i:s'); // Pastikan kolom ini ada jika dipakai
 
-// 3. Generate no_formulir unik (format: REGmdy001)
-$tgl = date('dm');
-$thn = date('y');
-$prefix = 'REG' . date('mdy'); // Contoh: REG052925
+// 3. Generate no_formulir unik (format: REGdmY001)
+$tgl = date('d');
+$bln = date('m');
+$thn = date('Y');
+$prefix = 'REG' . date('dmY'); // Contoh: REG29052025
 
 // Cari urutan hari ini
 $stmtUrut = $conn->prepare("SELECT MAX(no_formulir) as maxf FROM siswa WHERE no_formulir LIKE CONCAT(?, '%')");
@@ -71,7 +72,7 @@ $stmtUrut->close();
 
 $no_urut = 1;
 if ($maxData && $maxData['maxf']) {
-    $angka = intval(substr($maxData['maxf'], 9, 3));
+    $angka = intval(substr($maxData['maxf'], 11, 3)); // <--- Perhatikan index berubah jadi 11
     $no_urut = $angka + 1;
 }
 $no_formulir = $prefix . str_pad($no_urut, 3, '0', STR_PAD_LEFT);
