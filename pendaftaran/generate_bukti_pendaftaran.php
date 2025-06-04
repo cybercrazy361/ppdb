@@ -492,63 +492,69 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
       <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
     </table>
 
-<?php if (strtoupper($status_pendaftaran) !== 'PPDB BERSAMA'): ?>
-    <table class="tagihan-table">
+
+<div style="font-weight:bold; font-size:18px; color:#1a53c7; text-align:center; margin-bottom:5px; text-transform:uppercase;">
+  DATA MURID BARU
+</div>
+<table class="data-table">
+  <!-- ... data siswa ... -->
+</table>
+
+<table class="tagihan-table">
+  <tr>
+    <th colspan="2" style="text-align:center; font-weight:bold; font-size:14px; background:#e3eaf7;">
+      Keterangan Pembayaran
+    </th>
+  </tr>
+  <?php if(count($tagihan)): ?>
+    <?php foreach($tagihan as $tg): ?>
       <tr>
-        <th colspan="2" style="text-align:center; font-weight:bold; font-size:14px; background:#e3eaf7;">
-          Keterangan Pembayaran
-        </th>
+        <td><?= safe($tg['jenis']) ?></td>
+        <td style="text-align:right; font-weight:600;">
+          Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
+        </td>
       </tr>
-      <?php if(count($tagihan)): ?>
-        <?php foreach($tagihan as $tg): ?>
-          <tr>
-            <td><?= safe($tg['jenis']) ?></td>
-            <td style="text-align:right; font-weight:600;">
-              Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <tr><td colspan="2" style="text-align:center; color:#bb2222;">Belum ada tagihan yang diverifikasi.</td></tr>
-      <?php endif; ?>
-    </table>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <tr><td colspan="2" style="text-align:center; color:#bb2222;">Belum ada tagihan yang diverifikasi.</td></tr>
+  <?php endif; ?>
+</table>
 
-    <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
-      <div style="margin:10px 0 3px 0; font-weight:600;">Riwayat Pembayaran:</div>
-      <table class="tagihan-table riwayat-bayar" style="font-size:11px;">
-        <colgroup>
-          <col style="width:20%">
-          <col style="width:20%">
-          <col style="width:15%">
-          <col style="width:15%">
-          <col style="width:10%">
-          <col style="width:20%">
-        </colgroup>
-        <tr>
-          <th>Jenis</th>
-          <th>Nominal</th>
-          <th>Cashback</th>
-          <th>Status</th>
-          <th>Bulan</th>
-          <th>Tanggal</th>
-        </tr>
-        <?php foreach($pembayaran_terakhir as $b): ?>
-        <tr>
-          <td><?= safe($b['jenis']) ?></td>
-          <td style="text-align:right;">Rp <?= number_format($b['jumlah'], 0, ',', '.') ?></td>
-          <td style="text-align:right;"><?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'], 0, ',', '.') : '-' ?></td>
-          <td><?= safe($b['status_pembayaran']) ?></td>
-          <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
-          <td><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
-        </tr>
-        <?php endforeach; ?>
-      </table>
-    <?php endif; ?>
-
-    <div class="status-row">
-      Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
-    </div>
+<?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
+  <div style="margin:10px 0 3px 0; font-weight:600;">Riwayat Pembayaran:</div>
+  <table class="tagihan-table riwayat-bayar" style="font-size:11px;">
+    <colgroup>
+      <col style="width:20%">
+      <col style="width:20%">
+      <col style="width:15%">
+      <col style="width:15%">
+      <col style="width:10%">
+      <col style="width:20%">
+    </colgroup>
+    <tr>
+      <th>Jenis</th>
+      <th>Nominal</th>
+      <th>Cashback</th>
+      <th>Status</th>
+      <th>Bulan</th>
+      <th>Tanggal</th>
+    </tr>
+    <?php foreach($pembayaran_terakhir as $b): ?>
+    <tr>
+      <td><?= safe($b['jenis']) ?></td>
+      <td style="text-align:right;">Rp <?= number_format($b['jumlah'], 0, ',', '.') ?></td>
+      <td style="text-align:right;"><?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'], 0, ',', '.') : '-' ?></td>
+      <td><?= safe($b['status_pembayaran']) ?></td>
+      <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
+      <td><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
+    </tr>
+    <?php endforeach; ?>
+  </table>
 <?php endif; ?>
+
+<div class="status-row">
+  Status Pembayaran: <?= getStatusBadge($status_pembayaran) ?>
+</div>
 
 
     <div class="info-contact">
