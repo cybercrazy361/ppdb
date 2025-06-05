@@ -2,31 +2,33 @@
 session_start();
 include '../database_connection.php';
 
-// Validasi login
+// Validasi login petugas pendaftaran
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
     header('Location: login_pendaftaran.php');
     exit();
 }
 
-$unit = $_SESSION['unit'];
-$active = 'dashboard';
-$_SESSION['nama'] = $_SESSION['nama'] ?? 'Petugas';
+$unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 
-// LOGIKA STATUS PEMBAYARAN
+// === PAKAI LOGIKA STATUS PEMBAYARAN SAMA SEPERTI daftar_siswa.php ===
 $uang_pangkal_id = 1;
 $spp_id = 2;
-function getStats($conn, $unit, $uang_pangkal_id, $spp_id) {
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
-    $stmt->bind_param("s", $unit);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $total = 0;
-    if ($result) {
-        $row = $result->fetch_assoc();
-        $total = $row ? intval($row['total']) : 0;
-    }
-    $stmt->close();
 
+function getStats($conn, $unit, $uang_pangkal_id, $spp_id) {
+    // Total pendaftar
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
+$stmt->bind_param("s", $unit);
+$stmt->execute();
+$result = $stmt->get_result();
+$total = 0;
+if ($result) {
+    $row = $result->fetch_assoc();
+    $total = $row ? intval($row['total']) : 0;
+}
+$stmt->close();
+
+
+    // Hitung semua status pembayaran
     $sql = "
     SELECT s.id,
       CASE
@@ -100,16 +102,19 @@ $conn->close();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard <?=htmlspecialchars($unit)?> – SPMB</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css">
-  <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/pendaftaran_dashboard_styles.css" />
+  <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <?php $active = 'dashboard'; ?>
   <?php include 'sidebar_pendaftaran.php'; ?>
+
   <div class="main">
     <header class="navbar">
-      <button class="toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar"><i class="fas fa-bars"></i></button>
+      <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
       <div class="title">Dashboard <?=htmlspecialchars($unit)?></div>
       <div class="user-menu">
         <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
@@ -175,70 +180,71 @@ $conn->close();
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/sidebar_pendaftaran.js"></script>
+  <script src="../assets/js/sidebar_pendaftaran.js"></script>
   <script>
     function showModal(status) {
-      const body = document.getElementById('modalBody');
-      body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
-      fetch(`fetch_siswa.php?status=${status}&unit=<?=urlencode($unit)?>`)
-        .then(r => r.json())
-        .then(data => {
-          if(!data.length) {
-            body.innerHTML = '<tr><td colspan="3" class="text-center">Tidak ada data.</td></tr>';
-            return;
-          }
-          body.innerHTML = data.map((s,i) =>
-            `<tr><td>${i+1}</td><td>${s.nama}</td><td>${s.status_pembayaran}</td></tr>`
-          ).join('');
-        })
-        .catch(() => {
-          body.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat.</td></tr>';
-        });
-      new bootstrap.Modal('#statusModal').show();
-    }
+  const body = document.getElementById('modalBody');
+  body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
+  fetch(`fetch_siswa.php?status=${status}&unit=<?=urlencode($unit)?>`)
+    .then(r => r.json())
+    .then(data => {
+      if(!data.length) {
+        body.innerHTML = '<tr><td colspan="3" class="text-center">Tidak ada data.</td></tr>';
+        return;
+      }
+      body.innerHTML = data.map((s,i) =>
+        `<tr><td>${i+1}</td><td>${s.nama}</td><td>${s.status_pembayaran}</td></tr>`
+      ).join('');
+    })
+    .catch(() => {
+      body.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat.</td></tr>';
+    });
+  new bootstrap.Modal('#statusModal').show();
+}
 
-    // Chart.js: Donut chart pembayaran
-    const ctx = document.getElementById('chartBayar').getContext('2d');
-    new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Lunas','Angsuran','Belum Bayar'],
-        datasets: [{
-          data: [<?=$stat['lunas']?>, <?=$stat['angsuran']?>, <?=$stat['belum']?>],
-          backgroundColor: ['#198754','#ffc107','#dc3545'],
-          hoverOffset: 20
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              color: '#f7fbff',
-              font: {
-                family: "'Poppins', 'Segoe UI', Arial, sans-serif",
-                weight: 'bold',
-                size: 16
-              },
-              boxWidth: 28,
-              padding: 18,
-              usePointStyle: true
-            }
+// Chart.js: Atur legend agar lebih terang & modern
+const ctx = document.getElementById('chartBayar').getContext('2d');
+new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Lunas','Angsuran','Belum Bayar'],
+    datasets: [{
+      data: [<?=$stat['lunas']?>, <?=$stat['angsuran']?>, <?=$stat['belum']?>],
+      backgroundColor: ['#198754','#ffc107','#dc3545'],
+      hoverOffset: 20
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: '#f7fbff',         // Warna putih terang
+          font: {
+            family: "'Poppins', 'Segoe UI', Arial, sans-serif", // Sesuaikan dengan dashboard
+            weight: 'bold',
+            size: 16
           },
-          tooltip: {
-            callbacks: {
-              label: ctx => {
-                const v = ctx.raw,
-                      t = ctx.dataset.data.reduce((a,b) => a+b, 0),
-                      p = ((v/t)*100).toFixed(1);
-                return `${ctx.label}: ${v} (${p}%)`;
-              }
-            }
+          boxWidth: 28,
+          padding: 18,
+          usePointStyle: true // Lebih modern (bisa diaktifkan/disable sesuai selera)
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const v = ctx.raw,
+                  t = ctx.dataset.data.reduce((a,b) => a+b, 0),
+                  p = ((v/t)*100).toFixed(1);
+            return `${ctx.label}: ${v} (${p}%)`;
           }
         }
       }
-    });
+    }
+  }
+});
+
   </script>
 </body>
 </html>
