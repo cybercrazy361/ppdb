@@ -1,9 +1,10 @@
 <!-- sidebar_pendaftaran.php -->
-<!-- Pastikan sudah include FontAwesome dan CSS sidebar ini -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<link rel="stylesheet" href="sidebar_pendaftaran_styles.css">
 
-<!-- sidebar_pendaftaran.php -->
+<!-- Toggle button (mobile) -->
+<button class="toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">
+  <i class="fas fa-bars"></i>
+</button>
+
 <nav class="sidebar" id="sidebarNav">
   <div class="brand">SPMB <?= htmlspecialchars($unit) ?></div>
   <div class="nav flex-column">
@@ -13,6 +14,14 @@
       <span>Dashboard</span>
     </a>
     <div class="sidebar-section-label">PROGRES PEMBAYARAN</div>
+    <!-- HILANGKAN INPUT PEMBAYARAN -->
+    <!--
+    <a href="form_pendaftaran.php"
+      class="nav-link <?= ($active=='form'?'active':'') ?>">
+      <i class="fas fa-user-plus"></i>
+      <span>Input Progres Pembayaran</span>
+    </a>
+    -->
     <a href="daftar_siswa.php"
       class="nav-link <?= ($active=='progres'?'active':'') ?>">
       <i class="fas fa-users"></i>
@@ -25,8 +34,4 @@
     </a>
   </div>
 </nav>
-<button class="toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">
-  <i class="fas fa-bars"></i>
-</button>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-
