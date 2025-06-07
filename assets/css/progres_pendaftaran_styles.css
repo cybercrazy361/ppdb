@@ -569,3 +569,10 @@ body::-webkit-scrollbar-track,
     max-width: 340px;
     /* biar ga terlalu panjang */
 }
+
+.table,
+.table th,
+.table td {
+    font-size: 0.90rem;
+    /* lebih kecil dari biasanya */
+}
