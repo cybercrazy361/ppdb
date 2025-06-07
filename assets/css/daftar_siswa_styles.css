@@ -496,7 +496,7 @@ body::-webkit-scrollbar-track,
 
 /* ==== Modal Checkbox Styling (Biar centang kelihatan di modal putih!) ==== */
 input[type="checkbox"] {
-    accent-color: #355cfc !important;
+    accent-color: #355cfc;
     width: 22px;
     height: 22px;
     border-radius: 6px;
@@ -504,14 +504,7 @@ input[type="checkbox"] {
     vertical-align: middle;
 }
 
-
-.modal-content input[type="checkbox"]:focus {
+input[type="checkbox"]:focus {
     outline: 2px solid #355cfc;
     box-shadow: 0 0 0 2px #13afe070;
-}
-
-.modal-content input[type="checkbox"]:checked {
-    accent-color: #355cfc;
-    /* Paksa browser warnain centang-nya biru */
-    /* native browser checkmark appears */
 }
