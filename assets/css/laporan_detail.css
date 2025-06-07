@@ -1,178 +1,216 @@
-/* laporan_detail.css | Konsisten Neo Glassmorphism Dashboard */
-
+/* ------ Laporan Detail - Professional Neo Glassmorphism ------ */
 body {
-    background: linear-gradient(120deg, #283e7e 0%, #285ae5 60%, #1be4e4 100%);
-    color: #f7fbff;
+    background: linear-gradient(120deg, #23395d 0%, #356ff6 65%, #21e0e0 100%);
+    min-height: 100vh;
     font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    color: #f7fbff;
 }
 
 .main {
-    padding: 36px 18px 36px 0;
+    padding: 36px 32px 36px 0;
     min-height: 100vh;
-    box-sizing: border-box;
     background: transparent;
+    box-sizing: border-box;
+    transition: margin-left .22s;
+    /* Biar tidak nempel ke sidebar */
 }
 
-/* Card Rekap */
-.card {
-    background: rgba(24, 36, 64, 0.74);
-    border-radius: 1.15rem;
-    border: 1.5px solid #29d6f836;
-    box-shadow: 0 3px 24px #24ffe415, 0 1px 4px #1be4e425;
-    color: #f7fbff;
-    font-size: 1.12rem;
-    font-weight: 500;
-    min-width: 120px;
+@media (max-width: 1200px) {
+    .main {
+        padding: 22px 5vw 22px 0;
+    }
+}
+
+@media (max-width: 992px) {
+    .main {
+        padding: 12px 0 16px 0;
+    }
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 38px 12px 38px;
+    border-radius: 22px;
+    margin-bottom: 36px;
+    background: rgba(22, 38, 79, 0.68);
+    box-shadow: 0 3px 32px 0 #24ffe41e, 0 2px 8px 0 #0003;
+    backdrop-filter: blur(12px);
+    min-height: 60px;
+}
+
+.navbar .title {
+    font-size: 1.17rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: .04em;
+    text-shadow: 0 1px 12px #0ce2e2a6;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-menu small {
+    color: #c8e5fa;
+    font-weight: 600;
+}
+
+.user-menu .btn-logout {
+    background: linear-gradient(90deg, #355cfc 70%, #24ffe4 120%);
+    color: #13324e;
+    padding: 4px 18px 4px 16px;
+    border-radius: 18px;
+    font-size: 0.97rem;
+    font-weight: 700;
+    border: none;
+    text-decoration: none;
+    margin-left: 2px;
+    box-shadow: 0 2px 16px #19e3f421;
+    transition: filter .16s, background .19s;
+}
+
+.user-menu .btn-logout:hover {
+    filter: brightness(1.09) drop-shadow(0 0 12px #0ce2e288);
+    background: linear-gradient(90deg, #24ffe4 50%, #355cfc 130%);
+    color: #173063;
+}
+
+/* Rekap Cards */
+.row.g-2.mb-4 {
+    margin-bottom: 2.1rem !important;
+}
+
+.row.g-2>.col {
+    min-width: 200px;
+}
+
+.card.p-3 {
+    background: rgba(23, 36, 80, 0.85);
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 24px #25c2fa19, 0 2px 8px #21e0e032;
+    border: 1.4px solid #24ffe430;
+    color: #f4fdff;
+    font-weight: 600;
+    font-size: 1.08rem;
+    letter-spacing: .02em;
     text-align: center;
-    transition: transform .13s, box-shadow .17s, filter .14s;
-    margin-bottom: 0;
+    margin-bottom: 8px;
     position: relative;
     overflow: hidden;
-    z-index: 1;
+    transition: box-shadow .14s, transform .12s;
 }
 
-.card:hover,
-.card:focus {
-    filter: brightness(1.08) drop-shadow(0 0 16px #23b4e633);
-    box-shadow: 0 7px 24px #24ffe43c, 0 2px 9px #29d6f849;
-    transform: translateY(-4px) scale(1.021);
+.card.p-3:hover {
+    box-shadow: 0 8px 36px #24ffe459, 0 2px 12px #23b4e644;
+    transform: translateY(-4px) scale(1.025);
 }
 
-.card b {
-    font-weight: 700;
-    color: #e6f8fe;
-    font-size: 1.02em;
-}
-
-.card .count {
-    display: block;
-    font-size: 2.25rem;
+.card.p-3 .count {
+    font-size: 2.2rem;
     font-weight: 800;
+    letter-spacing: 1.5px;
     margin-top: 7px;
-    margin-bottom: -2px;
+    text-shadow: 0 2px 12px #25e7e4a8, 0 1px 6px #22339944;
     color: #fff;
-    text-shadow: 0 3px 8px #24ffe4a8, 0 1px 10px #22339944;
+    display: block;
 }
 
 .bg-blue {
-    background: linear-gradient(135deg, #355cfc 55%, #24ffe4 140%);
+    background: linear-gradient(120deg, #3169f7 40%, #3ff0fc 140%);
     color: #fff;
 }
 
 .bg-green {
-    background: linear-gradient(120deg, #27f4b9 20%, #24ffe4 100%);
-    color: #173b2b;
+    background: linear-gradient(120deg, #0fd9d2 30%, #54fcb6 120%);
+    color: #fff;
 }
 
 .bg-yellow {
-    background: linear-gradient(120deg, #ffe980 40%, #ffe953 100%);
-    color: #675111;
+    background: linear-gradient(120deg, #ffe35d 30%, #f7f78c 120%);
+    color: #393323;
 }
 
 .bg-red {
-    background: linear-gradient(120deg, #fd6377 10%, #fd1f4e 85%);
+    background: linear-gradient(120deg, #fd4363 30%, #ff7575 120%);
     color: #fff;
 }
 
-.text-success {
-    color: #24ffe4 !important;
-}
-
-.text-warning {
-    color: #ffc107 !important;
-}
-
-.text-danger {
-    color: #fd6377 !important;
-}
-
-.text-muted {
-    color: #bac6dd !important;
-}
-
+/* Label Headings */
 h5 {
-    margin-top: 20px;
-    margin-bottom: 17px;
-    color: #f7fbff;
+    margin: 0 0 16px 2px;
     font-weight: 700;
-    text-shadow: 0 1px 10px #24ffe432;
-    font-size: 1.15rem;
-    letter-spacing: .02em;
-}
-
-label.form-label {
-    color: #dbe8ff;
-    font-weight: 600;
-    letter-spacing: .02em;
-    margin-bottom: 0;
-}
-
-input[type="date"].form-control {
-    background: rgba(36, 59, 109, 0.28);
     color: #fff;
-    border: 1.3px solid #29d6f836;
-    border-radius: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0 2px 8px #24ffe40c;
-    padding: 4px 16px;
-    font-size: 1.07rem;
-    transition: border-color .15s, box-shadow .15s;
+    text-shadow: 0 1px 6px #3ff0fc2a;
 }
 
-input[type="date"].form-control:focus {
-    border-color: #24ffe4;
-    box-shadow: 0 0 0 2px #24ffe45e;
+form#formCariTanggal {
+    margin-left: 2px;
+    margin-bottom: 20px;
+}
+
+#formCariTanggal label {
+    color: #e5eefa;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+#tanggalCari.form-control {
+    background: rgba(255, 255, 255, 0.13);
     color: #fff;
-    background: rgba(36, 59, 109, 0.38);
+    border: 1.3px solid #24ffe4a1;
+    border-radius: 1rem;
+    padding: 6px 18px;
+    font-size: 1.06rem;
+    font-family: 'Poppins', Arial, sans-serif;
+    transition: border-color .14s, background .14s;
 }
 
-/* Responsive Grid & Card */
-@media (max-width: 900px) {
-    .card .count {
-        font-size: 1.6rem;
+#tanggalCari.form-control:focus {
+    border-color: #355cfc;
+    background: #fff5;
+    color: #213;
+    box-shadow: 0 0 0 2px #24ffe420;
+}
+
+@media (max-width:900px) {
+    .row.g-2 .col {
+        min-width: 150px;
     }
 
-    .row.g-2>.col {
-        min-width: 140px;
-        margin-bottom: 8px;
-    }
-}
-
-@media (max-width: 600px) {
     .main {
-        padding: 9px 0 10px 0;
+        padding: 6vw 2vw 6vw 0;
     }
 
-    .container {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
+    .navbar {
+        padding: 10px 13px 8px 13px;
+    }
+}
+
+@media (max-width:600px) {
+    .main {
+        padding: 7vw 0 8vw 0;
     }
 
-    h5 {
-        font-size: 1.01rem;
-    }
-
-    .card {
-        font-size: .98rem;
-        border-radius: .85rem;
-        padding: 8px 7px !important;
-    }
-
-    .card .count {
-        font-size: 1.13rem;
-        margin-top: 3px;
+    .navbar {
+        padding: 7px 5vw 8px 5vw;
+        border-radius: 12px;
     }
 
     .row.g-2 {
-        gap: 6px 0;
+        gap: 1.09rem 0.7rem;
     }
-}
 
-/* Alert */
-.alert-danger {
-    background: rgba(250, 91, 112, 0.17) !important;
-    color: #fd6377 !important;
-    border-radius: .85rem;
-    border: 1.2px solid #fd637733;
-    font-weight: 700;
+    .card.p-3 {
+        padding: 18px 5px 15px 5px;
+        font-size: .95rem;
+    }
+
+    .card.p-3 .count {
+        font-size: 1.18rem;
+    }
 }
