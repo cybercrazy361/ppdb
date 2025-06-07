@@ -576,3 +576,12 @@ body::-webkit-scrollbar-track,
     font-size: 0.90rem;
     /* lebih kecil dari biasanya */
 }
+
+.table .form-select,
+.table select,
+.table .status-select,
+.table .pj-select {
+    font-size: 0.90rem !important;
+    /* atau lebih kecil lagi, misal 0.85rem */
+    padding: 4px 6px;
+}
