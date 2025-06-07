@@ -206,7 +206,7 @@ $no_invoice = $row['no_invoice'] ?? '';
 
     <div class="no-reg-bar">
       <div class="no-reg-row" style="margin-bottom:0;">
-        <div class="no-reg-label"><b>No. Registrasi Pendaftaran</b></div>
+        <div class="no-reg-label"><b>No. Registrasi </b></div>
         <div class="no-reg-sep">:</div>
         <div class="no-reg-val"><b><i><?= safe($row['no_formulir']) ?></i></b></div>
       </div>

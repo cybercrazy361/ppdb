@@ -446,7 +446,7 @@ ob_start();
   <table width="100%" style="border-collapse: collapse;">
     <tr>
       <td style="width: 50%; padding: 0; vertical-align: middle;">
-        <span class="no-reg-label">No. Registrasi Pendaftaran</span>
+        <span class="no-reg-label">No. Registrasi</span>
         <span class="no-reg-sep">:</span>
         <span class="no-reg-val"><i><b><?= safe($row['no_formulir']) ?></b></i></span>
       </td>
