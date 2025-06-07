@@ -103,72 +103,87 @@ body.bg-main {
     z-index: 2;
 }
 
-/* Login Card (custom-card) */
-.custom-card {
-    background: linear-gradient(135deg, #f8fbff 78%, #eaf7ff 100%);
-    border-radius: 1.7rem;
-    box-shadow: 0 8px 36px 0 #13afe022, 0 2px 12px #4a00e01a;
-    border: 1.6px solid #e2eafd;
-    transition: transform .18s cubic-bezier(.16, 1, .32, 1), box-shadow .16s, border-color .19s;
-    min-height: 300px;
-    padding: 32px 22px 18px 22px;
+/* ========== CARD LOGIN & TEAM (MODERN STYLE) ========== */
+.custom-card,
+.team-card {
+    background: linear-gradient(135deg, #f9fbff 90%, #eaf7ff 100%);
+    border-radius: 2.2rem;
+    box-shadow: 0 6px 32px 0 #13afe022, 0 2px 18px #4a00e012;
+    border: 1.8px solid #e2eafd;
+    padding: 38px 22px 24px 22px;
     overflow: hidden;
     position: relative;
+    min-height: 340px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: box-shadow .22s, border-color .22s, transform .21s;
 }
 
 .custom-card:hover,
-.custom-card:focus-within {
-    transform: translateY(-13px) scale(1.045);
-    box-shadow: 0 22px 55px #13afe032, 0 10px 36px #4a00e028;
+.custom-card:focus-within,
+.team-card:hover,
+.team-card:focus-within {
+    box-shadow: 0 18px 48px #13afe03b, 0 10px 34px #4a00e029;
     border-color: #13afe0;
-    z-index: 3;
+    transform: translateY(-12px) scale(1.045);
+    z-index: 4;
 }
 
-.card-icon {
+/* ICON BESAR & SOFT */
+.card-icon,
+.team-avatar {
+    background: linear-gradient(135deg, #4a00e0 60%, #13afe0 100%);
+    border-radius: 1.5rem;
+    width: 78px;
+    height: 78px;
+    font-size: 2.6em;
     color: #fff;
-    font-size: 2.7em;
-    background: linear-gradient(135deg, #4a00e0 65%, #13afe0 100%);
-    border-radius: 18px;
-    width: 72px;
-    height: 72px;
+    box-shadow: 0 5px 20px #13afe018;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 22px #13afe01c;
-    margin-bottom: 15px;
-    margin-top: -52px;
-    border: 5px solid #fff;
-    transition: background .18s, box-shadow .18s;
+    margin-bottom: 17px;
+    margin-top: -40px;
+    border: 6px solid #fff;
+    transition: background .18s, box-shadow .17s, transform .17s;
 }
 
 .custom-card:hover .card-icon,
-.custom-card:focus-within .card-icon {
-    background: linear-gradient(135deg, #13afe0 40%, #4a00e0 100%);
-    box-shadow: 0 8px 28px #4a00e045;
+.custom-card:focus-within .card-icon,
+.team-card:hover .team-avatar,
+.team-card:focus-within .team-avatar {
+    background: linear-gradient(135deg, #13afe0 30%, #4a00e0 100%);
+    box-shadow: 0 10px 32px #4a00e048;
+    transform: scale(1.08) rotate(-8deg);
 }
 
-.card-title {
+.card-title,
+.team-title {
     font-weight: 800;
-    font-size: 1.25em;
-    color: #223161;
-    letter-spacing: .025em;
-    margin-bottom: 0.32rem;
+    font-size: 1.21em;
+    color: #283a69;
+    letter-spacing: .03em;
+    margin-bottom: 0.42rem;
     margin-top: 2px;
+    text-shadow: 0 1px 6px #eaf7ff60;
 }
 
-.card-text {
+.card-text,
+.team-subtitle {
     color: #7b90a7;
-    font-size: 1.11em;
-    margin-bottom: 1.25rem;
+    font-size: 1.13em;
+    margin-bottom: 1.15rem;
     min-height: 38px;
-    line-height: 1.52;
+    line-height: 1.55;
+    font-weight: 500;
+    letter-spacing: .01em;
 }
 
-.custom-card .btn-main {
-    font-size: 1.04em;
+/* Tombol pada Card */
+.custom-card .btn-main,
+.team-card .btn-main {
+    font-size: 1.07em;
     border-radius: 1.3rem;
     box-shadow: 0 2px 10px #13afe018;
     padding: 9px 0;
@@ -177,93 +192,13 @@ body.bg-main {
     transition: box-shadow .16s, background .16s, transform .15s;
 }
 
-.custom-card .btn-main:hover,
-.custom-card .btn-main:focus {
-    box-shadow: 0 8px 24px #13afe02c;
-    background: linear-gradient(90deg, #13afe0 20%, #4a00e0 100%);
-    transform: scale(1.035);
-}
-
-/* Team Card (Pelayanan) */
-.team-card {
-    background: linear-gradient(135deg, #f8fbff 94%, #e6faff 100%);
-    border-radius: 1.9rem;
-    box-shadow: 0 12px 46px #13afe01b, 0 3px 14px #4a00e012;
-    border: 1.5px solid #e6eafd;
-    min-height: 330px;
-    padding: 26px 20px 26px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    position: relative;
-    overflow: visible;
-    transition: box-shadow .19s, transform .18s, border-color .19s;
-    margin-bottom: 0;
-}
-
-.team-card:hover,
-.team-card:focus-within {
-    box-shadow: 0 28px 68px #13afe045, 0 18px 46px #4a00e020;
-    border-color: #13afe0;
-    transform: translateY(-12px) scale(1.04);
-    z-index: 2;
-}
-
-.team-avatar {
-    background: linear-gradient(140deg, #4a00e0 25%, #13afe0 70%, #f7faff 100%);
-    border-radius: 50%;
-    width: 85px;
-    height: 85px;
-    margin-top: -45px;
-    box-shadow: 0 8px 30px #13afe024, 0 1px 7px #4a00e019;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5em;
-    color: #fff;
-    margin-bottom: 17px;
-    position: relative;
-    border: 6px solid #fff;
-    transition: box-shadow .19s;
-}
-
-.team-avatar::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, #13afe024 0%, #fff 90%);
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.team-title {
-    font-weight: 800;
-    font-size: 1.14em;
-    letter-spacing: .5px;
-    color: #2d478a;
-    margin-top: 7px;
-}
-
-.team-subtitle {
-    font-size: .99em;
-    color: #6991ba;
-    font-weight: 500;
-    margin-bottom: 2px;
-    letter-spacing: .03em;
-}
-
+/* DAFTAR NAMA TIM */
 .team-list {
     list-style: none;
     padding: 0;
     margin: 0;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 14px;
     font-size: 1.04em;
 }
 
@@ -272,7 +207,7 @@ body.bg-main {
     align-items: center;
     justify-content: center;
     gap: 13px;
-    padding: 7px 0;
+    padding: 8px 0;
     color: #25324d;
     border-bottom: 1px dashed #e9ecfa;
 }
@@ -283,12 +218,12 @@ body.bg-main {
 
 .team-list span {
     font-weight: 700;
-    min-width: 88px;
+    min-width: 92px;
     text-align: right;
     color: #1d3360;
-    font-size: .97em;
+    font-size: 1em;
     letter-spacing: .01em;
-    margin-right: 4px;
+    margin-right: 5px;
 }
 
 .team-phone {
@@ -311,26 +246,95 @@ body.bg-main {
     text-decoration: underline;
 }
 
-/* Responsif Card */
-@media (max-width: 900px) {
+/* Aksen lingkaran glowing avatar tim */
+.team-avatar::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    height: 110px;
+    background: radial-gradient(circle, #13afe024 0%, #fff 90%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* RESPONSIF CARD */
+@media (max-width: 1200px) {
+    .hero-section {
+        padding: 60px 0 44px 0;
+    }
+}
+
+@media (max-width: 992px) {
+    .navbar {
+        border-radius: 0 0 1.2rem 1.2rem;
+        padding: 0.5rem 0;
+    }
 
     .custom-card,
     .team-card {
-        min-height: 180px;
-        padding: 14px 6px 10px 6px;
+        min-height: 220px;
+        padding: 18px 10px 12px 10px;
+    }
+
+    .footer {
+        padding: 22px 0 8px 0;
     }
 
     .card-icon,
     .team-avatar {
-        font-size: 1.3em;
-        width: 38px;
-        height: 38px;
-        margin-top: -22px;
+        width: 58px;
+        height: 58px;
+        font-size: 1.4em;
+        margin-top: -24px;
     }
 
     .team-avatar::after {
-        width: 44px;
-        height: 44px;
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 0 30px 0;
+    }
+
+    .custom-card,
+    .team-card {
+        min-height: 135px;
+        padding: 12px 2px 10px 2px;
+        border-radius: 1.4rem;
+    }
+
+    .team-title,
+    .card-title {
+        font-size: 1em;
+    }
+
+    .team-list span {
+        min-width: 55px;
+        font-size: .93em;
+    }
+
+    .card-icon,
+    .team-avatar {
+        font-size: .95em;
+        width: 34px;
+        height: 34px;
+        margin-top: -10px;
+    }
+
+    .team-avatar::after {
+        width: 40px;
+        height: 40px;
+    }
+
+    .footer {
+        margin-top: 38px;
     }
 }
 
@@ -338,34 +342,36 @@ body.bg-main {
 
     .custom-card,
     .team-card {
-        min-height: 120px;
-        padding: 7px 2px 5px 2px;
+        min-height: 80px;
+        padding: 5px 2px 4px 2px;
         border-radius: 1.1rem;
     }
 
-    .team-title {
-        font-size: .99em;
+    .team-title,
+    .card-title {
+        font-size: .98em;
     }
 
     .team-list span {
-        min-width: 48px;
-        font-size: .94em;
+        min-width: 35px;
+        font-size: .92em;
     }
 
     .card-icon,
     .team-avatar {
-        font-size: .95em;
-        width: 22px;
-        height: 22px;
-        margin-top: -11px;
+        font-size: .82em;
+        width: 19px;
+        height: 19px;
+        margin-top: -7px;
     }
 
     .team-avatar::after {
-        width: 22px;
-        height: 22px;
+        width: 18px;
+        height: 18px;
     }
 }
 
+/* TIM SECTION DESC */
 .tim-section-desc {
     margin-bottom: 34px;
     font-size: 1.23rem;
@@ -465,81 +471,4 @@ a,
     color: #fff;
     border-color: #4a00e0;
     box-shadow: 0 2px 12px #4a00e035;
-}
-
-/* Responsive Tweaks */
-@media (max-width: 1200px) {
-    .hero-section {
-        padding: 60px 0 44px 0;
-    }
-}
-
-@media (max-width: 992px) {
-    .navbar {
-        border-radius: 0 0 1.2rem 1.2rem;
-        padding: 0.5rem 0;
-    }
-
-    .custom-card,
-    .team-card {
-        min-height: 250px;
-    }
-
-    .footer {
-        padding: 22px 0 8px 0;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-section {
-        padding: 40px 0 30px 0;
-    }
-
-    .custom-card,
-    .team-card {
-        min-height: 180px;
-    }
-
-    .team-avatar {
-        font-size: 1.15em;
-        width: 37px;
-        height: 37px;
-    }
-
-    .team-avatar::after {
-        width: 46px;
-        height: 46px;
-    }
-
-    .card-icon {
-        font-size: 1.3em;
-        width: 40px;
-        height: 40px;
-    }
-
-    .footer {
-        margin-top: 38px;
-    }
-}
-
-@media (max-width: 576px) {
-    .btn-main {
-        font-size: 1em;
-        padding-left: 22px;
-        padding-right: 22px;
-    }
-
-    .hero-section .display-3,
-    .hero-section .display-5 {
-        font-size: 2rem !important;
-    }
-
-    .team-title {
-        font-size: 1em;
-    }
-
-    .team-list span {
-        min-width: 65px;
-        font-size: .95em;
-    }
 }
