@@ -179,25 +179,25 @@ $conn->close();
     <h5>Rekap Total (Semua Data)</h5>
 <div class="row g-2 mb-4">
   <div class="col">
-    <div class="card p-3 bg-blue">
+    <div class="report-card report-blue">
       <b>Total Siswa</b><br>
       <span class="count"><?=$rekap['total']?></span>
     </div>
   </div>
   <div class="col">
-    <div class="card p-3 bg-green">
+    <div class="report-card report-green">
       <b>Lunas</b><br>
       <span class="count"><?=$rekap['lunas']?></span>
     </div>
   </div>
   <div class="col">
-    <div class="card p-3 bg-yellow">
+    <div class="report-card report-yellow">
       <b>Angsuran</b><br>
       <span class="count"><?=$rekap['angsuran']?></span>
     </div>
   </div>
   <div class="col">
-    <div class="card p-3 bg-red">
+    <div class="report-card report-red">
       <b>Belum Bayar</b><br>
       <span class="count"><?=$rekap['belum']?></span>
     </div>

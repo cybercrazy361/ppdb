@@ -1,4 +1,4 @@
-/* ------ Laporan Detail - Professional Neo Glassmorphism ------ */
+/* ------ Laporan Detail - Professional Neo Glassmorphism (MATCH Dashboard) ------ */
 body {
     background: linear-gradient(120deg, #23395d 0%, #356ff6 65%, #21e0e0 100%);
     min-height: 100vh;
@@ -13,7 +13,6 @@ body {
     background: transparent;
     box-sizing: border-box;
     transition: margin-left .22s;
-    /* Biar tidak nempel ke sidebar */
 }
 
 @media (max-width: 1200px) {
@@ -28,6 +27,7 @@ body {
     }
 }
 
+/* Navbar */
 .navbar {
     display: flex;
     align-items: center;
@@ -80,7 +80,7 @@ body {
     color: #173063;
 }
 
-/* Rekap Cards */
+/* --- Modern Rekap Cards (MATCH Dashboard) --- */
 .row.g-2.mb-4 {
     margin-bottom: 2.1rem !important;
 }
@@ -89,54 +89,73 @@ body {
     min-width: 200px;
 }
 
-.card.p-3 {
-    background: rgba(23, 36, 80, 0.85);
-    border-radius: 1.25rem;
-    box-shadow: 0 2px 24px #25c2fa19, 0 2px 8px #21e0e032;
-    border: 1.4px solid #24ffe430;
-    color: #f4fdff;
-    font-weight: 600;
-    font-size: 1.08rem;
-    letter-spacing: .02em;
-    text-align: center;
-    margin-bottom: 8px;
+/* Custom card, jangan pakai .card.p-3! */
+.report-card {
+    background: rgba(24, 36, 64, 0.74);
+    border-radius: 1.18rem;
+    box-shadow: 0 2px 28px #3df1ff17, 0 1.5px 16px #23d5fa13 inset, 0 0.5px 1.5px #fff1;
+    padding: 32px 18px 20px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
     overflow: hidden;
-    transition: box-shadow .14s, transform .12s;
+    transition: transform .13s, box-shadow .19s, filter .12s;
+    border: 1.5px solid #29d6f836;
+    min-width: 0;
+    margin-bottom: 14px;
+    animation: fadeInCard .7s;
+    font-size: 1.12rem;
+    text-align: center;
 }
 
-.card.p-3:hover {
-    box-shadow: 0 8px 36px #24ffe459, 0 2px 12px #23b4e644;
-    transform: translateY(-4px) scale(1.025);
+.report-card::before {
+    content: '';
+    position: absolute;
+    top: -34px;
+    right: -62px;
+    width: 160px;
+    height: 90px;
+    background: linear-gradient(115deg, #29d6f8 0%, #24ffe4 90%);
+    opacity: .15;
+    border-radius: 50% 60% 80% 50%;
+    z-index: 0;
+    filter: blur(8px);
 }
 
-.card.p-3 .count {
-    font-size: 2.2rem;
+.report-card b {
+    color: #e5f6ff;
+    font-size: 1.1em;
+    font-weight: 700;
+    z-index: 1;
+}
+
+.report-card .count {
+    font-size: 2.12rem;
     font-weight: 800;
-    letter-spacing: 1.5px;
+    color: #fff;
     margin-top: 7px;
-    text-shadow: 0 2px 12px #25e7e4a8, 0 1px 6px #22339944;
-    color: #fff;
-    display: block;
+    text-shadow: 0 3px 8px #24ffe4a8, 0 1px 10px #22339966;
+    letter-spacing: .03em;
+    z-index: 1;
 }
 
-.bg-blue {
-    background: linear-gradient(120deg, #3169f7 40%, #3ff0fc 140%);
-    color: #fff;
+/* Gradient Card Status */
+.report-blue {
+    background: linear-gradient(135deg, #2d56b6 60%, #32a7ff 100%) !important;
 }
 
-.bg-green {
-    background: linear-gradient(120deg, #0fd9d2 30%, #54fcb6 120%);
-    color: #fff;
+.report-green {
+    background: linear-gradient(135deg, #2dc1b6 60%, #2effe4 100%) !important;
 }
 
-.bg-yellow {
-    background: linear-gradient(120deg, #ffe35d 30%, #f7f78c 120%);
+.report-yellow {
+    background: linear-gradient(135deg, #ffe176 30%, #ffe18d 100%) !important;
     color: #393323;
 }
 
-.bg-red {
-    background: linear-gradient(120deg, #fd4363 30%, #ff7575 120%);
+.report-red {
+    background: linear-gradient(135deg, #fa3a3a 40%, #fd7171 100%) !important;
     color: #fff;
 }
 
@@ -148,6 +167,7 @@ h5 {
     text-shadow: 0 1px 6px #3ff0fc2a;
 }
 
+/* Tanggal Form */
 form#formCariTanggal {
     margin-left: 2px;
     margin-bottom: 20px;
@@ -189,6 +209,15 @@ form#formCariTanggal {
     .navbar {
         padding: 10px 13px 8px 13px;
     }
+
+    .report-card {
+        padding: 18px 7px 14px 7px;
+        font-size: .99rem;
+    }
+
+    .report-card .count {
+        font-size: 1.29rem;
+    }
 }
 
 @media (max-width:600px) {
@@ -205,12 +234,25 @@ form#formCariTanggal {
         gap: 1.09rem 0.7rem;
     }
 
-    .card.p-3 {
-        padding: 18px 5px 15px 5px;
-        font-size: .95rem;
+    .report-card {
+        padding: 10px 2px 9px 2px;
+        font-size: .92rem;
     }
 
-    .card.p-3 .count {
-        font-size: 1.18rem;
+    .report-card .count {
+        font-size: 1.13rem;
+    }
+}
+
+/* Animation */
+@keyframes fadeInCard {
+    0% {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: none;
     }
 }
