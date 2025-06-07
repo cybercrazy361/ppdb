@@ -496,12 +496,15 @@ body::-webkit-scrollbar-track,
 
 /* ==== Modal Checkbox Styling (Biar centang kelihatan di modal putih!) ==== */
 input[type="checkbox"] {
-    accent-color: #355cfc;
+    accent-color: #355cfc !important;
     width: 22px;
     height: 22px;
     border-radius: 6px;
     margin-right: 7px;
     vertical-align: middle;
+    appearance: auto !important;
+    -webkit-appearance: auto !important;
+    /* HAPUS background/border/box-shadow/outline manual */
 }
 
 input[type="checkbox"]:focus {
