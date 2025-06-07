@@ -1,8 +1,10 @@
 body.bg-main {
-    background: linear-gradient(120deg, #f6faff 0%, #e6ecff 100%);
+    background: linear-gradient(120deg, #f5faff 0%, #e4eaff 100%);
     font-family: 'Inter', 'Poppins', Arial, sans-serif;
-    color: #263253;
+    color: #242943;
     min-height: 100vh;
+    font-size: 1.08rem;
+    letter-spacing: .01em;
 }
 
 /* Logo Gradient */
@@ -11,36 +13,43 @@ body.bg-main {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-weight: 800 !important;
-    letter-spacing: 1.2px;
-    font-size: 1.19rem !important;
+    font-weight: 900 !important;
+    font-size: 1.25rem !important;
+    letter-spacing: 1.3px;
+    transition: color .2s;
 }
 
 /* Navbar */
 .navbar {
-    background: rgba(255, 255, 255, 0.97) !important;
-    box-shadow: 0 4px 28px #13afe019;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 4px 32px #13afe022;
     font-family: 'Inter', 'Poppins', Arial, sans-serif;
-    border-radius: 0 0 1.6rem 1.6rem;
+    border-radius: 0 0 2rem 2rem;
+    padding: 0.8rem 0;
+    transition: box-shadow .2s;
 }
 
 .navbar-nav .nav-link {
     font-weight: 600;
-    font-size: 1.07rem;
-    color: #35446e !important;
+    font-size: 1.1rem;
+    color: #364478 !important;
     letter-spacing: .02em;
-    margin-right: 8px;
-    transition: color .16s;
+    margin-right: 14px;
+    border-radius: 8px;
+    padding: 6px 14px;
+    transition: color .18s, background .18s;
 }
 
 .navbar-nav .nav-link.active,
 .navbar-nav .nav-link:focus,
 .navbar-nav .nav-link:hover {
     color: #13afe0 !important;
+    background: #eaf7ff;
 }
 
+/* Tombol utama */
 .btn-main {
-    background: linear-gradient(90deg, #355cfc 50%, #13afe0 110%);
+    background: linear-gradient(90deg, #355cfc 40%, #13afe0 100%);
     color: #fff;
     border-radius: 1.2rem;
     font-weight: 700;
@@ -48,31 +57,26 @@ body.bg-main {
     border: none;
     box-shadow: 0 2px 18px #13afe020;
     letter-spacing: .03em;
-    transition: background .19s, color .12s, box-shadow .19s;
+    padding: 10px 32px;
+    transition: background .19s, color .12s, box-shadow .19s, transform .17s;
 }
 
 .btn-main:hover,
 .btn-main:focus {
-    background: linear-gradient(90deg, #13afe0 20%, #4a00e0 100%);
+    background: linear-gradient(90deg, #13afe0 10%, #4a00e0 95%);
     color: #fff;
+    transform: translateY(-2px) scale(1.03);
     box-shadow: 0 6px 24px #4a00e040;
-}
-
-@media (max-width: 576px) {
-    .btn-main {
-        font-size: 1em;
-        padding-left: 24px;
-        padding-right: 24px;
-    }
 }
 
 /* Hero Section */
 .hero-section {
     min-height: 67vh;
-    padding: 60px 0 55px 0;
+    padding: 80px 0 65px 0;
     background: linear-gradient(90deg, #eaf2ff 80%, #f7faff 100%);
     position: relative;
     overflow: hidden;
+    border-radius: 0 0 1.7rem 1.7rem;
 }
 
 .hero-section .text-gradient {
@@ -84,11 +88,11 @@ body.bg-main {
 
 .hero-section .bg-shape {
     position: absolute;
-    right: -220px;
-    bottom: -210px;
-    width: 510px;
-    height: 510px;
-    background: radial-gradient(circle at 42% 60%, #13afe035 60%, #00c6ff15 100%);
+    right: -160px;
+    bottom: -160px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle at 42% 60%, #13afe035 60%, #00c6ff13 100%);
     z-index: 0;
     border-radius: 50%;
     pointer-events: none;
@@ -99,91 +103,63 @@ body.bg-main {
     z-index: 2;
 }
 
-@media (max-width: 700px) {
-    .hero-section {
-        padding: 38px 0 35px 0;
-    }
-
-    .hero-section .display-3,
-    .hero-section .display-5 {
-        font-size: 2rem !important;
-    }
-
-    .hero-section .bg-shape {
-        width: 350px;
-        height: 350px;
-        right: -100px;
-        bottom: -80px;
-    }
-}
-
-/* Card Login */
+/* Login Card */
 .custom-card {
-    background: rgba(255, 255, 255, 0.91);
-    border-radius: 1.18rem;
-    box-shadow: 0 4px 30px #355cfc0f, 0 1.5px 10px #13afe018;
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 1.22rem;
+    box-shadow: 0 4px 28px #13afe019, 0 1.5px 10px #4a00e018;
     border: 1.3px solid #e6eafd;
     transition: transform .15s, box-shadow .16s;
     min-height: 315px;
     padding-bottom: 6px;
     overflow: hidden;
     position: relative;
+    margin-top: 16px;
 }
 
 .custom-card:hover,
 .custom-card:focus-within {
-    transform: translateY(-8px) scale(1.027);
-    box-shadow: 0 8px 32px #4a00e035, 0 2.5px 16px #13afe029;
+    transform: translateY(-9px) scale(1.035);
+    box-shadow: 0 12px 38px #4a00e030, 0 4.5px 22px #13afe035;
     z-index: 2;
 }
 
 .card-icon {
     color: #13afe0;
-    font-size: 2.3em;
-    background: linear-gradient(135deg, #f4f8ff 70%, #eafcff 100%);
-    border-radius: 14px;
-    width: 57px;
-    height: 57px;
-    line-height: 57px;
+    font-size: 2.45em;
+    background: linear-gradient(135deg, #f4f8ff 80%, #eafcff 100%);
+    border-radius: 16px;
+    width: 62px;
+    height: 62px;
+    line-height: 62px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 3px 12px #13afe01c;
+    margin-bottom: 8px;
 }
 
 .card-title {
     font-weight: 700;
-    font-size: 1.19em;
+    font-size: 1.22em;
     color: #23305c;
     margin-bottom: 0.2rem;
 }
 
 .card-text {
-    color: #7b859e;
-    font-size: 1.05em;
+    color: #7888a5;
+    font-size: 1.06em;
     margin-bottom: 1.1rem;
-}
-
-@media (max-width: 700px) {
-    .custom-card {
-        min-height: 235px;
-    }
-
-    .card-icon {
-        font-size: 1.4em;
-        width: 41px;
-        height: 41px;
-    }
 }
 
 /* Tim Section */
 .team-card {
     background: rgba(255, 255, 255, 0.99);
-    border-radius: 1.4rem;
-    box-shadow: 0 8px 36px #4a00e018, 0 2.5px 14px #13afe012;
+    border-radius: 1.45rem;
+    box-shadow: 0 8px 32px #4a00e018, 0 2.5px 14px #13afe012;
     border: none;
     min-height: 340px;
-    padding: 0 0 20px 0;
+    padding: 0 0 22px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -197,23 +173,23 @@ body.bg-main {
 .team-card:hover,
 .team-card:focus-within {
     box-shadow: 0 18px 56px #13afe025, 0 8px 36px #4a00e01c;
-    transform: translateY(-5px) scale(1.025);
+    transform: translateY(-7px) scale(1.025);
     z-index: 2;
 }
 
 .team-avatar {
     background: linear-gradient(140deg, #e6f3fd 55%, #f7faff 100%);
     border-radius: 50%;
-    width: 67px;
-    height: 67px;
+    width: 70px;
+    height: 70px;
     margin-top: -28px;
     box-shadow: 0 4px 18px #13afe02b, 0 1px 7px #4a00e019;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.1em;
+    font-size: 2.15em;
     color: #13afe0;
-    margin-bottom: 11px;
+    margin-bottom: 13px;
     position: relative;
 }
 
@@ -236,7 +212,7 @@ body.bg-main {
     font-size: 1.18em;
     letter-spacing: .5px;
     color: #22396e;
-    margin-top: 5px;
+    margin-top: 7px;
 }
 
 .team-subtitle {
@@ -252,8 +228,8 @@ body.bg-main {
     padding: 0;
     margin: 0;
     width: 100%;
-    margin-top: 10px;
-    font-size: 1.04em;
+    margin-top: 13px;
+    font-size: 1.05em;
 }
 
 .team-list li {
@@ -283,101 +259,56 @@ body.bg-main {
 .team-phone {
     color: #1ca1f5;
     font-weight: 600;
-    font-size: 1.01em;
+    font-size: 1.03em;
     letter-spacing: .01em;
     text-decoration: none;
-    border-radius: 6px;
-    transition: color .15s, background .15s;
-    padding: 2px 7px 2px 7px;
+    border-radius: 7px;
+    transition: color .14s, background .14s;
+    padding: 2px 9px 2px 9px;
     display: inline-block;
 }
 
 .team-phone:hover,
 .team-phone:focus {
-    background: #13afe016;
+    background: #13afe017;
     color: #4a00e0;
     text-decoration: underline;
 }
 
-/* Responsive Tweaks */
-@media (max-width: 900px) {
-    .team-card {
-        min-height: 280px;
-    }
-
-    .team-avatar {
-        font-size: 1.5em;
-        width: 50px;
-        height: 50px;
-    }
-
-    .team-avatar::after {
-        width: 67px;
-        height: 67px;
-    }
-}
-
-@media (max-width: 600px) {
-    .team-card {
-        min-height: 220px;
-        padding-bottom: 7px;
-    }
-
-    .team-title {
-        font-size: 1.06em;
-    }
-
-    .team-list span {
-        min-width: 80px;
-        font-size: .96em;
-    }
-
-    .team-avatar {
-        font-size: 1.15em;
-        width: 35px;
-        height: 35px;
-    }
-
-    .team-avatar::after {
-        width: 46px;
-        height: 46px;
-    }
-}
-
 .tim-section-desc {
-    margin-bottom: 32px;
-    /* atau 40px untuk lebih longgar */
+    margin-bottom: 34px;
     font-size: 1.23rem;
-    /* jika mau lebih besar */
     color: #353b57;
 }
 
 /* Social Icon */
 .social-icon {
     display: inline-block;
-    width: 38px;
-    height: 38px;
-    background: linear-gradient(135deg, #f4f8ff 55%, #eafcff 100%);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #f4f8ff 65%, #eafcff 100%);
     border-radius: 50%;
     color: #4a00e0;
     text-align: center;
-    line-height: 38px;
+    line-height: 40px;
     font-size: 1.17em;
     margin: 0 5px 0 0;
-    transition: background .17s, color .17s, transform .17s;
+    transition: background .18s, color .18s, transform .17s;
+    border: 1px solid #e7eafd;
 }
 
 .social-icon:hover {
     color: #fff;
-    background: linear-gradient(135deg, #4a00e0 70%, #13afe0 120%);
-    transform: translateY(-4px) scale(1.08);
+    background: linear-gradient(135deg, #4a00e0 80%, #13afe0 120%);
+    transform: translateY(-4px) scale(1.09);
+    border: 1px solid #4a00e0;
 }
 
 /* Footer */
 footer {
     background: none;
-    margin-top: 65px;
-    padding: 26px 0 11px 0;
+    margin-top: 70px;
+    padding: 30px 0 13px 0;
     color: #8790a7;
     font-size: 1.07em;
 }
@@ -394,7 +325,7 @@ footer .container {
 @keyframes fadeInMain {
     from {
         opacity: 0;
-        transform: translateY(32px);
+        transform: translateY(40px) scale(.98);
     }
 
     to {
@@ -405,7 +336,7 @@ footer .container {
 
 /* Utility */
 .text-gradient {
-    background: linear-gradient(90deg, #4a00e0 15%, #13afe0 80%);
+    background: linear-gradient(90deg, #4a00e0 20%, #13afe0 85%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -416,7 +347,6 @@ footer .container {
     pointer-events: none;
 }
 
-/* Remove link underline globally */
 a,
 .nav-link,
 .btn,
@@ -424,10 +354,44 @@ a,
     text-decoration: none !important;
 }
 
-/* Responsive */
+/* Chatbot Quick Reply */
+.chatbot-quick {
+    background: linear-gradient(90deg, #e8e5ff, #eafcff 80%);
+    border: 1px solid #d6d2ff;
+    color: #4a00e0;
+    border-radius: 8px;
+    padding: 5px 12px;
+    margin: 2px 6px 2px 0;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background .2s, color .2s, box-shadow .17s;
+    box-shadow: 0 1px 5px #13afe012;
+}
+
+.chatbot-quick:hover {
+    background: #4a00e0;
+    color: #fff;
+    border-color: #4a00e0;
+    box-shadow: 0 2px 12px #4a00e035;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 1200px) {
+    .hero-section {
+        padding: 60px 0 44px 0;
+    }
+}
+
 @media (max-width: 992px) {
     .navbar {
-        border-radius: 0 0 1rem 1rem;
+        border-radius: 0 0 1.2rem 1.2rem;
+        padding: 0.5rem 0;
+    }
+
+    .custom-card,
+    .team-card {
+        min-height: 250px;
     }
 
     .footer {
@@ -435,18 +399,56 @@ a,
     }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 0 30px 0;
+    }
+
+    .custom-card,
     .team-card {
-        min-height: 170px;
+        min-height: 180px;
     }
 
     .team-avatar {
-        font-size: 1.19em;
-        width: 36px;
-        height: 36px;
+        font-size: 1.15em;
+        width: 37px;
+        height: 37px;
     }
 
-    footer {
+    .team-avatar::after {
+        width: 46px;
+        height: 46px;
+    }
+
+    .card-icon {
+        font-size: 1.3em;
+        width: 40px;
+        height: 40px;
+    }
+
+    .footer {
         margin-top: 38px;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-main {
+        font-size: 1em;
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .hero-section .display-3,
+    .hero-section .display-5 {
+        font-size: 2rem !important;
+    }
+
+    .team-title {
+        font-size: 1em;
+    }
+
+    .team-list span {
+        min-width: 65px;
+        font-size: .95em;
     }
 }
