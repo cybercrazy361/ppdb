@@ -562,5 +562,10 @@ body::-webkit-scrollbar-track,
 
 .table th.status-col,
 .table td.status-col {
-    min-width: 180px;
+    min-width: 250px;
+    /* dari 180px, misal jadi 250px */
+    width: 260px;
+    /* tambahkan width supaya lebih stabil */
+    max-width: 340px;
+    /* biar ga terlalu panjang */
 }
