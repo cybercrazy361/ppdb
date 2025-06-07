@@ -494,37 +494,27 @@ body::-webkit-scrollbar-track,
     color: #23395d;
 }
 
-/* SKELETON: (hanya jika kamu pakai custom span untuk checkbox visual) */
-input[type="checkbox"] {
-    display: none;
-}
-
-.checkbox-custom {
+/* ==== Modal Checkbox Styling (Biar centang kelihatan di modal putih!) ==== */
+.modal-content input[type="checkbox"] {
     width: 22px;
     height: 22px;
+    accent-color: #355cfc;
+    /* Biru, biar konsisten dengan tema utama */
     border-radius: 7px;
-    border: 2px solid #b2dbfa;
+    border: 1.8px solid #b2dbfa;
     background: #f7fafd;
-    display: inline-block;
+    margin-right: 7px;
     vertical-align: middle;
-    transition: border-color .13s, box-shadow .17s;
-    position: relative;
+    /* Remove any old custom checkbox background/image! */
 }
 
-input[type="checkbox"]:checked+.checkbox-custom {
-    background: #355cfc;
-    border-color: #355cfc;
+.modal-content input[type="checkbox"]:focus {
+    outline: 2px solid #355cfc;
+    box-shadow: 0 0 0 2px #13afe070;
 }
 
-input[type="checkbox"]:checked+.checkbox-custom:after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    top: 1px;
-    width: 7px;
-    height: 13px;
-    border: solid #fff;
-    border-width: 0 3px 3px 0;
-    transform: rotate(42deg);
-    /* This creates the white checkmark */
+.modal-content input[type="checkbox"]:checked {
+    accent-color: #355cfc;
+    /* Paksa browser warnain centang-nya biru */
+    /* native browser checkmark appears */
 }
