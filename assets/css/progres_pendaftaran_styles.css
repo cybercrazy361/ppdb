@@ -509,3 +509,39 @@ body::-webkit-scrollbar-track,
 .pekerjaan-col {
     display: none !important;
 }
+
+.table th,
+.table td {
+    min-width: 90px;
+    padding: 12px 10px;
+}
+
+.table th.nama-col,
+.table td.nama-col {
+    min-width: 180px;
+}
+
+.table th.hp-col,
+.table td.hp-col {
+    min-width: 140px;
+}
+
+.table th.alamat-col,
+.table td.alamat-col {
+    min-width: 250px;
+}
+
+.table th.ket-col,
+.table td.ket-col {
+    min-width: 160px;
+}
+
+.table th.pj-col,
+.table td.pj-col {
+    min-width: 160px;
+}
+
+.table th.status-col,
+.table td.status-col {
+    min-width: 180px;
+}
