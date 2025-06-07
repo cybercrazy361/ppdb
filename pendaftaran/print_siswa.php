@@ -221,7 +221,7 @@ $no_invoice = $row['no_invoice'] ?? '';
 $is_ppdb_bersama = (strtoupper($status_pendaftaran) === 'PPDB BERSAMA');
 if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_invoice)): ?>
   <div class="no-reg-row">
-    <div class="no-reg-label"><b>No. Formulir Pendaftaran</b></div>
+    <div class="no-reg-label"><b>No. Formulir</b></div>
     <div class="no-reg-sep">:</div>
     <div class="no-reg-val"><b><i><?= safe($no_invoice) ?></i></b></div>
   </div>
