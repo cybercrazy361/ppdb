@@ -496,16 +496,12 @@ body::-webkit-scrollbar-track,
 
 /* ==== Modal Checkbox Styling (Biar centang kelihatan di modal putih!) ==== */
 .modal-content input[type="checkbox"] {
+    accent-color: #355cfc;
     width: 22px;
     height: 22px;
-    accent-color: #355cfc;
-    /* Biru, biar konsisten dengan tema utama */
     border-radius: 7px;
-    border: 1.8px solid #b2dbfa;
-    background: #f7fafd;
     margin-right: 7px;
     vertical-align: middle;
-    /* Remove any old custom checkbox background/image! */
 }
 
 .modal-content input[type="checkbox"]:focus {
