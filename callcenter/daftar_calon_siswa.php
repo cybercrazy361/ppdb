@@ -98,6 +98,7 @@ function tanggal_indo($tgl) {
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/sidebar_callcenter_styles.css">
   <link rel="stylesheet" href="../assets/css/progres_pendaftaran_styles.css">
+  
 </head>
 <body>
     <?php $active = 'calonsiswa'; ?>
@@ -171,11 +172,19 @@ function tanggal_indo($tgl) {
     <td><?= htmlspecialchars($row['nama']) ?></td>
     <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
     <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-    <td><?= htmlspecialchars($row['no_hp']) ?></td>
+    <td>
+      <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp'])) ?>" target="_blank">
+        <?= htmlspecialchars($row['no_hp']) ?>
+      </a>
+    </td>
     <td class="alamat-col d-none"><?= htmlspecialchars($row['alamat']) ?></td>
     <td class="pendidikan-col d-none"><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
     <td class="pekerjaan-col d-none"><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
-    <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
+    <td>
+      <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu'])) ?>" target="_blank">
+        <?= htmlspecialchars($row['no_hp_ortu']) ?>
+      </a>
+    </td>
     <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
     <td class="status-col text-center">
         <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
