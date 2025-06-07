@@ -506,13 +506,14 @@ body::-webkit-scrollbar-track,
 /* ===== HIDE COLUMN (contoh: alamat, pendidikan, pekerjaan jika perlu) ==== */
 .table th.asal-col,
 .table td.asal-col {
-    min-width: 220px;
-    /* Atur sesuai kebutuhan */
-    max-width: 340px;
-    /* Opsional, biar nggak terlalu lebar */
-    /* Bisa tambahkan: */
-    /* width: 260px; */
+    min-width: 300px;
+    /* ganti jadi 300 atau 340, sesuai kebutuhan */
+    width: 340px;
+    /* set width biar fix */
+    max-width: 440px;
+    /* boleh lebih besar, contoh 400/440 */
 }
+
 
 .alamat-col,
 .pendidikan-col,
@@ -534,6 +535,14 @@ body::-webkit-scrollbar-track,
 .table th.hp-col,
 .table td.hp-col {
     min-width: 140px;
+}
+
+.table th.tgl-col,
+.table td.tgl-col {
+    min-width: 130px;
+    /* atau lebih sesuai kebutuhan */
+    max-width: 160px;
+    text-align: center;
 }
 
 .table th.alamat-col,
