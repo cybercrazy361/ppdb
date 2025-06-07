@@ -181,7 +181,7 @@ body {
 }
 
 .no-reg-label {
-    min-width: 152px;
+    min-width: 100px;
     font-weight: 500;
 }
 
