@@ -117,16 +117,18 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="card unit-card text-center py-4<?= $unit=='SMK'?' selected':'' ?>" onclick="pilihUnit('SMK')">
-                <div class="card-body">
-                    <div class="icon-container"><i class="fa fa-cogs"></i></div>
-                    <div class="card-title">SMK Dharma Karya</div>
-                    <div class="text-secondary">Lihat siswa SMK</div>
-                </div>
-            </div>
+<?php // Hilangkan atau comment blok SMK di bawah ini ?>
+<?php /*
+<div class="col-md-4 mb-3">
+    <div class="card unit-card text-center py-4<?= $unit=='SMK'?' selected':'' ?>" onclick="pilihUnit('SMK')">
+        <div class="card-body">
+            <div class="icon-container"><i class="fa fa-cogs"></i></div>
+            <div class="card-title">SMK Dharma Karya</div>
+            <div class="text-secondary">Lihat siswa SMK</div>
         </div>
     </div>
+</div>
+*/ ?>
 
     <div id="areaTabel">
         <?php if ($unit): ?>
