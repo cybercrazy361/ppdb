@@ -449,3 +449,47 @@ body::-webkit-scrollbar-track,
         border-radius: 8.5px;
     }
 }
+
+/* Modal Modern Clean Card Style */
+.modal-content {
+    background: #fff !important;
+    color: #1b2239 !important;
+    border-radius: 1.13rem;
+    box-shadow: 0 3px 32px #24ffe425;
+}
+
+.modal-header {
+    background: #f5faff;
+    color: #355cfc !important;
+}
+
+.modal-title {
+    color: #355cfc !important;
+    font-weight: 700;
+}
+
+.modal-content label,
+.modal-content .form-label,
+.modal-content input,
+.modal-content select,
+.modal-content textarea,
+.modal-content .form-check-label {
+    color: #24334e !important;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content input[type="date"],
+.modal-content select {
+    background: #f7fafd;
+    color: #23395d;
+    border: 1.3px solid #b2dbfa;
+    border-radius: 9px;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+    border-color: #355cfc;
+    background: #fff;
+    color: #23395d;
+}
