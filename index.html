@@ -172,9 +172,14 @@
 
         .hero-section {
             position: relative;
-            min-height: 380px;
+            min-height: 420px;
+            /* Perbesar sesuai kebutuhan */
             background: #f5faff;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .hero-section::before {
@@ -182,11 +187,13 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 420px;
-            height: 420px;
+            width: 700px;
+            /* PERBESAR UKURAN LOGO */
+            height: 700px;
             background: url('https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png') no-repeat center center;
             background-size: contain;
-            opacity: 0.08;
+            opacity: 0.13;
+            /* Bisa kamu atur lebih transparan lagi */
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 1;
@@ -196,6 +203,7 @@
         .hero-section>.bg-shape {
             position: relative;
             z-index: 2;
+            margin: 0 auto;
         }
     </style>
 </head>
