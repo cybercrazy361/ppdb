@@ -420,3 +420,29 @@ a,
     border-color: #4a00e0;
     box-shadow: 0 2px 12px #4a00e035;
 }
+
+.hero-title,
+.hero-inner .display-3 {
+    white-space: nowrap;
+    font-size: 3.2rem;
+    max-width: 100%;
+    overflow-x: auto;
+    text-overflow: ellipsis;
+    letter-spacing: -1px;
+}
+
+@media (max-width: 768px) {
+
+    .hero-title,
+    .hero-inner .display-3 {
+        font-size: 2.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .hero-title,
+    .hero-inner .display-3 {
+        font-size: 1.12rem;
+    }
+}
