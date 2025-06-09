@@ -582,9 +582,9 @@ a,
     left: 50%;
     top: 52%;
     transform: translate(-50%, -50%);
-    width: 340px;
-    max-width: 65vw;
-    opacity: 0.08;
+    width: 540px;
+    max-width: 90vw;
+    opacity: 0.11;
     z-index: 1;
     pointer-events: none;
     user-select: none;
