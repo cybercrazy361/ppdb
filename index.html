@@ -21,8 +21,8 @@
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top nav-blur">
         <div class="container">
             <a class="navbar-brand fw-bold logo-gradient d-flex align-items-center" href="#">
-                <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo"
-                    style="height:50px; margin-right:16px;">
+                <img id="navbarLogo" src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
+                    alt="Logo" class="navbar-logo-zoom" style="height:50px; margin-right:16px;">
                 SPMB SMAS DHARMA KARYA
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -319,6 +319,18 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === "Escape") win.style.display = 'none';
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var logo = document.getElementById('navbarLogo');
+            logo.addEventListener('click', function (e) {
+                e.preventDefault(); // Jika tidak mau reload halaman
+                logo.classList.add('zooming');
+                setTimeout(function () {
+                    logo.classList.remove('zooming');
+                }, 350); // sesuai durasi CSS transition
+            });
+        });
+
     </script>
 
 </body>
