@@ -175,7 +175,7 @@ function badge($s){
       <img src="../assets/images/logo_trans.png" class="img-fluid" style="max-height:80px">
     </div>
     <div class="col-8 text-center">
-      <h2>PPDB <?=htmlspecialchars($filter_unit)?></h2>
+      <h2>SPMB <?=htmlspecialchars($filter_unit)?></h2>
       <p class="mb-0">Laporan Pendaftaran Siswa</p>
       <small><?=formatTanggalIndonesia(date('Y-m-d'));?></small>
     </div>

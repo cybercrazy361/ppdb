@@ -1,3 +1,4 @@
+# Tentukan file index default
 DirectoryIndex index.php index.html
 
 # Jangan ganggu file PDF, biarkan bisa diakses dari mana saja
@@ -9,11 +10,11 @@ DirectoryIndex index.php index.html
     </FilesMatch>
 </IfModule>
 
+RewriteEngine On
+
 # Izinkan akses ke folder .well-known/acme-challenge untuk SSL verification
 RewriteCond %{REQUEST_URI} ^/\.well-known/acme-challenge/ [NC]
 RewriteRule ^ - [L]
-
-RewriteEngine On
 
 # Khusus file PDF, JANGAN DI-REWRITE (biar diakses langsung, no .php)
 RewriteCond %{REQUEST_URI} \.pdf$ [NC]
