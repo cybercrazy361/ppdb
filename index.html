@@ -47,7 +47,9 @@
             </div>
         </div>
     </nav>
+
     <div id="logoModal">
+        <span class="close-modal" id="closeLogoModal">&times;</span>
         <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo Besar">
     </div>
 
@@ -326,12 +328,42 @@
         document.addEventListener('DOMContentLoaded', function () {
             var logo = document.getElementById('navbarLogo');
             var modal = document.getElementById('logoModal');
+            var closeBtn = document.getElementById('closeLogoModal');
+
+            // Buka modal
             logo.addEventListener('click', function (e) {
                 e.preventDefault();
                 modal.style.display = 'flex';
+                setTimeout(function () {
+                    modal.classList.add('active');
+                }, 10);
             });
-            modal.addEventListener('click', function () {
-                modal.style.display = 'none';
+
+            // Tutup modal (klik area gelap atau tombol close)
+            function closeModal() {
+                modal.classList.remove('active');
+                setTimeout(function () {
+                    modal.style.display = 'none';
+                }, 350); // harus sama dengan transition duration di CSS
+            }
+
+            closeBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                closeModal();
+            });
+
+            // Klik area luar gambar (area gelap)
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // ESC key
+            document.addEventListener('keydown', function (e) {
+                if (modal.classList.contains('active') && (e.key === "Escape" || e.key === "Esc" || e.keyCode === 27)) {
+                    closeModal();
+                }
             });
         });
     </script>

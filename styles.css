@@ -610,6 +610,13 @@ a,
     background: rgba(0, 0, 0, 0.82);
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s cubic-bezier(.23, .8, .43, .99);
+}
+
+#logoModal.active {
+    display: flex;
+    opacity: 1;
 }
 
 #logoModal img {
@@ -618,4 +625,43 @@ a,
     border-radius: 18px;
     box-shadow: 0 8px 40px #000b;
     background: #fff;
+    transition: transform 0.25s cubic-bezier(.23, 1.15, .4, 1.01);
+    transform: scale(0.95);
+}
+
+#logoModal.active img {
+    transform: scale(1);
+}
+
+#logoModal .close-modal {
+    position: absolute;
+    top: 28px;
+    right: 36px;
+    font-size: 2.1rem;
+    color: #fff;
+    cursor: pointer;
+    z-index: 100;
+    background: rgba(44, 44, 64, 0.32);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .18s;
+}
+
+#logoModal .close-modal:hover {
+    background: #4a00e0;
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    #logoModal .close-modal {
+        top: 14px;
+        right: 14px;
+        font-size: 1.4rem;
+        width: 36px;
+        height: 36px;
+    }
 }
