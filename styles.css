@@ -423,26 +423,30 @@ a,
 
 .hero-title,
 .hero-inner .display-3 {
-    white-space: nowrap;
-    font-size: 4.2rem;
+    font-size: 4rem;
+    /* 4rem boleh, atau 6vw biar responsif */
+    font-weight: 900;
     max-width: 100%;
+    /* HAPUS/COMMENT white-space: nowrap; */
+    /* white-space: normal; */
+    word-break: break-word;
+    line-height: 1.05;
     letter-spacing: -1px;
-    margin-bottom: 20px;
-    /* border-bottom: none;  <-- pastikan tidak ada */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
 
     .hero-title,
     .hero-inner .display-3 {
-        font-size: 2.1rem;
+        font-size: 7vw;
+        /* Responsif turun sendiri di mobile */
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
 
     .hero-title,
     .hero-inner .display-3 {
-        font-size: 1.12rem;
+        font-size: 2.3rem;
     }
 }
