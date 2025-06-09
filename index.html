@@ -169,43 +169,6 @@
                 bottom: 18px;
             }
         }
-
-        .hero-section {
-            min-height: 67vh;
-            padding: 80px 0 65px 0;
-            background: linear-gradient(90deg, #eaf2ff 80%, #f7faff 100%);
-            position: relative;
-            overflow: hidden;
-            border-radius: 0 0 1.7rem 1.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 800px;
-            /* atau lebih besar */
-            height: 800px;
-            background: url('https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png') no-repeat center center;
-            background-size: contain;
-            opacity: 0.13;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .hero-inner {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 780px;
-            margin: 0 auto;
-        }
     </style>
 </head>
 
@@ -214,11 +177,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top nav-blur">
         <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
-                <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo"
-                    style="height:40px;width:auto;">
-                <span class="logo-gradient">SPMB SMAS DHARMA KARYA</span>
-            </a>
+            <a class="navbar-brand fw-bold logo-gradient" href="#">SPMB SMAS DHARMA KARYA</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -243,15 +202,15 @@
     </nav>
 
     <!-- Hero -->
-    <header class="hero-section">
-        <div class="hero-inner text-center">
+    <header class="hero-section d-flex align-items-center justify-content-center">
+        <div class="container text-center animate-fadein">
             <h1 class="display-5 fw-bold mb-3">Selamat Datang di</h1>
-            <h2 class="display-1 fw-bold mb-3 text-gradient hero-title">
-                SPMB SMAS Dharma Karya
-            </h2>
+            <h2 class="display-3 fw-bold mb-3 text-gradient">SPMB <span style="font-weight: 700;">SMAS Dharma
+                    Karya</span></h2>
             <p class="lead mb-4">Sistem Penerimaan Murid Baru Tahun Ajaran 2025/2026</p>
             <a href="info/daftar_siswa.php" class="btn btn-main btn-lg px-5">Lihat siswa yang diterima</a>
         </div>
+        <div class="bg-shape"></div>
     </header>
 
     <!-- Login Cards -->

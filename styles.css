@@ -420,33 +420,3 @@ a,
     border-color: #4a00e0;
     box-shadow: 0 2px 12px #4a00e035;
 }
-
-.hero-title,
-.hero-inner .display-3 {
-    font-size: 4rem;
-    /* 4rem boleh, atau 6vw biar responsif */
-    font-weight: 900;
-    max-width: 100%;
-    /* HAPUS/COMMENT white-space: nowrap; */
-    /* white-space: normal; */
-    word-break: break-word;
-    line-height: 1.05;
-    letter-spacing: -1px;
-}
-
-@media (max-width: 900px) {
-
-    .hero-title,
-    .hero-inner .display-3 {
-        font-size: 7vw;
-        /* Responsif turun sendiri di mobile */
-    }
-}
-
-@media (max-width: 600px) {
-
-    .hero-title,
-    .hero-inner .display-3 {
-        font-size: 2.3rem;
-    }
-}
