@@ -426,9 +426,9 @@ a,
     white-space: nowrap;
     font-size: 4.2rem;
     max-width: 100%;
-    overflow-x: auto;
-    text-overflow: ellipsis;
     letter-spacing: -1px;
+    margin-bottom: 20px;
+    /* border-bottom: none;  <-- pastikan tidak ada */
 }
 
 @media (max-width: 768px) {
