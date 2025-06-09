@@ -580,11 +580,14 @@ a,
 .hero-bg-logo {
     position: absolute;
     left: 50%;
-    top: 52%;
+    top: 50%;
     transform: translate(-50%, -50%);
-    width: 540px;
-    max-width: 90vw;
-    opacity: 0.11;
+    width: 900px;
+    /* Perbesar lagi, boleh sampai 1200px */
+    max-width: 97vw;
+    /* Supaya tetap responsif di HP */
+    opacity: 0.10;
+    /* Bisa adjust, misal 0.13 untuk lebih terlihat */
     z-index: 1;
     pointer-events: none;
     user-select: none;
