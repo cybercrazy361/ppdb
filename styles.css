@@ -599,10 +599,23 @@ a,
     z-index: 2;
 }
 
-.navbar-logo-zoom {
-    transition: transform 0.3s cubic-bezier(.23, 1.07, .5, .96);
+#logoModal {
+    display: none;
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.82);
+    align-items: center;
+    justify-content: center;
 }
 
-.navbar-logo-zoom.zooming {
-    transform: scale(1.3) rotate(-6deg);
+#logoModal img {
+    max-width: 92vw;
+    max-height: 85vh;
+    border-radius: 18px;
+    box-shadow: 0 8px 40px #000b;
+    background: #fff;
 }

@@ -22,7 +22,7 @@
         <div class="container">
             <a class="navbar-brand fw-bold logo-gradient d-flex align-items-center" href="#">
                 <img id="navbarLogo" src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png"
-                    alt="Logo" class="navbar-logo-zoom" style="height:50px; margin-right:16px;">
+                    alt="Logo" style="height:50px; margin-right:16px; cursor:pointer;">
                 SPMB SMAS DHARMA KARYA
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -47,6 +47,9 @@
             </div>
         </div>
     </nav>
+    <div id="logoModal">
+        <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo Besar">
+    </div>
 
     <!-- Hero -->
     <header class="hero-section d-flex align-items-center justify-content-center">
@@ -322,15 +325,15 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             var logo = document.getElementById('navbarLogo');
+            var modal = document.getElementById('logoModal');
             logo.addEventListener('click', function (e) {
-                e.preventDefault(); // Jika tidak mau reload halaman
-                logo.classList.add('zooming');
-                setTimeout(function () {
-                    logo.classList.remove('zooming');
-                }, 350); // sesuai durasi CSS transition
+                e.preventDefault();
+                modal.style.display = 'flex';
+            });
+            modal.addEventListener('click', function () {
+                modal.style.display = 'none';
             });
         });
-
     </script>
 
 </body>
