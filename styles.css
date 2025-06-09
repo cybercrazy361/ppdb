@@ -582,16 +582,17 @@ a,
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 900px;
-    /* Perbesar lagi, boleh sampai 1200px */
-    max-width: 97vw;
-    /* Supaya tetap responsif di HP */
+    width: 720px;
+    /* Misal: dari 900px -> 720px, tinggal adjust */
+    max-width: 90vw;
+    /* Tetap responsif */
     opacity: 0.10;
-    /* Bisa adjust, misal 0.13 untuk lebih terlihat */
+    /* Opacity boleh tetap */
     z-index: 1;
     pointer-events: none;
     user-select: none;
 }
+
 
 .hero-section .container {
     position: relative;
