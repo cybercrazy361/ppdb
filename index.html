@@ -169,6 +169,34 @@
                 bottom: 18px;
             }
         }
+
+        .hero-section {
+            position: relative;
+            min-height: 380px;
+            background: #f5faff;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 420px;
+            height: 420px;
+            background: url('https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png') no-repeat center center;
+            background-size: contain;
+            opacity: 0.08;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-section>.container,
+        .hero-section>.bg-shape {
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 
@@ -208,8 +236,6 @@
     <!-- Hero -->
     <header class="hero-section d-flex align-items-center justify-content-center">
         <div class="container text-center animate-fadein">
-            <img src="https://ppdbdk.pakarinformatika.web.id/assets/images/logo_trans.png" alt="Logo"
-                style="height:72px;width:auto;margin-bottom:10px;">
             <h1 class="display-5 fw-bold mb-3">Selamat Datang di</h1>
             <h2 class="display-3 fw-bold mb-3 text-gradient">SPMB <span style="font-weight: 700;">SMAS Dharma
                     Karya</span></h2>
