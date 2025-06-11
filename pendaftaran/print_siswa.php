@@ -54,56 +54,61 @@ function tanggal_id($tgl) {
 }
 
 // Status progres
+// Status progres
 $uang_pangkal_id = 1;
 $spp_id = 2;
-$query_status = "
-    SELECT
-        CASE
-            WHEN 
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = s.id 
-                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                      AND pd1.status_pembayaran = 'Lunas'
-                ) > 0
-            AND
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = s.id 
-                      AND pd2.jenis_pembayaran_id = $spp_id
-                      AND pd2.bulan = 'Juli'
-                      AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
-            THEN 'Lunas'
-            WHEN 
-                (
-                    (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                        WHERE p1.siswa_id = s.id 
-                          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                          AND pd1.status_pembayaran = 'Lunas'
-                    ) > 0
-                    OR
-                    (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                        WHERE p2.siswa_id = s.id 
-                          AND pd2.jenis_pembayaran_id = $spp_id
-                          AND pd2.bulan = 'Juli'
-                          AND pd2.status_pembayaran = 'Lunas'
-                    ) > 0
-                )
-            THEN 'Angsuran'
-            ELSE 'Belum Bayar'
-        END AS status_pembayaran
-    FROM siswa s
-    WHERE s.id = ?
-";
-$stmtStatus = $conn->prepare($query_status);
-$stmtStatus->bind_param('i', $id);
-$stmtStatus->execute();
-$resultStatus = $stmtStatus->get_result();
-$status_pembayaran = $resultStatus->fetch_assoc()['status_pembayaran'] ?? 'Belum Bayar';
-$stmtStatus->close();
+
+// Cek apakah ADA pembayaran uang pangkal untuk siswa ini (apapun status, kecuali NULL/kosong)
+$stmt_up = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM pembayaran_detail pd
+    JOIN pembayaran p ON pd.pembayaran_id = p.id
+    WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ?
+");
+$stmt_up->bind_param('ii', $id, $uang_pangkal_id);
+$stmt_up->execute();
+$cek_uang_pangkal = $stmt_up->get_result()->fetch_assoc();
+$is_bayar_uang_pangkal = ($cek_uang_pangkal['total'] > 0);
+$stmt_up->close();
+
+// Cek SPP Juli Lunas
+$stmt_spp = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM pembayaran_detail pd
+    JOIN pembayaran p ON pd.pembayaran_id = p.id
+    WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ? AND pd.bulan = 'Juli' AND pd.status_pembayaran = 'Lunas'
+");
+$stmt_spp->bind_param('ii', $id, $spp_id);
+$stmt_spp->execute();
+$cek_spp_juli = $stmt_spp->get_result()->fetch_assoc();
+$is_lunas_spp_juli = ($cek_spp_juli['total'] > 0);
+$stmt_spp->close();
+
+// Cek uang pangkal LUNAS
+$stmt_up_lunas = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM pembayaran_detail pd
+    JOIN pembayaran p ON pd.pembayaran_id = p.id
+    WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ? AND pd.status_pembayaran = 'Lunas'
+");
+$stmt_up_lunas->bind_param('ii', $id, $uang_pangkal_id);
+$stmt_up_lunas->execute();
+$cek_uang_pangkal_lunas = $stmt_up_lunas->get_result()->fetch_assoc();
+$is_lunas_uang_pangkal = ($cek_uang_pangkal_lunas['total'] > 0);
+$stmt_up_lunas->close();
+
+// Logika status pembayaran
+if ($is_lunas_uang_pangkal && $is_lunas_spp_juli) {
+    $status_pembayaran = 'Lunas';
+} elseif ($is_bayar_uang_pangkal) {
+    // Sudah pernah bayar uang pangkal, tapi belum lunas
+    $status_pembayaran = 'Angsuran';
+} elseif ($is_lunas_spp_juli) {
+    // SPP Juli saja yang lunas
+    $status_pembayaran = 'Angsuran';
+} else {
+    $status_pembayaran = 'Belum Bayar';
+}
 
 // Tagihan awal
 $tagihan = [];
