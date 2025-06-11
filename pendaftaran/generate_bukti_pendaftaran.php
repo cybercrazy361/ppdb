@@ -553,9 +553,6 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
   ?>
 </div>
 
-
-
-
     <div class="info-contact">
       Informasi lebih lanjut hubungi:<br>
       Hotline SMA : <b>081511519271</b> (Bu Puji)
