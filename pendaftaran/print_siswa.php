@@ -336,12 +336,10 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
         2. Form Registrasi ini bukan menjadi bukti siswa tersebut diterima di SMA Dharma Karya. Siswa dinyatakan diterima apabila telah menyelesaikan administrasi dan mendapatkan nomor Formulir.
       <?php elseif ($status_pembayaran === 'Angsuran'): ?>
         <b>Catatan:</b><br>
-        Siswa telah melakukan pembayaran sebagian (angsuran).<br>
-        Simpan bukti ini sebagai tanda terima pembayaran.
+        Simpan Form ini sebagai bukti telah melakukan pembayaran Administrasi.
       <?php elseif ($status_pembayaran === 'Lunas'): ?>
         <b>Catatan:</b><br>
-        Siswa telah menyelesaikan seluruh pembayaran.<br>
-        Simpan bukti ini sebagai tanda lunas dan konfirmasi pendaftaran.
+        Simpan Form ini sebagai bukti telah melakukan pembayaran Administrasi.
       <?php else: ?>
         <b>Catatan:</b><br>
         Status pembayaran tidak diketahui.
