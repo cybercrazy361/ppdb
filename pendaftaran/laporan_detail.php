@@ -93,6 +93,7 @@ $stmt->bind_param("ss", $unit, $today);
     $lunas = $angsuran = $belum = $total = 0;
     while ($row = $result->fetch_assoc()) {
         $id = $row['id'];
+        echo "<!-- siswa_harian_id: $id -->";
 // YANG BENAR:
         $cek = "
         SELECT
