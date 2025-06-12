@@ -165,12 +165,13 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                     $res_nom->close();
                 }
                 $sql = "SELECT s.*, 
-                            COALESCE((SELECT SUM(jumlah) FROM pembayaran WHERE siswa_id=s.id),0) AS total_bayar,
-                            (SELECT metode_pembayaran FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS metode_terakhir,
-                            (SELECT COUNT(*) FROM pembayaran WHERE siswa_id=s.id) AS jumlah_transaksi
-                        FROM siswa s
-                        WHERE s.unit = ?
-                        ORDER BY s.nama ASC";
+                    COALESCE((SELECT SUM(jumlah) FROM pembayaran WHERE siswa_id=s.id),0) AS total_bayar,
+                    (SELECT metode_pembayaran FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS metode_terakhir,
+                    (SELECT COUNT(*) FROM pembayaran WHERE siswa_id=s.id) AS jumlah_transaksi,
+                    (SELECT no_invoice FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS no_invoice_terakhir
+                FROM siswa s
+                WHERE s.unit = ?
+                ORDER BY s.nama ASC";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("s", $unit);
                 $stmt->execute();
@@ -193,7 +194,7 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                 ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= htmlspecialchars($row['no_formulir']) ?></td>
+                    <td><?= htmlspecialchars($row['no_invoice_terakhir'] ?? '-') ?></td>
                     <td><?= htmlspecialchars($row['nama']) ?></td>
                     <td><?= substr($row['jenis_kelamin'], 0, 1) ?></td>
                     <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
