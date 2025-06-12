@@ -367,11 +367,19 @@ const classes = {
     'Tidak Jadi':'status-tidak-jadi'
 };
 
-  $('#calonTable').on('change', '.status-select', function(){
+$('#calonTable').on('change', '.status-select', function(){
     const $sel = $(this),
           $row = $sel.closest('tr'),
           id   = $row.data('id'),
           status = $sel.val();
+
+    // Jika kosong, reset class saja, jangan kirim ke backend
+    if(!status) {
+        $sel.removeClass().addClass('status-select form-select form-select-sm');
+        return; // Stop
+    }
+
+    // Kalau tidak kosong, kirim ke backend
     $.post('update_status.php', {id, status}, function(res){
       if(res.success){
         $sel.removeClass().addClass('status-select form-select form-select-sm ' + classes[status]);
@@ -380,7 +388,7 @@ const classes = {
         alert('Error menyimpan status');
       }
     }, 'json');
-  });
+});
 
   // PJ select update
   $('#calonTable').on('change', '.pj-select', function(){
