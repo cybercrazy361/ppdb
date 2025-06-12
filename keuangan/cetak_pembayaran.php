@@ -192,157 +192,114 @@ function getElementValue($elementName) {
     <meta charset="UTF-8">
     <title>Cetak Kuitansi Pembayaran</title>
 <style>
-    @media print {
-        @page {
-            size: <?= htmlspecialchars($paper_width_mm); ?>mm <?= htmlspecialchars($paper_height_mm); ?>mm;
-            margin: 0;
-        }
-        body {
-            margin: 0;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12pt;
-        }
-        .receipt-container {
-            position: relative;
-            width: <?= htmlspecialchars($paper_width_mm); ?>mm;
-            height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-            padding: 0 10mm 5mm;
-            box-sizing: border-box;
-            background-color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .receipt-element {
-            position: absolute;
-            white-space: nowrap;
-            background-color: transparent !important;
-            border: none !important;
-            outline: none !important;
-            box-shadow: none !important;
-        }
-        .receipt-element table,
-        .receipt-element table th,
-        .receipt-element table td,
-        .receipt-element h3,
-        .receipt-element p {
-            font-family: 'Courier New', Courier, monospace !important;
-            font-size: inherit !important;
-        }
-        .receipt-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
-            text-align: center;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Courier New', Courier, monospace;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 5mm;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        table, th, td {
-            border: 1px solid #000;
-        }
-        th, td {
-            padding: 4px;
-            font-size: 10pt;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .print-button {
-            display: none;
-        }
-        .receipt-element.logo-element img {
-            max-width: 100px;
-            max-height: 100px;
-            pointer-events: none;
-        }
-        .receipt-element.watermark-element {
-            opacity: 0.3;
-            transform: rotate(-45deg);
-            text-align: center;
-            width: 100%;
-            pointer-events: none;
-            font-family: 'Courier New', Courier, monospace;
-        }
+@media print {
+    @page {
+        size: <?= htmlspecialchars($paper_width_mm); ?>mm <?= htmlspecialchars($paper_height_mm); ?>mm;
+        margin: 0;
+    }
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 13pt !important;
+        background: #fff !important;
+        color: #000 !important;
     }
     .receipt-container {
         position: relative;
         width: <?= htmlspecialchars($paper_width_mm); ?>mm;
         height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-        border: 1px solid #dee2e6;
-        padding: 10mm;
-        box-sizing: border-box;
-        margin: 20px auto;
-        background-color: #fff;
-        border-radius: 1rem;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        overflow: hidden;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 12pt;
+        padding: 0;
+        margin: 0 auto;
+        background: #fff !important;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 13pt !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
     }
-    .receipt-element {
-        position: absolute;
-        background-color: rgba(0, 123, 255, 0.3);
-        border: 1px solid #007bff;
-        border-radius: 0.5rem;
-        padding: 2px 4px;
-        font-size: 8pt;
-        cursor: move;
-        user-select: none;
-        white-space: nowrap;
-        transition: background-color 0.2s, border-color 0.2s;
-        font-family: 'Courier New', Courier, monospace;
-        font-weight: 600;
-        color: #5a5c69;
-    }
-    .receipt-element:hover {
-        background-color: rgba(0, 123, 255, 0.5);
-        border-color: #0056b3;
-    }
-    .print-button {
-        text-align: center;
-        margin-top: 20px;
+    .receipt-element,
+    .receipt-element * {
+        position: static !important;
+        background: none !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 13pt !important;
+        color: #000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     .receipt-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
-        text-align: center;
-        left: 50%;
-        transform: translateX(-50%);
-        font-family: 'Courier New', Courier, monospace;
-    }
-    .receipt-element.logo-element img {
-        max-width: 100px;
-        max-height: 100px;
-        pointer-events: none;
-    }
-    .receipt-element.watermark-element {
-        opacity: 0.3;
-        transform: rotate(-45deg);
-        text-align: center;
         width: 100%;
-        pointer-events: none;
-        font-family: 'Courier New', Courier, monospace;
+        text-align: center;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 15pt !important;
+        margin-bottom: 4mm;
     }
-    @media print {
-        .receipt-container {
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-        }
-        .receipt-element {
-            background-color: transparent !important;
-            border: none !important;
-        }
+    table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+        margin: 0 !important;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 12pt !important;
     }
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 2px 4px !important;
+        font-size: 12pt !important;
+        font-family: 'Courier New', Courier, monospace !important;
+    }
+    .print-button { display: none !important; }
+    .logo-element, .watermark-element { display: none !important; }
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13pt;
+    background: #fff;
+}
+.receipt-container {
+    position: relative;
+    width: <?= htmlspecialchars($paper_width_mm); ?>mm;
+    min-height: <?= htmlspecialchars($paper_height_mm); ?>mm;
+    margin: 0 auto;
+    padding: 0;
+    background: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13pt;
+}
+.receipt-header {
+    width: 100%;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 15pt;
+    margin-bottom: 4mm;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12pt;
+}
+th, td {
+    border: 1px solid #000;
+    padding: 2px 4px;
+    font-size: 12pt;
+    font-family: 'Courier New', Courier, monospace;
+}
+.print-button {
+    text-align: center;
+    margin-top: 20px;
+}
+.logo-element, .watermark-element {
+    display: none;
+}
 </style>
+
 </head>
 <body>
     <div class="receipt-container">
