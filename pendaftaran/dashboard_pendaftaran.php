@@ -17,18 +17,17 @@ $spp_id = 2;
 function getStats($conn, $unit, $uang_pangkal_id, $spp_id) {
     // Total pendaftar
     $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
-$stmt->bind_param("s", $unit);
-$stmt->execute();
-$result = $stmt->get_result();
-$total = 0;
-if ($result) {
-    $row = $result->fetch_assoc();
-    $total = $row ? intval($row['total']) : 0;
-}
-$stmt->close();
+    $stmt->bind_param("s", $unit);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $total = 0;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $total = $row ? intval($row['total']) : 0;
+    }
+    $stmt->close();
 
-
-    // Hitung semua status pembayaran
+    // Ambil status pembayaran
     $sql = "
     SELECT s.id,
       CASE
@@ -50,20 +49,20 @@ $stmt->close();
         THEN 'Lunas'
         WHEN 
             (
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                ((SELECT COUNT(*) FROM pembayaran_detail pd1 
                     JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
                     WHERE p1.siswa_id = s.id 
                       AND pd1.jenis_pembayaran_id = $uang_pangkal_id
                       AND pd1.status_pembayaran = 'Lunas'
-                ) > 0
+                ) > 0)
                 OR
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                ((SELECT COUNT(*) FROM pembayaran_detail pd2 
                     JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
                     WHERE p2.siswa_id = s.id 
                       AND pd2.jenis_pembayaran_id = $spp_id
                       AND pd2.bulan = 'Juli'
                       AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
+                ) > 0)
             )
         THEN 'Angsuran'
         ELSE 'Belum Bayar'
