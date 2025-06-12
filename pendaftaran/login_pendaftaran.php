@@ -45,7 +45,7 @@
                 </div>
             </div>
             <div class="mb-3">
-               <label for="unit" class="form-label">Pilih Unit</label>
+               <label for="unit" class="form-label">Unit</label>
                     <select class="form-select" id="unit" name="unit" required>
                         <option value="" disabled>-- Pilih Unit --</option>
                         <option value="Yayasan">Yayasan</option>
