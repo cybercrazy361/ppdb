@@ -99,12 +99,12 @@ $stmt->bind_param("ss", $unit, $today);
         SELECT
         CASE
             WHEN 
-              (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                  JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                  WHERE p1.siswa_id = $id 
-                    AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                    AND pd1.status_pembayaran = 'Lunas'
-              ) > 0
+                (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                    WHERE p1.siswa_id = $id 
+                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                      AND pd1.status_pembayaran = 'Lunas'
+                ) > 0
             AND
                 (SELECT COUNT(*) FROM pembayaran_detail pd2 
                     JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
