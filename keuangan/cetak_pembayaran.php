@@ -194,155 +194,107 @@ function getElementValue($elementName) {
 <style>
     @media print {
         @page {
-            size: <?= htmlspecialchars($paper_width_mm); ?>mm <?= htmlspecialchars($paper_height_mm); ?>mm;
+            size: 241mm 139.7mm; /* 9.5" x 5.5" typical continuous form */
             margin: 0;
         }
-        body {
-            margin: 0;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12pt;
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+            font-family: "Courier New", Courier, monospace !important;
+            font-size: 10pt !important;
+            color: #000 !important;
+            width: 241mm !important;
+            height: 139.7mm !important;
         }
         .receipt-container {
+            width: 241mm !important;
+            min-height: 139.7mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: #fff !important;
             position: relative;
-            width: <?= htmlspecialchars($paper_width_mm); ?>mm;
-            height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-            padding: 0 10mm 5mm;
-            box-sizing: border-box;
-            background-color: #fff;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: "Courier New", Courier, monospace !important;
+            font-size: 10pt !important;
         }
         .receipt-element {
             position: absolute;
-            white-space: nowrap;
-            background-color: transparent !important;
+            background: none !important;
             border: none !important;
-            outline: none !important;
             box-shadow: none !important;
+            font-family: "Courier New", Courier, monospace !important;
+            font-size: 10pt !important;
+            color: #000 !important;
+            font-weight: normal !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            line-height: 1.1 !important;
         }
-        .receipt-element table,
-        .receipt-element table th,
-        .receipt-element table td,
-        .receipt-element h3,
-        .receipt-element p {
-            font-family: 'Courier New', Courier, monospace !important;
-            font-size: inherit !important;
-        }
-        .receipt-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
-            text-align: center;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Courier New', Courier, monospace;
+        .receipt-header h2,
+        .receipt-header p,
+        h3,
+        th {
+            font-family: "Courier New", Courier, monospace !important;
+            font-weight: bold !important;
+            font-size: 11pt !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 5mm;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        table, th, td {
-            border: 1px solid #000;
+            border-collapse: collapse !important;
+            width: 100% !important;
+            font-family: "Courier New", Courier, monospace !important;
+            font-size: 10pt !important;
         }
         th, td {
-            padding: 4px;
-            font-size: 10pt;
-            font-family: 'Courier New', Courier, monospace;
+            border: 1px solid #000 !important;
+            font-size: 10pt !important;
+            padding: 1.5px 4px !important;
         }
         .print-button {
-            display: none;
+            display: none !important;
         }
-        .receipt-element.logo-element img {
-            max-width: 100px;
-            max-height: 100px;
-            pointer-events: none;
-        }
+        .receipt-element.logo-element img,
         .receipt-element.watermark-element {
-            opacity: 0.3;
-            transform: rotate(-45deg);
-            text-align: center;
-            width: 100%;
-            pointer-events: none;
-            font-family: 'Courier New', Courier, monospace;
+            display: none !important;
         }
     }
+    /* Non-print, hanya untuk preview */
+    html, body {
+        font-family: "Courier New", Courier, monospace !important;
+        background: #fff;
+        color: #000;
+        margin: 0;
+        padding: 0;
+    }
     .receipt-container {
+        width: 241mm;
+        min-height: 139.7mm;
+        background: #fff;
         position: relative;
-        width: <?= htmlspecialchars($paper_width_mm); ?>mm;
-        height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-        border: 1px solid #dee2e6;
-        padding: 10mm;
-        box-sizing: border-box;
-        margin: 20px auto;
-        background-color: #fff;
-        border-radius: 1rem;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        overflow: hidden;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 12pt;
+        margin: 0 auto;
+        padding: 0;
+        box-shadow: none;
+        border: 1px solid #bbb;
+        font-size: 10pt;
     }
     .receipt-element {
         position: absolute;
-        background-color: rgba(0, 123, 255, 0.3);
-        border: 1px solid #007bff;
-        border-radius: 0.5rem;
-        padding: 2px 4px;
-        font-size: 8pt;
-        cursor: move;
-        user-select: none;
-        white-space: nowrap;
-        transition: background-color 0.2s, border-color 0.2s;
-        font-family: 'Courier New', Courier, monospace;
-        font-weight: 600;
-        color: #5a5c69;
-    }
-    .receipt-element:hover {
-        background-color: rgba(0, 123, 255, 0.5);
-        border-color: #0056b3;
-    }
-    .print-button {
-        text-align: center;
-        margin-top: 20px;
-    }
-    .receipt-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
-        text-align: center;
-        left: 50%;
-        transform: translateX(-50%);
-        font-family: 'Courier New', Courier, monospace;
-    }
-    .receipt-element.logo-element img {
-        max-width: 100px;
-        max-height: 100px;
-        pointer-events: none;
-    }
-    .receipt-element.watermark-element {
-        opacity: 0.3;
-        transform: rotate(-45deg);
-        text-align: center;
-        width: 100%;
-        pointer-events: none;
-        font-family: 'Courier New', Courier, monospace;
-    }
-    @media print {
-        .receipt-container {
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-        }
-        .receipt-element {
-            background-color: transparent !important;
-            border: none !important;
-        }
+        background: none;
+        border: none;
+        box-shadow: none;
+        font-family: "Courier New", Courier, monospace !important;
+        font-size: 10pt;
+        color: #000;
+        font-weight: normal;
+        padding: 0;
+        margin: 0;
+        line-height: 1.1;
     }
 </style>
+
 </head>
 <body>
     <div class="receipt-container">
