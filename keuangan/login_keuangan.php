@@ -46,11 +46,12 @@
             </div>
             <div class="mb-3">
                 <label for="unit" class="form-label">Pilih Unit</label>
-                <select class="form-select" id="unit" name="unit" required>
-                    <option value="" disabled selected>-- Pilih Unit --</option>
-                    <option value="SMA">SMA</option>
-                    <option value="SMK">SMK</option>
-                </select>
+                    <select class="form-select" id="unit" name="unit" required>
+                        <option value="" disabled>-- Pilih Unit --</option>
+                        <option value="Yayasan">Yayasan</option>
+                        <option value="SMA" selected>SMA</option>
+                        <option value="SMK">SMK</option>
+                    </select>
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary w-100">Login</button>
