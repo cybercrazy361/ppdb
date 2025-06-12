@@ -198,52 +198,62 @@ function getElementValue($elementName) {
         margin: 0;
     }
     html, body {
-        width: 100%;
-        height: 100%;
         margin: 0 !important;
         padding: 0 !important;
         font-family: 'Courier New', Courier, monospace !important;
         font-size: 13pt !important;
         background: #fff !important;
         color: #000 !important;
+        width: 100%;
+        height: 100%;
     }
     .receipt-container {
         position: relative;
         width: <?= htmlspecialchars($paper_width_mm); ?>mm;
         height: <?= htmlspecialchars($paper_height_mm); ?>mm;
-        padding: 0;
-        margin: 0 auto;
+        padding: 0 !important;
+        margin: 0 auto !important;
         background: #fff !important;
-        font-family: 'Courier New', Courier, monospace !important;
-        font-size: 13pt !important;
         border: none !important;
         box-shadow: none !important;
-        border-radius: 0 !important;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 13pt !important;
     }
-    .receipt-element,
-    .receipt-element * {
-        position: static !important;
+    .receipt-element {
+        position: absolute !important;
         background: none !important;
         border: none !important;
-        outline: none !important;
         box-shadow: none !important;
         font-family: 'Courier New', Courier, monospace !important;
         font-size: 13pt !important;
         color: #000 !important;
         padding: 0 !important;
         margin: 0 !important;
+        white-space: normal !important;
+    }
+    .receipt-element p,
+    .receipt-element h2,
+    .receipt-element h3,
+    .receipt-element strong,
+    .receipt-element em {
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: inherit !important;
+        color: #000 !important;
+        background: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     .receipt-header {
-        width: 100%;
-        text-align: center;
-        font-family: 'Courier New', Courier, monospace !important;
+        width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm !important;
+        text-align: center !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         font-size: 15pt !important;
-        margin-bottom: 4mm;
+        font-family: 'Courier New', Courier, monospace !important;
     }
     table {
         border-collapse: collapse !important;
         width: 100% !important;
-        margin: 0 !important;
         font-family: 'Courier New', Courier, monospace !important;
         font-size: 12pt !important;
     }
@@ -273,11 +283,14 @@ body {
     font-size: 13pt;
 }
 .receipt-header {
-    width: 100%;
+    width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
     text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: 'Courier New', Courier, monospace;
     font-size: 15pt;
     margin-bottom: 4mm;
+    position: absolute;
 }
 table {
     border-collapse: collapse;
