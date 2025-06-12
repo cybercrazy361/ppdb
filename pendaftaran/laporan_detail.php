@@ -84,9 +84,10 @@ THEN 'Angsuran'
 
 // Fungsi rekap hari ini
 function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id) {
-    $today = date('Y-m-d');
-    $stmt = $conn->prepare("SELECT id FROM siswa WHERE unit=? AND DATE(tanggal_pendaftaran)=?");
-    $stmt->bind_param("ss", $unit, $today);
+$today = date('Y-m-d');
+// echo "<!-- today: $today -->";
+$stmt = $conn->prepare("SELECT id FROM siswa WHERE unit=? AND tanggal_pendaftaran=?");
+$stmt->bind_param("ss", $unit, $today);
     $stmt->execute();
     $result = $stmt->get_result();
     $lunas = $angsuran = $belum = $total = 0;
