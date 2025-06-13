@@ -54,6 +54,7 @@ $status_list = [
     'Uang Titipan'        => 'Uang titipan sudah masuk',
     'Akan Bayar'          => 'Akan melakukan pembayaran',
     'Menunggu Negeri'     => 'Menunggu sekolah negeri',
+    'Menunggu Proses'     => 'Menunggu proses',
     'Tidak Ada Konfirmasi'=> 'Tidak ada konfirmasi',
     'Tidak Jadi'          => 'Tidak jadi daftar'
 ];
@@ -363,6 +364,7 @@ const classes = {
     'Uang Titipan':'status-uang-titipan',
     'Akan Bayar':'status-akan-bayar',
     'Menunggu Negeri':'status-menunggu-negeri',
+    'Menunggu Proses':'status-menunggu-proses',
     'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
     'Tidak Jadi':'status-tidak-jadi'
 };

@@ -247,6 +247,12 @@ body {
     color: #fff !important;
 }
 
+.status-menunggu-proses {
+    background-color: #44423f !important;
+    /* warna oranye, bisa diubah sesuai selera */
+    color: #fff !important;
+}
+
 /* ===== TABLE MODERN ===== */
 .table-responsive {
     background: var(--color-card);
