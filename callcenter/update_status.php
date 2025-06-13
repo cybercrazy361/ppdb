@@ -77,7 +77,9 @@ if (!$stmt) {
     echo json_encode(['success'=>false,'msg'=>'Prepare failed: '.$conn->error]);
     exit;
 }
-$stmt->bind_param($types, ...$params);
+if (!empty($types) && !empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
 
 if ($stmt->execute()) {
     echo json_encode(['success'=>true]);
