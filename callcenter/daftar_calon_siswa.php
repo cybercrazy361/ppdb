@@ -8,33 +8,50 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
     header('Location: login_callcenter.php');
     exit();
 }
+
+// --- FILTER & Pencarian ---
 $unit = $_SESSION['unit'];
+$search = trim($_GET['q'] ?? '');
+$pj_filter = trim($_GET['pj'] ?? '');
 
-// 2) Ambil unit petugas
-$username = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT unit FROM petugas WHERE username = ?");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$stmt->bind_result($unit);
-$stmt->fetch();
-$stmt->close();
+$where = [];
+$params = [];
+$types = '';
 
-// 3) Query data calon_pendaftar (TANPA EMAIL), JOIN callcenter untuk ambil nama PJ
+if ($unit !== 'Yayasan') {
+    $where[] = "cp.pilihan = ?";
+    $params[] = $unit;
+    $types   .= 's';
+}
+if ($pj_filter) {
+    $where[] = "cp.pj_username = ?";
+    $params[] = $pj_filter;
+    $types   .= 's';
+}
+if ($search) {
+    $where[] = "(cp.nama LIKE ? OR cp.no_hp LIKE ? OR cp.asal_sekolah LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $types   .= 'sss';
+}
+
+// 2) Query utama data calon_pendaftar JOIN callcenter
 $sql = "SELECT cp.id, cp.nama, cp.jenis_kelamin, cp.asal_sekolah, cp.no_hp, cp.alamat,
                cp.pendidikan_ortu, cp.pekerjaan_ortu, cp.no_hp_ortu, cp.pilihan, cp.tanggal_daftar,
                cp.status, cp.notes, cp.pj_username, cc.nama as pj_nama
         FROM calon_pendaftar cp
-        LEFT JOIN callcenter cc ON cp.pj_username = cc.username
-        " . ($unit !== 'Yayasan' ? "WHERE cp.pilihan = ? " : "") . "
-        ORDER BY cp.id DESC";
-
+        LEFT JOIN callcenter cc ON cp.pj_username = cc.username";
+if ($where) $sql .= " WHERE " . implode(" AND ", $where);
+$sql .= " ORDER BY cp.id DESC";
 $stmt = $conn->prepare($sql);
-if ($unit !== 'Yayasan') {
-    $stmt->bind_param("s", $unit);
+if ($params) {
+    $stmt->bind_param($types, ...$params);
 }
 $stmt->execute();
 $result = $stmt->get_result();
-// Ambil daftar PJ sesuai unit login saja
+
+// 3) Ambil daftar PJ sesuai unit login saja
 $pj_list = [];
 $sql_pj = "SELECT username, nama FROM callcenter WHERE unit = ? ORDER BY nama ASC";
 $stmt_pj = $conn->prepare($sql_pj);
@@ -48,7 +65,7 @@ $calon = [];
 while ($row = $result->fetch_assoc()) $calon[] = $row;
 $stmt->close();
 
-// 4) Daftar status dinamis & inisialisasi rekap
+// 4) Daftar status dinamis & rekap
 $status_list = [
     'PPDB Bersama'        => 'PPDB Bersama',
     'Sudah Bayar'         => 'Sudah Bayar',
@@ -75,20 +92,17 @@ function sudah_terkirim($conn, $nama, $tanggal_daftar) {
     $stmt->close();
     return $jml > 0;
 }
-
 function tanggal_indo($tgl) {
-    // Deteksi format yang ada waktu
     if (preg_match('/^\d{4}-\d{2}-\d{2}/', $tgl)) {
         $bulan = [
             1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
         ];
-        $exp = explode('-', substr($tgl, 0, 10)); // Ambil 10 karakter pertama
+        $exp = explode('-', substr($tgl, 0, 10));
         return intval($exp[2]) . ' ' . $bulan[intval($exp[1])] . ' ' . $exp[0];
     }
     return $tgl;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -100,7 +114,6 @@ function tanggal_indo($tgl) {
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/sidebar_callcenter_styles.css">
   <link rel="stylesheet" href="../assets/css/progres_pendaftaran_styles.css">
-  
 </head>
 <body>
     <?php $active = 'calonsiswa'; ?>
@@ -133,6 +146,24 @@ function tanggal_indo($tgl) {
                 <a href="../assets/template/template_calon_pendaftar.xlsx" class="btn btn-success btn-sm mb-2" download>
                   <i class="fas fa-download"></i> Download Template Excel
                 </a>
+                <div class="mb-3 d-flex gap-2 flex-wrap">
+                  <form method="get" class="d-flex gap-2 flex-wrap align-items-center">
+                    <input type="text" name="q" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" class="form-control form-control-sm" placeholder="Cari Nama / No HP / Asal Sekolah">
+                    <select name="pj" class="form-select form-select-sm">
+                      <option value="">-- Semua PJ --</option>
+                      <?php foreach($pj_list as $pj): ?>
+                        <option value="<?= htmlspecialchars($pj['username']) ?>" <?= (isset($_GET['pj']) && $_GET['pj'] == $pj['username'] ? 'selected' : '') ?>>
+                          <?= htmlspecialchars($pj['nama']) ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="fas fa-search"></i> Cari</button>
+                    <?php if(!empty($_GET['q']) || !empty($_GET['pj'])): ?>
+                      <a href="<?= strtok($_SERVER["REQUEST_URI"],'?') ?>" class="btn btn-sm btn-outline-danger" title="Reset"><i class="fas fa-times"></i></a>
+                    <?php endif; ?>
+                  </form>
+                </div>
+
                 <!-- =========================== -->
                 <!--     Form Upload Excel       -->
                 <!-- =========================== -->
@@ -143,6 +174,7 @@ function tanggal_indo($tgl) {
                   </form>
                   <div id="uploadResult" class="mt-2"></div>
                 </div>
+                
                 <div class="table-responsive">
                     <table id="calonTable" class="table table-hover table-bordered align-middle">
     <thead>
