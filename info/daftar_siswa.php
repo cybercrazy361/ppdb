@@ -211,23 +211,7 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             $status = ""; $badge = "";
             $status_ppdb = '-';
 
-            if ($jumlah_transaksi == 0) {
-                $status = "Belum Bayar";
-                $badge = "danger";
-                $belum++;
-            } elseif ($total_bayar >= $tagihan_total) {
-                $status = "Lunas";
-                $badge = "success";
-                $lunas++;
-            } else {
-                $status = "Angsuran";
-                $badge = "warning";
-                $angsuran++;
-            }
-            $total++;
-            $metode = $row['metode_terakhir'] ?? 'Belum Ada';
-
-            // Status PPDB
+            // Ambil status PPDB
             if (!empty($row['calon_pendaftar_id'])) {
                 $res_status = $conn->prepare("SELECT status FROM calon_pendaftar WHERE id=? LIMIT 1");
                 $res_status->bind_param("i", $row['calon_pendaftar_id']);
@@ -237,7 +221,29 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                 $res_status->close();
                 $status_ppdb = trim(strtolower($status_ppdb));
             }
-            if ($status_ppdb === 'ppdb bersama') $ppdb_bersama++;
+
+            // Kategorikan rekap dengan urutan: PPDB Bersama > Lunas > Angsuran > Belum Bayar
+            if ($status_ppdb === 'ppdb bersama') {
+                $ppdb_bersama++;
+                $badge = "info";
+                $status = "PPDB Bersama";
+            } elseif ($jumlah_transaksi == 0) {
+                $belum++;
+                $badge = "danger";
+                $status = "Belum Bayar";
+            } elseif ($total_bayar >= $tagihan_total) {
+                $lunas++;
+                $badge = "success";
+                $status = "Lunas";
+            } else {
+                $angsuran++;
+                $badge = "warning";
+                $status = "Angsuran";
+            }
+
+            $total++; // Tetap hitung total semua siswa (termasuk PPDB Bersama)
+
+            $metode = $row['metode_terakhir'] ?? 'Belum Ada';
 
             $rows_html .= '<tr>';
             $rows_html .= '<td>' . $no++ . '</td>';
@@ -245,13 +251,7 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             $rows_html .= '<td>' . htmlspecialchars($row['nama']) . '</td>';
             $rows_html .= '<td>' . substr($row['jenis_kelamin'], 0, 1) . '</td>';
             $rows_html .= '<td>' . htmlspecialchars($row['asal_sekolah']) . '</td>';
-            $rows_html .= '<td>';
-            if ($status_ppdb === 'ppdb bersama') {
-                $rows_html .= '<span class="badge bg-info text-dark">PPDB Bersama</span>';
-            } else {
-                $rows_html .= '<span class="badge bg-' . $badge . '">' . htmlspecialchars($status) . '</span>';
-            }
-            $rows_html .= '</td>';
+            $rows_html .= '<td><span class="badge bg-' . $badge . ($badge=='info'?' text-dark':'') . '">' . htmlspecialchars($status) . '</span></td>';
             $rows_html .= '<td>' . htmlspecialchars($metode) . '</td>';
             $rows_html .= '<td>' . htmlspecialchars($row['tanggal_pendaftaran']) . '</td>';
             $rows_html .= '</tr>';
