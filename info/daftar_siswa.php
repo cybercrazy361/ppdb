@@ -130,6 +130,10 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             font-weight: 600;
             letter-spacing: 0.1px;
         }
+        .badge {
+        box-shadow: 0 2px 10px 0 rgba(0,0,0,0.08);
+        }
+
         ::-webkit-scrollbar {height:8px; width:8px;}
         ::-webkit-scrollbar-thumb {background:#c9c9ec; border-radius:10px;}
         ::-webkit-scrollbar-track {background:transparent;}
@@ -140,6 +144,11 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             .rekap-row { flex-direction: column; gap: 8px; }
             .rekap-card { min-width: unset; width: 100%; }
         }
+        .rekap-card:hover {
+        transform: translateY(-6px) scale(1.04);
+        box-shadow: 0 8px 40px 0 rgba(32,40,100,0.15);
+        }
+
     </style>
 </head>
 <body>
