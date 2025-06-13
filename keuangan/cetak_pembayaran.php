@@ -194,25 +194,25 @@ function getElementValue($elementName) {
 <style>
 @media print {
     @page {
-        size: <?= htmlspecialchars($paper_width_mm); ?>mm <?= htmlspecialchars($paper_height_mm); ?>mm;
+        size: 240mm 140mm;
         margin: 0;
     }
     html, body {
+        width: 240mm;
+        height: 140mm;
         margin: 0 !important;
         padding: 0 !important;
-        font-family: 'Courier New', Courier, monospace !important;
-        font-size: 13pt !important;
         background: #fff !important;
         color: #000 !important;
-        width: 100%;
-        height: 100%;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 13pt !important;
     }
     .receipt-container {
-        position: relative;
-        width: <?= htmlspecialchars($paper_width_mm); ?>mm;
-        height: <?= htmlspecialchars($paper_height_mm); ?>mm;
+        width: 240mm;
+        height: 140mm;
+        margin: 0 !important;
         padding: 0 !important;
-        margin: 0 auto !important;
+        position: relative;
         background: #fff !important;
         border: none !important;
         box-shadow: none !important;
@@ -244,7 +244,7 @@ function getElementValue($elementName) {
         margin: 0 !important;
     }
     .receipt-header {
-        width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm !important;
+        width: 220mm !important;
         text-align: center !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
@@ -274,8 +274,8 @@ body {
 }
 .receipt-container {
     position: relative;
-    width: <?= htmlspecialchars($paper_width_mm); ?>mm;
-    min-height: <?= htmlspecialchars($paper_height_mm); ?>mm;
+    width: 240mm;
+    min-height: 140mm;
     margin: 0 auto;
     padding: 0;
     background: #fff;
@@ -283,7 +283,7 @@ body {
     font-size: 13pt;
 }
 .receipt-header {
-    width: <?= htmlspecialchars($paper_width_mm - 20); ?>mm;
+    width: 220mm;
     text-align: center;
     left: 50%;
     transform: translateX(-50%);
@@ -312,6 +312,7 @@ th, td {
     display: none;
 }
 </style>
+
 
 </head>
 <body>
