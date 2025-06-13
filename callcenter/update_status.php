@@ -1,5 +1,5 @@
 <?php
-// File: update_status.php
+// callcenter/update_status.php
 session_start();
 header('Content-Type: application/json');
 include '../database_connection.php';
@@ -21,29 +21,36 @@ if (!$id) {
     exit;
 }
 
-// 4. Status yang diperbolehkan (HARUS SAMA dengan ENUM di database!)
+// 4. Status yang diperbolehkan (SAMA dengan ENUM di DB)
 $allowed = [
     'PPDB Bersama',
-    'Sudah Bayar',        // <-- HARUS ADA!
+    'Sudah Bayar',
     'Uang Titipan',
     'Akan Bayar',
     'Menunggu Negeri',
+    'Menunggu Proses',        // <<< Tambahkan!
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ];
+
 $updates = [];
 $params  = [];
 $types   = '';
 
 // 5. Update status jika ada
 if ($status !== null) {
-    if (!in_array($status, $allowed, true)) {
-        echo json_encode(['success'=>false,'msg'=>'Invalid status: '.$status]);
-        exit;
+    if ($status === '') {
+        $updates[] = "status = NULL";
+        // Tidak usah tambahkan ke $params/$types
+    } else {
+        if (!in_array($status, $allowed, true)) {
+            echo json_encode(['success'=>false,'msg'=>'Invalid status: '.$status]);
+            exit;
+        }
+        $updates[] = "status = ?";
+        $types   .= 's';
+        $params[] = $status;
     }
-    $updates[] = "status = ?";
-    $types   .= 's';
-    $params[] = $status;
 }
 
 // 6. Update notes jika ada
