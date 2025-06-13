@@ -154,14 +154,14 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
 <body>
 
 <div class="container py-5">
-    <h2 class="section-title text-center">Lihat Daftar Siswa SPMB</h2>
+    <h2 class="section-title text-center">Daftar Siswa SPMB</h2>
     <div class="row justify-content-center mb-4" id="unitCards">
         <div class="col-md-4 mb-3">
             <div class="card unit-card text-center py-4<?= $unit=='SMA'?' selected':'' ?>" onclick="pilihUnit('SMA')">
                 <div class="card-body">
                     <div class="icon-container"><i class="fa fa-graduation-cap"></i></div>
                     <div class="card-title">SMA Dharma Karya</div>
-                    <div class="text-secondary">Lihat siswa SMA</div>
+                    <div class="text-secondary">Siswa SMA</div>
                 </div>
             </div>
         </div>
