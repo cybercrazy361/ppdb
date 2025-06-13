@@ -674,23 +674,33 @@ body::-webkit-scrollbar-track,
 }
 
 /* Perbaiki posisi search DataTables */
-.dataTables_wrapper .dataTables_filter {
-    float: right !important;
-    text-align: right !important;
-    margin-bottom: 0 !important;
+/* Biar label "Cari:" dan input tetap satu baris (inline) */
+.dataTables_wrapper .dataTables_filter label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
-.dataTables_wrapper .dataTables_length {
-    float: left !important;
-    margin-bottom: 0 !important;
+.dataTables_wrapper .dataTables_filter input[type="search"] {
+    background: #f7fafd;
+    /* Lebih abu, kontras */
+    border: 2px solid #355cfc;
+    /* biru tegas */
+    border-radius: 8px;
+    font-size: 1.05rem;
+    color: #22305a;
+    padding: 6px 14px;
+    transition: border 0.17s, box-shadow 0.17s;
+    outline: none;
+    min-width: 230px;
+    /* biar tidak kecil */
+    box-shadow: 0 1.5px 8px #a9bffb1a;
 }
 
-@media (max-width: 700px) {
-
-    .dataTables_wrapper .dataTables_filter,
-    .dataTables_wrapper .dataTables_length {
-        float: none !important;
-        text-align: left !important;
-        width: 100%;
-    }
+.dataTables_wrapper .dataTables_filter input[type="search"]:focus {
+    border-color: #13afe0;
+    background: #fff;
+    box-shadow: 0 2px 8px #13afe025;
 }
