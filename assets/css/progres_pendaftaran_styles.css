@@ -654,3 +654,21 @@ body::-webkit-scrollbar-track,
     border-radius: 8px;
     min-width: 120px;
 }
+
+.btn-cari {
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    padding: 5px 18px;
+    box-shadow: 0 2px 10px #355cfc25;
+    transition: background .15s, box-shadow .15s;
+}
+
+.btn-cari:hover,
+.btn-cari:focus {
+    background: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 4px 16px #13afe045;
+}

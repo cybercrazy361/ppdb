@@ -152,7 +152,9 @@ function tanggal_indo($tgl) {
         </option>
       <?php endforeach; ?>
     </select>
-    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="fas fa-search"></i> Cari</button>
+<button type="submit" class="btn btn-sm btn-cari">
+    <i class="fas fa-search"></i> Cari
+</button>
     <?php if(!empty($_GET['q']) || !empty($_GET['pj'])): ?>
       <a href="<?= strtok($_SERVER["REQUEST_URI"],'?') ?>" class="btn btn-sm btn-outline-danger" title="Reset"><i class="fas fa-times"></i></a>
     <?php endif; ?>
