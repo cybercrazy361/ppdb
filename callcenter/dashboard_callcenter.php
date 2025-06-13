@@ -24,7 +24,7 @@ $statusList = [
     'Uang Titipan'         => 0,
     'Akan Bayar'           => 0,
     'Menunggu Negeri'      => 0,
-    'Menunggu Proses'      => 0,
+    'Menunggu Progres'      => 0,
     'Tidak Ada Konfirmasi' => 0,
     'Tidak Jadi'           => 0
 ];
@@ -112,10 +112,10 @@ $conn->close();
             <div class="count"><?=$stat['status']['Menunggu Negeri']?></div>
             <div class="subtext">Menunggu Sekolah Negeri</div>
         </div>
-        <div class="card shadow" onclick="showModal('nungguproses')" style="cursor:pointer;">
+        <div class="card shadow" onclick="showModal('nungguprogres')" style="cursor:pointer;">
             <div class="icon" style="color:#6d5eff;"><i class="fas fa-spinner"></i></div>
-            <div class="title">Menunggu Proses</div>
-            <div class="count"><?=$stat['status']['Menunggu Proses']?></div>
+            <div class="title">Menunggu Progres</div>
+            <div class="count"><?=$stat['status']['Menunggu Progres']?></div>
             <div class="subtext">Proses Seleksi</div>
         </div>
         <div class="card shadow" onclick="showModal('pending')" style="cursor:pointer;">
@@ -175,7 +175,7 @@ function showModal(status) {
     else if (status === 'titipan') url += "&status=Uang%20Titipan";
     else if (status === 'akanbayar') url += "&status=Akan%20Bayar";
     else if (status === 'nunggunegeri') url += "&status=Menunggu%20Negeri";
-    else if (status === 'nungguproses') url += "&status=Menunggu%20Proses";
+    else if (status === 'nungguprogres') url += "&status=Menunggu%20Progres";
     else if (status === 'pending') url += "&status=Tidak%20Ada%20Konfirmasi";
     else if (status === 'tidakjadi') url += "&status=Tidak%20Jadi";
     // "all" tidak tambah param status
@@ -211,7 +211,7 @@ labels: [
     'Uang Titipan',
     'Akan Bayar',
     'Menunggu Negeri',
-    'Menunggu Proses',
+    'Menunggu Progres',
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ],
@@ -222,7 +222,7 @@ datasets: [{
         <?=$stat['status']['Uang Titipan']?>,
         <?=$stat['status']['Akan Bayar']?>,
         <?=$stat['status']['Menunggu Negeri']?>,
-        <?=$stat['status']['Menunggu Proses']?>,
+        <?=$stat['status']['Menunggu Progres']?>,
         <?=$stat['status']['Tidak Ada Konfirmasi']?>,
         <?=$stat['status']['Tidak Jadi']?>
     ],

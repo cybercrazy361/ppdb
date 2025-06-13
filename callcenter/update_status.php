@@ -28,7 +28,7 @@ $allowed = [
     'Uang Titipan',
     'Akan Bayar',
     'Menunggu Negeri',
-    'Menunggu Proses',        // <<< Tambahkan!
+    'Menunggu Progres',        // <<< Tambahkan!
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ];

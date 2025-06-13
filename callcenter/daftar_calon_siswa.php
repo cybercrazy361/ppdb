@@ -72,7 +72,7 @@ $status_list = [
     'Uang Titipan'        => 'Uang titipan sudah masuk',
     'Akan Bayar'          => 'Akan melakukan pembayaran',
     'Menunggu Negeri'     => 'Menunggu sekolah negeri',
-    'Menunggu Proses'     => 'Menunggu proses',
+    'Menunggu Progres'     => 'Menunggu progres',
     'Tidak Ada Konfirmasi'=> 'Tidak ada konfirmasi',
     'Tidak Jadi'          => 'Tidak jadi daftar'
 ];

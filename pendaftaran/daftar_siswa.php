@@ -254,8 +254,8 @@ th.alamat-col, td.alamat-col {
                         $statusPendaftaran = strtolower(trim($row['status_pendaftaran'] ?? ''));
                       if ($statusPendaftaran === 'ppdb bersama') {
                         echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
-                      } elseif ($statusPendaftaran === 'menunggu proses') { // <--- Tambah ini
-                        echo '<span class="badge bg-primary">Menunggu Proses</span>';
+                      } elseif ($statusPendaftaran === 'menunggu progres') { // <--- Tambah ini
+                        echo '<span class="badge bg-primary">Menunggu Progres</span>';
                       } elseif ($statusPendaftaran === 'sudah bayar') {
                         echo '<span class="badge bg-success">Sudah Bayar</span>';
                       } elseif ($statusPendaftaran === 'terverifikasi') {
