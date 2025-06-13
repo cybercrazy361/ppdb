@@ -297,7 +297,7 @@ foreach ($layout_settings as $element => $pos) {
 ?>
     <div class="receipt-element"
          style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; width:200mm; <?= $style_inline; ?>">
-        <h3 style="<?= $style_inline; ?> margin: 5px 0; padding: 0;">Rincian Pembayaran</h3>
+        <h3 style="<?= $style_inline; ?> margin: 5px 0; padding: 0; text-align:center; width:100%;">Rincian Pembayaran</h3>
         <?php if (!empty($details)) : ?>
         <table class="rincian-table">
             <thead>
