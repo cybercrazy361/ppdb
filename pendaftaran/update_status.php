@@ -21,13 +21,14 @@ if (!$id) {
     exit;
 }
 
-// 4. Status yang diperbolehkan (HARUS SAMA dengan ENUM di database!)
+// 4. Status yang diperbolehkan (SAMA dengan ENUM di DB)
 $allowed = [
     'PPDB Bersama',
-    'Sudah Bayar',           // <-- TAMBAHKAN INI!
+    'Sudah Bayar',
     'Uang Titipan',
     'Akan Bayar',
     'Menunggu Negeri',
+    'Menunggu Proses',        // <<< Tambahkan!
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ];
@@ -38,13 +39,18 @@ $types   = '';
 
 // 5. Update status jika ada
 if ($status !== null) {
-    if (!in_array($status, $allowed, true)) {
-        echo json_encode(['success'=>false,'msg'=>'Invalid status: '.$status]);
-        exit;
+    if ($status === '') {
+        $updates[] = "status = NULL";
+        // Tidak usah tambahkan ke $params/$types
+    } else {
+        if (!in_array($status, $allowed, true)) {
+            echo json_encode(['success'=>false,'msg'=>'Invalid status: '.$status]);
+            exit;
+        }
+        $updates[] = "status = ?";
+        $types   .= 's';
+        $params[] = $status;
     }
-    $updates[] = "status = ?";
-    $types   .= 's';
-    $params[] = $status;
 }
 
 // 6. Update notes jika ada
@@ -71,7 +77,9 @@ if (!$stmt) {
     echo json_encode(['success'=>false,'msg'=>'Prepare failed: '.$conn->error]);
     exit;
 }
-$stmt->bind_param($types, ...$params);
+if (!empty($types) && !empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
 
 if ($stmt->execute()) {
     echo json_encode(['success'=>true]);
