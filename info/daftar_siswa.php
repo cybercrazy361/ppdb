@@ -250,6 +250,14 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             }
 
             $total++; // Tetap hitung total semua siswa (termasuk PPDB Bersama)
+            function tanggal_indo($tgl) {
+                $bulan = [
+                    1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                    7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                ];
+                $p = explode('-', $tgl);
+                return $p[2] . ' ' . $bulan[(int)$p[1]] . ' ' . $p[0];
+            }
 
             $metode = $row['metode_terakhir'] ?? 'Belum Ada';
 
@@ -262,8 +270,7 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             //$rows_html .= '<td><span class="badge bg-' . $badge . ($badge=='info'?' text-dark':'') . '">' . htmlspecialchars($status) . '</span></td>';
             //$rows_html .= '<td>' . htmlspecialchars($metode) . '</td>';
             // Format tanggal jadi tgl bulan tahun
-            $tgl_daftar = date('d F Y', strtotime($row['tanggal_pendaftaran']));
-            $rows_html .= '<td>' . htmlspecialchars($tgl_daftar) . '</td>';
+            $rows_html .= '<td>' . htmlspecialchars(tanggal_indo($row['tanggal_pendaftaran'])) . '</td>';
             $rows_html .= '</tr>';
         endwhile;
         $stmt->close();
