@@ -347,7 +347,11 @@ foreach ($layout_settings as $element => $pos) {
         <p style="<?= $style_inline; ?> margin: 0;">Terima kasih atas pembayaran Anda.</p>
         <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p><br><br>
         <p style="<?= $style_inline; ?> margin-top: 40px;">________________________</p>
-        <p style="<?= $style_inline; ?> margin: 0;">Bagian Keuangan</p>
+        <?php if(isset($_SESSION['nama'])): ?>
+            <p style="<?= $style_inline; ?> margin: 0; font-weight:bold;">
+                <?= htmlspecialchars($_SESSION['nama']); ?>
+            </p>
+        <?php endif; ?>
     </div>
 <?php
             break;
