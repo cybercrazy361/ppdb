@@ -276,23 +276,33 @@ foreach ($layout_settings as $element => $pos) {
     </div>
 <?php
             break;
-        case 'no_formulir':
-        case 'nama':
-        case 'unit':
-        case 'tahun_pelajaran':
-        case 'metode_pembayaran':
-        case 'tanggal_pembayaran':
-        case 'keterangan':
+case 'no_formulir':
+case 'nama':
+case 'unit':
+case 'tahun_pelajaran':
+case 'metode_pembayaran':
+case 'tanggal_pembayaran':
+case 'keterangan':
 ?>
-    <div class="receipt-element"
-         style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
-        <p style="<?= $style_inline; ?>">
-            <strong><?= ucfirst(str_replace('_', ' ', $element)); ?>:</strong>
-            <?= getElementValue($element); ?>
-        </p>
-    </div>
+<div class="receipt-element"
+     style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
+    <p style="<?= $style_inline; ?>">
+        <strong>
+            <?php
+                // Kalau elemen no_formulir, ganti label jadi No Register
+                if ($element === 'no_formulir') {
+                    echo 'No Register';
+                } else {
+                    echo ucfirst(str_replace('_', ' ', $element));
+                }
+            ?>:
+        </strong>
+        <?= getElementValue($element); ?>
+    </p>
+</div>
 <?php
-            break;
+    break;
+
         case 'details':
 ?>
     <div class="receipt-element"
