@@ -345,7 +345,7 @@ foreach ($layout_settings as $element => $pos) {
     <div class="receipt-element"
          style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
         <p style="<?= $style_inline; ?> margin: 0;">Terima kasih atas pembayaran Anda.</p>
-        <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p><br><br><br>
+        <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p><br><br>
         <p style="<?= $style_inline; ?> margin-top: 40px;">________________________</p>
         <p style="<?= $style_inline; ?> margin: 0;">Bagian Keuangan</p>
     </div>
