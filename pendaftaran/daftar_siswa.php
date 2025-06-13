@@ -252,21 +252,23 @@ th.alamat-col, td.alamat-col {
                   <td>
                       <?php
                         $statusPendaftaran = strtolower(trim($row['status_pendaftaran'] ?? ''));
-                        if ($statusPendaftaran === 'ppdb bersama') {
-                          echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
-                        } elseif ($statusPendaftaran === 'sudah bayar') { // <--- Tambahkan ini
-                          echo '<span class="badge bg-success">Sudah Bayar</span>';
-                        } elseif ($statusPendaftaran === 'terverifikasi') {
-                          echo '<span class="badge bg-success">Terverifikasi</span>';
-                        } elseif ($statusPendaftaran === 'belum verifikasi') {
-                          echo '<span class="badge bg-warning text-dark">Belum Verifikasi</span>';
-                        } elseif ($statusPendaftaran === 'ditolak') {
-                          echo '<span class="badge bg-danger">Ditolak</span>';
-                        } elseif ($statusPendaftaran === '') {
-                          echo '<span class="badge bg-secondary">-</span>';
-                        } else {
-                          echo '<span class="badge bg-secondary">'.htmlspecialchars($row['status_pendaftaran']).'</span>';
-                        }
+                      if ($statusPendaftaran === 'ppdb bersama') {
+                        echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
+                      } elseif ($statusPendaftaran === 'menunggu proses') { // <--- Tambah ini
+                        echo '<span class="badge bg-primary">Menunggu Proses</span>';
+                      } elseif ($statusPendaftaran === 'sudah bayar') {
+                        echo '<span class="badge bg-success">Sudah Bayar</span>';
+                      } elseif ($statusPendaftaran === 'terverifikasi') {
+                        echo '<span class="badge bg-success">Terverifikasi</span>';
+                      } elseif ($statusPendaftaran === 'belum verifikasi') {
+                        echo '<span class="badge bg-warning text-dark">Belum Verifikasi</span>';
+                      } elseif ($statusPendaftaran === 'ditolak') {
+                        echo '<span class="badge bg-danger">Ditolak</span>';
+                      } elseif ($statusPendaftaran === '') {
+                        echo '<span class="badge bg-secondary">-</span>';
+                      } else {
+                        echo '<span class="badge bg-secondary">'.htmlspecialchars($row['status_pendaftaran']).'</span>';
+                      }
                       ?>
                   </td>
                   <td class="text-center">
