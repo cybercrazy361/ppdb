@@ -179,7 +179,6 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
 
     <div id="areaTabel">
         <?php if ($unit): ?>
-        <h4 class="mb-3 mt-4 text-center fw-bold"><?= htmlspecialchars($unit_label) ?></h4>
         <div class="mb-3 search-box">
             <input type="text" class="form-control form-control-lg" id="searchInput" placeholder="Cari nama atau no formulir...">
         </div>
