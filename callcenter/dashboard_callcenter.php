@@ -20,10 +20,11 @@ function getCallCenterStats($conn, $unit) {
 
 $statusList = [
     'PPDB Bersama'         => 0,
-    'Sudah Bayar'          => 0,  // <--- Tambah di sini
+    'Sudah Bayar'          => 0,  
     'Uang Titipan'         => 0,
     'Akan Bayar'           => 0,
     'Menunggu Negeri'      => 0,
+    'Menunggu Proses'      => 0,
     'Tidak Ada Konfirmasi' => 0,
     'Tidak Jadi'           => 0
 ];
@@ -111,6 +112,12 @@ $conn->close();
             <div class="count"><?=$stat['status']['Menunggu Negeri']?></div>
             <div class="subtext">Menunggu Sekolah Negeri</div>
         </div>
+        <div class="card shadow" onclick="showModal('nungguproses')" style="cursor:pointer;">
+            <div class="icon" style="color:#6d5eff;"><i class="fas fa-spinner"></i></div>
+            <div class="title">Menunggu Proses</div>
+            <div class="count"><?=$stat['status']['Menunggu Proses']?></div>
+            <div class="subtext">Proses Seleksi</div>
+        </div>
         <div class="card shadow" onclick="showModal('pending')" style="cursor:pointer;">
             <div class="icon text-danger"><i class="fas fa-user-question"></i></div>
             <div class="title">Tidak Ada Konfirmasi</div>
@@ -168,6 +175,7 @@ function showModal(status) {
     else if (status === 'titipan') url += "&status=Uang%20Titipan";
     else if (status === 'akanbayar') url += "&status=Akan%20Bayar";
     else if (status === 'nunggunegeri') url += "&status=Menunggu%20Negeri";
+    else if (status === 'nungguproses') url += "&status=Menunggu%20Proses";
     else if (status === 'pending') url += "&status=Tidak%20Ada%20Konfirmasi";
     else if (status === 'tidakjadi') url += "&status=Tidak%20Jadi";
     // "all" tidak tambah param status
@@ -199,20 +207,22 @@ new Chart(ctx, {
     data: {
 labels: [
     'PPDB Bersama',
-    'Sudah Bayar',           // <-- Tambah
+    'Sudah Bayar',           
     'Uang Titipan',
     'Akan Bayar',
     'Menunggu Negeri',
+    'Menunggu Proses',
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ],
 datasets: [{
     data: [
         <?=$stat['status']['PPDB Bersama']?>,
-        <?=$stat['status']['Sudah Bayar']?>,   // <-- Tambah
+        <?=$stat['status']['Sudah Bayar']?>,   
         <?=$stat['status']['Uang Titipan']?>,
         <?=$stat['status']['Akan Bayar']?>,
         <?=$stat['status']['Menunggu Negeri']?>,
+        <?=$stat['status']['Menunggu Proses']?>,
         <?=$stat['status']['Tidak Ada Konfirmasi']?>,
         <?=$stat['status']['Tidak Jadi']?>
     ],
@@ -222,6 +232,7 @@ datasets: [{
         '#36b9cc', // Uang Titipan
         '#f6c23e', // Akan Bayar
         '#8f9dff', // Menunggu Negeri
+        '#6d5eff', // Menunggu Proses
         '#e75151', // Tidak Ada Konfirmasi
         '#727a86'  // Tidak Jadi
     ],
