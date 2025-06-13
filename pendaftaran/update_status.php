@@ -24,10 +24,11 @@ if (!$id) {
 // 4. Status yang diperbolehkan (HARUS SAMA dengan ENUM di database!)
 $allowed = [
     'PPDB Bersama',
-    'Sudah Bayar',           // <-- TAMBAHKAN INI!
+    'Sudah Bayar',           
     'Uang Titipan',
     'Akan Bayar',
     'Menunggu Negeri',
+    'Menunggu Proses',
     'Tidak Ada Konfirmasi',
     'Tidak Jadi'
 ];
@@ -38,14 +39,20 @@ $types   = '';
 
 // 5. Update status jika ada
 if ($status !== null) {
-    if (!in_array($status, $allowed, true)) {
-        echo json_encode(['success'=>false,'msg'=>'Invalid status: '.$status]);
-        exit;
+    if ($status === '') {
+        $updates[] = "status = NULL";
+        // tidak usah tambah ke $params/$types
+    } else {
+        if (!in_array($status, $allowed, true)) {
+            echo json_encode(['success'=>false,'msg'=>'Invalid status: '.$status]);
+            exit;
+        }
+        $updates[] = "status = ?";
+        $types   .= 's';
+        $params[] = $status;
     }
-    $updates[] = "status = ?";
-    $types   .= 's';
-    $params[] = $status;
 }
+
 
 // 6. Update notes jika ada
 if ($notes !== null) {
