@@ -672,3 +672,25 @@ body::-webkit-scrollbar-track,
     color: #fff;
     box-shadow: 0 4px 16px #13afe045;
 }
+
+/* Perbaiki posisi search DataTables */
+.dataTables_wrapper .dataTables_filter {
+    float: right !important;
+    text-align: right !important;
+    margin-bottom: 0 !important;
+}
+
+.dataTables_wrapper .dataTables_length {
+    float: left !important;
+    margin-bottom: 0 !important;
+}
+
+@media (max-width: 700px) {
+
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_length {
+        float: none !important;
+        text-align: left !important;
+        width: 100%;
+    }
+}
