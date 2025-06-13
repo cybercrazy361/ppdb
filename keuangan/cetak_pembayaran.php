@@ -356,12 +356,13 @@ case 'keterangan':
          style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
         <p style="<?= $style_inline; ?> margin: 0;">Terima kasih atas pembayaran Anda.</p>
         <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p><br>
-        <p style="<?= $style_inline; ?> margin-top: 40px;">________________________</p>
+        
         <?php if(isset($_SESSION['nama'])): ?>
             <p style="<?= $style_inline; ?> margin: 0; font-weight:bold;">
                 <?= htmlspecialchars($_SESSION['nama']); ?>
             </p>
-        <?php endif; ?>
+        <?php endif; ?><br>
+        <p style="<?= $style_inline; ?> margin-top: 1px;">________________________</p>
     </div>
 <?php
             break;
