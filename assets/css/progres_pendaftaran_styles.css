@@ -591,3 +591,66 @@ body::-webkit-scrollbar-track,
     /* atau lebih kecil lagi, misal 0.85rem */
     padding: 4px 6px;
 }
+
+.rekap-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-bottom: 16px;
+}
+
+.rekap-box {
+    flex: 1 1 auto;
+    display: flex;
+    gap: 8px 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    min-width: 290px;
+}
+
+.filter-form {
+    flex: 1 1 350px;
+    min-width: 270px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 0 !important;
+}
+
+@media (max-width: 1200px) {
+    .rekap-flex {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px 0;
+    }
+
+    .rekap-box {
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+    }
+
+    .filter-form {
+        flex-wrap: wrap;
+        min-width: 200px;
+        width: 100%;
+        gap: 7px 0;
+    }
+}
+
+/* Biar tombol dan input ga turun kalau ruang cukup */
+@media (min-width: 650px) {
+
+    .rekap-flex>.filter-form,
+    .rekap-flex>a,
+    .rekap-flex>form {
+        margin-left: auto !important;
+    }
+}
+
+#formUploadExcel input[type="file"] {
+    font-size: .92em;
+    padding: 3px 6px;
+    border-radius: 8px;
+    min-width: 120px;
+}

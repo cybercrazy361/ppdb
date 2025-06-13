@@ -132,115 +132,109 @@ function tanggal_indo($tgl) {
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-2 gap-2">
                     <h4 class="mb-0 fw-bold">Progres Pendaftaran</h4>
                 </div>
-                <!-- Box Rekap Status -->
-                <div class="rekap-box mb-3">
-                    <?php foreach($rekap as $key => $count):
-                        $cls = 'status-'.strtolower(str_replace(' ', '-', $key));
-                    ?>
-                    <span class="badge <?= $cls ?> filter-status-badge" data-status="<?= $key ?>"><?= $key ?>: <?= $count ?></span>
-                    <?php endforeach; ?>
-                    <span class="badge bg-dark filter-status-badge" data-status="">Semua</span>
-                </div>
-                
-                <!-- Tombol Download Template Excel -->
-                <a href="../assets/template/template_calon_pendaftar.xlsx" class="btn btn-success btn-sm mb-2" download>
-                  <i class="fas fa-download"></i> Download Template Excel
-                </a>
-                <div class="mb-3 d-flex gap-2 flex-wrap">
-                  <form method="get" class="d-flex gap-2 flex-wrap align-items-center">
-                    <input type="text" name="q" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" class="form-control form-control-sm" placeholder="Cari Nama / No HP / Asal Sekolah">
-                    <select name="pj" class="form-select form-select-sm">
-                      <option value="">-- Semua PJ --</option>
-                      <?php foreach($pj_list as $pj): ?>
-                        <option value="<?= htmlspecialchars($pj['username']) ?>" <?= (isset($_GET['pj']) && $_GET['pj'] == $pj['username'] ? 'selected' : '') ?>>
-                          <?= htmlspecialchars($pj['nama']) ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="fas fa-search"></i> Cari</button>
-                    <?php if(!empty($_GET['q']) || !empty($_GET['pj'])): ?>
-                      <a href="<?= strtok($_SERVER["REQUEST_URI"],'?') ?>" class="btn btn-sm btn-outline-danger" title="Reset"><i class="fas fa-times"></i></a>
-                    <?php endif; ?>
-                  </form>
-                </div>
-
-                <!-- =========================== -->
-                <!--     Form Upload Excel       -->
-                <!-- =========================== -->
-                <div class="mb-3">
-                  <form id="formUploadExcel" enctype="multipart/form-data" method="post" action="upload_excel.php" class="d-flex align-items-center gap-2">
-                    <input type="file" name="excel_file" accept=".xlsx,.xls" class="form-control form-control-sm" required>
-                    <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload Excel</button>
-                  </form>
-                  <div id="uploadResult" class="mt-2"></div>
-                </div>
-                
-                <div class="table-responsive">
-                    <table id="calonTable" class="table table-hover table-bordered align-middle">
-    <thead>
-    <tr>
-        <th class="no-col">No</th>
-        <th class="nama-col">Nama</th>
-        <th class="jk-col">Jenis Kelamin</th>
-        <th class="asal-col">Asal Sekolah</th>
-        <th class="hp-col">No HP</th>
-        <th class="alamat-col d-none">Alamat</th>
-        <th class="pendidikan-col d-none">Pendidikan Ortu/Wali</th>
-        <th class="pekerjaan-col d-none">Pekerjaan Ortu/Wali</th>
-        <th class="hp-ortu-col">No HP Ortu/Wali</th>
-        <th class="tgl-col">Tanggal Daftar</th>
-        <th class="status-col">Status</th>
-        <th class="pj-col">Penanggung Jawab</th>
-        <th class="ket-col">Keterangan</th>
-        <th class="kirim-col">Kirim</th>
-    </tr>
-    </thead>
-<tbody>
-<?php $no=1; foreach ($calon as $row):
-    $current = $row['status'];
-    $notes   = $row['notes'];
-    $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
-?>
-<tr data-id="<?= $row['id'] ?>">
-    <td><?= $no++ ?></td>
-    <td><?= htmlspecialchars($row['nama']) ?></td>
-    <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
-    <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-    <td>
-      <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp'])) ?>" target="_blank">
-        <?= htmlspecialchars($row['no_hp']) ?>
-      </a>
-    </td>
-    <td class="alamat-col d-none"><?= htmlspecialchars($row['alamat']) ?></td>
-    <td class="pendidikan-col d-none"><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
-    <td class="pekerjaan-col d-none"><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
-    <td>
-      <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu'])) ?>" target="_blank">
-        <?= htmlspecialchars($row['no_hp_ortu']) ?>
-      </a>
-    </td>
-    <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
-    <td class="status-col text-center">
-        <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
-<select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
-    <option value="">- Pilih Status -</option> <!-- Tambahkan ini sebagai opsi default -->
-    <?php foreach ($status_list as $st => $desc): ?>
-        <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $desc ?></option>
+<!-- Box Rekap Status (RAPIH & RESPONSIF) -->
+<div class="rekap-flex mb-3 flex-wrap align-items-center justify-content-between gap-2">
+  <div class="rekap-box flex-wrap align-items-center">
+    <?php foreach($rekap as $key => $count):
+      $cls = 'status-'.strtolower(str_replace(' ', '-', $key));
+    ?>
+      <span class="badge <?= $cls ?> filter-status-badge" data-status="<?= $key ?>"><?= $key ?>: <?= $count ?></span>
     <?php endforeach; ?>
-</select>
+    <span class="badge bg-dark filter-status-badge" data-status="">Semua</span>
+  </div>
+  <form method="get" class="filter-form d-flex gap-2 flex-wrap align-items-center mb-0" style="min-width:320px;">
+    <input type="text" name="q" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" class="form-control form-control-sm" placeholder="Cari Nama / No HP / Asal Sekolah" style="min-width:180px;">
+    <select name="pj" class="form-select form-select-sm" style="min-width:120px;">
+      <option value="">-- Semua PJ --</option>
+      <?php foreach($pj_list as $pj): ?>
+        <option value="<?= htmlspecialchars($pj['username']) ?>" <?= (isset($_GET['pj']) && $_GET['pj'] == $pj['username'] ? 'selected' : '') ?>>
+          <?= htmlspecialchars($pj['nama']) ?>
+        </option>
+      <?php endforeach; ?>
+    </select>
+    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="fas fa-search"></i> Cari</button>
+    <?php if(!empty($_GET['q']) || !empty($_GET['pj'])): ?>
+      <a href="<?= strtok($_SERVER["REQUEST_URI"],'?') ?>" class="btn btn-sm btn-outline-danger" title="Reset"><i class="fas fa-times"></i></a>
+    <?php endif; ?>
+  </form>
+  <div class="d-flex gap-2 align-items-center">
+    <a href="../assets/template/template_calon_pendaftar.xlsx" class="btn btn-success btn-sm" download>
+      <i class="fas fa-download"></i> Download Template Excel
+    </a>
+    <form id="formUploadExcel" enctype="multipart/form-data" method="post" action="upload_excel.php" class="d-flex align-items-center gap-2">
+      <input type="file" name="excel_file" accept=".xlsx,.xls" class="form-control form-control-sm" required style="max-width:180px;">
+      <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload Excel</button>
+    </form>
+  </div>
+</div>
+<div id="uploadResult" class="mt-2"></div>
+
+        <div class="table-responsive">
+        <table id="calonTable" class="table table-hover table-bordered align-middle">
+        <thead>
+        <tr>
+            <th class="no-col">No</th>
+            <th class="nama-col">Nama</th>
+            <th class="jk-col">Jenis Kelamin</th>
+            <th class="asal-col">Asal Sekolah</th>
+            <th class="hp-col">No HP</th>
+            <th class="alamat-col d-none">Alamat</th>
+            <th class="pendidikan-col d-none">Pendidikan Ortu/Wali</th>
+            <th class="pekerjaan-col d-none">Pekerjaan Ortu/Wali</th>
+            <th class="hp-ortu-col">No HP Ortu/Wali</th>
+            <th class="tgl-col">Tanggal Daftar</th>
+            <th class="status-col">Status</th>
+            <th class="pj-col">Penanggung Jawab</th>
+            <th class="ket-col">Keterangan</th>
+            <th class="kirim-col">Kirim</th>
+        </tr>
+        </thead>
+    <tbody>
+    <?php $no=1; foreach ($calon as $row):
+        $current = $row['status'];
+        $notes   = $row['notes'];
+        $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
+    ?>
+    <tr data-id="<?= $row['id'] ?>">
+        <td><?= $no++ ?></td>
+        <td><?= htmlspecialchars($row['nama']) ?></td>
+        <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
+        <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
+        <td>
+          <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp'])) ?>" target="_blank">
+            <?= htmlspecialchars($row['no_hp']) ?>
+          </a>
+        </td>
+        <td class="alamat-col d-none"><?= htmlspecialchars($row['alamat']) ?></td>
+        <td class="pendidikan-col d-none"><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
+        <td class="pekerjaan-col d-none"><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
+        <td>
+          <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu'])) ?>" target="_blank">
+            <?= htmlspecialchars($row['no_hp_ortu']) ?>
+          </a>
+        </td>
+        <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
+        <td class="status-col text-center">
+            <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
+    <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
+        <option value="">- Pilih Status -</option> <!-- Tambahkan ini sebagai opsi default -->
+        <?php foreach ($status_list as $st => $desc): ?>
+            <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $desc ?></option>
+        <?php endforeach; ?>
+    </select>
+
+        </td>
+        <td>
+    <select class="pj-select form-select form-select-lg" data-id="<?= $row['id'] ?>">
+        <option value="">- Pilih PJ -</option>
+        <?php foreach($pj_list as $pj): ?>
+          <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($pj['nama']) ?>
+          </option>
+        <?php endforeach; ?>
+    </select>
 
     </td>
-    <td>
-<select class="pj-select form-select form-select-lg" data-id="<?= $row['id'] ?>">
-    <option value="">- Pilih PJ -</option>
-    <?php foreach($pj_list as $pj): ?>
-      <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
-        <?= htmlspecialchars($pj['nama']) ?>
-      </option>
-    <?php endforeach; ?>
-</select>
-
-</td>
 
     <td class="text-center">
         <button type="button"
@@ -397,7 +391,7 @@ const classes = {
     'Uang Titipan':'status-uang-titipan',
     'Akan Bayar':'status-akan-bayar',
     'Menunggu Negeri':'status-menunggu-negeri',
-    'Menunggu Proses':'status-menunggu-proses',
+    'Menunggu Progres':'status-menunggu-progres',
     'Tidak Ada Konfirmasi':'status-tidak-ada-konfirmasi',
     'Tidak Jadi':'status-tidak-jadi'
 };
