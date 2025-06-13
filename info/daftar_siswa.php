@@ -305,8 +305,8 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                         <th>Nama Siswa</th>
                         <th>JK</th>
                         <th>Asal Sekolah</th>
-                        <th>Status Pembayaran</th>
-                        <th>Metode</th>
+                        <!-- <th>Status Pembayaran</th> -->
+                        <!-- <th>Metode</th> -->
                         <th>Tanggal Daftar</th>
                     </tr>
                 </thead>
