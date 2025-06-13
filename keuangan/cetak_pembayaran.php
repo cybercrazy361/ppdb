@@ -434,7 +434,7 @@ th, td {
                          style="left: <?= htmlspecialchars($pos['x']); ?>mm; top: <?= htmlspecialchars($pos['y']); ?>mm; <?= $style_inline; ?>">
                         <p style="<?= $style_inline; ?> margin: 0;">Terima kasih atas pembayaran Anda.</p>
                         <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p>
-                        <p style="<?= $style_inline; ?> margin-top: 40px;">________________________</p>
+                        <p style="<?= $style_inline; ?> margin-top: 40px;">________________________</p><br><br>
                         <p style="<?= $style_inline; ?> margin: 0;">Bagian Keuangan</p>
                     </div>
                     <?php
