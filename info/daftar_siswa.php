@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
 include(__DIR__ . '/../database_connection.php');
 
 $unit = isset($_GET['unit']) ? $_GET['unit'] : '';
@@ -74,6 +73,45 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             margin: 0 auto 1.2rem;
             box-shadow: 0 2px 12px rgba(74,0,224,0.06);
         }
+        .rekap-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 1.4rem;
+        }
+        .rekap-card {
+            min-width: 150px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 3px 18px rgba(74,0,224,0.09);
+            padding: 18px 24px;
+            text-align: center;
+            font-weight: 600;
+            transition: box-shadow 0.15s, transform 0.13s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .rekap-card .icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+        .rekap-card.total   { border-left: 5px solid #1976d2; }
+        .rekap-card.lunas   { border-left: 5px solid #45c39d; }
+        .rekap-card.angsuran { border-left: 5px solid #ffa726; }
+        .rekap-card.belum   { border-left: 5px solid #f44336; }
+        .rekap-card.ppdb    { border-left: 5px solid #00bcd4; }
+        .rekap-card .label {
+            font-size: 1.05rem;
+            margin-top: 3px;
+            font-weight: 600;
+        }
+        .rekap-card .jumlah {
+            font-size: 1.7rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
         .table-responsive {
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(74,0,224,0.07);
@@ -92,7 +130,6 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             font-weight: 600;
             letter-spacing: 0.1px;
         }
-        /* Custom scrollbar for table */
         ::-webkit-scrollbar {height:8px; width:8px;}
         ::-webkit-scrollbar-thumb {background:#c9c9ec; border-radius:10px;}
         ::-webkit-scrollbar-track {background:transparent;}
@@ -100,6 +137,8 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             .unit-card .card-title { font-size: 1.12rem; }
             .unit-card { padding: 1rem 0 !important; }
             .section-title { font-size: 1.4rem; }
+            .rekap-row { flex-direction: column; gap: 8px; }
+            .rekap-card { min-width: unset; width: 100%; }
         }
     </style>
 </head>
@@ -117,18 +156,18 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                 </div>
             </div>
         </div>
-<?php // Hilangkan atau comment blok SMK di bawah ini ?>
-<?php /*
-<div class="col-md-4 mb-3">
-    <div class="card unit-card text-center py-4<?= $unit=='SMK'?' selected':'' ?>" onclick="pilihUnit('SMK')">
-        <div class="card-body">
-            <div class="icon-container"><i class="fa fa-cogs"></i></div>
-            <div class="card-title">SMK Dharma Karya</div>
-            <div class="text-secondary">Lihat siswa SMK</div>
+        <?php /*
+        <div class="col-md-4 mb-3">
+            <div class="card unit-card text-center py-4<?= $unit=='SMK'?' selected':'' ?>" onclick="pilihUnit('SMK')">
+                <div class="card-body">
+                    <div class="icon-container"><i class="fa fa-cogs"></i></div>
+                    <div class="card-title">SMK Dharma Karya</div>
+                    <div class="text-secondary">Lihat siswa SMK</div>
+                </div>
+            </div>
         </div>
+        */ ?>
     </div>
-</div>
-*/ ?>
 
     <div id="areaTabel">
         <?php if ($unit): ?>
@@ -136,6 +175,119 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
         <div class="mb-3 search-box">
             <input type="text" class="form-control form-control-lg" id="searchInput" placeholder="Cari nama atau no formulir...">
         </div>
+        <?php
+        // --- Query Siswa & Summary ---
+        $tagihan_total = 0;
+        $id_jenis_pangkal = null;
+        $res_pangkal = $conn->query("SELECT id FROM jenis_pembayaran WHERE nama='Uang Pangkal' LIMIT 1");
+        if ($res_pangkal && $row = $res_pangkal->fetch_assoc()) {
+            $id_jenis_pangkal = $row['id'];
+            $res_nom = $conn->prepare("SELECT nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id=? AND unit=? LIMIT 1");
+            $res_nom->bind_param("is", $id_jenis_pangkal, $unit);
+            $res_nom->execute();
+            $res_nom->bind_result($tagihan_total);
+            $res_nom->fetch();
+            $res_nom->close();
+        }
+        $sql = "SELECT s.*, 
+            COALESCE((SELECT SUM(jumlah) FROM pembayaran WHERE siswa_id=s.id),0) AS total_bayar,
+            (SELECT metode_pembayaran FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS metode_terakhir,
+            (SELECT COUNT(*) FROM pembayaran WHERE siswa_id=s.id) AS jumlah_transaksi,
+            (SELECT no_invoice FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS no_invoice_terakhir
+        FROM siswa s
+        WHERE s.unit = ?
+        ORDER BY s.nama ASC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $unit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $no = 1;
+        $total = $lunas = $angsuran = $belum = $ppdb_bersama = 0;
+        $rows_html = "";
+
+        while ($row = $result->fetch_assoc()):
+            $total_bayar = (float)$row['total_bayar'];
+            $jumlah_transaksi = (int)$row['jumlah_transaksi'];
+            $status = ""; $badge = "";
+            $status_ppdb = '-';
+
+            if ($jumlah_transaksi == 0) {
+                $status = "Belum Bayar";
+                $badge = "danger";
+                $belum++;
+            } elseif ($total_bayar >= $tagihan_total) {
+                $status = "Lunas";
+                $badge = "success";
+                $lunas++;
+            } else {
+                $status = "Angsuran";
+                $badge = "warning";
+                $angsuran++;
+            }
+            $total++;
+            $metode = $row['metode_terakhir'] ?? 'Belum Ada';
+
+            // Status PPDB
+            if (!empty($row['calon_pendaftar_id'])) {
+                $res_status = $conn->prepare("SELECT status FROM calon_pendaftar WHERE id=? LIMIT 1");
+                $res_status->bind_param("i", $row['calon_pendaftar_id']);
+                $res_status->execute();
+                $res_status->bind_result($status_ppdb);
+                $res_status->fetch();
+                $res_status->close();
+                $status_ppdb = trim(strtolower($status_ppdb));
+            }
+            if ($status_ppdb === 'ppdb bersama') $ppdb_bersama++;
+
+            $rows_html .= '<tr>';
+            $rows_html .= '<td>' . $no++ . '</td>';
+            $rows_html .= '<td>' . htmlspecialchars($row['no_invoice_terakhir'] ?? '-') . '</td>';
+            $rows_html .= '<td>' . htmlspecialchars($row['nama']) . '</td>';
+            $rows_html .= '<td>' . substr($row['jenis_kelamin'], 0, 1) . '</td>';
+            $rows_html .= '<td>' . htmlspecialchars($row['asal_sekolah']) . '</td>';
+            $rows_html .= '<td>';
+            if ($status_ppdb === 'ppdb bersama') {
+                $rows_html .= '<span class="badge bg-info text-dark">PPDB Bersama</span>';
+            } else {
+                $rows_html .= '<span class="badge bg-' . $badge . '">' . htmlspecialchars($status) . '</span>';
+            }
+            $rows_html .= '</td>';
+            $rows_html .= '<td>' . htmlspecialchars($metode) . '</td>';
+            $rows_html .= '<td>' . htmlspecialchars($row['tanggal_pendaftaran']) . '</td>';
+            $rows_html .= '</tr>';
+        endwhile;
+        $stmt->close();
+        ?>
+        <!-- REKAP MODERN -->
+        <div class="rekap-row mb-4">
+            <div class="rekap-card total">
+                <div class="icon text-primary"><i class="fas fa-users"></i></div>
+                <span class="jumlah"><?= $total ?></span>
+                <span class="label">Total Siswa</span>
+            </div>
+            <div class="rekap-card lunas">
+                <div class="icon" style="color:#45c39d"><i class="fas fa-check-circle"></i></div>
+                <span class="jumlah"><?= $lunas ?></span>
+                <span class="label">Lunas</span>
+            </div>
+            <div class="rekap-card angsuran">
+                <div class="icon" style="color:#ffa726"><i class="fas fa-coins"></i></div>
+                <span class="jumlah"><?= $angsuran ?></span>
+                <span class="label">Angsuran</span>
+            </div>
+            <div class="rekap-card belum">
+                <div class="icon" style="color:#f44336"><i class="fas fa-exclamation-circle"></i></div>
+                <span class="jumlah"><?= $belum ?></span>
+                <span class="label">Belum Bayar</span>
+            </div>
+            <div class="rekap-card ppdb">
+                <div class="icon" style="color:#00bcd4"><i class="fas fa-handshake"></i></div>
+                <span class="jumlah"><?= $ppdb_bersama ?></span>
+                <span class="label">PPDB Bersama</span>
+            </div>
+        </div>
+        <!-- END REKAP MODERN -->
+
         <div class="table-responsive">
             <table class="table table-bordered align-middle mb-0">
                 <thead class="table-primary">
@@ -151,76 +303,7 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                     </tr>
                 </thead>
                 <tbody id="tabelSiswa">
-                <?php
-                $tagihan_total = 0;
-                $id_jenis_pangkal = null;
-                $res_pangkal = $conn->query("SELECT id FROM jenis_pembayaran WHERE nama='Uang Pangkal' LIMIT 1");
-                if ($res_pangkal && $row = $res_pangkal->fetch_assoc()) {
-                    $id_jenis_pangkal = $row['id'];
-                    $res_nom = $conn->prepare("SELECT nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id=? AND unit=? LIMIT 1");
-                    $res_nom->bind_param("is", $id_jenis_pangkal, $unit);
-                    $res_nom->execute();
-                    $res_nom->bind_result($tagihan_total);
-                    $res_nom->fetch();
-                    $res_nom->close();
-                }
-                $sql = "SELECT s.*, 
-                    COALESCE((SELECT SUM(jumlah) FROM pembayaran WHERE siswa_id=s.id),0) AS total_bayar,
-                    (SELECT metode_pembayaran FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS metode_terakhir,
-                    (SELECT COUNT(*) FROM pembayaran WHERE siswa_id=s.id) AS jumlah_transaksi,
-                    (SELECT no_invoice FROM pembayaran WHERE siswa_id=s.id ORDER BY tanggal_pembayaran DESC, id DESC LIMIT 1) AS no_invoice_terakhir
-                FROM siswa s
-                WHERE s.unit = ?
-                ORDER BY s.nama ASC";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("s", $unit);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $no = 1;
-                while ($row = $result->fetch_assoc()):
-                    $total_bayar = (float)$row['total_bayar'];
-                    $jumlah_transaksi = (int)$row['jumlah_transaksi'];
-                    if ($jumlah_transaksi == 0) {
-                        $status = "Belum Bayar";
-                        $badge = "danger";
-                    } elseif ($total_bayar >= $tagihan_total) {
-                        $status = "Lunas";
-                        $badge = "success";
-                    } else {
-                        $status = "Angsuran";
-                        $badge = "warning";
-                    }
-                    $metode = $row['metode_terakhir'] ?? 'Belum Ada';
-                ?>
-                <tr>
-                    <td><?= $no++ ?></td>
-                    <td><?= htmlspecialchars($row['no_invoice_terakhir'] ?? '-') ?></td>
-                    <td><?= htmlspecialchars($row['nama']) ?></td>
-                    <td><?= substr($row['jenis_kelamin'], 0, 1) ?></td>
-                    <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
-                    <td>
-                        <?php
-                        $status_ppdb = '-';
-                        if (!empty($row['calon_pendaftar_id'])) {
-                            $res_status = $conn->prepare("SELECT status FROM calon_pendaftar WHERE id=? LIMIT 1");
-                            $res_status->bind_param("i", $row['calon_pendaftar_id']);
-                            $res_status->execute();
-                            $res_status->bind_result($status_ppdb);
-                            $res_status->fetch();
-                            $res_status->close();
-                            $status_ppdb = trim(strtolower($status_ppdb));
-                        }
-                        if ($status_ppdb === 'ppdb bersama') {
-                            echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
-                        } else {
-                            echo '<span class="badge bg-'.$badge.'">'.htmlspecialchars($status).'</span>';
-                        }
-                        ?>
-                        </td>
-                    <td><?= htmlspecialchars($metode) ?></td>
-                    <td><?= htmlspecialchars($row['tanggal_pendaftaran']) ?></td>
-                </tr>
-                <?php endwhile; $stmt->close(); ?>
+                    <?= $rows_html ?>
                 </tbody>
             </table>
         </div>
@@ -248,5 +331,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
-
