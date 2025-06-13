@@ -261,7 +261,9 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             $rows_html .= '<td>' . htmlspecialchars($row['asal_sekolah']) . '</td>';
             //$rows_html .= '<td><span class="badge bg-' . $badge . ($badge=='info'?' text-dark':'') . '">' . htmlspecialchars($status) . '</span></td>';
             //$rows_html .= '<td>' . htmlspecialchars($metode) . '</td>';
-            $rows_html .= '<td>' . htmlspecialchars($row['tanggal_pendaftaran']) . '</td>';
+            // Format tanggal jadi tgl bulan tahun
+            $tgl_daftar = date('d F Y', strtotime($row['tanggal_pendaftaran']));
+            $rows_html .= '<td>' . htmlspecialchars($tgl_daftar) . '</td>';
             $rows_html .= '</tr>';
         endwhile;
         $stmt->close();
