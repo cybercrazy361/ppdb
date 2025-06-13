@@ -362,7 +362,7 @@ case 'keterangan':
                 <?= htmlspecialchars($_SESSION['nama']); ?>
             </p>
         <?php endif; ?>
-        <p style="<?= $style_inline; ?> margin: 0;">________________________</p>
+        <p style="<?= $style_inline; ?> margin: 0; margin-top: 0;">________________________</p>
     </div>
 <?php
             break;
