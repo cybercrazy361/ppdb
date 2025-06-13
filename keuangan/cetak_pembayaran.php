@@ -358,11 +358,11 @@ case 'keterangan':
         <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p><br>
         
         <?php if(isset($_SESSION['nama'])): ?>
-            <p style="<?= $style_inline; ?> margin: 0; font-weight:bold;">
+            <p style="<?= $style_inline; ?> margin-top: 30px; font-weight:bold;">
                 <?= htmlspecialchars($_SESSION['nama']); ?>
             </p>
         <?php endif; ?><br>
-        <p style="<?= $style_inline; ?> margin-top: 1px;">________________________</p>
+        <p style="<?= $style_inline; ?> margin: 0;">________________________</p>
     </div>
 <?php
             break;
