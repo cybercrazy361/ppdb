@@ -161,7 +161,6 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                 <div class="card-body">
                     <div class="icon-container"><i class="fa fa-graduation-cap"></i></div>
                     <div class="card-title">SMA Dharma Karya</div>
-                    <div class="text-secondary">Siswa SMA</div>
                 </div>
             </div>
         </div>
