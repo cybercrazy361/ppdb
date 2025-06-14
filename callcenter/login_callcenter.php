@@ -18,13 +18,11 @@
         <!-- Tampilkan Pesan Kesalahan -->
         <?php if (isset($_GET['error'])): ?>
             <div class="alert alert-danger text-center">
-                <?php
-                    if ($_GET['error'] === 'invalid_credentials') {
-                        echo 'Username, password, atau unit salah.';
-                    } elseif ($_GET['error'] === 'empty_fields') {
-                        echo 'Semua kolom wajib diisi.';
-                    }
-                ?>
+                <?php if ($_GET['error'] === 'invalid_credentials') {
+                    echo 'Username, password, atau unit salah.';
+                } elseif ($_GET['error'] === 'empty_fields') {
+                    echo 'Semua kolom wajib diisi.';
+                } ?>
             </div>
         <?php endif; ?>
         <!-- Form Login -->
