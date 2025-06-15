@@ -11,26 +11,31 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'callcenter') {
 $unit = $_SESSION['unit'];
 
 // Statistik utama calon pendaftar
-function getCallCenterStats($conn, $unit) {
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM calon_pendaftar WHERE pilihan = ?");
-    $stmt->bind_param("s", $unit);
+function getCallCenterStats($conn, $unit)
+{
+    $stmt = $conn->prepare(
+        'SELECT COUNT(*) AS total FROM calon_pendaftar WHERE pilihan = ?'
+    );
+    $stmt->bind_param('s', $unit);
     $stmt->execute();
     $total = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
 
-$statusList = [
-    'PPDB Bersama'         => 0,
-    'Sudah Bayar'          => 0,  
-    'Uang Titipan'         => 0,
-    'Akan Bayar'           => 0,
-    'Menunggu Negeri'      => 0,
-    'Menunggu Progres'      => 0,
-    'Tidak Ada Konfirmasi' => 0,
-    'Tidak Jadi'           => 0
-];
+    $statusList = [
+        'PPDB Bersama' => 0,
+        'Sudah Bayar' => 0,
+        'Uang Titipan' => 0,
+        'Akan Bayar' => 0,
+        'Menunggu Negeri' => 0,
+        'Menunggu Progres' => 0,
+        'Tidak Ada Konfirmasi' => 0,
+        'Tidak Jadi' => 0,
+    ];
 
-    $stmt2 = $conn->prepare("SELECT status, COUNT(*) as jumlah FROM calon_pendaftar WHERE pilihan = ? GROUP BY status");
-    $stmt2->bind_param("s", $unit);
+    $stmt2 = $conn->prepare(
+        'SELECT status, COUNT(*) as jumlah FROM calon_pendaftar WHERE pilihan = ? GROUP BY status'
+    );
+    $stmt2->bind_param('s', $unit);
     $stmt2->execute();
     $result2 = $stmt2->get_result();
     while ($row = $result2->fetch_assoc()) {
@@ -40,7 +45,7 @@ $statusList = [
 
     return [
         'total' => $total,
-        'status' => $statusList
+        'status' => $statusList,
     ];
 }
 
@@ -67,9 +72,11 @@ $conn->close();
     <!-- Navbar / Topbar -->
     <header class="navbar">
         <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-        <div class="title">Dashboard Call Center (<?=htmlspecialchars($unit)?>)</div>
+        <div class="title">Dashboard Call Center (<?= htmlspecialchars(
+            $unit
+        ) ?>)</div>
         <div class="user-menu">
-            <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
+            <small>Halo, <?= htmlspecialchars($_SESSION['nama']) ?></small>
             <a href="../callcenter/logout_callcenter.php" class="btn-logout">Logout</a>
         </div>
     </header>
@@ -79,55 +86,57 @@ $conn->close();
         <div class="card shadow" onclick="showModal('sudahbayar')" style="cursor:pointer;">
             <div class="icon text-success"><i class="fas fa-cash-register"></i></div>
             <div class="title">Sudah Bayar</div>
-            <div class="count"><?=$stat['status']['Sudah Bayar']?></div>
+            <div class="count"><?= $stat['status']['Sudah Bayar'] ?></div>
             <div class="subtext">Sudah Melunasi</div>
         </div>
         <div class="card shadow" onclick="showModal('all')" style="cursor:pointer;">
             <div class="icon text-primary"><i class="fas fa-users"></i></div>
             <div class="title">Total Calon Pendaftar</div>
-            <div class="count"><?=$stat['total']?></div>
-            <div class="subtext">Unit <?=htmlspecialchars($unit)?></div>
+            <div class="count"><?= $stat['total'] ?></div>
+            <div class="subtext">Unit <?= htmlspecialchars($unit) ?></div>
         </div>
         <div class="card shadow" onclick="showModal('ppdb')" style="cursor:pointer;">
             <div class="icon text-success"><i class="fas fa-user-check"></i></div>
             <div class="title">PPDB Bersama</div>
-            <div class="count"><?=$stat['status']['PPDB Bersama']?></div>
+            <div class="count"><?= $stat['status']['PPDB Bersama'] ?></div>
             <div class="subtext">Follow-up Berhasil</div>
         </div>
         <div class="card shadow" onclick="showModal('titipan')" style="cursor:pointer;">
             <div class="icon text-info"><i class="fas fa-money-bill-wave"></i></div>
             <div class="title">Uang Titipan</div>
-            <div class="count"><?=$stat['status']['Uang Titipan']?></div>
+            <div class="count"><?= $stat['status']['Uang Titipan'] ?></div>
             <div class="subtext">Sudah Titip Uang</div>
         </div>
         <div class="card shadow" onclick="showModal('akanbayar')" style="cursor:pointer;">
             <div class="icon text-warning"><i class="fas fa-hourglass-half"></i></div>
             <div class="title">Akan Bayar</div>
-            <div class="count"><?=$stat['status']['Akan Bayar']?></div>
+            <div class="count"><?= $stat['status']['Akan Bayar'] ?></div>
             <div class="subtext">Akan Melakukan Pembayaran</div>
         </div>
         <div class="card shadow" onclick="showModal('nunggunegeri')" style="cursor:pointer;">
             <div class="icon" style="color:#8f9dff;"><i class="fas fa-user-clock"></i></div>
             <div class="title">Menunggu Negeri</div>
-            <div class="count"><?=$stat['status']['Menunggu Negeri']?></div>
+            <div class="count"><?= $stat['status']['Menunggu Negeri'] ?></div>
             <div class="subtext">Menunggu Sekolah Negeri</div>
         </div>
         <div class="card shadow" onclick="showModal('nungguprogres')" style="cursor:pointer;">
             <div class="icon" style="color:#6d5eff;"><i class="fas fa-spinner"></i></div>
             <div class="title">Menunggu Progres</div>
-            <div class="count"><?=$stat['status']['Menunggu Progres']?></div>
+            <div class="count"><?= $stat['status']['Menunggu Progres'] ?></div>
             <div class="subtext">Proses Seleksi</div>
         </div>
         <div class="card shadow" onclick="showModal('pending')" style="cursor:pointer;">
             <div class="icon text-danger"><i class="fas fa-user-question"></i></div>
             <div class="title">Tidak Ada Konfirmasi</div>
-            <div class="count"><?=$stat['status']['Tidak Ada Konfirmasi']?></div>
+            <div class="count"><?= $stat['status'][
+                'Tidak Ada Konfirmasi'
+            ] ?></div>
             <div class="subtext">Belum dihubungi</div>
         </div>
         <div class="card shadow" onclick="showModal('tidakjadi')" style="cursor:pointer;">
             <div class="icon" style="color:#727a86;"><i class="fas fa-user-slash"></i></div>
             <div class="title">Tidak Jadi</div>
-            <div class="count"><?=$stat['status']['Tidak Jadi']?></div>
+            <div class="count"><?= $stat['status']['Tidak Jadi'] ?></div>
             <div class="subtext">Batal Mendaftar</div>
         </div>
     </section>
@@ -169,7 +178,7 @@ $conn->close();
 function showModal(status) {
     const body = document.getElementById('modalBody');
     body.innerHTML = '<tr><td colspan="5" class="text-center">Memuat...</td></tr>';
-    let url = `fetch_calon_pendaftar.php?unit=<?=urlencode($unit)?>`;
+    let url = `fetch_calon_pendaftar.php?unit=<?= urlencode($unit) ?>`;
     if (status === 'ppdb') url += "&status=PPDB%20Bersama";
     else if (status === 'sudahbayar') url += "&status=Sudah%20Bayar";
     else if (status === 'titipan') url += "&status=Uang%20Titipan";
@@ -217,14 +226,14 @@ labels: [
 ],
 datasets: [{
     data: [
-        <?=$stat['status']['PPDB Bersama']?>,
-        <?=$stat['status']['Sudah Bayar']?>,   
-        <?=$stat['status']['Uang Titipan']?>,
-        <?=$stat['status']['Akan Bayar']?>,
-        <?=$stat['status']['Menunggu Negeri']?>,
-        <?=$stat['status']['Menunggu Progres']?>,
-        <?=$stat['status']['Tidak Ada Konfirmasi']?>,
-        <?=$stat['status']['Tidak Jadi']?>
+        <?= $stat['status']['PPDB Bersama'] ?>,
+        <?= $stat['status']['Sudah Bayar'] ?>,   
+        <?= $stat['status']['Uang Titipan'] ?>,
+        <?= $stat['status']['Akan Bayar'] ?>,
+        <?= $stat['status']['Menunggu Negeri'] ?>,
+        <?= $stat['status']['Menunggu Progres'] ?>,
+        <?= $stat['status']['Tidak Ada Konfirmasi'] ?>,
+        <?= $stat['status']['Tidak Jadi'] ?>
     ],
     backgroundColor: [
         '#3ec86b', // PPDB Bersama
