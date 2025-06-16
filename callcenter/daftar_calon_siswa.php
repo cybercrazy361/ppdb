@@ -294,55 +294,57 @@ function tanggal_indo($tgl)
 $pj['username']
     ? 'selected'
     : '' ?>>
-            <?= htmlspecialchars($pj['nama']) ?>
-          </option>
-        <?php endforeach; ?>
-    </select>
+                    <?= htmlspecialchars($pj['nama']) ?>
+                  </option>
+                <?php endforeach; ?>
+            </select>
 
-    </td>
+            </td>
 
-    <td class="text-center">
-        <button type="button"
-            class="btn btn-sm btn-outline-primary btn-notes"
-            data-id="<?= $row['id'] ?>"
-            data-nama="<?= htmlspecialchars($row['nama']) ?>"
-            data-notes="<?= htmlspecialchars($notes) ?>">
-            <i class="fas fa-sticky-note"></i> Lihat/Edit
-        </button>
-    </td>
-    <td class="text-center">
-        <?php if ($terkirim): ?>
-        <span class="badge bg-success">Terkirim</span>
-        <?php else: ?>
-        <button class="btn btn-sm btn-success btn-kirim"
-                data-id="<?= $row['id'] ?>"
-                data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                data-jenis_kelamin="<?= htmlspecialchars(
-                    $row['jenis_kelamin']
-                ) ?>"
-                data-asal_sekolah="<?= htmlspecialchars(
-                    $row['asal_sekolah']
-                ) ?>"
-                data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
-                data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
-                data-pendidikan_ortu="<?= htmlspecialchars(
-                    $row['pendidikan_ortu']
-                ) ?>"
-                data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
-                data-tanggal_daftar="<?= htmlspecialchars(
-                    $row['tanggal_daftar']
-                ) ?>"
-                data-unit="<?= htmlspecialchars($unit) ?>"
-        ><i class="fas fa-paper-plane"></i> Kirim</button>
-        <?php endif; ?>
-    </td>
-</tr>
-<?php
+            <td class="text-center">
+                <button type="button"
+                    class="btn btn-sm btn-outline-primary btn-notes"
+                    data-id="<?= $row['id'] ?>"
+                    data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                    data-notes="<?= htmlspecialchars($notes) ?>">
+                    <i class="fas fa-sticky-note"></i> Lihat/Edit
+                </button>
+            </td>
+            <td class="text-center">
+                <?php if ($terkirim): ?>
+                <span class="badge bg-success">Terkirim</span>
+                <?php else: ?>
+                <button class="btn btn-sm btn-success btn-kirim"
+                        data-id="<?= $row['id'] ?>"
+                        data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                        data-jenis_kelamin="<?= htmlspecialchars(
+                            $row['jenis_kelamin']
+                        ) ?>"
+                        data-asal_sekolah="<?= htmlspecialchars(
+                            $row['asal_sekolah']
+                        ) ?>"
+                        data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
+                        data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
+                        data-pendidikan_ortu="<?= htmlspecialchars(
+                            $row['pendidikan_ortu']
+                        ) ?>"
+                        data-no_hp_ortu="<?= htmlspecialchars(
+                            $row['no_hp_ortu']
+                        ) ?>"
+                        data-tanggal_daftar="<?= htmlspecialchars(
+                            $row['tanggal_daftar']
+                        ) ?>"
+                        data-unit="<?= htmlspecialchars($unit) ?>"
+                ><i class="fas fa-paper-plane"></i> Kirim</button>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php
     endforeach;
     ?>
-</tbody>
+        </tbody>
 
-</table>
+        </table>
                 </div>
             </div>
         </div>
