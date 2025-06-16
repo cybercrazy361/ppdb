@@ -19,21 +19,21 @@ $params = [];
 $types = '';
 
 if ($unit !== 'Yayasan') {
-    $where[] = "cp.pilihan = ?";
+    $where[] = 'cp.pilihan = ?';
     $params[] = $unit;
-    $types   .= 's';
+    $types .= 's';
 }
 if ($pj_filter) {
-    $where[] = "cp.pj_username = ?";
+    $where[] = 'cp.pj_username = ?';
     $params[] = $pj_filter;
-    $types   .= 's';
+    $types .= 's';
 }
 if ($search) {
-    $where[] = "(cp.nama LIKE ? OR cp.no_hp LIKE ? OR cp.asal_sekolah LIKE ?)";
+    $where[] = '(cp.nama LIKE ? OR cp.no_hp LIKE ? OR cp.asal_sekolah LIKE ?)';
     $params[] = "%$search%";
     $params[] = "%$search%";
     $params[] = "%$search%";
-    $types   .= 'sss';
+    $types .= 'sss';
 }
 
 // 2) Query utama data calon_pendaftar JOIN callcenter
@@ -42,8 +42,10 @@ $sql = "SELECT cp.id, cp.nama, cp.jenis_kelamin, cp.asal_sekolah, cp.no_hp, cp.a
                cp.status, cp.notes, cp.pj_username, cc.nama as pj_nama
         FROM calon_pendaftar cp
         LEFT JOIN callcenter cc ON cp.pj_username = cc.username";
-if ($where) $sql .= " WHERE " . implode(" AND ", $where);
-$sql .= " ORDER BY cp.id DESC";
+if ($where) {
+    $sql .= ' WHERE ' . implode(' AND ', $where);
+}
+$sql .= ' ORDER BY cp.id DESC';
 $stmt = $conn->prepare($sql);
 if ($params) {
     $stmt->bind_param($types, ...$params);
@@ -53,50 +55,71 @@ $result = $stmt->get_result();
 
 // 3) Ambil daftar PJ sesuai unit login saja
 $pj_list = [];
-$sql_pj = "SELECT username, nama FROM callcenter WHERE unit = ? ORDER BY nama ASC";
+$sql_pj =
+    'SELECT username, nama FROM callcenter WHERE unit = ? ORDER BY nama ASC';
 $stmt_pj = $conn->prepare($sql_pj);
-$stmt_pj->bind_param("s", $unit);
+$stmt_pj->bind_param('s', $unit);
 $stmt_pj->execute();
 $res_pj = $stmt_pj->get_result();
-while($pj = $res_pj->fetch_assoc()) $pj_list[] = $pj;
+while ($pj = $res_pj->fetch_assoc()) {
+    $pj_list[] = $pj;
+}
 $stmt_pj->close();
 
 $calon = [];
-while ($row = $result->fetch_assoc()) $calon[] = $row;
+while ($row = $result->fetch_assoc()) {
+    $calon[] = $row;
+}
 $stmt->close();
 
 // 4) Daftar status dinamis & rekap
 $status_list = [
-    'PPDB Bersama'        => 'PPDB Bersama',
-    'Sudah Bayar'         => 'Sudah Bayar',
-    'Uang Titipan'        => 'Uang titipan sudah masuk',
-    'Akan Bayar'          => 'Akan melakukan pembayaran',
-    'Menunggu Negeri'     => 'Menunggu sekolah negeri',
-    'Menunggu Progres'     => 'Menunggu progres',
-    'Tidak Ada Konfirmasi'=> 'Tidak ada konfirmasi',
-    'Tidak Jadi'          => 'Tidak jadi daftar'
+    'PPDB Bersama' => 'PPDB Bersama',
+    'Sudah Bayar' => 'Sudah Bayar',
+    'Uang Titipan' => 'Uang titipan sudah masuk',
+    'Akan Bayar' => 'Akan melakukan pembayaran',
+    'Menunggu Negeri' => 'Menunggu sekolah negeri',
+    'Menunggu Progres' => 'Menunggu progres',
+    'Tidak Ada Konfirmasi' => 'Tidak ada konfirmasi',
+    'Tidak Jadi' => 'Tidak jadi daftar',
 ];
 $rekap = array_fill_keys(array_keys($status_list), 0);
 foreach ($calon as $row) {
     $st = $row['status'];
-    if (isset($rekap[$st])) $rekap[$st]++;
+    if (isset($rekap[$st])) {
+        $rekap[$st]++;
+    }
 }
 
 // Fungsi cek sudah terkirim
-function sudah_terkirim($conn, $nama, $tanggal_daftar) {
-    $stmt = $conn->prepare("SELECT COUNT(*) as jml FROM siswa WHERE nama=? AND tanggal_pendaftaran=?");
-    $stmt->bind_param("ss", $nama, $tanggal_daftar);
+function sudah_terkirim($conn, $nama, $tanggal_daftar)
+{
+    $stmt = $conn->prepare(
+        'SELECT COUNT(*) as jml FROM siswa WHERE nama=? AND tanggal_pendaftaran=?'
+    );
+    $stmt->bind_param('ss', $nama, $tanggal_daftar);
     $stmt->execute();
     $result = $stmt->get_result();
     $jml = $result->fetch_assoc()['jml'];
     $stmt->close();
     return $jml > 0;
 }
-function tanggal_indo($tgl) {
+function tanggal_indo($tgl)
+{
     if (preg_match('/^\d{4}-\d{2}-\d{2}/', $tgl)) {
         $bulan = [
-            1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            1 => 'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember',
         ];
         $exp = explode('-', substr($tgl, 0, 10));
         return intval($exp[2]) . ' ' . $bulan[intval($exp[1])] . ' ' . $exp[0];
@@ -123,7 +146,9 @@ function tanggal_indo($tgl) {
             <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
             <div class="title">Progres Pendaftaran Calon Siswa</div>
             <div class="user-menu">
-                <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
+                <small>Halo, <?= htmlspecialchars(
+                    $_SESSION['nama'] ?? ''
+                ) ?></small>
                 <a href="../callcenter/logout_callcenter.php" class="btn-logout">Logout</a>
             </div>
         </header>
@@ -135,19 +160,25 @@ function tanggal_indo($tgl) {
 <!-- Box Rekap Status (RAPIH & RESPONSIF) -->
 <div class="rekap-flex mb-3 flex-wrap align-items-center justify-content-between gap-2">
   <div class="rekap-box flex-wrap align-items-center">
-    <?php foreach($rekap as $key => $count):
-      $cls = 'status-'.strtolower(str_replace(' ', '-', $key));
-    ?>
+    <?php foreach ($rekap as $key => $count):
+        $cls = 'status-' . strtolower(str_replace(' ', '-', $key)); ?>
       <span class="badge <?= $cls ?> filter-status-badge" data-status="<?= $key ?>"><?= $key ?>: <?= $count ?></span>
-    <?php endforeach; ?>
+    <?php
+    endforeach; ?>
     <span class="badge bg-dark filter-status-badge" data-status="">Semua</span>
   </div>
   <form method="get" class="filter-form d-flex gap-2 flex-wrap align-items-center mb-0" style="min-width:320px;">
-    <input type="text" name="q" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" class="form-control form-control-sm" placeholder="Cari Nama / No HP / Asal Sekolah" style="min-width:180px;">
+    <input type="text" name="q" value="<?= htmlspecialchars(
+        $_GET['q'] ?? ''
+    ) ?>" class="form-control form-control-sm" placeholder="Cari Nama / No HP / Asal Sekolah" style="min-width:180px;">
     <select name="pj" class="form-select form-select-sm" style="min-width:120px;">
       <option value="">-- Semua PJ --</option>
-      <?php foreach($pj_list as $pj): ?>
-        <option value="<?= htmlspecialchars($pj['username']) ?>" <?= (isset($_GET['pj']) && $_GET['pj'] == $pj['username'] ? 'selected' : '') ?>>
+      <?php foreach ($pj_list as $pj): ?>
+        <option value="<?= htmlspecialchars($pj['username']) ?>" <?= isset(
+    $_GET['pj']
+) && $_GET['pj'] == $pj['username']
+    ? 'selected'
+    : '' ?>>
           <?= htmlspecialchars($pj['nama']) ?>
         </option>
       <?php endforeach; ?>
@@ -155,8 +186,11 @@ function tanggal_indo($tgl) {
 <button type="submit" class="btn btn-sm btn-cari">
     <i class="fas fa-search"></i> Cari
 </button>
-    <?php if(!empty($_GET['q']) || !empty($_GET['pj'])): ?>
-      <a href="<?= strtok($_SERVER["REQUEST_URI"],'?') ?>" class="btn btn-sm btn-outline-danger" title="Reset"><i class="fas fa-times"></i></a>
+    <?php if (!empty($_GET['q']) || !empty($_GET['pj'])): ?>
+      <a href="<?= strtok(
+          $_SERVER['REQUEST_URI'],
+          '?'
+      ) ?>" class="btn btn-sm btn-outline-danger" title="Reset"><i class="fas fa-times"></i></a>
     <?php endif; ?>
   </form>
   <div class="d-flex gap-2 align-items-center">
@@ -192,45 +226,74 @@ function tanggal_indo($tgl) {
         </tr>
         </thead>
     <tbody>
-    <?php $no=1; foreach ($calon as $row):
+    <?php
+    $no = 1;
+    foreach ($calon as $row):
+
         $current = $row['status'];
-        $notes   = $row['notes'];
+        $notes = $row['notes'];
         $terkirim = sudah_terkirim($conn, $row['nama'], $row['tanggal_daftar']);
-    ?>
+        ?>
     <tr data-id="<?= $row['id'] ?>">
         <td><?= $no++ ?></td>
         <td><?= htmlspecialchars($row['nama']) ?></td>
         <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
         <td><?= htmlspecialchars($row['asal_sekolah']) ?></td>
         <td>
-          <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp'])) ?>" target="_blank">
+          <a href="https://wa.me/<?= preg_replace(
+              '/^0/',
+              '62',
+              preg_replace('/[^0-9]/', '', $row['no_hp'])
+          ) ?>" target="_blank">
             <?= htmlspecialchars($row['no_hp']) ?>
           </a>
         </td>
-        <td class="alamat-col d-none"><?= htmlspecialchars($row['alamat']) ?></td>
-        <td class="pendidikan-col d-none"><?= htmlspecialchars($row['pendidikan_ortu']) ?></td>
-        <td class="pekerjaan-col d-none"><?= htmlspecialchars($row['pekerjaan_ortu'] ?? '-') ?></td>
+        <td class="alamat-col d-none"><?= htmlspecialchars(
+            $row['alamat']
+        ) ?></td>
+        <td class="pendidikan-col d-none"><?= htmlspecialchars(
+            $row['pendidikan_ortu']
+        ) ?></td>
+        <td class="pekerjaan-col d-none"><?= htmlspecialchars(
+            $row['pekerjaan_ortu'] ?? '-'
+        ) ?></td>
         <td>
-          <a href="https://wa.me/<?= preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $row['no_hp_ortu'])) ?>" target="_blank">
+          <a href="https://wa.me/<?= preg_replace(
+              '/^0/',
+              '62',
+              preg_replace('/[^0-9]/', '', $row['no_hp_ortu'])
+          ) ?>" target="_blank">
             <?= htmlspecialchars($row['no_hp_ortu']) ?>
           </a>
         </td>
         <td><?= tanggal_indo($row['tanggal_daftar']) ?></td>
         <td class="status-col text-center">
-            <span class="d-none status-search-text"><?= htmlspecialchars($current) ?></span>
-    <select class="status-select form-select form-select-sm status-<?= strtolower(str_replace(' ', '-', $current)) ?>">
+            <span class="d-none status-search-text"><?= htmlspecialchars(
+                $current
+            ) ?></span>
+    <select class="status-select form-select form-select-sm status-<?= strtolower(
+        str_replace(' ', '-', $current)
+    ) ?>">
         <option value="">- Pilih Status -</option> <!-- Tambahkan ini sebagai opsi default -->
         <?php foreach ($status_list as $st => $desc): ?>
-            <option value="<?= $st ?>" <?= $st === $current ? 'selected' : '' ?>><?= $desc ?></option>
+            <option value="<?= $st ?>" <?= $st === $current
+    ? 'selected'
+    : '' ?>><?= $desc ?></option>
         <?php endforeach; ?>
     </select>
 
         </td>
         <td>
-    <select class="pj-select form-select form-select-lg" data-id="<?= $row['id'] ?>">
+    <select class="pj-select form-select form-select-lg" data-id="<?= $row[
+        'id'
+    ] ?>">
         <option value="">- Pilih PJ -</option>
-        <?php foreach($pj_list as $pj): ?>
-          <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ?? '') == $pj['username'] ? 'selected' : '' ?>>
+        <?php foreach ($pj_list as $pj): ?>
+          <option value="<?= $pj['username'] ?>" <?= ($row['pj_username'] ??
+    '') ==
+$pj['username']
+    ? 'selected'
+    : '' ?>>
             <?= htmlspecialchars($pj['nama']) ?>
           </option>
         <?php endforeach; ?>
@@ -254,19 +317,29 @@ function tanggal_indo($tgl) {
         <button class="btn btn-sm btn-success btn-kirim"
                 data-id="<?= $row['id'] ?>"
                 data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin']) ?>"
-                data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah']) ?>"
+                data-jenis_kelamin="<?= htmlspecialchars(
+                    $row['jenis_kelamin']
+                ) ?>"
+                data-asal_sekolah="<?= htmlspecialchars(
+                    $row['asal_sekolah']
+                ) ?>"
                 data-no_hp="<?= htmlspecialchars($row['no_hp']) ?>"
                 data-alamat="<?= htmlspecialchars($row['alamat']) ?>"
-                data-pendidikan_ortu="<?= htmlspecialchars($row['pendidikan_ortu']) ?>"
+                data-pendidikan_ortu="<?= htmlspecialchars(
+                    $row['pendidikan_ortu']
+                ) ?>"
                 data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu']) ?>"
-                data-tanggal_daftar="<?= htmlspecialchars($row['tanggal_daftar']) ?>"
+                data-tanggal_daftar="<?= htmlspecialchars(
+                    $row['tanggal_daftar']
+                ) ?>"
                 data-unit="<?= htmlspecialchars($unit) ?>"
         ><i class="fas fa-paper-plane"></i> Kirim</button>
         <?php endif; ?>
     </td>
 </tr>
-<?php endforeach; ?>
+<?php
+    endforeach;
+    ?>
 </tbody>
 
 </table>
@@ -354,11 +427,12 @@ $('.filter-status-badge').on('click', function(){
 });
 
   // Nomor urut update setiap sorting, search, pagination
-  table.on('order.dt search.dt draw.dt', function() {
-    table.column(0, { search: 'applied', order: 'applied', page: 'current' })
-      .nodes()
-      .each(function(cell, i) { cell.innerHTML = i + 1; });
-  });
+table.on('order.dt search.dt draw.dt', function() {
+  let pageInfo = table.page.info();
+  table.column(0, { search: 'applied', order: 'applied', page: 'current' })
+    .nodes()
+    .each(function(cell, i) { cell.innerHTML = i + 1 + pageInfo.start; });
+});
 
   // Modal notes
   let notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
