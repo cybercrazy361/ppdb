@@ -1,7 +1,7 @@
 <?php
 include '../database_connection.php';
 
-// Paginasi
+// Paging
 $data_per_halaman = 5;
 $halaman = isset($_GET['halaman']) ? (int) $_GET['halaman'] : 1;
 if ($halaman < 1) {
@@ -9,21 +9,29 @@ if ($halaman < 1) {
 }
 $offset = ($halaman - 1) * $data_per_halaman;
 
-// Data Call Center
-$sql = "SELECT * FROM callcenter ORDER BY id ASC LIMIT $data_per_halaman OFFSET $offset";
-$result = $conn->query($sql);
+// Ambil semua username yang punya akses callcenter dari akses_petugas
+$sql =
+    "SELECT DISTINCT petugas_username FROM akses_petugas WHERE role = 'callcenter'";
+$resultUsernames = $conn->query($sql);
 
-// Total Data (untuk info total dan paginasi di halaman utama)
-$total_data_sql = 'SELECT COUNT(*) AS total FROM callcenter';
-$total_data_result = $conn->query($total_data_sql);
-$total_data_row = $total_data_result->fetch_assoc();
-$total_data = $total_data_row['total'];
-$total_halaman = ceil($total_data / $data_per_halaman);
+$usernames = [];
+while ($row = $resultUsernames->fetch_assoc()) {
+    $usernames[] = $row['petugas_username'];
+}
 
-// Tampilkan
-if ($result->num_rows > 0) {
+if (count($usernames) > 0) {
+    // Gabungkan semua username dari tabel petugas dan callcenter (cari nama/unit dsb)
+    $usernames_str =
+        "'" . implode("','", array_map('addslashes', $usernames)) . "'";
+    $sqlDetail = "
+        SELECT username, nama, unit FROM petugas WHERE username IN ($usernames_str)
+        UNION
+        SELECT username, nama, unit FROM callcenter WHERE username IN ($usernames_str)
+    ";
+    $detailResult = $conn->query($sqlDetail);
+
     $no = $offset + 1;
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $detailResult->fetch_assoc()) {
         $username = $row['username'];
         // Ambil akses lain dari akses_petugas
         $akses = [];
@@ -48,31 +56,13 @@ if ($result->num_rows > 0) {
             '</td>';
         echo '<td>' . $akses_text . '</td>';
         echo "<td class='text-center'>
-            <button 
-                class='btn btn-secondary btn-sm mb-1'
+            <button class='btn btn-secondary btn-sm mb-1'
                 data-bs-toggle='modal'
                 data-bs-target='#tambahAksesModal'
                 onclick=\"setTambahAksesModal('{$row['username']}')\">
                 <i class='fas fa-user-shield'></i> Tambah Akses
             </button>
-            <button 
-                class='btn btn-warning btn-sm mb-1' 
-                data-bs-toggle='modal' 
-                data-bs-target='#editCallCenterModal' 
-                onclick=\"setEditModalData('{$row['id']}', '" .
-            htmlspecialchars($row['nama'], ENT_QUOTES) .
-            "', '{$row['username']}', '{$row['unit']}')\">
-                <i class='fas fa-edit'></i> Edit
-            </button>
-            <button 
-                class='btn btn-danger btn-sm mb-1' 
-                data-bs-toggle='modal' 
-                data-bs-target='#deleteCallCenterModal' 
-                onclick=\"setDeleteModalData('{$row['id']}', '" .
-            htmlspecialchars($row['nama'], ENT_QUOTES) .
-            "')\">
-                <i class='fas fa-trash-alt'></i> Delete
-            </button>
+            <!-- tombol edit dan delete opsional, custom sesuai sistemmu -->
         </td>";
         echo '</tr>';
     }
