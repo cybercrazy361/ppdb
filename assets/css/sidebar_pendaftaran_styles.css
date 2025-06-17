@@ -109,12 +109,14 @@
 .sidebar::-webkit-scrollbar {
     width: 4px;
 }
-
 .sidebar::-webkit-scrollbar-thumb {
     background: #1ee2e755;
     border-radius: 10px;
 }
 
+/* ====================
+   RESPONSIVE BREAKPOINTS
+   ==================== */
 @media (max-width: 992px) {
     .sidebar {
         left: -110vw;
@@ -122,13 +124,13 @@
         max-width: 330px;
         min-width: 98px;
         border-radius: 0;
+        padding-bottom: 1rem;
+        padding-top: .6rem;
     }
-
     .sidebar.active {
         left: 0;
         box-shadow: 0 4px 38px 0 #1ee2e76b;
     }
-
     .sidebar-backdrop {
         display: block;
         position: fixed;
@@ -138,12 +140,10 @@
         opacity: 1;
         transition: opacity .16s;
     }
-
     .sidebar-backdrop:not(.active) {
         opacity: 0;
         pointer-events: none;
     }
-
     .toggle-btn {
         display: flex !important;
     }
@@ -154,17 +154,18 @@
         left: 0 !important;
         width: var(--sidebar-width);
     }
-
     .sidebar-backdrop {
         display: none !important;
     }
-
     .main {
         margin-left: var(--sidebar-width);
         width: calc(100% - var(--sidebar-width));
     }
 }
 
+/* ================
+   TOGGLE BUTTON
+   ================ */
 .toggle-btn {
     background: rgba(36, 255, 228, 0.09);
     border: none;
@@ -179,7 +180,6 @@
     transition: background .11s, color .12s;
     box-shadow: 0 0 10px #1ee2e732;
 }
-
 .toggle-btn:hover,
 .toggle-btn:focus {
     background: #e1fdff2c;
@@ -187,19 +187,44 @@
     box-shadow: 0 0 10px #1ee2e749;
 }
 
+/* ================
+   MOBILE OPTIMIZE
+   ================ */
 @media (max-width: 480px) {
-    .sidebar .brand {
-        font-size: .95rem;
-        padding: 14px 9px 9px 15px;
-    }
-
     .sidebar {
-        width: 97vw;
-        min-width: 70px;
+        width: 93vw;
+        min-width: 54px;
         max-width: 99vw;
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: .5rem;
+        padding-top: .5rem;
+    }
+    .sidebar .brand {
+        font-size: 1rem;
+        padding: 12px 10px 9px 16px;
+        margin-bottom: 10px;
+    }
+    .sidebar .nav-link {
+        font-size: .97rem;
+        padding: 10px 8px 10px 18px;
+        gap: 9px;
+        margin: 0 4px 5px 4px;
+    }
+    .sidebar-section-label {
+        font-size: .78rem;
+        margin: 10px 8px 5px 12px;
+        padding-left: 4px;
+    }
+    .sidebar .nav-link i {
+        font-size: .93em;
+        min-width: 15px;
     }
 }
 
+/* 
+ * For touch experience
+ */
 .sidebar,
 .sidebar * {
     -webkit-tap-highlight-color: transparent;
