@@ -343,3 +343,12 @@ body {
         padding: 2px 1px 3px 1px;
     }
 }
+@media (max-width: 600px) {
+    .main {
+        padding: 0 10px 8px 10px !important;
+    }
+    .dashboard-cards {
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+}

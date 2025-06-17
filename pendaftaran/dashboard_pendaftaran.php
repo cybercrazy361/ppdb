@@ -14,10 +14,13 @@ $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
-function getStats($conn, $unit, $uang_pangkal_id, $spp_id) {
+function getStats($conn, $unit, $uang_pangkal_id, $spp_id)
+{
     // Total pendaftar
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
-    $stmt->bind_param("s", $unit);
+    $stmt = $conn->prepare(
+        'SELECT COUNT(*) AS total FROM siswa WHERE unit = ?'
+    );
+    $stmt->bind_param('s', $unit);
     $stmt->execute();
     $result = $stmt->get_result();
     $total = 0;
@@ -70,24 +73,28 @@ function getStats($conn, $unit, $uang_pangkal_id, $spp_id) {
     WHERE s.unit = ?
     ";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $unit);
+    $stmt->bind_param('s', $unit);
     $stmt->execute();
     $result = $stmt->get_result();
 
     $lunas = $angsuran = $belum = 0;
     while ($row = $result->fetch_assoc()) {
-        if ($row['status_pembayaran'] === 'Lunas') $lunas++;
-        elseif ($row['status_pembayaran'] === 'Angsuran') $angsuran++;
-        else $belum++;
+        if ($row['status_pembayaran'] === 'Lunas') {
+            $lunas++;
+        } elseif ($row['status_pembayaran'] === 'Angsuran') {
+            $angsuran++;
+        } else {
+            $belum++;
+        }
     }
     $stmt->close();
 
     return [
-      'total'    => $total,
-      'lunas'    => $lunas,
-      'angsuran' => $angsuran,
-      'belum'    => $belum,
-      'bayar'    => $lunas + $angsuran
+        'total' => $total,
+        'lunas' => $lunas,
+        'angsuran' => $angsuran,
+        'belum' => $belum,
+        'bayar' => $lunas + $angsuran,
     ];
 }
 
@@ -99,7 +106,7 @@ $conn->close();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard <?=htmlspecialchars($unit)?> – SPMB</title>
+  <title>Dashboard <?= htmlspecialchars($unit) ?> – SPMB</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -113,10 +120,9 @@ $conn->close();
 
   <div class="main">
     <header class="navbar">
-      <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-      <div class="title">Dashboard <?=htmlspecialchars($unit)?></div>
+      <div class="title">Dashboard <?= htmlspecialchars($unit) ?></div>
       <div class="user-menu">
-        <small>Halo, <?=htmlspecialchars($_SESSION['nama'])?></small>
+        <small>Halo, <?= htmlspecialchars($_SESSION['nama']) ?></small>
         <a href="../logout/logout_pendaftaran.php" class="btn-logout">Logout</a>
       </div>
     </header>
@@ -125,25 +131,25 @@ $conn->close();
       <div class="card" onclick="showModal('total')" style="cursor:pointer;">
         <div class="icon text-primary"><i class="fas fa-user-graduate"></i></div>
         <div class="title">Total Pendaftar</div>
-        <div class="count"><?=$stat['total']?></div>
-        <div class="subtext">Unit <?=htmlspecialchars($unit)?></div>
+        <div class="count"><?= $stat['total'] ?></div>
+        <div class="subtext">Unit <?= htmlspecialchars($unit) ?></div>
       </div>
       <div class="card" onclick="showModal('lunas')" style="cursor:pointer;">
         <div class="icon text-success"><i class="fas fa-check-circle"></i></div>
         <div class="title">Lunas</div>
-        <div class="count"><?=$stat['lunas']?></div>
+        <div class="count"><?= $stat['lunas'] ?></div>
         <div class="subtext">Sudah lunas semua</div>
       </div>
       <div class="card" onclick="showModal('angsuran')" style="cursor:pointer;">
         <div class="icon text-warning"><i class="fas fa-wallet"></i></div>
         <div class="title">Angsuran</div>
-        <div class="count"><?=$stat['angsuran']?></div>
+        <div class="count"><?= $stat['angsuran'] ?></div>
         <div class="subtext">Sebagian lunas</div>
       </div>
       <div class="card" onclick="showModal('belum')" style="cursor:pointer;">
         <div class="icon text-danger"><i class="fas fa-exclamation-circle"></i></div>
         <div class="title">Belum Bayar</div>
-        <div class="count"><?=$stat['belum']?></div>
+        <div class="count"><?= $stat['belum'] ?></div>
         <div class="subtext">Segera follow-up</div>
       </div>
     </section>
@@ -184,7 +190,7 @@ $conn->close();
       function showModal(status) {
         const body = document.getElementById('modalBody');
         body.innerHTML = '<tr><td colspan="3" class="text-center">Memuat...</td></tr>';
-        fetch(`fetch_siswa.php?status=${status}&unit=<?=urlencode($unit)?>`)
+        fetch(`fetch_siswa.php?status=${status}&unit=<?= urlencode($unit) ?>`)
           .then(r => r.json())
           .then(data => {
             if(!data.length) {
@@ -208,7 +214,9 @@ $conn->close();
         data: {
           labels: ['Lunas','Angsuran','Belum Bayar'],
           datasets: [{
-            data: [<?=$stat['lunas']?>, <?=$stat['angsuran']?>, <?=$stat['belum']?>],
+            data: [<?= $stat['lunas'] ?>, <?= $stat['angsuran'] ?>, <?= $stat[
+    'belum'
+] ?>],
             backgroundColor: ['#198754','#ffc107','#dc3545'],
             hoverOffset: 20
           }]
