@@ -243,7 +243,7 @@ body.bg-main {
 }
 
 /* Responsif untuk mobile */
-@media (max-width:600px) {
+@media (max-width: 600px) {
     .team-list li {
         grid-template-columns: 1fr;
         gap: 0;
@@ -283,39 +283,6 @@ body.bg-main {
     .team-list span {
         min-width: 56px;
         font-size: .92em;
-    }
-}
-
-@media (max-width: 600px) {
-
-    .custom-card,
-    .team-card {
-        padding: 10px 4px 8px 4px;
-        border-radius: 1.1rem;
-    }
-
-    .card-icon,
-    .team-avatar {
-        width: 28px;
-        height: 28px;
-        font-size: .94em;
-        margin-top: -8px;
-    }
-
-    .card-icon::after,
-    .team-avatar::after {
-        width: 34px;
-        height: 34px;
-    }
-
-    .card-title,
-    .team-title {
-        font-size: .93em;
-    }
-
-    .team-list span {
-        min-width: 28px;
-        font-size: .89em;
     }
 }
 
@@ -583,16 +550,12 @@ a,
     top: 50%;
     transform: translate(-50%, -50%);
     width: 720px;
-    /* Misal: dari 900px -> 720px, tinggal adjust */
     max-width: 90vw;
-    /* Tetap responsif */
     opacity: 0.10;
-    /* Opacity boleh tetap */
     z-index: 1;
     pointer-events: none;
     user-select: none;
 }
-
 
 .hero-section .container {
     position: relative;
@@ -657,28 +620,47 @@ a,
 }
 
 @media (max-width: 600px) {
-    #logoModal .close-modal {
-        top: 14px;
-        right: 14px;
-        font-size: 1.4rem;
-        width: 36px;
-        height: 36px;
-    }
-}
-
-@media (max-width: 600px) {
+    /* ---- Navbar Mobile OPTIMIZED ---- */
     .navbar {
         border-radius: 0 0 1.1rem 1.1rem;
-        padding: 0.4rem 0;
+        padding: 0.26rem 0.4rem !important;
+        min-height: 48px !important;
+        box-shadow: 0 3px 18px #13afe019;
         font-size: 0.98em;
     }
     .navbar-brand {
-        font-size: 1.03em !important;
+        font-size: 1em !important;
+        display: flex;
+        align-items: center;
+        gap: 7px;
     }
     .navbar-brand img {
-        height: 36px !important;
-        margin-right: 8px !important;
+        height: 28px !important;
+        margin-right: 6px !important;
     }
+    .navbar-toggler {
+        padding: 3px 10px;
+        font-size: 1.2rem;
+        border-radius: 9px;
+        border: 1.5px solid #eaeaea;
+        background: #fff;
+        margin-left: 4px;
+        margin-right: 0;
+        box-shadow: 0 1px 4px #13afe018;
+    }
+    .navbar-nav .nav-link {
+        font-size: 0.97em;
+        padding: 7px 10px;
+        margin-right: 0;
+        margin-bottom: 3px;
+    }
+    .navbar-collapse {
+        background: #fff;
+        border-radius: 0 0 0.7rem 0.7rem;
+        box-shadow: 0 6px 18px #13afe012;
+        margin-top: 7px;
+    }
+    /* --- hero, card, footer, logo, chatbot --- */
     .hero-section {
         padding: 44px 0 32px 0;
         min-height: 42vh;
@@ -725,7 +707,7 @@ a,
     .tim-section-desc {
         font-size: 0.99em;
     }
-    .footer {
+    footer {
         font-size: 0.97em;
         padding: 15px 0 7px 0;
     }
@@ -734,6 +716,13 @@ a,
         height: 29px;
         font-size: 1em;
         margin: 0 3px 0 0;
+    }
+    #logoModal .close-modal {
+        top: 14px;
+        right: 14px;
+        font-size: 1.4rem;
+        width: 36px;
+        height: 36px;
     }
     .chatbot-window {
         width: 97vw !important;
