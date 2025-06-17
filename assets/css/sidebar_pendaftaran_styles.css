@@ -192,7 +192,7 @@
    ================ */
 @media (max-width: 480px) {
     .sidebar {
-        width: 93vw;
+        width: 75vw;
         min-width: 54px;
         max-width: 99vw;
         padding-left: 0;
