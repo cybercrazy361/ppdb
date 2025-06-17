@@ -13,9 +13,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 
 $unit = $_SESSION['unit'] ?? '';
 $limit = 5;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
-$offset = ($page > 1) ? ($page * $limit) - $limit : 0;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) {
+    $page = 1;
+}
+$offset = $page > 1 ? $page * $limit - $limit : 0;
 
 // Ambil kata kunci pencarian
 $search = trim($_GET['q'] ?? '');
@@ -36,7 +38,13 @@ if ($search !== '') {
 $sqlCount = "SELECT COUNT(*) AS total FROM siswa s WHERE s.unit = ? $searchSql";
 $stmtTotal = $conn->prepare($sqlCount);
 if ($search !== '') {
-    $stmtTotal->bind_param('ssss', $unit, $searchParam, $searchParam, $searchParam);
+    $stmtTotal->bind_param(
+        'ssss',
+        $unit,
+        $searchParam,
+        $searchParam,
+        $searchParam
+    );
 } else {
     $stmtTotal->bind_param('s', $unit);
 }
@@ -106,7 +114,15 @@ LIMIT ? OFFSET ?
 ";
 $stmt = $conn->prepare($query);
 if ($search !== '') {
-    $stmt->bind_param('ssssii', $unit, $searchParam, $searchParam, $searchParam, $limit, $offset);
+    $stmt->bind_param(
+        'ssssii',
+        $unit,
+        $searchParam,
+        $searchParam,
+        $searchParam,
+        $limit,
+        $offset
+    );
 } else {
     $stmt->bind_param('sii', $unit, $limit, $offset);
 }
@@ -115,21 +131,35 @@ $result = $stmt->get_result();
 
 $totalPages = ceil($totalSiswa / $limit);
 
-function formatTanggalIndonesia($tanggal) {
-    if (!$tanggal || $tanggal === '0000-00-00') return '-';
+function formatTanggalIndonesia($tanggal)
+{
+    if (!$tanggal || $tanggal === '0000-00-00') {
+        return '-';
+    }
     $bulan = [
-        'January' => 'Januari','February' => 'Februari','March' => 'Maret',
-        'April'   => 'April',  'May'      => 'Mei',     'June'  => 'Juni',
-        'July'    => 'Juli',   'August'   => 'Agustus', 'September' => 'September',
-        'October' => 'Oktober','November' => 'November','December'  => 'Desember'
+        'January' => 'Januari',
+        'February' => 'Februari',
+        'March' => 'Maret',
+        'April' => 'April',
+        'May' => 'Mei',
+        'June' => 'Juni',
+        'July' => 'Juli',
+        'August' => 'Agustus',
+        'September' => 'September',
+        'October' => 'Oktober',
+        'November' => 'November',
+        'December' => 'Desember',
     ];
     $d = date('d', strtotime($tanggal));
-    $m = $bulan[date('F', strtotime($tanggal))] ?? date('F', strtotime($tanggal));
+    $m =
+        $bulan[date('F', strtotime($tanggal))] ??
+        date('F', strtotime($tanggal));
     $y = date('Y', strtotime($tanggal));
     return "$d $m $y";
 }
 
-function getStatusPembayaranLabel($status) {
+function getStatusPembayaranLabel($status)
+{
     switch (strtolower($status)) {
         case 'lunas':
             return '<span class="status-lunas"><i class="fas fa-check-circle"></i> Lunas</span>';
@@ -162,11 +192,13 @@ th.alamat-col, td.alamat-col {
 </head>
 <body>
 
-  <?php $active = 'progres'; include 'sidebar_pendaftaran.php'; ?>
+  <?php
+  $active = 'progres';
+  include 'sidebar_pendaftaran.php';
+  ?>
 
   <div class="main">
     <header class="navbar">
-      <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
       <div class="title">Daftar Siswa <?= htmlspecialchars($unit) ?></div>
       <div class="user-menu">
         <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
@@ -175,23 +207,27 @@ th.alamat-col, td.alamat-col {
     </header>
 
     <?php if (!empty($_SESSION['flash_message'])): ?>
-    <div class="alert alert-<?= $_SESSION['flash_type'] ?> alert-dismissible fade show" role="alert">
+    <div class="alert alert-<?= $_SESSION[
+        'flash_type'
+    ] ?> alert-dismissible fade show" role="alert">
         <?= htmlspecialchars($_SESSION['flash_message']) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    <?php 
-    // Hapus setelah ditampilkan
-    unset($_SESSION['flash_message'], $_SESSION['flash_type']);
-    endif;
-    ?>
+    <?php // Hapus setelah ditampilkan
+    unset($_SESSION['flash_message'], $_SESSION['flash_type']);endif; ?>
 
     <div class="container mt-1">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <form method="get" class="d-flex" style="gap:6px;">
-          <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" class="form-control" placeholder="Cari No Formulir, No Invoice, Nama...">
+          <input type="text" name="q" value="<?= htmlspecialchars(
+              $search
+          ) ?>" class="form-control" placeholder="Cari No Formulir, No Invoice, Nama...">
           <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
-          <?php if($search): ?>
-            <a href="<?= strtok($_SERVER["REQUEST_URI"],'?') ?>" class="btn btn-outline-danger" title="Reset Cari"><i class="fas fa-times"></i></a>
+          <?php if ($search): ?>
+            <a href="<?= strtok(
+                $_SERVER['REQUEST_URI'],
+                '?'
+            ) ?>" class="btn btn-outline-danger" title="Reset Cari"><i class="fas fa-times"></i></a>
           <?php endif; ?>
         </form>
         <a href="cetak_daftar_siswa.php" target="_blank" class="btn btn-primary">
@@ -221,53 +257,71 @@ th.alamat-col, td.alamat-col {
       </tr>
     </thead>
     <tbody>
-            <?php if ($result->num_rows): $no = $offset + 1;
-              while ($row = $result->fetch_assoc()): ?>
+            <?php if ($result->num_rows):
+                $no = $offset + 1;
+                while ($row = $result->fetch_assoc()): ?>
                 <tr>
                   <td><?= $no++ ?></td>
-                  <td class="no-regis-col"><?= htmlspecialchars($row['no_registrasi'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['no_invoice']   ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['nama']          ?? '') ?></td>
+                  <td class="no-regis-col"><?= htmlspecialchars(
+                      $row['no_registrasi'] ?? ''
+                  ) ?></td>
+                  <td><?= htmlspecialchars($row['no_invoice'] ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['nama'] ?? '') ?></td>
                   <td><?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?></td>
                   <td class="ttl-col">
                     <?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>,
                     <?= formatTanggalIndonesia($row['tanggal_lahir'] ?? '') ?>
                   </td>
-                  <td><?= htmlspecialchars($row['asal_sekolah']    ?? '') ?></td>
-                  <td class="alamat-col"><?= htmlspecialchars($row['alamat'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['no_hp']            ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['no_hp_ortu']       ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['asal_sekolah'] ?? '') ?></td>
+                  <td class="alamat-col"><?= htmlspecialchars(
+                      $row['alamat'] ?? ''
+                  ) ?></td>
+                  <td><?= htmlspecialchars($row['no_hp'] ?? '') ?></td>
+                  <td><?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?></td>
                   <td>
                     <?php
-                      $statusPendaftaran = strtolower(trim($row['status_pendaftaran'] ?? ''));
-                      if ($statusPendaftaran === 'ppdb bersama') {
+                    $statusPendaftaran = strtolower(
+                        trim($row['status_pendaftaran'] ?? '')
+                    );
+                    if ($statusPendaftaran === 'ppdb bersama') {
                         echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
-                      } else {
-                        echo getStatusPembayaranLabel($row['status_pembayaran'] ?? '');
-                      }
+                    } else {
+                        echo getStatusPembayaranLabel(
+                            $row['status_pembayaran'] ?? ''
+                        );
+                    }
                     ?>
                   </td>
-                  <td><?= htmlspecialchars($row['metode_pembayaran'] ?? '') ?></td>
-                  <td><?= formatTanggalIndonesia($row['tanggal_pendaftaran'] ?? '') ?></td>
+                  <td><?= htmlspecialchars(
+                      $row['metode_pembayaran'] ?? ''
+                  ) ?></td>
+                  <td><?= formatTanggalIndonesia(
+                      $row['tanggal_pendaftaran'] ?? ''
+                  ) ?></td>
                   <td>
                       <?php
-                        $statusPendaftaran = strtolower(trim($row['status_pendaftaran'] ?? ''));
+                      $statusPendaftaran = strtolower(
+                          trim($row['status_pendaftaran'] ?? '')
+                      );
                       if ($statusPendaftaran === 'ppdb bersama') {
-                        echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
-                      } elseif ($statusPendaftaran === 'menunggu progres') { // <--- Tambah ini
-                        echo '<span class="badge bg-primary">Menunggu Progres</span>';
+                          echo '<span class="badge bg-info text-dark">PPDB Bersama</span>';
+                      } elseif ($statusPendaftaran === 'menunggu progres') {
+                          // <--- Tambah ini
+                          echo '<span class="badge bg-primary">Menunggu Progres</span>';
                       } elseif ($statusPendaftaran === 'sudah bayar') {
-                        echo '<span class="badge bg-success">Sudah Bayar</span>';
+                          echo '<span class="badge bg-success">Sudah Bayar</span>';
                       } elseif ($statusPendaftaran === 'terverifikasi') {
-                        echo '<span class="badge bg-success">Terverifikasi</span>';
+                          echo '<span class="badge bg-success">Terverifikasi</span>';
                       } elseif ($statusPendaftaran === 'belum verifikasi') {
-                        echo '<span class="badge bg-warning text-dark">Belum Verifikasi</span>';
+                          echo '<span class="badge bg-warning text-dark">Belum Verifikasi</span>';
                       } elseif ($statusPendaftaran === 'ditolak') {
-                        echo '<span class="badge bg-danger">Ditolak</span>';
+                          echo '<span class="badge bg-danger">Ditolak</span>';
                       } elseif ($statusPendaftaran === '') {
-                        echo '<span class="badge bg-secondary">-</span>';
+                          echo '<span class="badge bg-secondary">-</span>';
                       } else {
-                        echo '<span class="badge bg-secondary">'.htmlspecialchars($row['status_pendaftaran']).'</span>';
+                          echo '<span class="badge bg-secondary">' .
+                              htmlspecialchars($row['status_pendaftaran']) .
+                              '</span>';
                       }
                       ?>
                   </td>
@@ -278,44 +332,84 @@ th.alamat-col, td.alamat-col {
                   </a>
                   <button class="btn btn-info btn-sm verifyBtn"
                           data-id="<?= $row['id'] ?>"
-                          data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
-                          data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
-                          data-no_invoice="<?= htmlspecialchars($row['no_invoice'] ?? '') ?>"
-                          data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
-                          data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
-                          data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
-                          data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
-                          data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
+                          data-nama="<?= htmlspecialchars(
+                              $row['nama'] ?? ''
+                          ) ?>"
+                          data-no_formulir="<?= htmlspecialchars(
+                              $row['no_formulir'] ?? ''
+                          ) ?>"
+                          data-no_invoice="<?= htmlspecialchars(
+                              $row['no_invoice'] ?? ''
+                          ) ?>"
+                          data-jenis_kelamin="<?= htmlspecialchars(
+                              $row['jenis_kelamin'] ?? ''
+                          ) ?>"
+                          data-asal_sekolah="<?= htmlspecialchars(
+                              $row['asal_sekolah'] ?? ''
+                          ) ?>"
+                          data-no_hp="<?= htmlspecialchars(
+                              $row['no_hp'] ?? ''
+                          ) ?>"
+                          data-alamat="<?= htmlspecialchars(
+                              $row['alamat'] ?? ''
+                          ) ?>"
+                          data-no_hp_ortu="<?= htmlspecialchars(
+                              $row['no_hp_ortu'] ?? ''
+                          ) ?>"
                           data-bs-toggle="modal" data-bs-target="#verifyModal">
                     <i class="fas fa-check-double"></i> Verifikasi
                   </button>
                   <button class="btn btn-warning btn-sm editBtn"
                           data-id="<?= $row['id'] ?>"
-                          data-no_formulir="<?= htmlspecialchars($row['no_formulir'] ?? '') ?>"
-                          data-no_invoice="<?= htmlspecialchars($row['no_invoice'] ?? '') ?>"
-                          data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
-                          data-jenis_kelamin="<?= htmlspecialchars($row['jenis_kelamin'] ?? '') ?>"
-                          data-tempat_lahir="<?= htmlspecialchars($row['tempat_lahir'] ?? '') ?>"
-                          data-tanggal_lahir="<?= htmlspecialchars($row['tanggal_lahir'] ?? '') ?>"
-                          data-asal_sekolah="<?= htmlspecialchars($row['asal_sekolah'] ?? '') ?>"
-                          data-alamat="<?= htmlspecialchars($row['alamat'] ?? '') ?>"
-                          data-no_hp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
-                          data-no_hp_ortu="<?= htmlspecialchars($row['no_hp_ortu'] ?? '') ?>"
+                          data-no_formulir="<?= htmlspecialchars(
+                              $row['no_formulir'] ?? ''
+                          ) ?>"
+                          data-no_invoice="<?= htmlspecialchars(
+                              $row['no_invoice'] ?? ''
+                          ) ?>"
+                          data-nama="<?= htmlspecialchars(
+                              $row['nama'] ?? ''
+                          ) ?>"
+                          data-jenis_kelamin="<?= htmlspecialchars(
+                              $row['jenis_kelamin'] ?? ''
+                          ) ?>"
+                          data-tempat_lahir="<?= htmlspecialchars(
+                              $row['tempat_lahir'] ?? ''
+                          ) ?>"
+                          data-tanggal_lahir="<?= htmlspecialchars(
+                              $row['tanggal_lahir'] ?? ''
+                          ) ?>"
+                          data-asal_sekolah="<?= htmlspecialchars(
+                              $row['asal_sekolah'] ?? ''
+                          ) ?>"
+                          data-alamat="<?= htmlspecialchars(
+                              $row['alamat'] ?? ''
+                          ) ?>"
+                          data-no_hp="<?= htmlspecialchars(
+                              $row['no_hp'] ?? ''
+                          ) ?>"
+                          data-no_hp_ortu="<?= htmlspecialchars(
+                              $row['no_hp_ortu'] ?? ''
+                          ) ?>"
                           data-bs-toggle="modal" data-bs-target="#editModal">
                     <i class="fas fa-edit"></i> Edit
                   </button>
                   <button class="btn btn-danger btn-sm deleteBtn"
                           data-id="<?= $row['id'] ?>"
-                          data-nama="<?= htmlspecialchars($row['nama'] ?? '') ?>"
+                          data-nama="<?= htmlspecialchars(
+                              $row['nama'] ?? ''
+                          ) ?>"
                           data-bs-toggle="modal" data-bs-target="#deleteModal">
                     <i class="fas fa-trash-alt"></i> Delete
                   </button>
                 </td>
                 </tr>
               <?php endwhile;
-            else: ?>
+            else:
+                 ?>
               <tr><td colspan="14" class="text-center">Tidak ada data siswa.</td></tr>
-            <?php endif; ?>
+            <?php
+            endif; ?>
           </tbody>
         </table>
       </div>
@@ -323,23 +417,30 @@ th.alamat-col, td.alamat-col {
       <!-- Pagination -->
       <nav class="mt-4">
         <ul class="pagination justify-content-center">
-          <li class="page-item <?= ($page <= 1 ? 'disabled' : '') ?>">
-            <a class="page-link" href="?q=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
+          <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+            <a class="page-link" href="?q=<?= urlencode(
+                $search
+            ) ?>&page=<?= $page - 1 ?>">Previous</a>
           </li>
           <?php
           $max_links = 5;
-          $start = max(1, $page - floor($max_links/2));
+          $start = max(1, $page - floor($max_links / 2));
           $end = min($totalPages, $start + $max_links - 1);
           if ($end - $start < $max_links) {
-            $start = max(1, $end - $max_links + 1);
+              $start = max(1, $end - $max_links + 1);
           }
           for ($i = $start; $i <= $end; $i++): ?>
-            <li class="page-item <?= ($i === $page ? 'active' : '') ?>">
-              <a class="page-link" href="?q=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
+            <li class="page-item <?= $i === $page ? 'active' : '' ?>">
+              <a class="page-link" href="?q=<?= urlencode(
+                  $search
+              ) ?>&page=<?= $i ?>"><?= $i ?></a>
             </li>
-          <?php endfor; ?>
-          <li class="page-item <?= ($page >= $totalPages ? 'disabled' : '') ?>">
-            <a class="page-link" href="?q=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
+          <?php endfor;
+          ?>
+          <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
+            <a class="page-link" href="?q=<?= urlencode(
+                $search
+            ) ?>&page=<?= $page + 1 ?>">Next</a>
           </li>
         </ul>
       </nav>
