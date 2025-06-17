@@ -665,3 +665,97 @@ a,
         height: 36px;
     }
 }
+
+@media (max-width: 600px) {
+    .navbar {
+        border-radius: 0 0 1.1rem 1.1rem;
+        padding: 0.4rem 0;
+        font-size: 0.98em;
+    }
+    .navbar-brand {
+        font-size: 1.03em !important;
+    }
+    .navbar-brand img {
+        height: 36px !important;
+        margin-right: 8px !important;
+    }
+    .hero-section {
+        padding: 44px 0 32px 0;
+        min-height: 42vh;
+    }
+    .hero-section h1,
+    .hero-section h2 {
+        font-size: 1.2em !important;
+        line-height: 1.3 !important;
+    }
+    .hero-section .display-3 {
+        font-size: 1.3em !important;
+    }
+    .hero-section .lead {
+        font-size: 1em !important;
+    }
+    .hero-bg-logo {
+        width: 240px !important;
+        max-width: 80vw !important;
+    }
+    .custom-card,
+    .team-card {
+        padding: 11px 5px 7px 5px;
+        margin-bottom: 13px;
+        border-radius: 1.1rem;
+        max-width: 99vw;
+    }
+    .card-title,
+    .team-title {
+        font-size: 0.96em;
+    }
+    .card-icon,
+    .team-avatar {
+        width: 26px;
+        height: 26px;
+        font-size: 0.98em;
+        margin-top: -8px;
+    }
+    .team-list span {
+        font-size: 0.87em;
+    }
+    .team-phone {
+        font-size: 0.95em;
+    }
+    .tim-section-desc {
+        font-size: 0.99em;
+    }
+    .footer {
+        font-size: 0.97em;
+        padding: 15px 0 7px 0;
+    }
+    .social-icon {
+        width: 29px;
+        height: 29px;
+        font-size: 1em;
+        margin: 0 3px 0 0;
+    }
+    .chatbot-window {
+        width: 97vw !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        max-width: 99vw !important;
+        border-radius: 14px 14px 0 0 !important;
+    }
+    .chatbot-float-btn {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 1.4em !important;
+        bottom: 13px !important;
+        right: 13px !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .hero-bg-logo {
+        width: 180px !important;
+    }
+    .chatbot-window {
+        width: 99vw !important;
+    }
+}
