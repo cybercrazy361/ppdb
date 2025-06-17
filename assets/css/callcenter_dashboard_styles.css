@@ -407,17 +407,16 @@ body::-webkit-scrollbar-track,
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        min-height: 450px; /* Berikan cukup tinggi agar chart dan legend muat */
+        padding-bottom: 50px; /* Jarak bawah untuk legend */
     }
-    .chart-container {
-        width: 100%;
-        max-width: 210px;
-        min-width: 0;
-        height: 280px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+.chart-container {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    padding: 0 10px;
+}
     .modal-content {
         padding: 2px 1px 2px 1px;
     }
