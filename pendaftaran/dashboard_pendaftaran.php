@@ -209,49 +209,50 @@ $conn->close();
       }
 
       // Chart.js: Atur legend agar lebih terang & modern
-      const ctx = document.getElementById('chartBayar').getContext('2d');
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Lunas','Angsuran','Belum Bayar'],
-          datasets: [{
-            data: [<?= $stat['lunas'] ?>, <?= $stat['angsuran'] ?>, <?= $stat[
+const ctx = document.getElementById('chartBayar').getContext('2d');
+new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Lunas','Angsuran','Belum Bayar'],
+    datasets: [{
+      data: [<?= $stat['lunas'] ?>, <?= $stat['angsuran'] ?>, <?= $stat[
     'belum'
 ] ?>],
-            backgroundColor: ['#198754','#ffc107','#dc3545'],
-            hoverOffset: 20
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: '#f7fbff',         // Warna putih terang
-                font: {
-                  family: "'Poppins', 'Segoe UI', Arial, sans-serif", // Sesuaikan dengan dashboard
-                  weight: 'bold',
-                  size: 16
-                },
-                boxWidth: 28,
-                padding: 18,
-                usePointStyle: true // Lebih modern (bisa diaktifkan/disable sesuai selera)
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: ctx => {
-                  const v = ctx.raw,
-                        t = ctx.dataset.data.reduce((a,b) => a+b, 0),
-                        p = ((v/t)*100).toFixed(1);
-                  return `${ctx.label}: ${v} (${p}%)`;
-                }
-              }
-            }
+      backgroundColor: ['#198754','#ffc107','#dc3545'],
+      hoverOffset: 20
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: '#f7fbff',
+          font: {
+            family: "'Poppins', 'Segoe UI', Arial, sans-serif",
+            weight: 'bold',
+            // FONT SIZE LEBIH KECIL DI MOBILE
+            size: window.innerWidth < 600 ? 13 : 16
+          },
+          boxWidth: 22,
+          padding: 10,
+          usePointStyle: true
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const v = ctx.raw,
+                  t = ctx.dataset.data.reduce((a,b) => a+b, 0),
+                  p = ((v/t)*100).toFixed(1);
+            return `${ctx.label}: ${v} (${p}%)`;
           }
         }
-      });
+      }
+    }
+  }
+});
   </script>
 </body>
 </html>
