@@ -666,87 +666,42 @@ a,
     }
 }
 
-/* --- MOBILE FRIENDLY IMPROVEMENT --- */
+/* =========================
+   FIX CARD LOGIN RESPONSIVE
+   ========================= */
 
-/* Navbar padding & logo size */
+/* Card tetap kecil & center di desktop */
+.custom-card, .team-card {
+    max-width: 350px;
+    min-width: 270px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive di mobile: card jadi lebar penuh, padding aman */
 @media (max-width: 600px) {
-  .navbar {
-    padding: 0.4rem 0;
-  }
-  .navbar-brand img {
-    height: 36px !important;
-    margin-right: 10px !important;
-  }
-  .navbar-brand {
-    font-size: 1rem !important;
-  }
+    .custom-card, .team-card {
+        max-width: 98vw !important;
+        min-width: unset !important;
+        width: 97vw !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding: 14px 5vw 18px 5vw !important;
+        border-radius: 1.05rem !important;
+        box-sizing: border-box;
+    }
+    .card-title, .team-title {
+        font-size: 1em !important;
+    }
 }
 
-/* Hero section padding & font */
+/* Grid biar 1 kolom saja di mobile */
 @media (max-width: 600px) {
-  .hero-section {
-    padding: 30px 0 22px 0;
-    min-height: 340px;
-  }
-  .hero-section h1,
-  .hero-section h2 {
-    font-size: 1.15em !important;
-    line-height: 1.18;
-    margin-bottom: 0.7em;
-  }
-  .hero-section .hero-bg-logo {
-    width: 270px !important;
-    min-width: unset;
-  }
-  .hero-section .container {
-    padding: 0 4vw !important;
-  }
-}
-
-/* Card grid: biar rata tengah & tidak kepotong */
-@media (max-width: 900px) {
-  .row-cols-lg-5 {
-    justify-content: center !important;
-  }
-  .custom-card, .team-card {
-    margin-bottom: 12px;
-    min-width: 90vw;
-    max-width: 99vw;
-  }
-}
-@media (max-width: 600px) {
-  .custom-card, .team-card {
-    padding: 8px 2vw 12px 2vw !important;
-    border-radius: 0.9rem !important;
-    min-width: 97vw;
-    box-sizing: border-box;
-  }
-  .card-title, .team-title {
-    font-size: 1em !important;
-  }
-}
-
-/* Chatbot mobile fix */
-@media (max-width: 576px) {
-  .chatbot-window {
-    border-radius: 0 !important;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    min-width: 100vw !important;
-  }
-  .chatbot-header, .chatbot-body, .chatbot-input-area {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
-  }
-}
-
-/* Footer fix */
-@media (max-width: 600px) {
-  footer {
-    padding: 8px 2vw 6px 2vw !important;
-    font-size: .95em;
-  }
+    .row-cols-lg-5 > .col,
+    .row-cols-md-2 > .col,
+    .row-cols-1 > .col {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
 }
