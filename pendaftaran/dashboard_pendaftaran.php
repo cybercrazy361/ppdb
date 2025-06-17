@@ -160,6 +160,7 @@ $conn->close();
         <canvas id="chartBayar"></canvas>
       </div>
     </section>
+
   </div>
 
   <!-- Modal Daftar Siswa -->
