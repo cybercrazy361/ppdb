@@ -3,7 +3,6 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-// ...lanjutan script kamu
 
 include '../database_connection.php';
 
@@ -31,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $stmt->close();
 
-        // **Tambahan: jika role adalah callcenter, insert user ke tabel callcenter**
+        // Jika role callcenter, insert juga ke tabel callcenter jika belum ada
         if ($role === 'callcenter') {
-            // Cek apakah user sudah ada di tabel callcenter untuk unit tsb
+            // 1. Cek dulu apakah user sudah ada di callcenter untuk unit tsb
             $cek = $conn->prepare(
                 'SELECT COUNT(*) FROM callcenter WHERE username = ? AND unit = ?'
             );
@@ -44,14 +43,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cek->close();
 
             if ($sudah == 0) {
-                // Ambil data dari petugas
+                // 2. Ambil data nama dan password dari petugas
                 $qry = $conn->prepare(
                     'SELECT nama, password FROM petugas WHERE username = ?'
                 );
                 $qry->bind_param('s', $username);
                 $qry->execute();
                 $qry->bind_result($nama, $password);
+
                 if ($qry->fetch()) {
+                    $qry->close(); // Tutup dulu SEBELUM buat statement baru!
+
+                    // 3. Insert ke callcenter
                     $ins = $conn->prepare(
                         'INSERT INTO callcenter (username, password, nama, unit) VALUES (?, ?, ?, ?)'
                     );
@@ -64,8 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     );
                     $ins->execute();
                     $ins->close();
+                } else {
+                    $qry->close();
                 }
-                $qry->close();
             }
         }
 
