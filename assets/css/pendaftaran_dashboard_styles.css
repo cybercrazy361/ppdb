@@ -273,11 +273,7 @@ body {
         margin-bottom: 17px;
     }
 }
-
 @media (max-width: 600px) {
-    body {
-        font-size: 0.96rem;
-    }
     .main {
         padding: 0 10px 10px 10px !important;
     }
@@ -303,15 +299,28 @@ body {
     .dashboard-cards .card .subtext {
         font-size: 0.96em;
     }
+
+    /* === CHART CARD RESPONSIVE === */
     .chart-card {
-        padding: 10px 6px 48px 6px;      /* padding bawah lebih besar */
-        min-height: 340px;               /* biar legend muat penuh */
-        max-width: 360px;
-        margin: 0 auto 14px auto;
-        box-sizing: border-box;
+        background: rgba(18, 38, 79, 0.68);
+        box-shadow: 0 3px 18px #1ee2e718, 0 1.5px 5px #1ee2e70a;
+        border-radius: .99rem;
+        padding: 16px 10px 20px 10px;   /* padding bawah cukup, tidak berlebihan */
+        margin-bottom: 21px;
+        border: 1px solid #29d6f818;
+        animation: fadeInCard .6s;
+        max-width: 370px;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        /* HAPUS min-height! */
     }
     .chart-container {
-        max-width: 100%;
+        width: 100%;
+        max-width: 210px;
         min-width: 0;
         margin: 0 auto;
         display: flex;
@@ -325,6 +334,7 @@ body {
         margin: 0 auto 10px auto;
         display: block;
     }
+
     .modal-content {
         padding: 2px 1px 2px 1px;
     }
