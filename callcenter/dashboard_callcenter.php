@@ -251,20 +251,20 @@ new Chart(ctx, {
         responsive: true,
         plugins: {
             legend: {
-                position: 'bottom',
-                labels: {
-                    color: '#1b2344', // Warna teks legend agar lebih kontras, bisa sesuaikan
-                    font: {
-                        family: "'Poppins', 'Segoe UI', Arial, sans-serif",
-                        weight: '600',
-                        size: window.innerWidth < 600 ? 12 : 14
-                    },
-                    boxWidth: 18,
-                    padding: 12,
-                    usePointStyle: true
-                }
-            },
-            tooltip: {
+    position: 'bottom',
+    labels: {
+        color: '#fff',  // warna teks jadi putih terang
+        font: {
+            family: "'Poppins', 'Segoe UI', Arial, sans-serif",
+            weight: '600',
+            size: window.innerWidth < 600 ? 12 : 14
+        },
+        boxWidth: 18,
+        padding: 12,
+        usePointStyle: true
+    }
+},
+tooltip: {
                 callbacks: {
                     label: ctx => {
                         const v = ctx.raw,
