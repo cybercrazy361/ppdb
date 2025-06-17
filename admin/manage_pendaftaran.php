@@ -233,8 +233,11 @@ function setHapusAksesModal(username, role, unit) {
     document.getElementById('hapus_akses_username').value = username;
     document.getElementById('hapus_akses_role').value = role;
     document.getElementById('hapus_akses_unit').value = unit;
-    document.getElementById('hapus_akses_label').textContent = role.charAt(0).toUpperCase() + role.slice(1) + ' (' + unit + ') untuk ' + username;
+    document.getElementById('hapus_akses_label').textContent =
+        role.charAt(0).toUpperCase() + role.slice(1) + ' (' + unit + ') untuk ' + username;
 }
+
+
 
 
     </script>

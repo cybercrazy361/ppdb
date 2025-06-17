@@ -23,7 +23,7 @@ if ($result->num_rows > 0) {
     $no = $offset + 1;
     while ($row = $result->fetch_assoc()) {
         $username = $row['username'];
-        // --- Ambil akses lain dari akses_petugas ---
+        // Ambil akses lain dari akses_petugas
         $akses = [];
         $stmtAkses = $conn->prepare(
             'SELECT role, unit FROM akses_petugas WHERE petugas_username = ?'
@@ -34,17 +34,20 @@ if ($result->num_rows > 0) {
         while ($ar = $resultAkses->fetch_assoc()) {
             $role = ucfirst($ar['role']);
             $unit = $ar['unit'];
-            // tombol hapus akses: kirim ke modal
-            $akses[] = "{$role} ({$unit}) <button class='btn btn-sm btn-danger ms-1' 
-                data-bs-toggle='modal' data-bs-target='#hapusAksesModal'
-                onclick=\"setHapusAksesModal('{$username}', '{$ar['role']}', '{$unit}')\" 
-                title='Hapus Akses'><i class='fas fa-times'></i></button>";
+            $akses[] =
+                $role .
+                " ($unit) " .
+                "<button class='btn btn-sm btn-danger ms-1'
+                    data-bs-toggle='modal'
+                    data-bs-target='#hapusAksesModal'
+                    onclick=\"setHapusAksesModal('{$username}', '{$ar['role']}', '{$unit}')\"
+                    title='Hapus Akses'><i class='fas fa-times'></i></button>";
         }
         $stmtAkses->close();
         $akses_text = empty($akses) ? '-' : implode('<br>', $akses);
 
         echo '<tr>';
-        echo "<td class='text-center'>" . $no++ . '</td>';
+        echo "<td class='text-center'>{$no}</td>";
         echo '<td>' . htmlspecialchars($row['nama']) . '</td>';
         echo '<td>' . htmlspecialchars($row['username']) . '</td>';
         echo "<td class='text-center'>" .
@@ -79,6 +82,7 @@ if ($result->num_rows > 0) {
             </button>
         </td>";
         echo '</tr>';
+        $no++;
     }
 } else {
     echo "<tr><td colspan='6' class='text-center'>Tidak ada data petugas.</td></tr>";

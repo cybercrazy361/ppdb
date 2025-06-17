@@ -97,7 +97,7 @@
         </div>
     </div>
 </div>
-<!-- Modal Hapus Akses (Akses Lain) -->
+<!-- Modal Hapus Akses -->
 <div class="modal fade" id="hapusAksesModal" tabindex="-1" aria-labelledby="hapusAksesModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form action="hapus_akses_petugas.php" method="POST" class="modal-content">
