@@ -238,6 +238,11 @@ body {
     box-shadow: var(--color-card-shadow);
     padding: 16px 7px 10px 13px;
     margin-bottom: 24px;
+    min-height: 440px; /* tambah tinggi agar chart tidak terpotong */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .chart-card h6 {
@@ -249,19 +254,22 @@ body {
     letter-spacing: 0.7px;
 }
 
-
 .chart-container {
     width: 100%;
-    max-width: 400px; /* atau sesuai kebutuhan */
-    height: 400px;    /* atur agar tinggi cukup */
+    max-width: 450px; /* ukuran lebih besar agar grafik jelas */
+    height: 360px;    /* tinggi cukup agar proporsional */
     margin: 0 auto;
     padding: 8px 0;
     background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (max-width: 540px) {
     .chart-container {
         max-width: 99vw;
+        height: 320px;
         padding: 0;
     }
 }
@@ -404,6 +412,7 @@ body::-webkit-scrollbar-track,
         width: 100%;
         max-width: 210px;
         min-width: 0;
+        height: 280px;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
