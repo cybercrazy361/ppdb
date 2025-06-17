@@ -241,12 +241,14 @@ body {
 }
 
 .chart-card h6 {
+    color: #e0eaff; /* warna terang */
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+    font-weight: 700;
     margin-bottom: 11px;
     font-size: 1.06rem;
-    font-weight: 700;
-    color: var(--color-primary);
-    letter-spacing: .7px;
+    letter-spacing: 0.7px;
 }
+
 
 .chart-container {
     width: 100%;
