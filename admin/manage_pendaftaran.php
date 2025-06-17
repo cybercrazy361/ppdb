@@ -91,7 +91,7 @@ $petugas = $conn->query($sql);
                         $unit = $row['unit'];
                         $nama = $row['nama'];
 
-                        // Query akses lain
+                        // Query akses lain (sekaligus tampilkan tombol hapus akses)
                         $akses = [];
                         $stmtAkses = $conn->prepare(
                             'SELECT role, unit FROM akses_petugas WHERE petugas_username = ?'
@@ -100,13 +100,23 @@ $petugas = $conn->query($sql);
                         $stmtAkses->execute();
                         $resultAkses = $stmtAkses->get_result();
                         while ($ar = $resultAkses->fetch_assoc()) {
+                            $roleBtn = ucfirst($ar['role']);
+                            $unitBtn = htmlspecialchars($ar['unit']);
                             $akses[] =
-                                ucfirst($ar['role']) . ' (' . $ar['unit'] . ')';
+                                $roleBtn .
+                                " ($unitBtn) " .
+                                "<button type='button' class='btn btn-sm btn-danger ms-1'
+                                    data-bs-toggle='modal'
+                                    data-bs-target='#hapusAksesModal'
+                                    onclick=\"setHapusAksesModal('{$username}', '{$ar['role']}', '{$ar['unit']}')\"
+                                    title='Hapus Akses'>
+                                        <i class='fas fa-times'></i>
+                                </button>";
                         }
                         $stmtAkses->close();
                         $akses_text = empty($akses)
                             ? '-'
-                            : implode(', ', $akses);
+                            : implode('<br>', $akses);
                         ?>
                     <tr>
                         <td class="text-center"><?= $i++ ?></td>
@@ -115,21 +125,23 @@ $petugas = $conn->query($sql);
                         <td><?= htmlspecialchars($unit) ?></td>
                         <td><?= $akses_text ?></td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-secondary mb-1" data-bs-toggle="modal" data-bs-target="#tambahAksesModal"
+                            <button type="button" class="btn btn-sm btn-secondary mb-1" data-bs-toggle="modal" data-bs-target="#tambahAksesModal"
                                 onclick="setTambahAksesModal('<?= $username ?>')">
                                 <i class="fas fa-user-shield"></i> Tambah Akses
                             </button>
-                            <button class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal"
                                 data-bs-target="#editPetugasModal"
                                 onclick="setEditModalData('<?= $id ?>', '<?= htmlspecialchars(
-    $nama
+    $nama,
+    ENT_QUOTES
 ) ?>', '<?= $username ?>', '<?= $unit ?>')">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal"
-                                data-bs-target="#deletePetugasModal"
+                            <button type="button" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal"
+                                data-bs-target="#deleteConfirmationModal"
                                 onclick="setDeleteModalData('<?= $id ?>', '<?= htmlspecialchars(
-    $nama
+    $nama,
+    ENT_QUOTES
 ) ?>')">
                                 <i class="fas fa-trash"></i> Hapus
                             </button>
@@ -152,11 +164,11 @@ $petugas = $conn->query($sql);
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <?php for ($i = 1; $i <= $total_halaman; $i++): ?>
-                            <li class="page-item <?= $i == $halaman
+                        <?php for ($p = 1; $p <= $total_halaman; $p++): ?>
+                            <li class="page-item <?= $p == $halaman
                                 ? 'active'
                                 : '' ?>">
-                                <a class="page-link" href="?halaman=<?= $i ?>"><?= $i ?></a>
+                                <a class="page-link" href="?halaman=<?= $p ?>"><?= $p ?></a>
                             </li>
                         <?php endfor; ?>
                         <li class="page-item <?= $halaman >= $total_halaman
@@ -210,7 +222,7 @@ $petugas = $conn->query($sql);
       </div>
     </div>
 
-    <!-- Modal-modal lain (Tambah/Edit/Hapus Petugas) -->
+    <!-- Modal-modal lain (Tambah/Edit/Hapus Petugas + Hapus Akses) -->
     <?php include 'petugas_modals.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -228,19 +240,13 @@ $petugas = $conn->query($sql);
         function setTambahAksesModal(username) {
             document.getElementById('akses_username').value = username;
         }
-
-function setHapusAksesModal(username, role, unit) {
-    document.getElementById('hapus_akses_username').value = username;
-    document.getElementById('hapus_akses_role').value = role;
-    document.getElementById('hapus_akses_unit').value = unit;
-    document.getElementById('hapus_akses_label').textContent =
-        role.charAt(0).toUpperCase() + role.slice(1) + ' (' + unit + ') untuk ' + username;
-}
-
-
-
-
+        function setHapusAksesModal(username, role, unit) {
+            document.getElementById('hapus_akses_username').value = username;
+            document.getElementById('hapus_akses_role').value = role;
+            document.getElementById('hapus_akses_unit').value = unit;
+            document.getElementById('hapus_akses_label').textContent =
+                role.charAt(0).toUpperCase() + role.slice(1) + ' (' + unit + ') untuk ' + username;
+        }
     </script>
 </body>
-
 </html>

@@ -76,7 +76,7 @@
     </div>
 </div>
 
-<!-- Modal Konfirmasi Delete -->
+<!-- Modal Konfirmasi Hapus Petugas -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -97,6 +97,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal Hapus Akses -->
 <div class="modal fade" id="hapusAksesModal" tabindex="-1" aria-labelledby="hapusAksesModalLabel" aria-hidden="true">
   <div class="modal-dialog">

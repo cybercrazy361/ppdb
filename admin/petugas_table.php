@@ -33,15 +33,17 @@ if ($result->num_rows > 0) {
         $resultAkses = $stmtAkses->get_result();
         while ($ar = $resultAkses->fetch_assoc()) {
             $role = ucfirst($ar['role']);
-            $unit = $ar['unit'];
+            $unit = htmlspecialchars($ar['unit']);
             $akses[] =
                 $role .
                 " ($unit) " .
-                "<button class='btn btn-sm btn-danger ms-1'
+                "<button type='button' class='btn btn-sm btn-danger ms-1'
                     data-bs-toggle='modal'
                     data-bs-target='#hapusAksesModal'
-                    onclick=\"setHapusAksesModal('{$username}', '{$ar['role']}', '{$unit}')\"
-                    title='Hapus Akses'><i class='fas fa-times'></i></button>";
+                    onclick=\"setHapusAksesModal('{$username}', '{$ar['role']}', '{$ar['unit']}')\"
+                    title='Hapus Akses'>
+                        <i class='fas fa-times'></i>
+                </button>";
         }
         $stmtAkses->close();
         $akses_text = empty($akses) ? '-' : implode('<br>', $akses);
@@ -55,26 +57,26 @@ if ($result->num_rows > 0) {
             '</td>';
         echo '<td>' . $akses_text . '</td>';
         echo "<td class='text-center'>
-            <button 
-                class='btn btn-secondary btn-sm mb-1' 
-                data-bs-toggle='modal' 
+            <button type='button'
+                class='btn btn-secondary btn-sm mb-1'
+                data-bs-toggle='modal'
                 data-bs-target='#tambahAksesModal'
                 onclick=\"setTambahAksesModal('{$row['username']}')\">
                 <i class='fas fa-user-shield'></i> Tambah Akses
             </button>
-            <button 
-                class='btn btn-warning btn-sm mb-1' 
-                data-bs-toggle='modal' 
-                data-bs-target='#editPetugasModal' 
+            <button type='button'
+                class='btn btn-warning btn-sm mb-1'
+                data-bs-toggle='modal'
+                data-bs-target='#editPetugasModal'
                 onclick=\"setEditModalData('{$row['id']}', '" .
             htmlspecialchars($row['nama'], ENT_QUOTES) .
             "', '{$row['username']}', '{$row['unit']}')\">
                 <i class='fas fa-edit'></i> Edit
             </button>
-            <button 
-                class='btn btn-danger btn-sm mb-1' 
-                data-bs-toggle='modal' 
-                data-bs-target='#deleteConfirmationModal' 
+            <button type='button'
+                class='btn btn-danger btn-sm mb-1'
+                data-bs-toggle='modal'
+                data-bs-target='#deleteConfirmationModal'
                 onclick=\"setDeleteModalData('{$row['id']}', '" .
             htmlspecialchars($row['nama'], ENT_QUOTES) .
             "')\">
