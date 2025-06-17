@@ -12,9 +12,12 @@ $uang_pangkal_id = 1;
 $spp_id = 2;
 
 // Fungsi rekap total
-function rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id) {
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM siswa WHERE unit = ?");
-    $stmt->bind_param("s", $unit);
+function rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id)
+{
+    $stmt = $conn->prepare(
+        'SELECT COUNT(*) AS total FROM siswa WHERE unit = ?'
+    );
+    $stmt->bind_param('s', $unit);
     $stmt->execute();
     $total = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
@@ -62,39 +65,46 @@ THEN 'Angsuran'
     WHERE s.unit = ?
     ";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $unit);
+    $stmt->bind_param('s', $unit);
     $stmt->execute();
     $result = $stmt->get_result();
 
     $lunas = $angsuran = $belum = 0;
     while ($row = $result->fetch_assoc()) {
-        if ($row['status_pembayaran'] === 'Lunas') $lunas++;
-        elseif ($row['status_pembayaran'] === 'Angsuran') $angsuran++;
-        else $belum++;
+        if ($row['status_pembayaran'] === 'Lunas') {
+            $lunas++;
+        } elseif ($row['status_pembayaran'] === 'Angsuran') {
+            $angsuran++;
+        } else {
+            $belum++;
+        }
     }
     $stmt->close();
 
     return [
-      'total'    => $total,
-      'lunas'    => $lunas,
-      'angsuran' => $angsuran,
-      'belum'    => $belum
+        'total' => $total,
+        'lunas' => $lunas,
+        'angsuran' => $angsuran,
+        'belum' => $belum,
     ];
 }
 
 // Fungsi rekap hari ini
-function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id) {
-$today = date('Y-m-d');
-// echo "<!-- today: $today -->";
-$stmt = $conn->prepare("SELECT id FROM siswa WHERE unit=? AND tanggal_pendaftaran=?");
-$stmt->bind_param("ss", $unit, $today);
+function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id)
+{
+    $today = date('Y-m-d');
+    // echo "<!-- today: $today -->";
+    $stmt = $conn->prepare(
+        'SELECT id FROM siswa WHERE unit=? AND tanggal_pendaftaran=?'
+    );
+    $stmt->bind_param('ss', $unit, $today);
     $stmt->execute();
     $result = $stmt->get_result();
     $lunas = $angsuran = $belum = $total = 0;
     while ($row = $result->fetch_assoc()) {
         $id = $row['id'];
         echo "<!-- siswa_harian_id: $id -->";
-// YANG BENAR:
+        // YANG BENAR:
         $cek = "
         SELECT
         CASE
@@ -137,16 +147,20 @@ $stmt->bind_param("ss", $unit, $today);
 
         $q = $conn->query($cek);
         $stat = $q->fetch_assoc()['status_pembayaran'] ?? '';
-        if ($stat === 'Lunas') $lunas++;
-        elseif ($stat === 'Angsuran') $angsuran++;
-        else $belum++;
+        if ($stat === 'Lunas') {
+            $lunas++;
+        } elseif ($stat === 'Angsuran') {
+            $angsuran++;
+        } else {
+            $belum++;
+        }
         $total++;
     }
     return [
-      'total'    => $total,
-      'lunas'    => $lunas,
-      'angsuran' => $angsuran,
-      'belum'    => $belum
+        'total' => $total,
+        'lunas' => $lunas,
+        'angsuran' => $angsuran,
+        'belum' => $belum,
     ];
 }
 
@@ -167,10 +181,12 @@ $conn->close();
   <link rel="stylesheet" href="../assets/css/laporan_detail.css" />
 </head>
 <body>
-<?php $active = 'laporan'; include 'sidebar_pendaftaran.php'; ?>
+<?php
+$active = 'laporan';
+include 'sidebar_pendaftaran.php';
+?>
 <div class="main">
   <header class="navbar">
-    <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
     <div class="title">Laporan Detail – <?= htmlspecialchars($unit) ?></div>
     <div class="user-menu">
       <small>Halo, <?= htmlspecialchars($_SESSION['nama'] ?? '') ?></small>
@@ -184,25 +200,25 @@ $conn->close();
   <div class="col">
     <div class="report-card report-blue">
       <b>Total Siswa</b><br>
-      <span class="count"><?=$rekap['total']?></span>
+      <span class="count"><?= $rekap['total'] ?></span>
     </div>
   </div>
   <div class="col">
     <div class="report-card report-green">
       <b>Lunas</b><br>
-      <span class="count"><?=$rekap['lunas']?></span>
+      <span class="count"><?= $rekap['lunas'] ?></span>
     </div>
   </div>
   <div class="col">
     <div class="report-card report-yellow">
       <b>Angsuran</b><br>
-      <span class="count"><?=$rekap['angsuran']?></span>
+      <span class="count"><?= $rekap['angsuran'] ?></span>
     </div>
   </div>
   <div class="col">
     <div class="report-card report-red">
       <b>Belum Bayar</b><br>
-      <span class="count"><?=$rekap['belum']?></span>
+      <span class="count"><?= $rekap['belum'] ?></span>
     </div>
   </div>
 </div>
@@ -210,7 +226,9 @@ $conn->close();
     <h5>Rekap Harian</h5>
     <form id="formCariTanggal" class="d-flex align-items-center mb-2" style="gap:12px;">
       <label for="tanggalCari" class="form-label mb-0">Pilih Tanggal:</label>
-      <input type="date" id="tanggalCari" class="form-control" style="max-width:170px" value="<?=date('Y-m-d')?>">
+      <input type="date" id="tanggalCari" class="form-control" style="max-width:170px" value="<?= date(
+          'Y-m-d'
+      ) ?>">
     </form>
     <div id="rekapHarian">
       <div class="row g-2 mb-4">
