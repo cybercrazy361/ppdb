@@ -247,7 +247,7 @@ body {
 
 .chart-card h6 {
     color: #131313; /* warna terang */
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+    text-shadow: 0 0 6px rgba(54, 40, 212, 0.7);
     font-weight: 700;
     margin-bottom: 11px;
     font-size: 1.06rem;
