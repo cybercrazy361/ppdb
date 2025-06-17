@@ -249,22 +249,33 @@ new Chart(ctx, {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false, // biar bisa atur tinggi container
+        layout: {
+            padding: {
+                top: 10,
+                bottom: 20,
+                left: 10,
+                right: 10
+            }
+        },
         plugins: {
             legend: {
-    position: 'bottom',
-    labels: {
-        color: '#fff',  // warna teks jadi putih terang
-        font: {
-            family: "'Poppins', 'Segoe UI', Arial, sans-serif",
-            weight: '600',
-            size: window.innerWidth < 600 ? 12 : 14
-        },
-        boxWidth: 18,
-        padding: 12,
-        usePointStyle: true
-    }
-},
-tooltip: {
+                position: 'bottom',
+                labels: {
+                    color: '#fff',
+                    font: {
+                        family: "'Poppins', 'Segoe UI', Arial, sans-serif",
+                        weight: '600',
+                        size: window.innerWidth < 600 ? 12 : 14
+                    },
+                    boxWidth: 18,
+                    padding: 12,
+                    usePointStyle: true,
+                    // menambah lineHeight agar legend lebih renggang
+                    lineHeight: 18
+                }
+            },
+            tooltip: {
                 callbacks: {
                     label: ctx => {
                         const v = ctx.raw,

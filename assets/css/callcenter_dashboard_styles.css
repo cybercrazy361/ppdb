@@ -252,7 +252,8 @@ body {
 
 .chart-container {
     width: 100%;
-    max-width: 390px;
+    max-width: 400px; /* atau sesuai kebutuhan */
+    height: 400px;    /* atur agar tinggi cukup */
     margin: 0 auto;
     padding: 8px 0;
     background: none;
