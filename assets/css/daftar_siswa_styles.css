@@ -612,3 +612,33 @@ input[type="checkbox"]:focus {
         border-radius: 6px !important;
     }
 }
+@media (max-width: 600px) {
+    .btn.btn-primary,
+    .btn-primary {
+        font-size: .97rem !important;
+        padding: 7px 14px !important;
+        min-width: unset !important;
+        width: auto !important;
+        border-radius: 11px !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        box-shadow: 0 1px 6px #13afe017 !important;
+    }
+    /* Kalau ada div flex untuk form search + cetak */
+    .container .d-flex {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .container .d-flex > * {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 100%;
+    }
+    /* Supaya tombol tidak turun ke bawah input */
+    form.d-flex {
+        width: 100%;
+    }
+}
