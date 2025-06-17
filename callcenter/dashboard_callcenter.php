@@ -213,44 +213,57 @@ const ctx = document.getElementById('chartStatus').getContext('2d');
 new Chart(ctx, {
     type: 'doughnut',
     data: {
-labels: [
-    'PPDB Bersama',
-    'Sudah Bayar',           
-    'Uang Titipan',
-    'Akan Bayar',
-    'Menunggu Negeri',
-    'Menunggu Progres',
-    'Tidak Ada Konfirmasi',
-    'Tidak Jadi'
-],
-datasets: [{
-    data: [
-        <?= $stat['status']['PPDB Bersama'] ?>,
-        <?= $stat['status']['Sudah Bayar'] ?>,   
-        <?= $stat['status']['Uang Titipan'] ?>,
-        <?= $stat['status']['Akan Bayar'] ?>,
-        <?= $stat['status']['Menunggu Negeri'] ?>,
-        <?= $stat['status']['Menunggu Progres'] ?>,
-        <?= $stat['status']['Tidak Ada Konfirmasi'] ?>,
-        <?= $stat['status']['Tidak Jadi'] ?>
-    ],
-    backgroundColor: [
-        '#3ec86b', // PPDB Bersama
-        '#12c15c', // Sudah Bayar (pilih warna baru)
-        '#36b9cc', // Uang Titipan
-        '#f6c23e', // Akan Bayar
-        '#8f9dff', // Menunggu Negeri
-        '#6d5eff', // Menunggu Proses
-        '#e75151', // Tidak Ada Konfirmasi
-        '#727a86'  // Tidak Jadi
-    ],
-    hoverOffset: 18
-}]
+        labels: [
+            'PPDB Bersama',
+            'Sudah Bayar',           
+            'Uang Titipan',
+            'Akan Bayar',
+            'Menunggu Negeri',
+            'Menunggu Progres',
+            'Tidak Ada Konfirmasi',
+            'Tidak Jadi'
+        ],
+        datasets: [{
+            data: [
+                <?= $stat['status']['PPDB Bersama'] ?>,
+                <?= $stat['status']['Sudah Bayar'] ?>,   
+                <?= $stat['status']['Uang Titipan'] ?>,
+                <?= $stat['status']['Akan Bayar'] ?>,
+                <?= $stat['status']['Menunggu Negeri'] ?>,
+                <?= $stat['status']['Menunggu Progres'] ?>,
+                <?= $stat['status']['Tidak Ada Konfirmasi'] ?>,
+                <?= $stat['status']['Tidak Jadi'] ?>
+            ],
+            backgroundColor: [
+                '#3ec86b', // PPDB Bersama
+                '#12c15c', // Sudah Bayar
+                '#36b9cc', // Uang Titipan
+                '#f6c23e', // Akan Bayar
+                '#8f9dff', // Menunggu Negeri
+                '#6d5eff', // Menunggu Progres
+                '#e75151', // Tidak Ada Konfirmasi
+                '#727a86'  // Tidak Jadi
+            ],
+            hoverOffset: 18
+        }]
     },
     options: {
         responsive: true,
         plugins: {
-            legend: { position: 'bottom' },
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#1b2344', // Warna teks legend agar lebih kontras, bisa sesuaikan
+                    font: {
+                        family: "'Poppins', 'Segoe UI', Arial, sans-serif",
+                        weight: '600',
+                        size: window.innerWidth < 600 ? 12 : 14
+                    },
+                    boxWidth: 18,
+                    padding: 12,
+                    usePointStyle: true
+                }
+            },
             tooltip: {
                 callbacks: {
                     label: ctx => {
