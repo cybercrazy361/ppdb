@@ -78,6 +78,7 @@ body {
 
 .dashboard-cards .card {
     background: rgba(24, 36, 64, 0.78);
+    padding: 14px 7vw 10px 7vw !important;
     border-radius: 1.02rem;
     box-shadow: 0 2px 16px #1ee2e71c, 0 1.5px 9px #1ee2e712 inset;
     padding: 22px 10px 14px 15px;
@@ -350,5 +351,11 @@ body {
     .dashboard-cards {
         padding-left: 2px;
         padding-right: 2px;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-cards .card {
+        padding: 14px 12px 10px 12px !important; /* fix px di layar HP */
     }
 }
