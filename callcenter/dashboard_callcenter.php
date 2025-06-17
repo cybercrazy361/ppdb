@@ -71,7 +71,6 @@ $conn->close();
 <div class="main">
     <!-- Navbar / Topbar -->
     <header class="navbar">
-        <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
         <div class="title">Dashboard Call Center (<?= htmlspecialchars(
             $unit
         ) ?>)</div>

@@ -39,7 +39,6 @@ body {
 
 /* ==== MAIN ==== */
 .main {
-    /* Konten mulai langsung setelah sidebar */
     padding: var(--main-padding);
     min-height: 100vh;
     background: var(--color-bg);
@@ -138,34 +137,6 @@ body {
     }
 }
 
-@media (max-width: 600px) {
-    .main {
-        padding: 7px 2vw 7px 2vw;
-    }
-
-    .navbar {
-        padding: 5px 5px 7px 5px;
-        border-radius: 0 0 1rem 1rem;
-        margin-bottom: 10px;
-        min-height: 38px;
-    }
-
-    .navbar .title {
-        font-size: 1.02rem;
-        padding-left: 2px;
-    }
-
-    .user-menu small {
-        font-size: .91em;
-    }
-
-    .btn-logout {
-        padding: 3px 10px;
-        font-size: .93em;
-        border-radius: 6px;
-    }
-}
-
 /* ==== DASHBOARD CARDS ==== */
 .dashboard-cards {
     display: grid;
@@ -260,41 +231,6 @@ body {
     font-weight: 400;
 }
 
-@media (max-width: 500px) {
-    .card {
-        font-size: .96rem;
-        padding: 11px 5px 9px 11px;
-        min-height: 86px;
-        border-radius: .92rem;
-        box-shadow: 0 1px 8px 0 rgba(31, 38, 135, 0.09);
-    }
-
-    .card .icon {
-        font-size: 1.21rem;
-        margin-bottom: 4px;
-    }
-
-    .card .title {
-        font-size: .98rem;
-    }
-
-    .card .count {
-        font-size: 1.21rem;
-    }
-
-    .card .subtext {
-        font-size: .83rem;
-    }
-}
-
-@media (max-width: 400px) {
-    .card {
-        border-radius: .68rem;
-        padding: 6px 2px 7px 6px;
-        min-height: 70px;
-    }
-}
-
 /* ==== CHART CARD ==== */
 .chart-card {
     background: var(--color-card);
@@ -365,7 +301,6 @@ body {
         opacity: 0;
         transform: translateY(17px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -399,4 +334,100 @@ body::-webkit-scrollbar-track,
 .btn:focus {
     outline: none !important;
     box-shadow: none !important;
+}
+
+/* ======= MOBILE RESPONSIVE STYLES ======= */
+@media (max-width: 600px) {
+    .main {
+        padding: 0 10px 10px 10px !important;
+    }
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 4px 6px 4px 6px;
+        gap: 4px;
+        border-radius: 0 0 1rem 1rem;
+        margin-bottom: 10px;
+        min-height: 38px;
+    }
+    .navbar .title {
+        font-size: 1.02rem;
+        padding-left: 2px;
+    }
+    .user-menu small {
+        font-size: .91em;
+    }
+    .btn-logout {
+        padding: 3px 10px;
+        font-size: .93em;
+        border-radius: 6px;
+    }
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+        gap: .56rem;
+        margin-bottom: 15px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .dashboard-cards .card {
+        padding: 15px 16px 12px 16px !important;
+        font-size: 0.97em;
+        border-radius: .92rem;
+        min-height: 78px;
+        box-shadow: 0 1px 8px 0 rgba(31, 38, 135, 0.09);
+    }
+    .dashboard-cards .card .title,
+    .dashboard-cards .card .count,
+    .dashboard-cards .card .subtext {
+        font-size: 0.96em;
+    }
+    .chart-card {
+        background: rgba(18, 38, 79, 0.68);
+        box-shadow: 0 3px 18px #1ee2e718, 0 1.5px 5px #1ee2e70a;
+        border-radius: .99rem;
+        padding: 16px 10px 20px 10px;
+        margin-bottom: 21px;
+        border: 1px solid #29d6f818;
+        animation: fadeInCard .6s;
+        max-width: 370px;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .chart-container {
+        width: 100%;
+        max-width: 210px;
+        min-width: 0;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .modal-content {
+        padding: 2px 1px 2px 1px;
+    }
+    .modal-body {
+        padding: 6px 3px 5px 3px;
+        overflow-x: auto;
+    }
+    .table {
+        font-size: 0.89em;
+        min-width: 390px;
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        border-radius: 0.75rem;
+    }
+    .table th, .table td {
+        white-space: nowrap;
+        padding: 6px 7px !important;
+    }
+    .btn-close {
+        width: 1.7em !important;
+        height: 1.7em !important;
+        font-size: 1.05em !important;
+    }
 }
