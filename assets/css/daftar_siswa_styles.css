@@ -511,3 +511,104 @@ input[type="checkbox"]:focus {
     outline: 2px solid #355cfc;
     box-shadow: 0 0 0 2px #13afe070;
 }
+
+@media (max-width: 600px) {
+    .main {
+        padding: 6px 0 12px 0 !important;
+    }
+    .navbar {
+        padding: 2px 2vw !important;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        min-height: 40px;
+        height: auto;
+    }
+    .navbar .title {
+        font-size: .93rem;
+        letter-spacing: .5px;
+        padding-left: 1px;
+    }
+    .btn-logout {
+        padding: 2.5px 7px;
+        font-size: .89em;
+        margin-left: 2px;
+        border-radius: 7px;
+    }
+    .user-menu {
+        gap: 4px;
+    }
+    .table-responsive {
+        padding: 3px 1px 4px 1px;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 9px #29d6f810;
+    }
+    .table {
+        min-width: unset !important;
+        font-size: .92rem;
+        border-radius: 9px;
+        width: 100% !important;
+        display: block;
+        overflow-x: auto;
+        /* responsive, biar tabel scroll klo dipaksa sempit */
+    }
+    .table th, .table td {
+        padding: 6px 4px !important;
+        font-size: .91rem !important;
+        text-align: left;
+        vertical-align: middle;
+        white-space: normal !important;
+    }
+    .table th {
+        font-size: .93rem !important;
+        padding: 7px 4px !important;
+        text-align: left;
+    }
+    .table td.text-center {
+        text-align: left !important;
+    }
+    /* Tombol aksi lebih kecil, rapat, mudah di-tap */
+    .btn-sm {
+        font-size: .84em !important;
+        padding: 4px 8px !important;
+        margin-right: 3px !important;
+        margin-bottom: 2px !important;
+        border-radius: 7px !important;
+        min-width: 70px !important;
+    }
+    .table .text-center .btn-sm {
+        min-width: 70px !important;
+        margin-right: 3px !important;
+    }
+    .table .text-center .btn-sm:last-child {
+        margin-right: 0 !important;
+    }
+    /* Modal padding biar gak terlalu gede */
+    .modal-content {
+        padding: 5px 3px 7px 3px;
+    }
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 6px 10px !important;
+    }
+}
+
+@media (max-width: 450px) {
+    .main {
+        padding: 2px 0 12px 0 !important;
+    }
+    .navbar .title {
+        font-size: .87rem !important;
+    }
+    .table th, .table td {
+        font-size: .89rem !important;
+        padding: 5px 2px !important;
+    }
+    .btn-sm {
+        font-size: .78em !important;
+        padding: 3px 4px !important;
+        min-width: 55px !important;
+        border-radius: 6px !important;
+    }
+}
