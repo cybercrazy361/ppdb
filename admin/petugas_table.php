@@ -32,10 +32,16 @@ if ($result->num_rows > 0) {
         $stmtAkses->execute();
         $resultAkses = $stmtAkses->get_result();
         while ($ar = $resultAkses->fetch_assoc()) {
-            $akses[] = ucfirst($ar['role']) . ' (' . $ar['unit'] . ')';
+            $role = ucfirst($ar['role']);
+            $unit = $ar['unit'];
+            // tombol hapus akses: kirim ke modal
+            $akses[] = "{$role} ({$unit}) <button class='btn btn-sm btn-danger ms-1' 
+                data-bs-toggle='modal' data-bs-target='#hapusAksesModal'
+                onclick=\"setHapusAksesModal('{$username}', '{$ar['role']}', '{$unit}')\" 
+                title='Hapus Akses'><i class='fas fa-times'></i></button>";
         }
         $stmtAkses->close();
-        $akses_text = empty($akses) ? '-' : implode(', ', $akses);
+        $akses_text = empty($akses) ? '-' : implode('<br>', $akses);
 
         echo '<tr>';
         echo "<td class='text-center'>" . $no++ . '</td>';

@@ -97,3 +97,24 @@
         </div>
     </div>
 </div>
+<!-- Modal Hapus Akses (Akses Lain) -->
+<div class="modal fade" id="hapusAksesModal" tabindex="-1" aria-labelledby="hapusAksesModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="hapus_akses_petugas.php" method="POST" class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="hapusAksesModalLabel">Konfirmasi Hapus Akses</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="username" id="hapus_akses_username">
+        <input type="hidden" name="role" id="hapus_akses_role">
+        <input type="hidden" name="unit" id="hapus_akses_unit">
+        <p>Yakin ingin menghapus akses <strong id="hapus_akses_label"></strong>?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-danger">Hapus Akses</button>
+      </div>
+    </form>
+  </div>
+</div>
