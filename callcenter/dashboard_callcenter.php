@@ -251,24 +251,25 @@ new Chart(ctx, {
         responsive: true,
         plugins: {
             legend: {
-                position: 'bottom',
-                labels: {
-                    color: '#e0eaff',  // warna legend teks lebih terang
-                    font: {
-                        family: "'Poppins', 'Segoe UI', Arial, sans-serif",
-                        weight: 'bold',
-                        size: 14
-                    },
-                    usePointStyle: true,
-                    padding: 14
-                }
-            },
-            tooltip: {
+    position: 'bottom',
+    labels: {
+        color: '#fff',  // warna teks jadi putih terang
+        font: {
+            family: "'Poppins', 'Segoe UI', Arial, sans-serif",
+            weight: '600',
+            size: window.innerWidth < 600 ? 12 : 14
+        },
+        boxWidth: 18,
+        padding: 12,
+        usePointStyle: true
+    }
+},
+tooltip: {
                 callbacks: {
                     label: ctx => {
                         const v = ctx.raw,
-                            t = ctx.dataset.data.reduce((a,b) => a+b, 0),
-                            p = ((v/t)*100).toFixed(1);
+                              t = ctx.dataset.data.reduce((a,b) => a+b, 0),
+                              p = ((v/t)*100).toFixed(1);
                         return `${ctx.label}: ${v} (${p}%)`;
                     }
                 }
