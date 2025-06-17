@@ -247,46 +247,38 @@ new Chart(ctx, {
             hoverOffset: 18
         }]
     },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false, // biar bisa atur tinggi container
-        layout: {
-            padding: {
-                top: 10,
-                bottom: 20,
-                left: 10,
-                right: 10
+options: {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'bottom',
+            labels: {
+                color: '#000', // teks hitam agar jelas
+                font: {
+                    family: "'Poppins', 'Segoe UI', Arial, sans-serif",
+                    weight: '600',
+                    size: 14
+                },
+                boxWidth: 18,
+                padding: 14,
+                usePointStyle: true,
+                maxWidth: 300,  // membatasi lebar legend agar wrap (butuh Chart.js terbaru)
+                wrap: true      // fitur wrapping legend (jika didukung)
             }
         },
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    color: '#fff',
-                    font: {
-                        family: "'Poppins', 'Segoe UI', Arial, sans-serif",
-                        weight: '600',
-                        size: window.innerWidth < 600 ? 12 : 14
-                    },
-                    boxWidth: 18,
-                    padding: 12,
-                    usePointStyle: true,
-                    // menambah lineHeight agar legend lebih renggang
-                    lineHeight: 18
-                }
-            },
-            tooltip: {
-                callbacks: {
-                    label: ctx => {
-                        const v = ctx.raw,
-                              t = ctx.dataset.data.reduce((a,b) => a+b, 0),
-                              p = ((v/t)*100).toFixed(1);
-                        return `${ctx.label}: ${v} (${p}%)`;
-                    }
+        tooltip: {
+            callbacks: {
+                label: ctx => {
+                    const v = ctx.raw,
+                        t = ctx.dataset.data.reduce((a,b) => a+b, 0),
+                        p = ((v/t)*100).toFixed(1);
+                    return `${ctx.label}: ${v} (${p}%)`;
                 }
             }
         }
     }
+}
+
 });
 </script>
 </body>
