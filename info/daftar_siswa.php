@@ -1,12 +1,36 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-include(__DIR__ . '/../database_connection.php');
+include __DIR__ . '/../database_connection.php';
+
+function tanggal_indo($tgl)
+{
+    $bulan = [
+        1 => 'Januari',
+        2 => 'Februari',
+        3 => 'Maret',
+        4 => 'April',
+        5 => 'Mei',
+        6 => 'Juni',
+        7 => 'Juli',
+        8 => 'Agustus',
+        9 => 'September',
+        10 => 'Oktober',
+        11 => 'November',
+        12 => 'Desember',
+    ];
+    $p = explode('-', $tgl);
+    return $p[2] . ' ' . $bulan[(int) $p[1]] . ' ' . $p[0];
+}
 
 $unit = isset($_GET['unit']) ? $_GET['unit'] : '';
 $unit_label = '';
-if ($unit == 'SMA') $unit_label = 'SMA Dharma Karya';
-if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
+if ($unit == 'SMA') {
+    $unit_label = 'SMA Dharma Karya';
+}
+if ($unit == 'SMK') {
+    $unit_label = 'SMK Dharma Karya';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -157,7 +181,9 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
     <h2 class="section-title text-center">Daftar Siswa SPMB</h2>
     <div class="row justify-content-center mb-2" id="unitCards">
         <div class="col-md-4 mb-3">
-            <div class="card unit-card text-center py-4<?= $unit=='SMA'?' selected':'' ?>" onclick="pilihUnit('SMA')">
+            <div class="card unit-card text-center py-4<?= $unit == 'SMA'
+                ? ' selected'
+                : '' ?>" onclick="pilihUnit('SMA')">
                 <div class="card-body">
                     <div class="icon-container"><i class="fa fa-graduation-cap"></i></div>
                     <div class="card-title">SMA Dharma Karya</div>
@@ -165,7 +191,8 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                 </div>
             </div>
         </div>
-        <?php /*
+        <?php
+/*
         <div class="col-md-4 mb-3">
             <div class="card unit-card text-center py-4<?= $unit=='SMK'?' selected':'' ?>" onclick="pilihUnit('SMK')">
                 <div class="card-body">
@@ -175,7 +202,8 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
                 </div>
             </div>
         </div>
-        */ ?>
+        */
+?>
     </div>
 
     <div id="areaTabel">
@@ -187,11 +215,15 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
         // --- Query Siswa & Summary ---
         $tagihan_total = 0;
         $id_jenis_pangkal = null;
-        $res_pangkal = $conn->query("SELECT id FROM jenis_pembayaran WHERE nama='Uang Pangkal' LIMIT 1");
-        if ($res_pangkal && $row = $res_pangkal->fetch_assoc()) {
+        $res_pangkal = $conn->query(
+            "SELECT id FROM jenis_pembayaran WHERE nama='Uang Pangkal' LIMIT 1"
+        );
+        if ($res_pangkal && ($row = $res_pangkal->fetch_assoc())) {
             $id_jenis_pangkal = $row['id'];
-            $res_nom = $conn->prepare("SELECT nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id=? AND unit=? LIMIT 1");
-            $res_nom->bind_param("is", $id_jenis_pangkal, $unit);
+            $res_nom = $conn->prepare(
+                'SELECT nominal_max FROM pengaturan_nominal WHERE jenis_pembayaran_id=? AND unit=? LIMIT 1'
+            );
+            $res_nom->bind_param('is', $id_jenis_pangkal, $unit);
             $res_nom->execute();
             $res_nom->bind_result($tagihan_total);
             $res_nom->fetch();
@@ -206,23 +238,26 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
         WHERE s.unit = ?
         ORDER BY s.nama ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $unit);
+        $stmt->bind_param('s', $unit);
         $stmt->execute();
         $result = $stmt->get_result();
         $no = 1;
         $total = $lunas = $angsuran = $belum = $ppdb_bersama = 0;
-        $rows_html = "";
+        $rows_html = '';
 
         while ($row = $result->fetch_assoc()):
-            $total_bayar = (float)$row['total_bayar'];
-            $jumlah_transaksi = (int)$row['jumlah_transaksi'];
-            $status = ""; $badge = "";
+            $total_bayar = (float) $row['total_bayar'];
+            $jumlah_transaksi = (int) $row['jumlah_transaksi'];
+            $status = '';
+            $badge = '';
             $status_ppdb = '-';
 
             // Ambil status PPDB
             if (!empty($row['calon_pendaftar_id'])) {
-                $res_status = $conn->prepare("SELECT status FROM calon_pendaftar WHERE id=? LIMIT 1");
-                $res_status->bind_param("i", $row['calon_pendaftar_id']);
+                $res_status = $conn->prepare(
+                    'SELECT status FROM calon_pendaftar WHERE id=? LIMIT 1'
+                );
+                $res_status->bind_param('i', $row['calon_pendaftar_id']);
                 $res_status->execute();
                 $res_status->bind_result($status_ppdb);
                 $res_status->fetch();
@@ -233,44 +268,44 @@ if ($unit == 'SMK') $unit_label = 'SMK Dharma Karya';
             // Kategorikan rekap dengan urutan: PPDB Bersama > Lunas > Angsuran > Belum Bayar
             if ($status_ppdb === 'ppdb bersama') {
                 $ppdb_bersama++;
-                $badge = "info";
-                $status = "PPDB Bersama";
+                $badge = 'info';
+                $status = 'PPDB Bersama';
             } elseif ($jumlah_transaksi == 0) {
                 $belum++;
-                $badge = "danger";
-                $status = "Belum Bayar";
+                $badge = 'danger';
+                $status = 'Belum Bayar';
             } elseif ($total_bayar >= $tagihan_total) {
                 $lunas++;
-                $badge = "success";
-                $status = "Lunas";
+                $badge = 'success';
+                $status = 'Lunas';
             } else {
                 $angsuran++;
-                $badge = "warning";
-                $status = "Angsuran";
+                $badge = 'warning';
+                $status = 'Angsuran';
             }
 
             $total++; // Tetap hitung total semua siswa (termasuk PPDB Bersama)
-            function tanggal_indo($tgl) {
-                $bulan = [
-                    1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
-                    7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-                ];
-                $p = explode('-', $tgl);
-                return $p[2] . ' ' . $bulan[(int)$p[1]] . ' ' . $p[0];
-            }
 
             $metode = $row['metode_terakhir'] ?? 'Belum Ada';
 
             $rows_html .= '<tr>';
             $rows_html .= '<td>' . $no++ . '</td>';
-            $rows_html .= '<td>' . htmlspecialchars($row['no_invoice_terakhir'] ?? '-') . '</td>';
+            $rows_html .=
+                '<td>' .
+                htmlspecialchars($row['no_invoice_terakhir'] ?? '-') .
+                '</td>';
             $rows_html .= '<td>' . htmlspecialchars($row['nama']) . '</td>';
-            $rows_html .= '<td>' . substr($row['jenis_kelamin'], 0, 1) . '</td>';
-            $rows_html .= '<td>' . htmlspecialchars($row['asal_sekolah']) . '</td>';
+            $rows_html .=
+                '<td>' . substr($row['jenis_kelamin'], 0, 1) . '</td>';
+            $rows_html .=
+                '<td>' . htmlspecialchars($row['asal_sekolah']) . '</td>';
             //$rows_html .= '<td><span class="badge bg-' . $badge . ($badge=='info'?' text-dark':'') . '">' . htmlspecialchars($status) . '</span></td>';
             //$rows_html .= '<td>' . htmlspecialchars($metode) . '</td>';
             // Format tanggal jadi tgl bulan tahun
-            $rows_html .= '<td>' . htmlspecialchars(tanggal_indo($row['tanggal_pendaftaran'])) . '</td>';
+            $rows_html .=
+                '<td>' .
+                htmlspecialchars(tanggal_indo($row['tanggal_pendaftaran'])) .
+                '</td>';
             $rows_html .= '</tr>';
         endwhile;
         $stmt->close();
