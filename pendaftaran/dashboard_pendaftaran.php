@@ -1,4 +1,5 @@
 <?php
+// pendaftaran/dashboard_pendaftaran.php
 session_start();
 include '../database_connection.php';
 
@@ -28,95 +29,70 @@ function getStats($conn, $unit, $uang_pangkal_id, $spp_id)
     }
     $stmt->close();
 
-    // PPDB Bersama (status di calon_pendaftar)
-    $sql_ppdb = "
-        SELECT COUNT(*) AS total_ppdb
+    // Ambil seluruh siswa + status pendaftaran untuk rekap statistik
+    $query = "
+        SELECT 
+            s.id,
+            COALESCE(LOWER(cp.status), '') AS status_pendaftaran,
+            -- Ada pembayaran uang pangkal
+            (
+                SELECT COUNT(*) FROM pembayaran_detail pd1
+                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                WHERE p1.siswa_id = s.id
+                AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+            ) AS ada_uang_pangkal,
+            -- Uang pangkal sudah lunas
+            (
+                SELECT COUNT(*) FROM pembayaran_detail pd1
+                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                WHERE p1.siswa_id = s.id
+                AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                AND pd1.status_pembayaran = 'Lunas'
+            ) AS uang_pangkal_lunas,
+            -- Ada pembayaran SPP Juli
+            (
+                SELECT COUNT(*) FROM pembayaran_detail pd2
+                JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                WHERE p2.siswa_id = s.id
+                AND pd2.jenis_pembayaran_id = $spp_id
+                AND pd2.bulan = 'Juli'
+            ) AS ada_spp_juli,
+            -- SPP Juli sudah lunas
+            (
+                SELECT COUNT(*) FROM pembayaran_detail pd2
+                JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                WHERE p2.siswa_id = s.id
+                AND pd2.jenis_pembayaran_id = $spp_id
+                AND pd2.bulan = 'Juli'
+                AND pd2.status_pembayaran = 'Lunas'
+            ) AS spp_juli_lunas
         FROM siswa s
         LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-        WHERE s.unit = ? AND LOWER(cp.status) = 'ppdb bersama'
-    ";
-    $stmt_ppdb = $conn->prepare($sql_ppdb);
-    $stmt_ppdb->bind_param('s', $unit);
-    $stmt_ppdb->execute();
-    $result_ppdb = $stmt_ppdb->get_result();
-    $total_ppdb = 0;
-    if ($result_ppdb) {
-        $row = $result_ppdb->fetch_assoc();
-        $total_ppdb = $row ? intval($row['total_ppdb']) : 0;
-    }
-    $stmt_ppdb->close();
-
-    // Status pembayaran
-    $sql = "
-        SELECT s.id,
-            CASE
-                WHEN
-                    (SELECT COUNT(*) FROM pembayaran_detail pd1
-                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                        WHERE p1.siswa_id = s.id
-                          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                          AND pd1.status_pembayaran = 'Lunas'
-                    ) > 0
-                AND
-                    (SELECT COUNT(*) FROM pembayaran_detail pd2
-                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                        WHERE p2.siswa_id = s.id
-                          AND pd2.jenis_pembayaran_id = $spp_id
-                          AND pd2.bulan = 'Juli'
-                          AND pd2.status_pembayaran = 'Lunas'
-                    ) > 0
-                THEN 'Lunas'
-                WHEN (
-                    (
-                        (SELECT COUNT(*) FROM pembayaran_detail pd1
-                            JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                            WHERE p1.siswa_id = s.id
-                              AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                              AND pd1.status_pembayaran = 'Lunas'
-                        ) > 0
-                        AND
-                        (SELECT COUNT(*) FROM pembayaran_detail pd2
-                            JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                            WHERE p2.siswa_id = s.id
-                              AND pd2.jenis_pembayaran_id = $spp_id
-                              AND pd2.bulan = 'Juli'
-                              AND pd2.status_pembayaran = 'Lunas'
-                        ) = 0
-                    )
-                    OR
-                    (
-                        (SELECT COUNT(*) FROM pembayaran_detail pd2
-                            JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                            WHERE p2.siswa_id = s.id
-                              AND pd2.jenis_pembayaran_id = $spp_id
-                              AND pd2.bulan = 'Juli'
-                              AND pd2.status_pembayaran = 'Lunas'
-                        ) > 0
-                        AND
-                        (SELECT COUNT(*) FROM pembayaran_detail pd1
-                            JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                            WHERE p1.siswa_id = s.id
-                              AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                              AND pd1.status_pembayaran = 'Lunas'
-                        ) = 0
-                    )
-                )
-                THEN 'Angsuran'
-                ELSE 'Belum Bayar'
-            END AS status_pembayaran
-        FROM siswa s
         WHERE s.unit = ?
     ";
-    $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare($query);
     $stmt->bind_param('s', $unit);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $lunas = $angsuran = $belum = 0;
+    $lunas = $angsuran = $belum = $ppdb = 0;
     while ($row = $result->fetch_assoc()) {
-        if ($row['status_pembayaran'] === 'Lunas') {
+        $status_final = 'Belum Bayar';
+        if ($row['status_pendaftaran'] === 'ppdb bersama') {
+            $status_final = 'PPDB Bersama';
+            $ppdb++;
+        } elseif (
+            $row['uang_pangkal_lunas'] > 0 &&
+            $row['spp_juli_lunas'] > 0
+        ) {
+            $status_final = 'Lunas';
             $lunas++;
-        } elseif ($row['status_pembayaran'] === 'Angsuran') {
+        } elseif (
+            ($row['ada_uang_pangkal'] > 0 || $row['ada_spp_juli'] > 0) &&
+            !($row['uang_pangkal_lunas'] > 0 && $row['spp_juli_lunas'] > 0) &&
+            $row['status_pendaftaran'] !== 'ppdb bersama'
+        ) {
+            $status_final = 'Angsuran';
             $angsuran++;
         } else {
             $belum++;
@@ -130,7 +106,7 @@ function getStats($conn, $unit, $uang_pangkal_id, $spp_id)
         'angsuran' => $angsuran,
         'belum' => $belum,
         'bayar' => $lunas + $angsuran,
-        'ppdb' => $total_ppdb,
+        'ppdb' => $ppdb,
     ];
 }
 
