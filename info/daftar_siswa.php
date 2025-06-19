@@ -305,9 +305,7 @@ if ($unit == 'SMK') {
             $rows_html .= '<tr>';
             $rows_html .= '<td>' . $no++ . '</td>';
             $rows_html .=
-                '<td>' .
-                htmlspecialchars($row['no_invoice_terakhir'] ?? '-') .
-                '</td>';
+                '<td>' . htmlspecialchars($row['no_invoice'] ?? '-') . '</td>';
             $rows_html .= '<td>' . htmlspecialchars($row['nama']) . '</td>';
             $rows_html .=
                 '<td>' . substr($row['jenis_kelamin'], 0, 1) . '</td>';
