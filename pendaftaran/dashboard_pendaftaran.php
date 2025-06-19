@@ -81,15 +81,12 @@ function getStats($conn, $unit, $uang_pangkal_id, $spp_id)
         if ($row['status_pendaftaran'] === 'ppdb bersama') {
             $status_final = 'PPDB Bersama';
             $ppdb++;
-        } elseif (
-            $row['uang_pangkal_lunas'] > 0 &&
-            $row['spp_juli_lunas'] > 0
-        ) {
+        } elseif ($row['uang_pangkal_lunas'] > 0) {
             $status_final = 'Lunas';
             $lunas++;
         } elseif (
-            ($row['ada_uang_pangkal'] > 0 || $row['ada_spp_juli'] > 0) &&
-            !($row['uang_pangkal_lunas'] > 0 && $row['spp_juli_lunas'] > 0) &&
+            $row['ada_uang_pangkal'] > 0 &&
+            $row['uang_pangkal_lunas'] == 0 &&
             $row['status_pendaftaran'] !== 'ppdb bersama'
         ) {
             $status_final = 'Angsuran';
