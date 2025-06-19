@@ -233,12 +233,12 @@ const ctx = document.getElementById('chartBayar').getContext('2d');
 new Chart(ctx, {
   type: 'doughnut',
   data: {
-    labels: ['Lunas','Angsuran','Belum Bayar'],
+    labels: ['Lunas','Angsuran','Belum Bayar', 'PPDB Bersama'],
     datasets: [{
       data: [<?= $stat['lunas'] ?>, <?= $stat['angsuran'] ?>, <?= $stat[
     'belum'
-] ?>],
-      backgroundColor: ['#198754','#ffc107','#dc3545'],
+] ?>, <?= $stat['ppdb'] ?>],
+      backgroundColor: ['#198754','#ffc107','#dc3545','#0dcaf0'],
       hoverOffset: 20
     }]
   },
@@ -252,7 +252,6 @@ new Chart(ctx, {
           font: {
             family: "'Poppins', 'Segoe UI', Arial, sans-serif",
             weight: 'bold',
-            // FONT SIZE LEBIH KECIL DI MOBILE
             size: window.innerWidth < 600 ? 13 : 16
           },
           boxWidth: 22,
