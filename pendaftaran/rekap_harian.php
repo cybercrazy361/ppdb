@@ -42,45 +42,28 @@ while ($row = $result->fetch_assoc()) {
         $ppdb++;
     } else {
         // Cek pembayaran status
+        // Cek pembayaran status
         $cek = "
-            SELECT
-            CASE
-                WHEN 
-                    (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                        WHERE p1.siswa_id = $id 
-                          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                          AND pd1.status_pembayaran = 'Lunas'
-                    ) > 0
-                AND
-                    (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                        WHERE p2.siswa_id = $id 
-                          AND pd2.jenis_pembayaran_id = $spp_id
-                          AND pd2.bulan = 'Juli'
-                          AND pd2.status_pembayaran = 'Lunas'
-                    ) > 0
-                THEN 'Lunas'
-                WHEN 
-                    (
-                        (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                            JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                            WHERE p1.siswa_id = $id 
-                              AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                        ) > 0
-                        OR
-                        (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                            JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                            WHERE p2.siswa_id = $id 
-                              AND pd2.jenis_pembayaran_id = $spp_id
-                              AND pd2.bulan = 'Juli'
-                              AND pd2.status_pembayaran = 'Lunas'
-                        ) > 0
-                    )
-                THEN 'Angsuran'
-                ELSE 'Belum Bayar'
-            END AS status_pembayaran
-        ";
+    SELECT
+    CASE
+        WHEN 
+            (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                WHERE p1.siswa_id = $id 
+                  AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                  AND pd1.status_pembayaran = 'Lunas'
+            ) > 0
+        THEN 'Lunas'
+        WHEN 
+            (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                WHERE p1.siswa_id = $id 
+                  AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+            ) > 0
+        THEN 'Angsuran'
+        ELSE 'Belum Bayar'
+    END AS status_pembayaran
+";
         $q = $conn->query($cek);
         $stat = $q->fetch_assoc()['status_pembayaran'] ?? '';
         if ($stat === 'Lunas') {
