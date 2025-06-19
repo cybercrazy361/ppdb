@@ -11,7 +11,7 @@ $unit = $_SESSION['unit'];
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
-// Fungsi rekap total
+// === FUNGSI REKAP TOTAL ===
 function rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id)
 {
     $stmt = $conn->prepare(
@@ -21,6 +21,19 @@ function rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id)
     $stmt->execute();
     $total = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
+
+    // Hitung jumlah PPDB Bersama
+    $sql_ppdb = "
+        SELECT COUNT(*) AS total_ppdb
+        FROM siswa s
+        LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+        WHERE s.unit = ? AND LOWER(cp.status) = 'ppdb bersama'
+    ";
+    $stmt_ppdb = $conn->prepare($sql_ppdb);
+    $stmt_ppdb->bind_param('s', $unit);
+    $stmt_ppdb->execute();
+    $total_ppdb = $stmt_ppdb->get_result()->fetch_assoc()['total_ppdb'] ?? 0;
+    $stmt_ppdb->close();
 
     $sql = "
     SELECT s.id,
@@ -41,24 +54,23 @@ function rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id)
                   AND pd2.status_pembayaran = 'Lunas'
             ) > 0
         THEN 'Lunas'
-WHEN 
-    (
-        (SELECT COUNT(*) FROM pembayaran_detail pd1 
-            JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-            WHERE p1.siswa_id = s.id 
-              AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-        ) > 0
-        OR
-        (SELECT COUNT(*) FROM pembayaran_detail pd2 
-            JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-            WHERE p2.siswa_id = s.id 
-              AND pd2.jenis_pembayaran_id = $spp_id
-              AND pd2.bulan = 'Juli'
-              AND pd2.status_pembayaran = 'Lunas'
-        ) > 0
-    )
-THEN 'Angsuran'
-
+        WHEN 
+            (
+                (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                    WHERE p1.siswa_id = s.id 
+                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                ) > 0
+                OR
+                (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                    WHERE p2.siswa_id = s.id 
+                      AND pd2.jenis_pembayaran_id = $spp_id
+                      AND pd2.bulan = 'Juli'
+                      AND pd2.status_pembayaran = 'Lunas'
+                ) > 0
+            )
+        THEN 'Angsuran'
         ELSE 'Belum Bayar'
       END AS status_pembayaran
     FROM siswa s
@@ -86,86 +98,11 @@ THEN 'Angsuran'
         'lunas' => $lunas,
         'angsuran' => $angsuran,
         'belum' => $belum,
-    ];
-}
-
-// Fungsi rekap hari ini
-function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id)
-{
-    $today = date('Y-m-d');
-    // echo "<!-- today: $today -->";
-    $stmt = $conn->prepare(
-        'SELECT id FROM siswa WHERE unit=? AND tanggal_pendaftaran=?'
-    );
-    $stmt->bind_param('ss', $unit, $today);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $lunas = $angsuran = $belum = $total = 0;
-    while ($row = $result->fetch_assoc()) {
-        $id = $row['id'];
-        echo "<!-- siswa_harian_id: $id -->";
-        // YANG BENAR:
-        $cek = "
-        SELECT
-        CASE
-            WHEN 
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = $id 
-                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                      AND pd1.status_pembayaran = 'Lunas'
-                ) > 0
-            AND
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = $id 
-                      AND pd2.jenis_pembayaran_id = $spp_id
-                      AND pd2.bulan = 'Juli'
-                      AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
-            THEN 'Lunas'
-            WHEN 
-                (
-                    (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                        WHERE p1.siswa_id = $id 
-                          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                    ) > 0
-                    OR
-                    (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                        WHERE p2.siswa_id = $id 
-                          AND pd2.jenis_pembayaran_id = $spp_id
-                          AND pd2.bulan = 'Juli'
-                          AND pd2.status_pembayaran = 'Lunas'
-                    ) > 0
-                )
-            THEN 'Angsuran'
-            ELSE 'Belum Bayar'
-        END AS status_pembayaran
-        ";
-
-        $q = $conn->query($cek);
-        $stat = $q->fetch_assoc()['status_pembayaran'] ?? '';
-        if ($stat === 'Lunas') {
-            $lunas++;
-        } elseif ($stat === 'Angsuran') {
-            $angsuran++;
-        } else {
-            $belum++;
-        }
-        $total++;
-    }
-    return [
-        'total' => $total,
-        'lunas' => $lunas,
-        'angsuran' => $angsuran,
-        'belum' => $belum,
+        'ppdb' => $total_ppdb,
     ];
 }
 
 $rekap = rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id);
-$hariini = rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id);
 $conn->close();
 ?>
 
@@ -179,6 +116,15 @@ $conn->close();
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/sidebar_pendaftaran_styles.css" />
   <link rel="stylesheet" href="../assets/css/laporan_detail.css" />
+  <style>
+  .report-card.ppdb {
+    background: linear-gradient(135deg, #e0f7fa 40%, #8be8fa 100%);
+    color: #106688;
+    border: 1.5px solid #b3eafc;
+    font-weight: bold;
+    box-shadow: 0 0 6px #a0e2ff44;
+  }
+  </style>
 </head>
 <body>
 <?php
@@ -221,6 +167,12 @@ include 'sidebar_pendaftaran.php';
       <span class="count"><?= $rekap['belum'] ?></span>
     </div>
   </div>
+  <div class="col">
+    <div class="report-card ppdb">
+      <b><i class="fas fa-users"></i> PPDB Bersama</b><br>
+      <span class="count"><?= $rekap['ppdb'] ?></span>
+    </div>
+  </div>
 </div>
 
     <h5>Rekap Harian</h5>
@@ -236,6 +188,7 @@ include 'sidebar_pendaftaran.php';
         <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="count">…</span></div></div>
         <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="count">…</span></div></div>
         <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="count">…</span></div></div>
+        <div class="col"><div class="card p-3 ppdb"><b>PPDB Bersama</b><br><span class="count">…</span></div></div>
       </div>
     </div>
   </div>
@@ -252,6 +205,7 @@ function loadRekapHarian(tgl) {
       <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="count text-muted">Memuat...</span></div></div>
       <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="count text-muted">Memuat...</span></div></div>
       <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="count text-muted">Memuat...</span></div></div>
+      <div class="col"><div class="card p-3 ppdb"><b>PPDB Bersama</b><br><span class="count text-muted">Memuat...</span></div></div>
     </div>`;
   fetch('rekap_harian.php?tanggal='+encodeURIComponent(tgl))
     .then(r=>r.json()).then(d=>{
@@ -261,6 +215,7 @@ function loadRekapHarian(tgl) {
         <div class="col"><div class="card p-3 text-success"><b>Lunas</b><br><span class="count">${d.lunas}</span></div></div>
         <div class="col"><div class="card p-3 text-warning"><b>Angsuran</b><br><span class="count">${d.angsuran}</span></div></div>
         <div class="col"><div class="card p-3 text-danger"><b>Belum Bayar</b><br><span class="count">${d.belum}</span></div></div>
+        <div class="col"><div class="card p-3 ppdb"><b>PPDB Bersama</b><br><span class="count">${d.ppdb}</span></div></div>
       </div>`;
     }).catch(_=>{
       rekapDiv.innerHTML = `<div class="alert alert-danger">Gagal memuat data!</div>`;
