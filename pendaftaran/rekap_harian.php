@@ -17,53 +17,42 @@ $stmt = $conn->prepare(
 $stmt->bind_param('ss', $unit, $tanggal);
 $stmt->execute();
 $result = $stmt->get_result();
+
 $lunas = $angsuran = $belum = $total = $ppdb = 0;
 
 while ($row = $result->fetch_assoc()) {
     $id = $row['id'];
     $calon_pendaftar_id = $row['calon_pendaftar_id'];
-    // CEK STATUS PPDB BERSAMA
     $status_ppdb = '';
+
     if ($calon_pendaftar_id) {
-        $q = $conn->query(
-            'SELECT status FROM calon_pendaftar WHERE id=' .
-                intval($calon_pendaftar_id)
+        // Pakai prepared statement untuk cek status
+        $stmt2 = $conn->prepare(
+            'SELECT status FROM calon_pendaftar WHERE id = ? LIMIT 1'
         );
-        $r = $q ? $q->fetch_assoc() : null;
-        $status_ppdb = strtolower($r['status'] ?? '');
+        $stmt2->bind_param('i', $calon_pendaftar_id);
+        $stmt2->execute();
+        $res2 = $stmt2->get_result();
+        $r = $res2->fetch_assoc();
+        $status_ppdb = strtolower(trim($r['status'] ?? ''));
+        $stmt2->close();
     }
+
     if ($status_ppdb === 'ppdb bersama') {
         $ppdb++;
-    }
-    // Cek pembayaran jika bukan ppdb bersama
-    else {
+    } else {
+        // Cek pembayaran status
         $cek = "
-        SELECT
-        CASE
-            WHEN 
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = $id 
-                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                      AND pd1.status_pembayaran = 'Lunas'
-                ) > 0
-            AND
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = $id 
-                      AND pd2.jenis_pembayaran_id = $spp_id
-                      AND pd2.bulan = 'Juli'
-                      AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
-            THEN 'Lunas'
-            WHEN 
-                (
+            SELECT
+            CASE
+                WHEN 
                     (SELECT COUNT(*) FROM pembayaran_detail pd1 
                         JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
                         WHERE p1.siswa_id = $id 
                           AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                          AND pd1.status_pembayaran = 'Lunas'
                     ) > 0
-                    OR
+                AND
                     (SELECT COUNT(*) FROM pembayaran_detail pd2 
                         JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
                         WHERE p2.siswa_id = $id 
@@ -71,10 +60,26 @@ while ($row = $result->fetch_assoc()) {
                           AND pd2.bulan = 'Juli'
                           AND pd2.status_pembayaran = 'Lunas'
                     ) > 0
-                )
-            THEN 'Angsuran'
-            ELSE 'Belum Bayar'
-        END AS status_pembayaran
+                THEN 'Lunas'
+                WHEN 
+                    (
+                        (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                            JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                            WHERE p1.siswa_id = $id 
+                              AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                        ) > 0
+                        OR
+                        (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                            JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                            WHERE p2.siswa_id = $id 
+                              AND pd2.jenis_pembayaran_id = $spp_id
+                              AND pd2.bulan = 'Juli'
+                              AND pd2.status_pembayaran = 'Lunas'
+                        ) > 0
+                    )
+                THEN 'Angsuran'
+                ELSE 'Belum Bayar'
+            END AS status_pembayaran
         ";
         $q = $conn->query($cek);
         $stat = $q->fetch_assoc()['status_pembayaran'] ?? '';
@@ -88,6 +93,8 @@ while ($row = $result->fetch_assoc()) {
     }
     $total++;
 }
+$stmt->close();
+$conn->close();
 
 echo json_encode([
     'total' => $total,
