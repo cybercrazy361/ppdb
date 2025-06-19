@@ -9,8 +9,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 }
 
 $unit = $_SESSION['unit']; // 'SMA' atau 'SMK'
-
-// === PAKAI LOGIKA STATUS PEMBAYARAN SAMA SEPERTI daftar_siswa.php ===
 $uang_pangkal_id = 1;
 $spp_id = 2;
 
@@ -30,47 +28,84 @@ function getStats($conn, $unit, $uang_pangkal_id, $spp_id)
     }
     $stmt->close();
 
-    // Ambil status pembayaran
+    // PPDB Bersama (status di calon_pendaftar)
+    $sql_ppdb = "
+        SELECT COUNT(*) AS total_ppdb
+        FROM siswa s
+        LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+        WHERE s.unit = ? AND LOWER(cp.status) = 'ppdb bersama'
+    ";
+    $stmt_ppdb = $conn->prepare($sql_ppdb);
+    $stmt_ppdb->bind_param('s', $unit);
+    $stmt_ppdb->execute();
+    $result_ppdb = $stmt_ppdb->get_result();
+    $total_ppdb = 0;
+    if ($result_ppdb) {
+        $row = $result_ppdb->fetch_assoc();
+        $total_ppdb = $row ? intval($row['total_ppdb']) : 0;
+    }
+    $stmt_ppdb->close();
+
+    // Status pembayaran
     $sql = "
-    SELECT s.id,
-      CASE
-        WHEN 
-            (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                WHERE p1.siswa_id = s.id 
-                  AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                  AND pd1.status_pembayaran = 'Lunas'
-            ) > 0
-        AND
-            (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                WHERE p2.siswa_id = s.id 
-                  AND pd2.jenis_pembayaran_id = $spp_id
-                  AND pd2.bulan = 'Juli'
-                  AND pd2.status_pembayaran = 'Lunas'
-            ) > 0
-        THEN 'Lunas'
-        WHEN 
-            (
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = s.id 
-                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                ) > 0
-                OR
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = s.id 
-                      AND pd2.jenis_pembayaran_id = $spp_id
-                      AND pd2.bulan = 'Juli'
-                      AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
-            )
-        THEN 'Angsuran'
-        ELSE 'Belum Bayar'
-      END AS status_pembayaran
-    FROM siswa s
-    WHERE s.unit = ?
+        SELECT s.id,
+            CASE
+                WHEN
+                    (SELECT COUNT(*) FROM pembayaran_detail pd1
+                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                        WHERE p1.siswa_id = s.id
+                          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                          AND pd1.status_pembayaran = 'Lunas'
+                    ) > 0
+                AND
+                    (SELECT COUNT(*) FROM pembayaran_detail pd2
+                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                        WHERE p2.siswa_id = s.id
+                          AND pd2.jenis_pembayaran_id = $spp_id
+                          AND pd2.bulan = 'Juli'
+                          AND pd2.status_pembayaran = 'Lunas'
+                    ) > 0
+                THEN 'Lunas'
+                WHEN (
+                    (
+                        (SELECT COUNT(*) FROM pembayaran_detail pd1
+                            JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                            WHERE p1.siswa_id = s.id
+                              AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                              AND pd1.status_pembayaran = 'Lunas'
+                        ) > 0
+                        AND
+                        (SELECT COUNT(*) FROM pembayaran_detail pd2
+                            JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                            WHERE p2.siswa_id = s.id
+                              AND pd2.jenis_pembayaran_id = $spp_id
+                              AND pd2.bulan = 'Juli'
+                              AND pd2.status_pembayaran = 'Lunas'
+                        ) = 0
+                    )
+                    OR
+                    (
+                        (SELECT COUNT(*) FROM pembayaran_detail pd2
+                            JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                            WHERE p2.siswa_id = s.id
+                              AND pd2.jenis_pembayaran_id = $spp_id
+                              AND pd2.bulan = 'Juli'
+                              AND pd2.status_pembayaran = 'Lunas'
+                        ) > 0
+                        AND
+                        (SELECT COUNT(*) FROM pembayaran_detail pd1
+                            JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                            WHERE p1.siswa_id = s.id
+                              AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                              AND pd1.status_pembayaran = 'Lunas'
+                        ) = 0
+                    )
+                )
+                THEN 'Angsuran'
+                ELSE 'Belum Bayar'
+            END AS status_pembayaran
+        FROM siswa s
+        WHERE s.unit = ?
     ";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('s', $unit);
@@ -95,6 +130,7 @@ function getStats($conn, $unit, $uang_pangkal_id, $spp_id)
         'angsuran' => $angsuran,
         'belum' => $belum,
         'bayar' => $lunas + $angsuran,
+        'ppdb' => $total_ppdb,
     ];
 }
 
@@ -152,6 +188,14 @@ $conn->close();
         <div class="count"><?= $stat['belum'] ?></div>
         <div class="subtext">Segera follow-up</div>
       </div>
+      <?php if ($stat['ppdb'] > 0): ?>
+      <div class="card" onclick="showModal('ppdb')" style="cursor:pointer; background:#e5f7ff;">
+        <div class="icon text-info"><i class="fas fa-users"></i></div>
+        <div class="title">PPDB Bersama</div>
+        <div class="count"><?= $stat['ppdb'] ?></div>
+        <div class="subtext">Status: PPDB Bersama</div>
+      </div>
+      <?php endif; ?>
     </section>
 
     <section class="chart-card">
