@@ -9,12 +9,13 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 
 $unit = $_SESSION['unit'] ?? '';
 $uang_pangkal_id = 1;
-$spp_id          = 2;
+$spp_id = 2;
 
-// Ambil semua siswa tanpa limit, lengkap dengan metode & status pembayaran
+// Ambil semua siswa lengkap (ambil juga calon_pendaftar.status)
 $query = "
     SELECT 
       s.*,
+      cp.status as status_cp,
       COALESCE(
         (SELECT p.metode_pembayaran
          FROM pembayaran p
@@ -23,43 +24,44 @@ $query = "
          LIMIT 1),
         'Belum Ada'
       ) AS metode_pembayaran,
-CASE
-    WHEN
-      (SELECT COUNT(*) FROM pembayaran_detail pd1
-       JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-       WHERE p1.siswa_id = s.id
-         AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-         AND pd1.status_pembayaran = 'Lunas'
-      ) > 0
-    AND
-      (SELECT COUNT(*) FROM pembayaran_detail pd2
-       JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-       WHERE p2.siswa_id = s.id
-         AND pd2.jenis_pembayaran_id = $spp_id
-         AND pd2.bulan = 'Juli'
-         AND pd2.status_pembayaran = 'Lunas'
-      ) > 0
-    THEN 'Lunas'
-    WHEN
-      (
-        (SELECT COUNT(*) FROM pembayaran_detail pd1
-         JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-         WHERE p1.siswa_id = s.id
-           AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-        ) > 0
-        OR
-        (SELECT COUNT(*) FROM pembayaran_detail pd2
-         JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-         WHERE p2.siswa_id = s.id
-           AND pd2.jenis_pembayaran_id = $spp_id
-           AND pd2.bulan = 'Juli'
-           AND pd2.status_pembayaran = 'Lunas'
-        ) > 0
-      )
-    THEN 'Angsuran'
-    ELSE 'Belum Bayar'
-END AS status_pembayaran
+      CASE
+        WHEN
+          (SELECT COUNT(*) FROM pembayaran_detail pd1
+           JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+           WHERE p1.siswa_id = s.id
+             AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+             AND pd1.status_pembayaran = 'Lunas'
+          ) > 0
+        AND
+          (SELECT COUNT(*) FROM pembayaran_detail pd2
+           JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+           WHERE p2.siswa_id = s.id
+             AND pd2.jenis_pembayaran_id = $spp_id
+             AND pd2.bulan = 'Juli'
+             AND pd2.status_pembayaran = 'Lunas'
+          ) > 0
+        THEN 'Lunas'
+        WHEN
+          (
+            (SELECT COUNT(*) FROM pembayaran_detail pd1
+             JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+             WHERE p1.siswa_id = s.id
+               AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+            ) > 0
+            OR
+            (SELECT COUNT(*) FROM pembayaran_detail pd2
+             JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+             WHERE p2.siswa_id = s.id
+               AND pd2.jenis_pembayaran_id = $spp_id
+               AND pd2.bulan = 'Juli'
+               AND pd2.status_pembayaran = 'Lunas'
+            ) > 0
+          )
+        THEN 'Angsuran'
+        ELSE 'Belum Bayar'
+      END AS status_pembayaran
     FROM siswa s
+    LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
     WHERE s.unit = ?
     ORDER BY s.id
 ";
@@ -68,32 +70,50 @@ $stmt->bind_param('s', $unit);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Fetch semua baris ke array untuk menghitung statistik
-$rows = $result->fetch_all(MYSQLI_ASSOC);
-$lunas = $angsuran = $belum = 0;
-foreach ($rows as $r) {
-    switch (strtolower($r['status_pembayaran'])) {
-        case 'lunas':    $lunas++;    break;
-        case 'angsuran': $angsuran++; break;
-        default:         $belum++;    break;
+$rows = [];
+$lunas = $angsuran = $belum = $ppdb = 0;
+while ($row = $result->fetch_assoc()) {
+    // Cek status PPDB bersama
+    $status_final = '';
+    if (strtolower(trim($row['status_cp'] ?? '')) === 'ppdb bersama') {
+        $status_final = 'PPDB Bersama';
+        $ppdb++;
+    } else {
+        $status_final = $row['status_pembayaran'];
+        switch (strtolower($status_final)) {
+            case 'lunas':
+                $lunas++;
+                break;
+            case 'angsuran':
+                $angsuran++;
+                break;
+            default:
+                $belum++;
+                break;
+        }
     }
+    $row['status_final'] = $status_final;
+    $rows[] = $row;
 }
 
-function formatTanggal($t){
-    if (!$t || $t === '0000-00-00') return '-';
+function formatTanggal($t)
+{
+    if (!$t || $t === '0000-00-00') {
+        return '-';
+    }
     $bulan = [
-        'January'   => 'Januari',
-        'February'  => 'Februari',
-        'March'     => 'Maret',
-        'April'     => 'April',
-        'May'       => 'Mei',
-        'June'      => 'Juni',
-        'July'      => 'Juli',
-        'August'    => 'Agustus',
+        'January' => 'Januari',
+        'February' => 'Februari',
+        'March' => 'Maret',
+        'April' => 'April',
+        'May' => 'Mei',
+        'June' => 'Juni',
+        'July' => 'Juli',
+        'August' => 'Agustus',
         'September' => 'September',
-        'October'   => 'Oktober',
-        'November'  => 'November',
-        'December'  => 'Desember'
+        'October' => 'Oktober',
+        'November' => 'November',
+        'December' => 'Desember',
     ];
     $f = date('F', strtotime($t));
     $n = $bulan[$f] ?? $f;
@@ -106,7 +126,6 @@ function formatTanggal($t){
   <meta charset="UTF-8">
   <title>Cetak Daftar Siswa <?= htmlspecialchars($unit) ?></title>
   <style>
-    /* Print-only */
     @media print {
       body, table { margin: 0; }
       .no-print { display: none !important; }
@@ -115,7 +134,6 @@ function formatTanggal($t){
       thead { display: table-header-group; }
       tr { page-break-inside: avoid; }
     }
-    /* Screen */
     body { font-family: sans-serif; padding: 1rem; }
     h1 { text-align: center; margin-bottom: 0.5rem; }
     .no-print { margin-bottom: 1rem; }
@@ -150,6 +168,7 @@ function formatTanggal($t){
     <div>Lunas: <?= $lunas ?></div>
     <div>Angsuran: <?= $angsuran ?></div>
     <div>Belum Bayar: <?= $belum ?></div>
+    <div>PPDB Bersama: <?= $ppdb ?></div>
   </div>
 
   <table>
@@ -170,7 +189,9 @@ function formatTanggal($t){
       </tr>
     </thead>
     <tbody>
-      <?php $i = 1; foreach ($rows as $row): ?>
+      <?php
+      $i = 1;
+      foreach ($rows as $row): ?>
       <tr>
         <td><?= $i++ ?></td>
         <td><?= htmlspecialchars($row['no_formulir']) ?></td>
@@ -184,11 +205,12 @@ function formatTanggal($t){
         <td><?= htmlspecialchars($row['alamat']) ?></td>
         <td><?= htmlspecialchars($row['no_hp']) ?></td>
         <td><?= htmlspecialchars($row['no_hp_ortu']) ?></td>
-        <td><?= htmlspecialchars($row['status_pembayaran']) ?></td>
+        <td><?= htmlspecialchars($row['status_final']) ?></td>
         <td><?= htmlspecialchars($row['metode_pembayaran']) ?></td>
         <td><?= formatTanggal($row['tanggal_pendaftaran']) ?></td>
       </tr>
-      <?php endforeach; ?>
+      <?php endforeach;
+      ?>
     </tbody>
   </table>
 
