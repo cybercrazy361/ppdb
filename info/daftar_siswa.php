@@ -246,8 +246,6 @@ if ($unit == 'SMK') {
         $rows_html = '';
 
         while ($row = $result->fetch_assoc()):
-            $total_bayar = (float) $row['total_bayar'];
-            $jumlah_transaksi = (int) $row['jumlah_transaksi'];
             $status = '';
             $badge = '';
             $status_ppdb = '-';
@@ -265,26 +263,42 @@ if ($unit == 'SMK') {
                 $status_ppdb = trim(strtolower($status_ppdb));
             }
 
-            // Kategorikan rekap dengan urutan: PPDB Bersama > Lunas > Angsuran > Belum Bayar
+            // =========== LOGIKA BARU (SAMA PERSIS DASHBOARD) ==============
             if ($status_ppdb === 'ppdb bersama') {
                 $ppdb_bersama++;
                 $badge = 'info';
                 $status = 'PPDB Bersama';
-            } elseif ($jumlah_transaksi == 0) {
-                $belum++;
-                $badge = 'danger';
-                $status = 'Belum Bayar';
-            } elseif ($total_bayar >= $tagihan_total) {
-                $lunas++;
-                $badge = 'success';
-                $status = 'Lunas';
             } else {
-                $angsuran++;
-                $badge = 'warning';
-                $status = 'Angsuran';
-            }
+                // CEK UANG PANGKAL PER SISWA
+                $status_pembayaran = 'Belum Bayar';
+                $stmtUP = $conn->prepare("
+            SELECT 
+                SUM(CASE WHEN status_pembayaran = 'Lunas' THEN 1 ELSE 0 END) as lunas,
+                COUNT(*) as total
+            FROM pembayaran_detail pd
+            JOIN pembayaran p ON pd.pembayaran_id = p.id
+            WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = 1
+        ");
+                $stmtUP->bind_param('i', $row['id']);
+                $stmtUP->execute();
+                $resUP = $stmtUP->get_result()->fetch_assoc();
+                $stmtUP->close();
 
-            $total++; // Tetap hitung total semua siswa (termasuk PPDB Bersama)
+                if ($resUP['lunas'] > 0) {
+                    $lunas++;
+                    $badge = 'success';
+                    $status = 'Lunas';
+                } elseif ($resUP['total'] > 0) {
+                    $angsuran++;
+                    $badge = 'warning';
+                    $status = 'Angsuran';
+                } else {
+                    $belum++;
+                    $badge = 'danger';
+                    $status = 'Belum Bayar';
+                }
+            }
+            $total++;
 
             $metode = $row['metode_terakhir'] ?? 'Belum Ada';
 
