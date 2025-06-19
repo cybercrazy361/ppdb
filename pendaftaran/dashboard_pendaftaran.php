@@ -165,7 +165,7 @@ $conn->close();
         <div class="subtext">Segera follow-up</div>
       </div>
       <?php if ($stat['ppdb'] > 0): ?>
-      <div class="card" onclick="showModal('ppdb')" style="cursor:pointer; background:#e5f7ff;">
+      <div class="card" onclick="showModal('ppdb')" style="cursor:pointer;">
         <div class="icon text-info"><i class="fas fa-users"></i></div>
         <div class="title">PPDB Bersama</div>
         <div class="count"><?= $stat['ppdb'] ?></div>
