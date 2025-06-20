@@ -19,12 +19,12 @@ $result_total = $stmt_total->get_result()->fetch_assoc();
 $total_siswa = $result_total['total'] ?? 0;
 $stmt_total->close();
 
-// Hitung jumlah siswa PPDB Bersama
+// Ambil jumlah siswa dengan status "PPDB Bersama"
 $sql_ppdb_bersama = "
-SELECT COUNT(*) AS ppdb_bersama
-FROM siswa s
-LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-WHERE s.unit = ? AND LOWER(cp.status) = 'ppdb bersama'
+    SELECT COUNT(*) AS ppdb_bersama
+    FROM siswa s
+    LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+    WHERE s.unit = ? AND LOWER(cp.status) = 'ppdb bersama'
 ";
 $stmt_ppdb = $conn->prepare($sql_ppdb_bersama);
 $stmt_ppdb->bind_param('s', $unit);
@@ -33,19 +33,13 @@ $result_ppdb = $stmt_ppdb->get_result()->fetch_assoc();
 $total_ppdb_bersama = $result_ppdb['ppdb_bersama'] ?? 0;
 $stmt_ppdb->close();
 
-// Hitung belum bayar (kecualikan ppdb bersama)
-$total_belum_bayar = $total_siswa - $total_sudah_bayar - $total_ppdb_bersama;
-if ($total_belum_bayar < 0) {
-    $total_belum_bayar = 0;
-}
-
 // Ambil jumlah siswa yang sudah membayar
 $sql_sudah = "
-SELECT COUNT(DISTINCT s.id) AS sudah_bayar 
-FROM siswa s
-INNER JOIN pembayaran p ON s.id = p.siswa_id
-INNER JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-WHERE s.unit = ? AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
+    SELECT COUNT(DISTINCT s.id) AS sudah_bayar 
+    FROM siswa s
+    INNER JOIN pembayaran p ON s.id = p.siswa_id
+    INNER JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
+    WHERE s.unit = ? AND (pd.status_pembayaran = 'Lunas' OR pd.status_pembayaran LIKE 'Angsuran%')
 ";
 $stmt_sudah = $conn->prepare($sql_sudah);
 $stmt_sudah->bind_param('s', $unit);
@@ -54,11 +48,27 @@ $result_sudah = $stmt_sudah->get_result()->fetch_assoc();
 $total_sudah_bayar = $result_sudah['sudah_bayar'] ?? 0;
 $stmt_sudah->close();
 
-// Hitung sisa
-$total_belum_bayar = $total_siswa - $total_sudah_bayar;
+// Ambil jumlah siswa yang BELUM membayar dan BUKAN PPDB BERSAMA
+$sql_belum = "
+    SELECT COUNT(*) AS belum_bayar
+    FROM siswa s
+    LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+    WHERE s.unit = ?
+      AND (cp.status IS NULL OR LOWER(cp.status) <> 'ppdb bersama')
+      AND NOT EXISTS (
+          SELECT 1 FROM pembayaran p WHERE p.siswa_id = s.id
+      )
+";
+$stmt_belum = $conn->prepare($sql_belum);
+$stmt_belum->bind_param('s', $unit);
+$stmt_belum->execute();
+$result_belum = $stmt_belum->get_result()->fetch_assoc();
+$total_belum_bayar = $result_belum['belum_bayar'] ?? 0;
+$stmt_belum->close();
 
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
