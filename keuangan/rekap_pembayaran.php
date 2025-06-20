@@ -197,49 +197,52 @@ $conn->close();
 }
 
     </style>
-</head>
-<body>
-<?php include '../includes/sidebar.php'; ?>
-<div class="main-content p-4">
-  <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
-    <button id="sidebarToggle" class="btn btn-link rounded-circle"><i class="fas fa-bars"></i></button>
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item"><a class="nav-link" href="#"><span class="me-2"><?= htmlspecialchars(
-          $_SESSION['nama']
-      ) ?></span><i class="fas fa-user-circle fa-lg"></i></a></li>
-    </ul>
-  </nav>
-  <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h3 text-gray-800">Rekap Pembayaran Siswa - <?= htmlspecialchars(
-          $unit
-      ) ?></h1>
-      <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
-    </div>
-    <form method="get" class="mb-3">
-      <label><b>Tahun Pelajaran:</b></label>
-      <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
-        <?php foreach ($tahunList as $tp): ?>
-          <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
+            </head>
+            <body>
+            <?php include '../includes/sidebar.php'; ?>
+            <div class="main-content p-4">
+              <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
+                <button id="sidebarToggle" class="btn btn-link rounded-circle"><i class="fas fa-bars"></i></button>
+                <ul class="navbar-nav ms-auto">
+                  <li class="nav-item"><a class="nav-link" href="#"><span class="me-2"><?= htmlspecialchars(
+                      $_SESSION['nama']
+                  ) ?></span><i class="fas fa-user-circle fa-lg"></i></a></li>
+                </ul>
+              </nav>
+              <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h1 class="h3 text-gray-800">Rekap Pembayaran Siswa - <?= htmlspecialchars(
+                      $unit
+                  ) ?></h1>
+                  <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
+                </div>
+                <form method="get" class="mb-3">
+                  <label><b>Tahun Pelajaran:</b></label>
+                  <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+                    <?php foreach ($tahunList as $tp): ?>
+                      <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
     ? 'selected'
     : '' ?>><?= $tp ?></option>
-        <?php endforeach; ?>
-      </select>
-    </form>
-    <div class="card shadow mb-4 printable-area">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover">
+                    <?php endforeach; ?>
+                  </select>
+                </form>
+                <div class="card shadow mb-4 printable-area">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-hover">
             <thead class="table-primary">
               <tr>
-                <th colspan="<?= 3 +
+                <th colspan="<?= 4 +
                     count($kolom_list) +
                     1 ?>" class="text-center fs-5 fw-bold">
                   Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?>
                 </th>
               </tr>
               <tr>
-                <th>No</th><th>No Formulir</th><th>Nama Siswa</th><th>Status</th>
+                <th>No</th>
+                <th>No Formulir</th>
+                <th>Nama Siswa</th>
+                <th>Status</th>
                 <?php foreach (
                     $kolom_list
                     as $k
@@ -248,39 +251,42 @@ $conn->close();
               </tr>
             </thead>
             <tbody>
-<?php
-$no = 1;
-foreach ($siswa as $sis): ?>
-<tr<?= $sis['status_ppdb'] === 'ppdb bersama' ? ' class="table-info"' : '' ?>>
-  <td><?= $no++ ?></td>
-  <td><?= $sis['no_formulir'] ?></td>
-  <td style="text-align:left;"><?= $sis['nama'] ?></td>
-  <td>
-    <?php if ($sis['status_ppdb'] === 'ppdb bersama'): ?>
-      <span class="badge bg-info text-dark">PPDB Bersama</span>
-    <?php elseif ($sis['status_ppdb']): ?>
-      <?= htmlspecialchars($sis['status_ppdb']) ?>
-    <?php else: ?>
-      -
-    <?php endif; ?>
-  </td>
-  <?php foreach ($kolom_list as $k): ?>
-    <td>
-      <?= $sis['pembayaran'][$k] > 0
-          ? 'Rp ' . number_format($sis['pembayaran'][$k], 0, ',', '.')
-          : '-' ?>
-    </td>
-  <?php endforeach; ?>
-  <td><b><?= $sis['total_bayar'] > 0
-      ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
-      : '-' ?></b></td>
-</tr>
-<?php endforeach;
-?>
+            <?php
+            $no = 1;
+            foreach ($siswa as $sis): ?>
+            <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
+                ? ' class="table-info"'
+                : '' ?>>
+              <td><?= $no++ ?></td>
+              <td><?= $sis['no_formulir'] ?></td>
+              <td style="text-align:left;"><?= $sis['nama'] ?></td>
+              <td>
+                <?php if ($sis['status_ppdb'] === 'ppdb bersama'): ?>
+                  <span class="badge bg-info text-dark">PPDB Bersama</span>
+                <?php elseif ($sis['status_ppdb']): ?>
+                  <?= htmlspecialchars($sis['status_ppdb']) ?>
+                <?php else: ?>
+                  -
+                <?php endif; ?>
+              </td>
+              <?php foreach ($kolom_list as $k): ?>
+                <td>
+                  <?= $sis['pembayaran'][$k] > 0
+                      ? 'Rp ' .
+                          number_format($sis['pembayaran'][$k], 0, ',', '.')
+                      : '-' ?>
+                </td>
+              <?php endforeach; ?>
+              <td><b><?= $sis['total_bayar'] > 0
+                  ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
+                  : '-' ?></b></td>
+            </tr>
+            <?php endforeach;
+            ?>
             </tbody>
             <tfoot>
               <tr class="table-secondary fw-bold">
-                <td colspan="3" class="text-center">Total</td>
+                <td colspan="4" class="text-center">Total</td>
                 <?php foreach ($kolom_list as $k): ?>
                   <td>
                     <?= $total_kolom[$k] > 0
