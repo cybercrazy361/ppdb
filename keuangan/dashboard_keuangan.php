@@ -11,13 +11,33 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 $unit = $_SESSION['unit'];
 
 // Ambil total siswa pada unit tersebut
-$sql_total = "SELECT COUNT(*) AS total FROM siswa WHERE unit = ?";
+$sql_total = 'SELECT COUNT(*) AS total FROM siswa WHERE unit = ?';
 $stmt_total = $conn->prepare($sql_total);
 $stmt_total->bind_param('s', $unit);
 $stmt_total->execute();
 $result_total = $stmt_total->get_result()->fetch_assoc();
 $total_siswa = $result_total['total'] ?? 0;
 $stmt_total->close();
+
+// Hitung jumlah siswa PPDB Bersama
+$sql_ppdb_bersama = "
+SELECT COUNT(*) AS ppdb_bersama
+FROM siswa s
+LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+WHERE s.unit = ? AND LOWER(cp.status) = 'ppdb bersama'
+";
+$stmt_ppdb = $conn->prepare($sql_ppdb_bersama);
+$stmt_ppdb->bind_param('s', $unit);
+$stmt_ppdb->execute();
+$result_ppdb = $stmt_ppdb->get_result()->fetch_assoc();
+$total_ppdb_bersama = $result_ppdb['ppdb_bersama'] ?? 0;
+$stmt_ppdb->close();
+
+// Hitung belum bayar (kecualikan ppdb bersama)
+$total_belum_bayar = $total_siswa - $total_sudah_bayar - $total_ppdb_bersama;
+if ($total_belum_bayar < 0) {
+    $total_belum_bayar = 0;
+}
 
 // Ambil jumlah siswa yang sudah membayar
 $sql_sudah = "
@@ -61,7 +81,9 @@ $conn->close();
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="#">
-                        <span class="me-2"><?= htmlspecialchars($_SESSION['nama']); ?></span>
+                        <span class="me-2"><?= htmlspecialchars(
+                            $_SESSION['nama']
+                        ) ?></span>
                         <i class="fas fa-user-circle fa-lg"></i>
                     </a>
                 </li>
@@ -78,7 +100,9 @@ $conn->close();
                             <i class="fas fa-users"></i>
                         </div>
                         <h5 class="card-title">Total Siswa</h5>
-                        <p class="card-text fs-4"><?= htmlspecialchars($total_siswa); ?></p>
+                        <p class="card-text fs-4"><?= htmlspecialchars(
+                            $total_siswa
+                        ) ?></p>
                     </div>
                 </div>
             </div>
@@ -89,7 +113,9 @@ $conn->close();
                             <i class="fas fa-user-check"></i>
                         </div>
                         <h5 class="card-title">Sudah Membayar</h5>
-                        <p class="card-text fs-4"><?= htmlspecialchars($total_sudah_bayar); ?></p>
+                        <p class="card-text fs-4"><?= htmlspecialchars(
+                            $total_sudah_bayar
+                        ) ?></p>
                     </div>
                 </div>
             </div>
@@ -100,8 +126,23 @@ $conn->close();
                             <i class="fas fa-user-times"></i>
                         </div>
                         <h5 class="card-title">Belum Membayar</h5>
-                        <p class="card-text fs-4"><?= htmlspecialchars($total_belum_bayar); ?></p>
+                        <p class="card-text fs-4"><?= htmlspecialchars(
+                            $total_belum_bayar
+                        ) ?></p>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card ppdb-card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="card-icon mb-2">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h5 class="card-title">PPDB Bersama</h5>
+                    <p class="card-text fs-4"><?= htmlspecialchars(
+                        $total_ppdb_bersama
+                    ) ?></p>
                 </div>
             </div>
         </div>
@@ -117,7 +158,7 @@ $conn->close();
     </div>
 
     <footer class="footer text-center">
-        &copy; <?= date('Y'); ?> Sistem Keuangan PPDB
+        &copy; <?= date('Y') ?> Sistem Keuangan PPDB
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -128,10 +169,11 @@ $conn->close();
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Sudah Membayar', 'Belum Membayar'],
-                datasets: [{
-                    data: [<?= $total_sudah_bayar; ?>, <?= $total_belum_bayar; ?>]
-                }]
+            labels: ['Sudah Membayar', 'PPDB Bersama', 'Belum Membayar'],
+            datasets: [{
+                data: [<?= $total_sudah_bayar ?>, <?= $total_ppdb_bersama ?>, <?= $total_belum_bayar ?>]
+            }]
+
             },
             options: {
                 maintainAspectRatio: false,
