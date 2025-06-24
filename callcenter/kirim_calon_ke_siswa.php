@@ -57,7 +57,9 @@ $nama = $calon['nama'] ?? '-';
 $jenis_kelamin = $calon['jenis_kelamin'] ?? 'Laki-laki';
 $tempat_lahir = $calon['tempat_lahir'] ?? '-';
 $tanggal_lahir =
-    $calon['tanggal_lahir'] && $calon['tanggal_lahir'] != '0000-00-00'
+    isset($calon['tanggal_lahir']) &&
+    $calon['tanggal_lahir'] &&
+    $calon['tanggal_lahir'] != '0000-00-00'
         ? $calon['tanggal_lahir']
         : date('Y-m-d');
 $asal_sekolah = $calon['asal_sekolah'] ?? '-';
