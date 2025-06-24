@@ -512,8 +512,8 @@ $('#calonTable').on('change', '.status-select', function(){
     }, 'json');
   });
 
-// Kirim ke siswa (AJAX)
-$('#calonTable').on('click', '.btn-kirim', function(){
+  // Kirim ke siswa (AJAX)
+  $('#calonTable').on('click', '.btn-kirim', function(){
     const btn = $(this);
     btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Proses...');
     $.post('kirim_calon_ke_siswa.php', {
@@ -539,7 +539,7 @@ $('#calonTable').on('click', '.btn-kirim', function(){
       }
       $('#notifModal').modal('show');
     }, 'json');
-});
+  });
 
   // Upload Excel
   $('#formUploadExcel').on('submit', function(e){
