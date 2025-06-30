@@ -86,70 +86,69 @@ WHERE s.unit = ? AND (cp.status IS NULL OR LOWER(cp.status) != 'ppdb bersama')
     ];
 }
 
-// Fungsi rekap hari ini (dan PPDB Bersama harian)
 function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id, $tanggal = null)
 {
     $today = $tanggal ?: date('Y-m-d');
 
-    // Ambil siswa hari ini
-    $stmt = $conn->prepare(
-        'SELECT s.id, cp.status AS status_ppdb FROM siswa s LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id=cp.id WHERE s.unit=? AND s.tanggal_pendaftaran=?'
-    );
+    // Ambil siswa yang melakukan pembayaran pada tanggal itu
+    $stmt = $conn->prepare("
+        SELECT DISTINCT s.id, cp.status AS status_ppdb
+        FROM pembayaran p
+        JOIN siswa s ON p.siswa_id = s.id
+        LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+        WHERE s.unit = ? AND DATE(p.tanggal_bayar) = ?
+    ");
     $stmt->bind_param('ss', $unit, $today);
     $stmt->execute();
     $result = $stmt->get_result();
+
     $lunas = $angsuran = $belum = $total = $ppdb = 0;
 
     while ($row = $result->fetch_assoc()) {
         $id = $row['id'];
         $is_ppdb =
             strtolower(trim($row['status_ppdb'] ?? '')) === 'ppdb bersama';
+
         if ($is_ppdb) {
             $ppdb++;
             $total++;
-            continue; // Tidak hitung status bayar, langsung kategori ppdb
+            continue;
         }
-        // Non-ppdb, cek status bayar:
+
+        // Cek status pembayaran
         $cek = "
         SELECT
         CASE
             WHEN 
                 (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = $id 
-                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
-                      AND pd1.status_pembayaran = 'Lunas'
-                ) > 0
-            AND
+                 JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                 WHERE p1.siswa_id = $id 
+                   AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+                   AND pd1.status_pembayaran = 'Lunas') > 0
+            AND 
                 (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = $id 
-                      AND pd2.jenis_pembayaran_id = $spp_id
-                      AND pd2.bulan = 'Juli'
-                      AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
+                 JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                 WHERE p2.siswa_id = $id 
+                   AND pd2.jenis_pembayaran_id = $spp_id
+                   AND pd2.bulan = 'Juli'
+                   AND pd2.status_pembayaran = 'Lunas') > 0
             THEN 'Lunas'
-            WHEN (
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                    JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                    WHERE p1.siswa_id = $id 
-                      AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+            WHEN 
+                (SELECT COUNT(*) FROM pembayaran_detail pd 
+                 JOIN pembayaran p ON pd.pembayaran_id = p.id
+                 WHERE p.siswa_id = $id 
+                   AND (
+                       pd.jenis_pembayaran_id = $uang_pangkal_id
+                       OR (pd.jenis_pembayaran_id = $spp_id AND pd.bulan = 'Juli' AND pd.status_pembayaran = 'Lunas')
+                   )
                 ) > 0
-                OR
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                    JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                    WHERE p2.siswa_id = $id 
-                      AND pd2.jenis_pembayaran_id = $spp_id
-                      AND pd2.bulan = 'Juli'
-                      AND pd2.status_pembayaran = 'Lunas'
-                ) > 0
-            )
             THEN 'Angsuran'
             ELSE 'Belum Bayar'
         END AS status_pembayaran
         ";
         $q = $conn->query($cek);
         $stat = $q->fetch_assoc()['status_pembayaran'] ?? '';
+
         if ($stat === 'Lunas') {
             $lunas++;
         } elseif ($stat === 'Angsuran') {
@@ -157,9 +156,12 @@ function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id, $tanggal = null)
         } else {
             $belum++;
         }
+
         $total++;
     }
+
     $stmt->close();
+
     return [
         'total' => $total,
         'lunas' => $lunas,
@@ -325,6 +327,32 @@ window.addEventListener('DOMContentLoaded',function(){
   loadRekapHarian(document.getElementById('tanggalCari').value);
 });
 
+function showDetail() {
+  const tgl = document.getElementById('tanggalCari').value;
+  const tbody = document.getElementById('detailTableBody');
+  tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Memuat data...</td></tr>`;
+  
+  fetch('rekap_harian_detail.php?tanggal=' + encodeURIComponent(tgl))
+    .then(r => r.json())
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        tbody.innerHTML = data.map(row => `
+          <tr>
+            <td>${row.nama}</td>
+            <td>${row.status_ppdb ?? '-'}</td>
+            <td>${row.status_pembayaran}</td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Tidak ada data</td></tr>`;
+      }
+      const modal = new bootstrap.Modal(document.getElementById('modalDetail'));
+      modal.show();
+    })
+    .catch(_ => {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat data</td></tr>`;
+    });
+}
 
 </script>
 </body>
