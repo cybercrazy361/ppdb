@@ -322,6 +322,42 @@ $csrf_token = $_SESSION['csrf_token'];
                         // Tampilkan pagination dengan rentang yang lebih baik
                         // Maksimal link pagination yang ditampilkan
                         // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
                         else: ?>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -416,7 +452,12 @@ $csrf_token = $_SESSION['csrf_token'];
 <?php foreach ($pembayaran['details'] as $detail): ?>
     <tr>
         <td><?= htmlspecialchars($detail['jenis_pembayaran_nama']) ?></td>
-        <td><?= number_format($detail['jumlah'], 0, ',', '.') ?></td>
+        <td><?= number_format(
+            ($detail['jumlah'] ?? 0) - ($detail['cashback'] ?? 0),
+            0,
+            ',',
+            '.'
+        ) ?></td>
         <td><?= htmlspecialchars($detail['bulan'] ?? '') ?></td>
         <td><?= htmlspecialchars($detail['status_pembayaran'] ?? '') ?></td>
         <td>
