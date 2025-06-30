@@ -164,7 +164,7 @@ function formatTanggal($t)
       <tr>
         <th>No</th>
         <th>No Formulir</th>
-        <th class="th-nama">Nama Siswa</th>
+        <th>Nama Siswa</th>
         <th>JK</th>
         <th>TTL</th>
         <th>Asal Sekolah</th>
