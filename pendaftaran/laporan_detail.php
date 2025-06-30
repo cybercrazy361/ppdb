@@ -19,74 +19,65 @@ $spp_id = 2;
 function rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id)
 {
     $stmt = $conn->prepare(
-        'SELECT id, calon_pendaftar_id FROM siswa WHERE unit = ?'
+        'SELECT COUNT(*) AS total FROM siswa WHERE unit = ?'
     );
+    $stmt->bind_param('s', $unit);
+    $stmt->execute();
+    $total = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
+    $stmt->close();
+
+    // Hitung PPDB Bersama (total)
+    $stmt_ppdb = $conn->prepare("
+        SELECT COUNT(*) AS total_ppdb
+        FROM siswa s
+        LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+        WHERE s.unit = ? AND LOWER(cp.status) = 'ppdb bersama'
+    ");
+    $stmt_ppdb->bind_param('s', $unit);
+    $stmt_ppdb->execute();
+    $total_ppdb = $stmt_ppdb->get_result()->fetch_assoc()['total_ppdb'] ?? 0;
+    $stmt_ppdb->close();
+
+    $sql = "
+SELECT s.id,
+  CASE
+    WHEN 
+      (SELECT COUNT(*) FROM pembayaran_detail pd1 
+        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+        WHERE p1.siswa_id = s.id 
+          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+          AND pd1.status_pembayaran = 'Lunas'
+      ) > 0
+    THEN 'Lunas'
+    WHEN 
+      (SELECT COUNT(*) FROM pembayaran_detail pd1 
+        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+        WHERE p1.siswa_id = s.id 
+          AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+      ) > 0
+    THEN 'Angsuran'
+    ELSE 'Belum Bayar'
+  END AS status_pembayaran
+FROM siswa s
+LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+WHERE s.unit = ? AND (cp.status IS NULL OR LOWER(cp.status) != 'ppdb bersama')
+";
+
+    // hanya siswa NON ppdb bersama dihitung statusnya
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param('s', $unit);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $total = $lunas = $angsuran = $belum = $ppdb = 0;
-
+    $lunas = $angsuran = $belum = 0;
     while ($row = $result->fetch_assoc()) {
-        $id = (int) $row['id'];
-        $calon_pendaftar_id = (int) ($row['calon_pendaftar_id'] ?? 0);
-
-        // Cek status ppdb
-        $is_ppdb = false;
-        if ($calon_pendaftar_id > 0) {
-            $stmt2 = $conn->prepare(
-                'SELECT status FROM calon_pendaftar WHERE id = ? LIMIT 1'
-            );
-            $stmt2->bind_param('i', $calon_pendaftar_id);
-            $stmt2->execute();
-            $res2 = $stmt2->get_result();
-            $status_ppdb = strtolower(
-                trim($res2->fetch_assoc()['status'] ?? '')
-            );
-            $stmt2->close();
-            if ($status_ppdb === 'ppdb bersama') {
-                $ppdb++;
-                $total++;
-                continue;
-            }
-        }
-
-        // Ambil tagihan uang pangkal
-        $tagihan = 0;
-        $stmtTagihan = $conn->prepare(
-            'SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id=? AND jenis_pembayaran_id=?'
-        );
-        $stmtTagihan->bind_param('ii', $id, $uang_pangkal_id);
-        $stmtTagihan->execute();
-        $rsTagihan = $stmtTagihan->get_result();
-        if ($rTagihan = $rsTagihan->fetch_assoc()) {
-            $tagihan = (int) $rTagihan['nominal'];
-        }
-        $stmtTagihan->close();
-
-        // Hitung total bayar dikurangi cashback
-        $totalBayar = 0;
-        $stmtBayar = $conn->prepare(
-            'SELECT SUM(pd.jumlah - IFNULL(pd.cashback,0)) AS total_bayar FROM pembayaran_detail pd JOIN pembayaran p ON pd.pembayaran_id = p.id WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ?'
-        );
-        $stmtBayar->bind_param('ii', $id, $uang_pangkal_id);
-        $stmtBayar->execute();
-        $rsBayar = $stmtBayar->get_result();
-        if ($rBayar = $rsBayar->fetch_assoc()) {
-            $totalBayar = (int) $rBayar['total_bayar'];
-        }
-        $stmtBayar->close();
-
-        // Tentukan status
-        if ($tagihan > 0 && $totalBayar >= $tagihan) {
+        if ($row['status_pembayaran'] === 'Lunas') {
             $lunas++;
-        } elseif ($totalBayar > 0) {
+        } elseif ($row['status_pembayaran'] === 'Angsuran') {
             $angsuran++;
         } else {
             $belum++;
         }
-
-        $total++;
     }
     $stmt->close();
 
@@ -95,7 +86,7 @@ function rekapTotal($conn, $unit, $uang_pangkal_id, $spp_id)
         'lunas' => $lunas,
         'angsuran' => $angsuran,
         'belum' => $belum,
-        'ppdb' => $ppdb,
+        'ppdb' => $total_ppdb,
     ];
 }
 
