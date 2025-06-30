@@ -4,7 +4,8 @@ date_default_timezone_set('Asia/Jakarta');
 include '../database_connection.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
-function safe($str) {
+function safe($str)
+{
     return htmlspecialchars($str ?? '-');
 }
 
@@ -13,24 +14,33 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
 }
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-if ($id <= 0) die('ID siswa tidak valid.');
+if ($id <= 0) {
+    die('ID siswa tidak valid.');
+}
 
-$stmt = $conn->prepare("SELECT * FROM siswa WHERE id=?");
+$stmt = $conn->prepare('SELECT * FROM siswa WHERE id=?');
 $stmt->bind_param('i', $id);
 $stmt->execute();
 $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
-if (!$row) die('Data siswa tidak ditemukan.');
+if (!$row) {
+    die('Data siswa tidak ditemukan.');
+}
 
 $petugas = '-';
 $username_petugas = $_SESSION['username'] ?? '';
 if ($username_petugas) {
-    $stmt_petugas = $conn->prepare("SELECT nama FROM petugas WHERE username = ?");
+    $stmt_petugas = $conn->prepare(
+        'SELECT nama FROM petugas WHERE username = ?'
+    );
     $stmt_petugas->bind_param('s', $username_petugas);
     $stmt_petugas->execute();
     $result_petugas = $stmt_petugas->get_result();
     $data_petugas = $result_petugas->fetch_assoc();
-    $petugas = ($data_petugas && !empty($data_petugas['nama'])) ? $data_petugas['nama'] : $username_petugas;
+    $petugas =
+        $data_petugas && !empty($data_petugas['nama'])
+            ? $data_petugas['nama']
+            : $username_petugas;
     $stmt_petugas->close();
 }
 
@@ -38,7 +48,9 @@ if ($username_petugas) {
 $status_pendaftaran = '-';
 $keterangan_pendaftaran = '-';
 if (!empty($row['calon_pendaftar_id'])) {
-    $stmtStatus = $conn->prepare("SELECT status, notes FROM calon_pendaftar WHERE id = ?");
+    $stmtStatus = $conn->prepare(
+        'SELECT status, notes FROM calon_pendaftar WHERE id = ?'
+    );
     $stmtStatus->bind_param('i', $row['calon_pendaftar_id']);
     $stmtStatus->execute();
     $rsStatus = $stmtStatus->get_result()->fetch_assoc();
@@ -47,12 +59,24 @@ if (!empty($row['calon_pendaftar_id'])) {
     $stmtStatus->close();
 }
 
-function tanggal_id($tgl) {
-    if (!$tgl || $tgl == '0000-00-00') return '-';
+function tanggal_id($tgl)
+{
+    if (!$tgl || $tgl == '0000-00-00') {
+        return '-';
+    }
     $bulan = [
-        'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret', 'April' => 'April',
-        'May' => 'Mei', 'June' => 'Juni', 'July' => 'Juli', 'August' => 'Agustus',
-        'September' => 'September', 'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
+        'January' => 'Januari',
+        'February' => 'Februari',
+        'March' => 'Maret',
+        'April' => 'April',
+        'May' => 'Mei',
+        'June' => 'Juni',
+        'July' => 'Juli',
+        'August' => 'Agustus',
+        'September' => 'September',
+        'October' => 'Oktober',
+        'November' => 'November',
+        'December' => 'Desember',
     ];
     $date = date('d', strtotime($tgl));
     $month = $bulan[date('F', strtotime($tgl))];
@@ -60,58 +84,45 @@ function tanggal_id($tgl) {
     return "$date $month $year";
 }
 
-// Status progres pembayaran
-// Status progres
+// --- LOGIKA STATUS UANG PANGKAL BERDASARKAN TOTAL PEMBAYARAN (jumlah-cashback) --- //
 $uang_pangkal_id = 1;
-$spp_id = 2;
 
-// Cek apakah ADA pembayaran uang pangkal untuk siswa ini (apapun status, kecuali NULL/kosong)
-$stmt_up = $conn->prepare("
-    SELECT COUNT(*) as total 
+// Ambil tagihan uang pangkal
+$tagihan_uang_pangkal = 0;
+$stmt_tagihan_up = $conn->prepare(
+    'SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id = ? AND jenis_pembayaran_id = ?'
+);
+$stmt_tagihan_up->bind_param('ii', $id, $uang_pangkal_id);
+$stmt_tagihan_up->execute();
+$res_tagihan_up = $stmt_tagihan_up->get_result();
+if ($row_up = $res_tagihan_up->fetch_assoc()) {
+    $tagihan_uang_pangkal = (int) $row_up['nominal'];
+}
+$stmt_tagihan_up->close();
+
+// Hitung total pembayaran uang pangkal (jumlah - cashback)
+$total_bayar_uang_pangkal = 0;
+$stmt_bayar_up = $conn->prepare("
+    SELECT SUM(pd.jumlah - IFNULL(pd.cashback,0)) AS total_bayar
     FROM pembayaran_detail pd
     JOIN pembayaran p ON pd.pembayaran_id = p.id
     WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ?
 ");
-$stmt_up->bind_param('ii', $id, $uang_pangkal_id);
-$stmt_up->execute();
-$cek_uang_pangkal = $stmt_up->get_result()->fetch_assoc();
-$is_bayar_uang_pangkal = ($cek_uang_pangkal['total'] > 0);
-$stmt_up->close();
+$stmt_bayar_up->bind_param('ii', $id, $uang_pangkal_id);
+$stmt_bayar_up->execute();
+$res_bayar_up = $stmt_bayar_up->get_result();
+if ($row_bayar_up = $res_bayar_up->fetch_assoc()) {
+    $total_bayar_uang_pangkal = (int) $row_bayar_up['total_bayar'];
+}
+$stmt_bayar_up->close();
 
-// Cek SPP Juli Lunas
-$stmt_spp = $conn->prepare("
-    SELECT COUNT(*) as total 
-    FROM pembayaran_detail pd
-    JOIN pembayaran p ON pd.pembayaran_id = p.id
-    WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ? AND pd.bulan = 'Juli' AND pd.status_pembayaran = 'Lunas'
-");
-$stmt_spp->bind_param('ii', $id, $spp_id);
-$stmt_spp->execute();
-$cek_spp_juli = $stmt_spp->get_result()->fetch_assoc();
-$is_lunas_spp_juli = ($cek_spp_juli['total'] > 0);
-$stmt_spp->close();
-
-// Cek uang pangkal LUNAS
-$stmt_up_lunas = $conn->prepare("
-    SELECT COUNT(*) as total 
-    FROM pembayaran_detail pd
-    JOIN pembayaran p ON pd.pembayaran_id = p.id
-    WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ? AND pd.status_pembayaran = 'Lunas'
-");
-$stmt_up_lunas->bind_param('ii', $id, $uang_pangkal_id);
-$stmt_up_lunas->execute();
-$cek_uang_pangkal_lunas = $stmt_up_lunas->get_result()->fetch_assoc();
-$is_lunas_uang_pangkal = ($cek_uang_pangkal_lunas['total'] > 0);
-$stmt_up_lunas->close();
-
-// Logika status pembayaran
-if ($is_lunas_uang_pangkal && $is_lunas_spp_juli) {
+// LOGIKA STATUS
+if (
+    $total_bayar_uang_pangkal >= $tagihan_uang_pangkal &&
+    $tagihan_uang_pangkal > 0
+) {
     $status_pembayaran = 'Lunas';
-} elseif ($is_bayar_uang_pangkal) {
-    // Sudah pernah bayar uang pangkal, tapi belum lunas
-    $status_pembayaran = 'Angsuran';
-} elseif ($is_lunas_spp_juli) {
-    // SPP Juli saja yang lunas
+} elseif ($total_bayar_uang_pangkal > 0) {
     $status_pembayaran = 'Angsuran';
 } else {
     $status_pembayaran = 'Belum Bayar';
@@ -129,7 +140,9 @@ $stmtTagihan = $conn->prepare("
 $stmtTagihan->bind_param('i', $id);
 $stmtTagihan->execute();
 $res = $stmtTagihan->get_result();
-while ($t = $res->fetch_assoc()) $tagihan[] = $t;
+while ($t = $res->fetch_assoc()) {
+    $tagihan[] = $t;
+}
 $stmtTagihan->close();
 
 // Riwayat pembayaran terakhir + cashback
@@ -147,21 +160,32 @@ if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar->bind_param('i', $id);
     $stmtBayar->execute();
     $resBayar = $stmtBayar->get_result();
-    while ($b = $resBayar->fetch_assoc()) $pembayaran_terakhir[] = $b;
+    while ($b = $resBayar->fetch_assoc()) {
+        $pembayaran_terakhir[] = $b;
+    }
     $stmtBayar->close();
 }
 
-function getStatusBadge($status) {
+function getStatusBadge($status)
+{
     $status = strtolower($status);
-    if ($status === 'lunas') return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_lunas.png" alt="Lunas" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#1cc88a;font-weight:bold">Lunas</span>';
-    if ($status === 'angsuran') return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_angsuran.png" alt="Angsuran" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#f6c23e;font-weight:bold">Angsuran</span>';
+    if ($status === 'lunas') {
+        return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_lunas.png" alt="Lunas" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#1cc88a;font-weight:bold">Lunas</span>';
+    }
+    if ($status === 'angsuran') {
+        return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_angsuran.png" alt="Angsuran" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#f6c23e;font-weight:bold">Angsuran</span>';
+    }
     return '<img src="https://ppdbdk.pakarinformatika.web.id/assets/images/icon_belum.png" alt="Belum Bayar" style="height:18px;vertical-align:middle;margin-right:3px;"><span style="color:#e74a3b;font-weight:bold">Belum Bayar</span>';
 }
 
 $note_class = '';
-if ($status_pembayaran === 'Belum Bayar') $note_class = 'belum-bayar';
-elseif ($status_pembayaran === 'Angsuran') $note_class = 'angsuran';
-elseif ($status_pembayaran === 'Lunas') $note_class = 'lunas';
+if ($status_pembayaran === 'Belum Bayar') {
+    $note_class = 'belum-bayar';
+} elseif ($status_pembayaran === 'Angsuran') {
+    $note_class = 'angsuran';
+} elseif ($status_pembayaran === 'Lunas') {
+    $note_class = 'lunas';
+}
 
 $no_invoice = $row['no_invoice'] ?? '';
 
@@ -175,13 +199,14 @@ $versi_tertinggi = 1;
 foreach (glob($pattern) as $file) {
     if (preg_match('/_v(\d+)\.pdf$/', $file, $m)) {
         $v = intval($m[1]);
-        if ($v > $versi_tertinggi) $versi_tertinggi = $v;
+        if ($v > $versi_tertinggi) {
+            $versi_tertinggi = $v;
+        }
     }
 }
 $versi_tertinggi++; // Versi baru untuk file baru
 $filename = "bukti_pendaftaran_{$no_formulir}_v{$versi_tertinggi}.pdf";
 $save_path = $dir_pdf . $filename;
-
 
 $mpdf = new \Mpdf\Mpdf([
     'format' => 'A4',
@@ -189,7 +214,7 @@ $mpdf = new \Mpdf\Mpdf([
     'margin_left' => 7,
     'margin_right' => 7,
     'margin_bottom' => 8,
-    'default_font' => 'Arial'
+    'default_font' => 'Arial',
 ]);
 
 ob_start();
@@ -453,7 +478,9 @@ ob_start();
       <td style="width: 50%; padding: 0; vertical-align: middle;">
         <span class="no-reg-label">No. Registrasi</span>
         <span class="no-reg-sep">:</span>
-        <span class="no-reg-val"><i><b><?= safe($row['no_formulir']) ?></b></i></span>
+        <span class="no-reg-val"><i><b><?= safe(
+            $row['no_formulir']
+        ) ?></b></i></span>
       </td>
       <?php if (!empty($row['reviewed_by'])): ?>
       <td style="width: 50%; padding: 0; vertical-align: middle; text-align: right;">
@@ -468,14 +495,18 @@ ob_start();
   </table>
 
 <?php
-$is_ppdb_bersama = (strtoupper(trim($status_pendaftaran)) === 'PPDB BERSAMA');
-if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_invoice)): ?>
+$is_ppdb_bersama = strtoupper(trim($status_pendaftaran)) === 'PPDB BERSAMA';
+if (
+    ($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) &&
+    !empty($no_invoice)
+): ?>
   <div class="no-reg-row" style="margin-top:8px;">
     <span class="no-reg-label">No. Formulir</span>
     <span class="no-reg-sep">:</span>
     <span class="no-reg-val"><i><b><?= safe($no_invoice) ?></b></i></span>
   </div>
-<?php endif; ?>
+<?php endif;
+?>
 
 </div>
 
@@ -483,14 +514,22 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
   DATA CALON MURID BARU
 </div>
     <table class="data-table">
-      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id($row['tanggal_pendaftaran']) ?></td></tr>
+      <tr><th>Tanggal Pendaftaran</th><td><?= tanggal_id(
+          $row['tanggal_pendaftaran']
+      ) ?></td></tr>
       <tr><th>Nama Murid Baru</th><td><?= safe($row['nama']) ?></td></tr>
       <tr><th>Jenis Kelamin</th><td><?= safe($row['jenis_kelamin']) ?></td></tr>
-      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe($row['asal_sekolah']) ?></td></tr>
+      <tr><th>Asal Sekolah SMP/MTs</th><td><?= safe(
+          $row['asal_sekolah']
+      ) ?></td></tr>
       <tr><th>Alamat Rumah</th><td><?= safe($row['alamat']) ?></td></tr>
       <tr><th>No. HP Siswa</th><td><?= safe($row['no_hp']) ?></td></tr>
-      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe($row['no_hp_ortu']) ?></td></tr>
-      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe($row['unit']) ?></td></tr>
+      <tr><th>No. HP Orang Tua/Wali</th><td><?= safe(
+          $row['no_hp_ortu']
+      ) ?></td></tr>
+      <tr><th>Pilihan Sekolah/Jurusan</th><td><?= safe(
+          $row['unit']
+      ) ?></td></tr>
     </table>
 
 <?php if (strtoupper($status_pendaftaran) !== 'PPDB BERSAMA'): ?>
@@ -500,8 +539,8 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
           Keterangan Pembayaran
         </th>
       </tr>
-      <?php if(count($tagihan)): ?>
-        <?php foreach($tagihan as $tg): ?>
+      <?php if (count($tagihan)): ?>
+        <?php foreach ($tagihan as $tg): ?>
           <tr>
             <td><?= safe($tg['jenis']) ?></td>
             <td style="text-align:right; font-weight:600;">
@@ -514,7 +553,10 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
       <?php endif; ?>
     </table>
 
-    <?php if ($status_pembayaran !== 'Belum Bayar' && count($pembayaran_terakhir)): ?>
+    <?php if (
+        $status_pembayaran !== 'Belum Bayar' &&
+        count($pembayaran_terakhir)
+    ): ?>
       <div style="margin:10px 0 3px 0; font-weight:600;">Riwayat Pembayaran:</div>
       <table class="tagihan-table riwayat-bayar" style="font-size:11px;">
         <colgroup>
@@ -533,11 +575,19 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
           <th>Bulan</th>
           <th>Tanggal</th>
         </tr>
-        <?php foreach($pembayaran_terakhir as $b): ?>
+        <?php foreach ($pembayaran_terakhir as $b): ?>
         <tr>
           <td><?= safe($b['jenis']) ?></td>
-          <td style="text-align:right;">Rp <?= number_format($b['jumlah'], 0, ',', '.') ?></td>
-          <td style="text-align:right;"><?= ($b['cashback'] ?? 0) > 0 ? 'Rp ' . number_format($b['cashback'], 0, ',', '.') : '-' ?></td>
+        <td style="text-align:right;">Rp <?= number_format(
+            $b['jumlah'] - ($b['cashback'] ?? 0),
+            0,
+            ',',
+            '.'
+        ) ?></td>
+
+          <td style="text-align:right;"><?= ($b['cashback'] ?? 0) > 0
+              ? 'Rp ' . number_format($b['cashback'], 0, ',', '.')
+              : '-' ?></td>
           <td><?= safe($b['status_pembayaran']) ?></td>
           <td><?= $b['bulan'] ? safe($b['bulan']) : '-' ?></td>
           <td><?= tanggal_id($b['tanggal_pembayaran']) ?></td>
@@ -548,14 +598,11 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
 <?php endif; ?>
 <div class="status-row">
   Status Pembayaran: 
-  <?php
-
-    if (strtoupper($status_pendaftaran) === 'PPDB BERSAMA') {
-        echo '<span style="color:#31708f;font-weight:600;">PPDB Bersama</span>';
-    } else {
-        echo getStatusBadge($status_pembayaran);
-    }
-  ?>
+  <?php if (strtoupper($status_pendaftaran) === 'PPDB BERSAMA') {
+      echo '<span style="color:#31708f;font-weight:600;">PPDB Bersama</span>';
+  } else {
+      echo getStatusBadge($status_pembayaran);
+  } ?>
 </div>
 
     <div class="info-contact">
@@ -595,10 +642,9 @@ if (($status_pembayaran !== 'Belum Bayar' || $is_ppdb_bersama) && !empty($no_inv
 $html = ob_get_clean();
 $mpdf->WriteHTML($html);
 $mpdf->Output($save_path, \Mpdf\Output\Destination::FILE);
-
 $pdf_url = "https://ppdbdk.pakarinformatika.web.id/pendaftaran/bukti/$filename";
 echo "<div style='padding:22px;font-size:16px;font-family:Segoe UI,Arial;'>
 PDF berhasil dibuat:<br>
 <a href='$pdf_url' target='_blank'>$pdf_url</a>
 </div>";
-?>
+ ?>

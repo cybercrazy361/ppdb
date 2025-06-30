@@ -82,54 +82,45 @@ function tanggal_id($tgl)
     return "$date $month $year";
 }
 
-// Status progres
-// Status progres
+// --- Status progres UANG PANGKAL: Berdasarkan total pembayaran (jumlah-cashback) vs tagihan --- //
 $uang_pangkal_id = 1;
-$spp_id = 2;
 
-// Cek apakah ADA pembayaran uang pangkal untuk siswa ini (apapun status, kecuali NULL/kosong)
-$stmt_up = $conn->prepare("
-    SELECT COUNT(*) as total 
+// Ambil tagihan uang pangkal
+$tagihan_uang_pangkal = 0;
+$stmt_tagihan_up = $conn->prepare("
+    SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id = ? AND jenis_pembayaran_id = ?
+");
+$stmt_tagihan_up->bind_param('ii', $id, $uang_pangkal_id);
+$stmt_tagihan_up->execute();
+$res_tagihan_up = $stmt_tagihan_up->get_result();
+if ($row_up = $res_tagihan_up->fetch_assoc()) {
+    $tagihan_uang_pangkal = (int) $row_up['nominal'];
+}
+$stmt_tagihan_up->close();
+
+// Hitung total pembayaran uang pangkal (jumlah - cashback)
+$total_bayar_uang_pangkal = 0;
+$stmt_bayar_up = $conn->prepare("
+    SELECT SUM(pd.jumlah - IFNULL(pd.cashback,0)) AS total_bayar
     FROM pembayaran_detail pd
     JOIN pembayaran p ON pd.pembayaran_id = p.id
     WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ?
 ");
-$stmt_up->bind_param('ii', $id, $uang_pangkal_id);
-$stmt_up->execute();
-$cek_uang_pangkal = $stmt_up->get_result()->fetch_assoc();
-$is_bayar_uang_pangkal = $cek_uang_pangkal['total'] > 0;
-$stmt_up->close();
+$stmt_bayar_up->bind_param('ii', $id, $uang_pangkal_id);
+$stmt_bayar_up->execute();
+$res_bayar_up = $stmt_bayar_up->get_result();
+if ($row_bayar_up = $res_bayar_up->fetch_assoc()) {
+    $total_bayar_uang_pangkal = (int) $row_bayar_up['total_bayar'];
+}
+$stmt_bayar_up->close();
 
-// Cek SPP Juli Lunas
-$stmt_spp = $conn->prepare("
-    SELECT COUNT(*) as total 
-    FROM pembayaran_detail pd
-    JOIN pembayaran p ON pd.pembayaran_id = p.id
-    WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ? AND pd.bulan = 'Juli' AND pd.status_pembayaran = 'Lunas'
-");
-$stmt_spp->bind_param('ii', $id, $spp_id);
-$stmt_spp->execute();
-$cek_spp_juli = $stmt_spp->get_result()->fetch_assoc();
-$is_lunas_spp_juli = $cek_spp_juli['total'] > 0;
-$stmt_spp->close();
-
-// Cek uang pangkal LUNAS
-$stmt_up_lunas = $conn->prepare("
-    SELECT COUNT(*) as total 
-    FROM pembayaran_detail pd
-    JOIN pembayaran p ON pd.pembayaran_id = p.id
-    WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = ? AND pd.status_pembayaran = 'Lunas'
-");
-$stmt_up_lunas->bind_param('ii', $id, $uang_pangkal_id);
-$stmt_up_lunas->execute();
-$cek_uang_pangkal_lunas = $stmt_up_lunas->get_result()->fetch_assoc();
-$is_lunas_uang_pangkal = $cek_uang_pangkal_lunas['total'] > 0;
-$stmt_up_lunas->close();
-
-// Logika status pembayaran
-if ($is_lunas_uang_pangkal) {
+// Tentukan status
+if (
+    $total_bayar_uang_pangkal >= $tagihan_uang_pangkal &&
+    $tagihan_uang_pangkal > 0
+) {
     $status_pembayaran = 'Lunas';
-} elseif ($is_bayar_uang_pangkal) {
+} elseif ($total_bayar_uang_pangkal > 0) {
     $status_pembayaran = 'Angsuran';
 } else {
     $status_pembayaran = 'Belum Bayar';
@@ -367,11 +358,12 @@ if (
       <tr>
         <td><?= safe($b['jenis']) ?></td>
         <td style="text-align:right;">Rp <?= number_format(
-            $b['jumlah'],
+            $b['jumlah'] - ($b['cashback'] ?? 0),
             0,
             ',',
             '.'
         ) ?></td>
+
         <td style="text-align:right;">
           <?= ($b['cashback'] ?? 0) > 0
               ? 'Rp ' . number_format($b['cashback'], 0, ',', '.')
