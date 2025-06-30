@@ -25,34 +25,38 @@ $query = "
         'Belum Ada'
       ) AS metode_pembayaran,
       CASE
-        WHEN (
-          SELECT 
-            IFNULL(SUM(pd.jumlah - IFNULL(pd.cashback,0)),0)
-          FROM pembayaran_detail pd
-          JOIN pembayaran p ON pd.pembayaran_id = p.id
-          WHERE p.siswa_id = s.id
-            AND pd.jenis_pembayaran_id = $uang_pangkal_id
-        ) >= (
-          SELECT 
-            IFNULL(sta.nominal,0)
-          FROM siswa_tagihan_awal sta
-          WHERE sta.siswa_id = s.id AND sta.jenis_pembayaran_id = $uang_pangkal_id
-        )
-        AND (
-          SELECT 
-            IFNULL(sta.nominal,0)
-          FROM siswa_tagihan_awal sta
-          WHERE sta.siswa_id = s.id AND sta.jenis_pembayaran_id = $uang_pangkal_id
-        ) > 0
+        WHEN
+          (SELECT COUNT(*) FROM pembayaran_detail pd1
+           JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+           WHERE p1.siswa_id = s.id
+             AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+             AND pd1.status_pembayaran = 'Lunas'
+          ) > 0
+        AND
+          (SELECT COUNT(*) FROM pembayaran_detail pd2
+           JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+           WHERE p2.siswa_id = s.id
+             AND pd2.jenis_pembayaran_id = $spp_id
+             AND pd2.bulan = 'Juli'
+             AND pd2.status_pembayaran = 'Lunas'
+          ) > 0
         THEN 'Lunas'
-        WHEN (
-          SELECT 
-            IFNULL(SUM(pd.jumlah - IFNULL(pd.cashback,0)),0)
-          FROM pembayaran_detail pd
-          JOIN pembayaran p ON pd.pembayaran_id = p.id
-          WHERE p.siswa_id = s.id
-            AND pd.jenis_pembayaran_id = $uang_pangkal_id
-        ) > 0
+        WHEN
+          (
+            (SELECT COUNT(*) FROM pembayaran_detail pd1
+             JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+             WHERE p1.siswa_id = s.id
+               AND pd1.jenis_pembayaran_id = $uang_pangkal_id
+            ) > 0
+            OR
+            (SELECT COUNT(*) FROM pembayaran_detail pd2
+             JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+             WHERE p2.siswa_id = s.id
+               AND pd2.jenis_pembayaran_id = $spp_id
+               AND pd2.bulan = 'Juli'
+               AND pd2.status_pembayaran = 'Lunas'
+            ) > 0
+          )
         THEN 'Angsuran'
         ELSE 'Belum Bayar'
       END AS status_pembayaran
@@ -67,23 +71,28 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $rows = [];
+// Rekap stat
 $lunas = $angsuran = $belum = $ppdb = 0;
 while ($row = $result->fetch_assoc()) {
-    // Cek status PPDB bersama
-    $status_final = '';
-    if (strtolower(trim($row['status_cp'] ?? '')) === 'ppdb bersama') {
+    // -- NORMALISASI STATUS --
+    $status_cp = strtolower(trim($row['status_cp'] ?? ''));
+    $status_pembayaran = strtolower(trim($row['status_pembayaran'] ?? ''));
+    // -- LOGIKA STATUS FINAL --
+    if ($status_cp === 'ppdb bersama') {
         $status_final = 'PPDB Bersama';
         $ppdb++;
     } else {
-        $status_final = $row['status_pembayaran'];
-        switch (strtolower($status_final)) {
+        switch ($status_pembayaran) {
             case 'lunas':
+                $status_final = 'Lunas';
                 $lunas++;
                 break;
             case 'angsuran':
+                $status_final = 'Angsuran';
                 $angsuran++;
                 break;
             default:
+                $status_final = 'Belum Bayar';
                 $belum++;
                 break;
         }
