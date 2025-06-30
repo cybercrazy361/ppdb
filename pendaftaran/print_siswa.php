@@ -11,7 +11,6 @@ function safe($str)
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'pendaftaran') {
     die('Akses tidak diizinkan.');
 }
-
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) {
     die('ID siswa tidak valid.');
@@ -43,7 +42,7 @@ if ($username_petugas) {
     $stmt_petugas->close();
 }
 
-// Status & notes dari calon_pendaftar
+// Ambil status & notes dari calon_pendaftar
 $status_pendaftaran = '-';
 $keterangan_pendaftaran = '-';
 if (!empty($row['calon_pendaftar_id'])) {
@@ -83,14 +82,14 @@ function tanggal_id($tgl)
     return "$date $month $year";
 }
 
-// ===================== STATUS UANG PANGKAL ======================== //
+// --- Status progres UANG PANGKAL: Berdasarkan total pembayaran (jumlah-cashback) vs tagihan --- //
 $uang_pangkal_id = 1;
 
-// Tagihan uang pangkal
+// Ambil tagihan uang pangkal
 $tagihan_uang_pangkal = 0;
-$stmt_tagihan_up = $conn->prepare(
-    'SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id = ? AND jenis_pembayaran_id = ?'
-);
+$stmt_tagihan_up = $conn->prepare("
+    SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id = ? AND jenis_pembayaran_id = ?
+");
 $stmt_tagihan_up->bind_param('ii', $id, $uang_pangkal_id);
 $stmt_tagihan_up->execute();
 $res_tagihan_up = $stmt_tagihan_up->get_result();
@@ -99,7 +98,7 @@ if ($row_up = $res_tagihan_up->fetch_assoc()) {
 }
 $stmt_tagihan_up->close();
 
-// Total bayar uang pangkal (jumlah-cashback)
+// Hitung total pembayaran uang pangkal (jumlah - cashback)
 $total_bayar_uang_pangkal = 0;
 $stmt_bayar_up = $conn->prepare("
     SELECT SUM(pd.jumlah - IFNULL(pd.cashback,0)) AS total_bayar
@@ -115,7 +114,7 @@ if ($row_bayar_up = $res_bayar_up->fetch_assoc()) {
 }
 $stmt_bayar_up->close();
 
-// LOGIKA STATUS
+// Tentukan status
 if (
     $total_bayar_uang_pangkal >= $tagihan_uang_pangkal &&
     $tagihan_uang_pangkal > 0
@@ -127,7 +126,7 @@ if (
     $status_pembayaran = 'Belum Bayar';
 }
 
-// ================= TAGIHAN & RIWAYAT ================ //
+// Tagihan awal
 $tagihan = [];
 $stmtTagihan = $conn->prepare("
     SELECT jp.nama AS jenis, sta.nominal
@@ -144,7 +143,7 @@ while ($t = $res->fetch_assoc()) {
 }
 $stmtTagihan->close();
 
-// Riwayat pembayaran terakhir (status transaksi tetap tampil apa adanya!)
+// Riwayat pembayaran terakhir + cashback
 $pembayaran_terakhir = [];
 if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar = $conn->prepare("
@@ -165,7 +164,6 @@ if ($status_pembayaran !== 'Belum Bayar') {
     $stmtBayar->close();
 }
 
-// Status badge
 function getStatusBadge($status)
 {
     $status = strtolower($status);
@@ -189,7 +187,6 @@ if ($status_pembayaran === 'Belum Bayar') {
 
 $no_invoice = $row['no_invoice'] ?? '';
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -360,12 +357,12 @@ if (
       <?php foreach ($pembayaran_terakhir as $b): ?>
       <tr>
         <td><?= safe($b['jenis']) ?></td>
-        <td style="text-align:right;">Rp <?= number_format(
-            $b['jumlah'] - ($b['cashback'] ?? 0),
-            0,
-            ',',
-            '.'
-        ) ?></td>
+<td style="text-align:right;">Rp <?= number_format(
+    $b['jumlah'] - ($b['cashback'] ?? 0),
+    0,
+    ',',
+    '.'
+) ?></td>
 
         <td style="text-align:right;">
           <?= ($b['cashback'] ?? 0) > 0
