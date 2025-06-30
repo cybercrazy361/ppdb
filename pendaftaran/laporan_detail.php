@@ -195,6 +195,67 @@ $conn->close();
     .report-card.ppdb .count {color:#fff;}
     .card.ppdb {background: linear-gradient(135deg, #17c7e7 0%, #2cb5e8 100%) !important; color: #fff !important;}
     .card.ppdb .count {color:#fff;}
+    /* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+  .report-card {
+    padding: 12px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .report-card .count {
+    font-size: 1.4rem;
+  }
+
+  .main {
+    padding: 1rem;
+  }
+
+  .navbar .title {
+    font-size: 1rem;
+    white-space: normal;
+  }
+
+  .user-menu {
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+  }
+
+  .container {
+    padding: 0 0.5rem;
+  }
+
+  /* Jadikan modal tabel bisa scroll horizontal */
+  .modal-body table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .modal-body table td,
+  .modal-body table th {
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+
+  /* Input dan tombol lebih fleksibel */
+  #formCariTanggal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #formCariTanggal input[type="date"] {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+}
+
   </style>
 </head>
 <body>
