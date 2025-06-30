@@ -162,7 +162,7 @@ function formatTanggal($t)
     <thead>
       <tr>
         <th>No</th>
-        <th>No Formulir</th>
+        <th>No Invoice</th>
         <th>Nama</th>
         <th>JK</th>
         <th>TTL</th>
@@ -181,7 +181,7 @@ function formatTanggal($t)
       foreach ($rows as $row): ?>
       <tr>
         <td><?= $i++ ?></td>
-        <td><?= htmlspecialchars($row['no_formulir']) ?></td>
+        <td><?= htmlspecialchars($row['no_invoice']) ?></td>
         <td><?= htmlspecialchars($row['nama']) ?></td>
         <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
         <td>
