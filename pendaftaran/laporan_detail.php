@@ -100,7 +100,7 @@ function rekapHariIni($conn, $unit, $uang_pangkal_id, $spp_id, $tanggal = null)
         FROM pembayaran p
         JOIN siswa s ON p.siswa_id = s.id
         LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-        WHERE s.unit = ? AND DATE(p.tanggal_bayar) = ?
+        WHERE s.unit = ? AND DATE(p.tanggal_pembayaran) = ?
     ");
     $stmt->bind_param('ss', $unit, $today);
     $stmt->execute();
