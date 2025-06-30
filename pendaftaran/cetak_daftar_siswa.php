@@ -45,7 +45,7 @@ $query = "
     FROM siswa s
     LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
     WHERE s.unit = ?
-    ORDER BY s.id
+    ORDER BY s.nama ASC
 ";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('s', $unit);
@@ -138,7 +138,8 @@ function formatTanggal($t)
     }
     table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
     th { background: #2e59d9; color: #fff; }
-    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 6px; font-size: 14px; text-align: center; }
+    th.th-nama, td.td-nama { text-align: left !important; }
   </style>
 </head>
 <body>
@@ -148,22 +149,22 @@ function formatTanggal($t)
     <button onclick="window.close()">✖ Tutup</button>
   </div>
 
-  <h1>Daftar Siswa <?= htmlspecialchars($unit) ?></h1>
+  <h1>Daftar Siswa <?= htmlspecialchars($unit) ?> 2025/2026</h1>
 
   <div class="stats no-print">
     <div>Total: <?= count($rows) ?></div>
     <div>Lunas: <?= $lunas ?></div>
     <div>Angsuran: <?= $angsuran ?></div>
     <div>Belum Bayar: <?= $belum ?></div>
-    <div>PPDB Bersama: <?= $ppdb ?></div>
+    <div>SPMB Bersama: <?= $ppdb ?></div>
   </div>
 
   <table>
     <thead>
       <tr>
         <th>No</th>
-        <th>No Invoice</th>
-        <th>Nama</th>
+        <th>No Formulir</th>
+        <th class="th-nama">Nama Siswa</th>
         <th>JK</th>
         <th>TTL</th>
         <th>Asal Sekolah</th>
@@ -182,7 +183,7 @@ function formatTanggal($t)
       <tr>
         <td><?= $i++ ?></td>
         <td><?= htmlspecialchars($row['no_invoice']) ?></td>
-        <td><?= htmlspecialchars($row['nama']) ?></td>
+        <td class="td-nama"><?= htmlspecialchars($row['nama']) ?></td>
         <td><?= htmlspecialchars($row['jenis_kelamin']) ?></td>
         <td>
           <?= htmlspecialchars($row['tempat_lahir']) ?>, 
