@@ -17,7 +17,9 @@ $unit_petugas = $_SESSION['unit'];
 
 // Fetch tahun_pelajaran list
 $tahun_pelajaran_list = [];
-$stmt_tahun = $conn->prepare("SELECT tahun FROM tahun_pelajaran ORDER BY tahun DESC");
+$stmt_tahun = $conn->prepare(
+    'SELECT tahun FROM tahun_pelajaran ORDER BY tahun DESC'
+);
 if ($stmt_tahun) {
     $stmt_tahun->execute();
     $result_tahun = $stmt_tahun->get_result();
@@ -26,35 +28,41 @@ if ($stmt_tahun) {
     }
     $stmt_tahun->close();
 } else {
-    die("Error preparing statement: " . $conn->error);
+    die('Error preparing statement: ' . $conn->error);
 }
 
 // Fetch jenis_pembayaran_list sesuai dengan unit petugas
 $jenis_pembayaran_list = [];
-$stmt_jenis = $conn->prepare("SELECT id, nama FROM jenis_pembayaran WHERE unit = ? ORDER BY nama ASC");
+$stmt_jenis = $conn->prepare(
+    'SELECT id, nama FROM jenis_pembayaran WHERE unit = ? ORDER BY nama ASC'
+);
 if ($stmt_jenis) {
-    $stmt_jenis->bind_param("s", $unit_petugas);
+    $stmt_jenis->bind_param('s', $unit_petugas);
     $stmt_jenis->execute();
     $result_jenis = $stmt_jenis->get_result();
     while ($row = $result_jenis->fetch_assoc()) {
         $jenis_pembayaran_list[] = [
             'id' => $row['id'],
-            'nama' => $row['nama']
+            'nama' => $row['nama'],
         ];
     }
     $stmt_jenis->close();
 } else {
-    die("Error preparing statement: " . $conn->error);
+    die('Error preparing statement: ' . $conn->error);
 }
 
 // Ambil parameter pencarian
-$search_no_formulir = isset($_GET['search_no_formulir']) ? trim($_GET['search_no_formulir']) : '';
+$search_no_formulir = isset($_GET['search_no_formulir'])
+    ? trim($_GET['search_no_formulir'])
+    : '';
 $search_nama = isset($_GET['search_nama']) ? trim($_GET['search_nama']) : '';
 
 // Pagination setup
-$limit = 5; 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
+$limit = 5;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) {
+    $page = 1;
+}
 $start = ($page - 1) * $limit;
 
 // Initialize query parameters
@@ -67,19 +75,19 @@ $query_params[] = $unit_petugas;
 
 // Tambahkan filter pencarian jika ada
 if ($search_no_formulir !== '') {
-    $query .= " AND siswa.no_formulir LIKE ?";
+    $query .= ' AND siswa.no_formulir LIKE ?';
     $param_types .= 's';
     $query_params[] = '%' . $search_no_formulir . '%';
 }
 
 if ($search_nama !== '') {
-    $query .= " AND siswa.nama LIKE ?";
+    $query .= ' AND siswa.nama LIKE ?';
     $param_types .= 's';
     $query_params[] = '%' . $search_nama . '%';
 }
 
 // Hitung total pembayaran
-$total_query = "SELECT COUNT(*) AS total " . $query;
+$total_query = 'SELECT COUNT(*) AS total ' . $query;
 $stmt_total = $conn->prepare($total_query);
 if ($stmt_total) {
     $stmt_total->bind_param($param_types, ...$query_params);
@@ -89,11 +97,12 @@ if ($stmt_total) {
     $total_pages = ceil($total / $limit);
     $stmt_total->close();
 } else {
-    die("Error preparing statement: " . $conn->error);
+    die('Error preparing statement: ' . $conn->error);
 }
 
 // Ambil data pembayaran dengan limit dan offset
-$select_query = "SELECT 
+$select_query =
+    "SELECT 
                 pembayaran.id AS pembayaran_id,
                 siswa.no_formulir,
                 siswa.nama,
@@ -103,7 +112,9 @@ $select_query = "SELECT
                 pembayaran.tahun_pelajaran,
                 pembayaran.tanggal_pembayaran,
                 pembayaran.keterangan
-              " . $query . "
+              " .
+    $query .
+    "
               ORDER BY pembayaran.tanggal_pembayaran DESC, pembayaran.id DESC
               LIMIT ?, ?";
 
@@ -128,12 +139,12 @@ if ($stmt) {
             'tahun_pelajaran' => $row['tahun_pelajaran'],
             'tanggal_pembayaran' => $row['tanggal_pembayaran'],
             'keterangan' => $row['keterangan'],
-            'details' => []
+            'details' => [],
         ];
     }
     $stmt->close();
 } else {
-    die("Error preparing statement: " . $conn->error);
+    die('Error preparing statement: ' . $conn->error);
 }
 
 // Jika ada pembayaran, ambil detailnya
@@ -165,24 +176,25 @@ if (!empty($pembayaran_data)) {
             $pembayaran_id = $row['pembayaran_id'];
             if (isset($pembayaran_data[$pembayaran_id])) {
                 $pembayaran_data[$pembayaran_id]['details'][] = [
-    'jenis_pembayaran_nama' => $row['jenis_pembayaran_nama'],
-    'jumlah' => $row['detail_jumlah'],
-    'bulan' => $row['bulan'] ?? '',
-    'status_pembayaran' => $row['status_pembayaran'] ?? '',
-    'cashback' => $row['cashback'] ?? 0
-];
-
+                    'jenis_pembayaran_nama' => $row['jenis_pembayaran_nama'],
+                    'jumlah' => $row['detail_jumlah'],
+                    'bulan' => $row['bulan'] ?? '',
+                    'status_pembayaran' => $row['status_pembayaran'] ?? '',
+                    'cashback' => $row['cashback'] ?? 0,
+                ];
             }
         }
         $stmt_detail->close();
     } else {
-        die("Error preparing detail statement: " . $conn->error);
+        die('Error preparing detail statement: ' . $conn->error);
     }
 }
 
 // Fetch list of siswa untuk autocomplete (opsional)
 $siswa_list = [];
-$stmt_siswa = $conn->prepare("SELECT no_formulir, nama FROM siswa WHERE unit = ? ORDER BY nama ASC");
+$stmt_siswa = $conn->prepare(
+    'SELECT no_formulir, nama FROM siswa WHERE unit = ? ORDER BY nama ASC'
+);
 if ($stmt_siswa) {
     $stmt_siswa->bind_param('s', $unit_petugas);
     $stmt_siswa->execute();
@@ -192,7 +204,7 @@ if ($stmt_siswa) {
     }
     $stmt_siswa->close();
 } else {
-    die("Error preparing statement: " . $conn->error);
+    die('Error preparing statement: ' . $conn->error);
 }
 
 // Generate CSRF token
@@ -212,7 +224,9 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="stylesheet" href="../assets/css/sidebar.css">
     <link rel="stylesheet" href="../assets/css/kelola_pembayaran_styles.css">
     <script>
-        var jenisPembayaranList = <?php echo json_encode($jenis_pembayaran_list); ?>;
+        var jenisPembayaranList = <?php echo json_encode(
+            $jenis_pembayaran_list
+        ); ?>;
         console.log('jenisPembayaranList:', jenisPembayaranList);
     </script>
     <script src="../assets/js/kelola_pembayaran.js" defer></script>
@@ -227,7 +241,9 @@ $csrf_token = $_SESSION['csrf_token'];
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link" href="#">
-                        <span class="me-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['nama']); ?></span>
+                        <span class="me-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars(
+                            $_SESSION['nama']
+                        ); ?></span>
                         <i class="fas fa-user-circle fa-lg"></i>
                     </a>
                 </li>
@@ -245,11 +261,19 @@ $csrf_token = $_SESSION['csrf_token'];
                     <form class="row g-3" method="GET" action="kelola_pembayaran.php">
                         <div class="col-md-4">
                             <label for="search_no_formulir" class="form-label">Cari No Formulir</label>
-                            <input type="text" class="form-control" id="search_no_formulir" name="search_no_formulir" placeholder="Masukkan No Formulir" value="<?= isset($_GET['search_no_formulir']) ? htmlspecialchars($_GET['search_no_formulir']) : ''; ?>">
+                            <input type="text" class="form-control" id="search_no_formulir" name="search_no_formulir" placeholder="Masukkan No Formulir" value="<?= isset(
+                                $_GET['search_no_formulir']
+                            )
+                                ? htmlspecialchars($_GET['search_no_formulir'])
+                                : '' ?>">
                         </div>
                         <div class="col-md-4">
                             <label for="search_nama" class="form-label">Cari Nama Siswa</label>
-                            <input type="text" class="form-control" id="search_nama" name="search_nama" placeholder="Masukkan Nama Siswa" value="<?= isset($_GET['search_nama']) ? htmlspecialchars($_GET['search_nama']) : ''; ?>">
+                            <input type="text" class="form-control" id="search_nama" name="search_nama" placeholder="Masukkan Nama Siswa" value="<?= isset(
+                                $_GET['search_nama']
+                            )
+                                ? htmlspecialchars($_GET['search_nama'])
+                                : '' ?>">
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search"></i> Cari</button>
@@ -260,9 +284,45 @@ $csrf_token = $_SESSION['csrf_token'];
             </div>
             <div class="card shadow mb-4">
                 <div class="card-body">
-                    <?php if (empty($pembayaran_data)) : ?>
+                    <?php if (empty($pembayaran_data)): ?>
                         <div class="alert alert-warning">Tidak ada data pembayaran ditemukan.</div>
-                    <?php else : ?>
+                    <?php // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        else: ?>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="table-primary">
@@ -280,34 +340,68 @@ $csrf_token = $_SESSION['csrf_token'];
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                    $no = $start + 1; 
-                                    foreach ($pembayaran_data as $pembayaran_id => $pembayaran) : ?>
+                                    <?php
+                                    $no = $start + 1;
+                                    foreach (
+                                        $pembayaran_data
+                                        as $pembayaran_id => $pembayaran
+                                    ): ?>
                                         <tr>
-                                            <td><?= $no++; ?></td>
-                                            <td><?= htmlspecialchars($pembayaran['no_formulir']); ?></td>
-                                            <td><?= htmlspecialchars($pembayaran['nama']); ?></td>
-                                            <td><?= htmlspecialchars($pembayaran['unit']); ?></td>
-                                            <td><?= htmlspecialchars($pembayaran['tahun_pelajaran']); ?></td>
-                                            <td><?= number_format($pembayaran['jumlah'], 0, ',', '.'); ?></td>
-                                            <td><?= htmlspecialchars($pembayaran['metode_pembayaran']); ?></td>
-                                            <td><?= htmlspecialchars($pembayaran['tanggal_pembayaran']); ?></td>
-                                            <td><?= htmlspecialchars($pembayaran['keterangan']); ?></td>
+                                            <td><?= $no++ ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $pembayaran['no_formulir']
+                                            ) ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $pembayaran['nama']
+                                            ) ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $pembayaran['unit']
+                                            ) ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $pembayaran['tahun_pelajaran']
+                                            ) ?></td>
+                                            <td><?= number_format(
+                                                $pembayaran['jumlah'],
+                                                0,
+                                                ',',
+                                                '.'
+                                            ) ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $pembayaran['metode_pembayaran']
+                                            ) ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $pembayaran[
+                                                    'tanggal_pembayaran'
+                                                ]
+                                            ) ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $pembayaran['keterangan']
+                                            ) ?></td>
                                             <td>
-                                                <button class="btn btn-warning btn-sm edit-btn" data-id="<?= htmlspecialchars($pembayaran_id); ?>">
+                                                <button class="btn btn-warning btn-sm edit-btn" data-id="<?= htmlspecialchars(
+                                                    $pembayaran_id
+                                                ) ?>">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm delete-btn" data-id="<?= htmlspecialchars($pembayaran_id); ?>">
+                                                <button class="btn btn-danger btn-sm delete-btn" data-id="<?= htmlspecialchars(
+                                                    $pembayaran_id
+                                                ) ?>">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                                <a href="cetak_pembayaran.php?id=<?= htmlspecialchars($pembayaran_id); ?>" class="btn btn-primary btn-sm" target="_blank">
+                                                <a href="cetak_pembayaran.php?id=<?= htmlspecialchars(
+                                                    $pembayaran_id
+                                                ) ?>" class="btn btn-primary btn-sm" target="_blank">
                                                     <i class="fas fa-print"></i>
                                                 </a>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="10">
-                                                <?php if (!empty($pembayaran['details'])) : ?>
+                                                <?php if (
+                                                    !empty(
+                                                        $pembayaran['details']
+                                                    )
+                                                ): ?>
                                                     <table class="table table-sm table-bordered">
                                                         <thead>
     <tr>
@@ -319,16 +413,16 @@ $csrf_token = $_SESSION['csrf_token'];
     </tr>
 </thead>
 <tbody>
-<?php foreach ($pembayaran['details'] as $detail) : ?>
+<?php foreach ($pembayaran['details'] as $detail): ?>
     <tr>
-        <td><?= htmlspecialchars($detail['jenis_pembayaran_nama']); ?></td>
-        <td><?= number_format($detail['jumlah'], 0, ',', '.'); ?></td>
-        <td><?= htmlspecialchars($detail['bulan'] ?? ''); ?></td>
-        <td><?= htmlspecialchars($detail['status_pembayaran'] ?? ''); ?></td>
+        <td><?= htmlspecialchars($detail['jenis_pembayaran_nama']) ?></td>
+        <td><?= number_format($detail['jumlah'], 0, ',', '.') ?></td>
+        <td><?= htmlspecialchars($detail['bulan'] ?? '') ?></td>
+        <td><?= htmlspecialchars($detail['status_pembayaran'] ?? '') ?></td>
         <td>
     <?= ($detail['cashback'] ?? 0) > 0
         ? number_format($detail['cashback'], 0, ',', '.')
-        : '-'; ?>
+        : '-' ?>
 </td>
 
     </tr>
@@ -336,54 +430,82 @@ $csrf_token = $_SESSION['csrf_token'];
 </tbody>
 
                                                     </table>
-                                                <?php else : ?>
+                                                <?php else: ?>
                                                     <p>Tidak ada rincian pembayaran.</p>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
-                                    <?php endforeach; ?>
+                                    <?php endforeach;
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
-                        <?php if ($total_pages > 1) : ?>
+                        <?php if ($total_pages > 1): ?>
                             <nav>
                                 <ul class="pagination justify-content-center">
                                     <?php
-                                    $query_params_pagination = $query_params; // Salin parameter pencarian
-                                    function buildPageUrl($page, $params) {
+                                    $query_params_pagination = $query_params;
+                                    function buildPageUrl($page, $params)
+                                    {
                                         $params['page'] = $page;
                                         return '?' . http_build_query($params);
                                     }
                                     ?>
 
-                                    <?php if ($page > 1) : ?>
+                                    <?php if ($page > 1): ?>
                                         <li class="page-item">
-                                            <a class="page-link" href="<?= buildPageUrl($page - 1, $query_params_pagination); ?>" aria-label="Previous">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                $page - 1,
+                                                $query_params_pagination
+                                            ) ?>" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
                                     <?php endif; ?>
 
-                                    <?php 
-                                    // Tampilkan pagination dengan rentang yang lebih baik
-                                    $max_links = 5; // Maksimal link pagination yang ditampilkan
-                                    $start_link = max(1, $page - floor($max_links / 2));
-                                    $end_link = min($total_pages, $start_link + $max_links - 1);
-                                    
-                                    // Adjust start_link jika end_link mendekati total_pages
-                                    if (($end_link - $start_link) < ($max_links - 1)) {
-                                        $start_link = max(1, $end_link - $max_links + 1);
+                                    <?php
+                                    $max_links = 5;
+                                    $start_link = max(
+                                        1,
+                                        $page - floor($max_links / 2)
+                                    );
+                                    $end_link = min(
+                                        $total_pages,
+                                        $start_link + $max_links - 1
+                                    );
+
+                                    if (
+                                        $end_link - $start_link <
+                                        $max_links - 1
+                                    ) {
+                                        $start_link = max(
+                                            1,
+                                            $end_link - $max_links + 1
+                                        );
                                     }
 
-                                    for ($i = $start_link; $i <= $end_link; $i++) : ?>
-                                        <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
-                                            <a class="page-link" href="<?= buildPageUrl($i, $query_params_pagination); ?>"><?= $i; ?></a>
+                                    for (
+                                        $i = $start_link;
+                                        $i <= $end_link;
+                                        $i++
+                                    ): ?>
+                                        <li class="page-item <?= $i == $page
+                                            ? 'active'
+                                            : '' ?>">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                $i,
+                                                $query_params_pagination
+                                            ) ?>"><?= $i ?></a>
                                         </li>
-                                    <?php endfor; ?>
+                                    <?php endfor;
+                                    ?>
 
-                                    <?php if ($page < $total_pages) : ?>
+                                    <?php if ($page < $total_pages): ?>
                                         <li class="page-item">
-                                            <a class="page-link" href="<?= buildPageUrl($page + 1, $query_params_pagination); ?>" aria-label="Next">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                $page + 1,
+                                                $query_params_pagination
+                                            ) ?>" aria-label="Next">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>
@@ -425,8 +547,15 @@ $csrf_token = $_SESSION['csrf_token'];
                             <label for="tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
                             <select name="tahun_pelajaran" id="tahun_pelajaran" class="form-select" required>
                                 <option value="" disabled selected>Pilih Tahun Pelajaran</option>
-                                <?php foreach ($tahun_pelajaran_list as $tahun) : ?>
-                                    <option value="<?= htmlspecialchars($tahun); ?>"><?= htmlspecialchars($tahun); ?></option>
+                                <?php foreach (
+                                    $tahun_pelajaran_list
+                                    as $tahun
+                                ): ?>
+                                    <option value="<?= htmlspecialchars(
+                                        $tahun
+                                    ) ?>"><?= htmlspecialchars(
+    $tahun
+) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -447,7 +576,9 @@ $csrf_token = $_SESSION['csrf_token'];
                             <label for="keterangan" class="form-label">Keterangan</label>
                             <textarea name="keterangan" id="keterangan" class="form-control" placeholder="Opsional"></textarea>
                         </div>
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(
+                            $csrf_token
+                        ) ?>">
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -470,7 +601,9 @@ $csrf_token = $_SESSION['csrf_token'];
                 <div class="modal-body">
                     <div id="edit-form-errors" class="alert alert-danger" style="display: none;"></div>
                     <input type="hidden" id="editPembayaranId" name="pembayaran_id">
-                    <input type="hidden" id="editCsrfToken" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                    <input type="hidden" id="editCsrfToken" name="csrf_token" value="<?= htmlspecialchars(
+                        $csrf_token
+                    ) ?>">
                     <div class="mb-3">
                         <label for="edit_no_formulir" class="form-label">No Formulir</label>
                         <input type="text" id="edit_no_formulir" name="edit_no_formulir" class="form-control" readonly>
@@ -530,7 +663,9 @@ $csrf_token = $_SESSION['csrf_token'];
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" id="hapusPembayaranId" name="pembayaran_id">
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(
+                            $csrf_token
+                        ) ?>">
                         <button type="submit" class="btn btn-danger">Hapus</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     </div>
