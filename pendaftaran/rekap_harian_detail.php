@@ -25,46 +25,72 @@ $data = [];
 
 while ($row = $result->fetch_assoc()) {
     $siswa_id = (int) $row['id'];
+    $status_pembayaran = 'Belum Bayar';
 
-    $cek = "
-        SELECT
-        CASE
-            WHEN 
-                (SELECT COUNT(*) FROM pembayaran_detail pd1 
-                 JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
-                 WHERE p1.siswa_id = $siswa_id 
-                   AND pd1.jenis_pembayaran_id = 1
-                   AND pd1.status_pembayaran = 'Lunas') > 0
-            AND 
-                (SELECT COUNT(*) FROM pembayaran_detail pd2 
-                 JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
-                 WHERE p2.siswa_id = $siswa_id 
-                   AND pd2.jenis_pembayaran_id = 2
-                   AND pd2.bulan = 'Juli'
-                   AND pd2.status_pembayaran = 'Lunas') > 0
-            THEN 'Lunas'
-            WHEN 
-                (SELECT COUNT(*) FROM pembayaran_detail pd 
-                 JOIN pembayaran p ON pd.pembayaran_id = p.id
-                 WHERE p.siswa_id = $siswa_id AND 
-                       (pd.jenis_pembayaran_id = 1 
-                        OR (pd.jenis_pembayaran_id = 2 
-                            AND pd.bulan = 'Juli' 
-                            AND pd.status_pembayaran = 'Lunas'))
-                ) > 0
-            THEN 'Angsuran'
-            ELSE 'Belum Bayar'
-        END AS status_pembayaran
-    ";
+    // Ambil tagihan uang pangkal
+    $tagihan_up = 0;
+    $stmt1 = $conn->prepare(
+        'SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id=? AND jenis_pembayaran_id=1'
+    );
+    $stmt1->bind_param('i', $siswa_id);
+    $stmt1->execute();
+    $rs1 = $stmt1->get_result();
+    if ($d = $rs1->fetch_assoc()) {
+        $tagihan_up = (int) $d['nominal'];
+    }
+    $stmt1->close();
 
-    $status =
-        $conn->query($cek)->fetch_assoc()['status_pembayaran'] ?? 'Belum Bayar';
+    // Total pembayaran uang pangkal dikurangi cashback
+    $total_bayar_up = 0;
+    $stmt2 = $conn->prepare("
+        SELECT SUM(pd.jumlah - IFNULL(pd.cashback,0)) AS total_bayar
+        FROM pembayaran_detail pd
+        JOIN pembayaran p ON pd.pembayaran_id = p.id
+        WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = 1
+    ");
+    $stmt2->bind_param('i', $siswa_id);
+    $stmt2->execute();
+    $rs2 = $stmt2->get_result();
+    if ($d2 = $rs2->fetch_assoc()) {
+        $total_bayar_up = (int) $d2['total_bayar'];
+    }
+    $stmt2->close();
+
+    // Hitung status berdasarkan total bayar vs tagihan
+    if ($tagihan_up > 0 && $total_bayar_up >= $tagihan_up) {
+        $status_pembayaran = 'Lunas';
+    } elseif ($total_bayar_up > 0) {
+        $status_pembayaran = 'Angsuran';
+    }
+
+    // Sinkronkan status dengan transaksi terakhir (opsional, biar konsisten dengan field status_pembayaran jika pernah diubah manual)
+    $stmt3 = $conn->prepare("
+        SELECT pd.status_pembayaran 
+        FROM pembayaran_detail pd
+        JOIN pembayaran p ON pd.pembayaran_id = p.id
+        WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = 1
+        ORDER BY p.tanggal_pembayaran DESC, pd.id DESC
+        LIMIT 1
+    ");
+    $stmt3->bind_param('i', $siswa_id);
+    $stmt3->execute();
+    $rs3 = $stmt3->get_result();
+    if ($d3 = $rs3->fetch_assoc()) {
+        $stat = strtolower($d3['status_pembayaran'] ?? '');
+        if (strpos($stat, 'lunas') !== false) {
+            $status_pembayaran = 'Lunas';
+        } elseif (strpos($stat, 'angsuran') !== false) {
+            $status_pembayaran = 'Angsuran';
+        }
+    }
+    $stmt3->close();
 
     $data[] = [
         'nama' => $row['nama'],
         'status_ppdb' => $row['status_ppdb'] ?? '-',
-        'status_pembayaran' => $status,
+        'status_pembayaran' => $status_pembayaran,
     ];
 }
 
+header('Content-Type: application/json');
 echo json_encode($data);
