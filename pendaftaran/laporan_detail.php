@@ -335,7 +335,7 @@ include 'sidebar_pendaftaran.php';
       <?php endif; ?>
     </div>
 <div class="text-end mb-3">
-  <button class="btn btn-outline-primary btn-sm" onclick="showDetail()">Lihat Detail Harian</button>
+  <button class="btn btn-primary btn-sm" onclick="showDetail()">Lihat Detail Harian</button>
 </div>
 
     <h5>Rekap Harian</h5>
