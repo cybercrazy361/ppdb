@@ -71,18 +71,18 @@ while ($r = $res->fetch_assoc()) {
     if ($r['status_pendaftaran'] === 'ppdb bersama') {
         $status_final = 'PPDB Bersama';
     }
-    // 2. Lunas
-    elseif ($r['uang_pangkal_lunas'] > 0 && $r['spp_juli_lunas'] > 0) {
+    // 2. Lunas - Uang Pangkal saja
+    elseif ($r['uang_pangkal_lunas'] > 0) {
         $status_final = 'Lunas';
     }
     // 3. Angsuran
     elseif (
         ($r['ada_uang_pangkal'] > 0 || $r['ada_spp_juli'] > 0) &&
-        !($r['uang_pangkal_lunas'] > 0 && $r['spp_juli_lunas'] > 0) &&
         $r['status_pendaftaran'] !== 'ppdb bersama'
     ) {
         $status_final = 'Angsuran';
     }
+    // 4. Belum Bayar (default)
 
     // --- FILTER sesuai request ---
     if (
@@ -93,8 +93,8 @@ while ($r = $res->fetch_assoc()) {
         ($status === 'ppdb' && $status_final === 'PPDB Bersama')
     ) {
         $siswaList[] = [
-            'nama' => htmlspecialchars($r['nama']),
-            'status_pembayaran' => htmlspecialchars($status_final),
+            'nama' => $r['nama'],
+            'status_pembayaran' => $status_final,
         ];
     }
 }
