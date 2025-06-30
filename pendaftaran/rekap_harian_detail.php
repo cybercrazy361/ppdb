@@ -15,7 +15,7 @@ $stmt = $conn->prepare("
     FROM pembayaran p
     JOIN siswa s ON p.siswa_id = s.id
     LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-    WHERE s.unit = ? AND DATE(p.tanggal_bayar) = ?
+    WHERE s.unit = ? AND DATE(p.tanggal_pembayaran) = ?
 ");
 $stmt->bind_param('ss', $unit, $tanggal);
 $stmt->execute();
@@ -24,9 +24,8 @@ $result = $stmt->get_result();
 $data = [];
 
 while ($row = $result->fetch_assoc()) {
-    $siswa_id = $row['id'];
+    $siswa_id = (int) $row['id'];
 
-    // Cek status pembayaran
     $cek = "
         SELECT
         CASE
@@ -48,13 +47,16 @@ while ($row = $result->fetch_assoc()) {
                 (SELECT COUNT(*) FROM pembayaran_detail pd 
                  JOIN pembayaran p ON pd.pembayaran_id = p.id
                  WHERE p.siswa_id = $siswa_id AND 
-                       ((pd.jenis_pembayaran_id = 1) OR 
-                       (pd.jenis_pembayaran_id = 2 AND pd.bulan = 'Juli' AND pd.status_pembayaran = 'Lunas'))
+                       (pd.jenis_pembayaran_id = 1 
+                        OR (pd.jenis_pembayaran_id = 2 
+                            AND pd.bulan = 'Juli' 
+                            AND pd.status_pembayaran = 'Lunas'))
                 ) > 0
             THEN 'Angsuran'
             ELSE 'Belum Bayar'
         END AS status_pembayaran
     ";
+
     $status =
         $conn->query($cek)->fetch_assoc()['status_pembayaran'] ?? 'Belum Bayar';
 

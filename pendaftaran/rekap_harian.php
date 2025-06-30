@@ -12,11 +12,12 @@ $uang_pangkal_id = 1;
 $spp_id = 2;
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 
+// Ambil daftar siswa yang melakukan pembayaran pada tanggal tersebut
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.calon_pendaftar_id
     FROM pembayaran p
     JOIN siswa s ON p.siswa_id = s.id
-    WHERE s.unit = ? AND DATE(p.tanggal_bayar) = ?
+    WHERE s.unit = ? AND DATE(p.tanggal_pembayaran) = ?
 ");
 $stmt->bind_param('ss', $unit, $tanggal);
 $stmt->execute();
@@ -26,10 +27,10 @@ $lunas = $angsuran = $belum = $total = $ppdb = 0;
 
 while ($row = $result->fetch_assoc()) {
     $id = $row['id'];
-    $calon_pendaftar_id = $row['calon_pendaftar_id'];
+    $calon_pendaftar_id = intval($row['calon_pendaftar_id'] ?? 0);
     $status_ppdb = '';
 
-    if ($calon_pendaftar_id) {
+    if ($calon_pendaftar_id > 0) {
         $stmt2 = $conn->prepare(
             'SELECT status FROM calon_pendaftar WHERE id = ? LIMIT 1'
         );
@@ -65,6 +66,7 @@ while ($row = $result->fetch_assoc()) {
         ";
         $q = $conn->query($cek);
         $stat = $q->fetch_assoc()['status_pembayaran'] ?? '';
+
         if ($stat === 'Lunas') {
             $lunas++;
         } elseif ($stat === 'Angsuran') {
@@ -76,6 +78,7 @@ while ($row = $result->fetch_assoc()) {
 
     $total++;
 }
+
 $stmt->close();
 $conn->close();
 
