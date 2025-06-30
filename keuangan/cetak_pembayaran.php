@@ -10,52 +10,77 @@ include '../database_connection.php';
 /**
  * Mengubah angka menjadi kata (bahasa Indonesia)
  */
-function terbilang($angka) {
+function terbilang($angka)
+{
     $angka = (int) $angka;
-    $abil  = ["nol","satu","dua","tiga","empat","lima","enam","tujuh","delapan","sembilan","sepuluh","sebelas"];
+    $abil = [
+        'nol',
+        'satu',
+        'dua',
+        'tiga',
+        'empat',
+        'lima',
+        'enam',
+        'tujuh',
+        'delapan',
+        'sembilan',
+        'sepuluh',
+        'sebelas',
+    ];
 
     if ($angka < 12) {
         return $abil[$angka];
     } elseif ($angka < 20) {
-        return terbilang($angka - 10) . " belas";
+        return terbilang($angka - 10) . ' belas';
     } elseif ($angka < 100) {
         $puluh = intval($angka / 10);
-        $sisa  = $angka % 10;
-        return terbilang($puluh) . " puluh" . ($sisa ? " " . terbilang($sisa) : "");
+        $sisa = $angka % 10;
+        return terbilang($puluh) .
+            ' puluh' .
+            ($sisa ? ' ' . terbilang($sisa) : '');
     } elseif ($angka < 200) {
         $sisa = $angka - 100;
-        return "seratus" . ($sisa ? " " . terbilang($sisa) : "");
+        return 'seratus' . ($sisa ? ' ' . terbilang($sisa) : '');
     } elseif ($angka < 1000) {
         $ratus = intval($angka / 100);
-        $sisa  = $angka % 100;
-        return terbilang($ratus) . " ratus" . ($sisa ? " " . terbilang($sisa) : "");
+        $sisa = $angka % 100;
+        return terbilang($ratus) .
+            ' ratus' .
+            ($sisa ? ' ' . terbilang($sisa) : '');
     } elseif ($angka < 2000) {
         $sisa = $angka - 1000;
-        return "seribu" . ($sisa ? " " . terbilang($sisa) : "");
+        return 'seribu' . ($sisa ? ' ' . terbilang($sisa) : '');
     } elseif ($angka < 1000000) {
         $ribuan = intval($angka / 1000);
-        $sisa   = $angka % 1000;
-        return terbilang($ribuan) . " ribu" . ($sisa ? " " . terbilang($sisa) : "");
+        $sisa = $angka % 1000;
+        return terbilang($ribuan) .
+            ' ribu' .
+            ($sisa ? ' ' . terbilang($sisa) : '');
     } elseif ($angka < 1000000000) {
         $juta = intval($angka / 1000000);
         $sisa = $angka % 1000000;
-        return terbilang($juta) . " juta" . ($sisa ? " " . terbilang($sisa) : "");
+        return terbilang($juta) .
+            ' juta' .
+            ($sisa ? ' ' . terbilang($sisa) : '');
     }
 
-    return "";
+    return '';
 }
 
 // Validasi session
-if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], ['keuangan', 'admin'])) {
+if (
+    !isset($_SESSION['username']) ||
+    !in_array($_SESSION['role'], ['keuangan', 'admin'])
+) {
     header('Location: login_keuangan.php');
     exit();
 }
 
 // Validasi ID pembayaran
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    die("ID pembayaran tidak valid.");
+    die('ID pembayaran tidak valid.');
 }
-$pembayaran_id = (int)$_GET['id'];
+$pembayaran_id = (int) $_GET['id'];
 
 // Fetch data pembayaran
 $stmt = $conn->prepare("
@@ -81,10 +106,10 @@ if ($stmt) {
     $stmt->close();
 
     if (!$pembayaran) {
-        die("Data pembayaran tidak ditemukan.");
+        die('Data pembayaran tidak ditemukan.');
     }
 } else {
-    die("Error preparing statement: " . $conn->error);
+    die('Error preparing statement: ' . $conn->error);
 }
 
 // Fetch detail pembayaran
@@ -111,7 +136,7 @@ if ($stmt_detail) {
     }
     $stmt_detail->close();
 } else {
-    die("Error preparing detail statement: " . $conn->error);
+    die('Error preparing detail statement: ' . $conn->error);
 }
 $ada_cashback = false;
 foreach ($details as $d) {
@@ -123,7 +148,9 @@ foreach ($details as $d) {
 
 // Fetch layout settings
 $unit = $pembayaran['unit'];
-$stmt_layout = $conn->prepare("SELECT element_name, x_position_mm, y_position_mm, visible, font_size, font_family, paper_width_mm, paper_height_mm, image_path, watermark_text FROM receipt_layout WHERE unit = ? ORDER BY id ASC");
+$stmt_layout = $conn->prepare(
+    'SELECT element_name, x_position_mm, y_position_mm, visible, font_size, font_family, paper_width_mm, paper_height_mm, image_path, watermark_text FROM receipt_layout WHERE unit = ? ORDER BY id ASC'
+);
 if ($stmt_layout) {
     $stmt_layout->bind_param('s', $unit);
     $stmt_layout->execute();
@@ -131,7 +158,7 @@ if ($stmt_layout) {
     $layouts = $result_layout->fetch_all(MYSQLI_ASSOC);
     $stmt_layout->close();
 } else {
-    die("Error preparing layout statement: " . $conn->error);
+    die('Error preparing layout statement: ' . $conn->error);
 }
 $layout_settings = [];
 $layout_data = [];
@@ -143,18 +170,31 @@ foreach ($layouts as $l) {
     if ($l['visible']) {
         $layout_settings[$l['element_name']] = [
             'x' => $l['x_position_mm'],
-            'y' => $l['y_position_mm']
+            'y' => $l['y_position_mm'],
         ];
     }
     $paper_width_mm = $l['paper_width_mm'];
     $paper_height_mm = $l['paper_height_mm'];
 }
 
-$tanggal_pembayaran = date('d-m-Y', strtotime($pembayaran['tanggal_pembayaran']));
-$jumlah_pembayaran = number_format($pembayaran['jumlah'], 0, ',', '.');
+$tanggal_pembayaran = date(
+    'd-m-Y',
+    strtotime($pembayaran['tanggal_pembayaran'])
+);
+$total_masuk = 0;
+foreach ($details as $detail) {
+    $total_masuk +=
+        ($detail['detail_jumlah'] ?? 0) - ($detail['cashback'] ?? 0);
+}
+$jumlah_pembayaran = number_format($total_masuk, 0, ',', '.');
 
-function getElementValue($elementName) {
-    global $pembayaran, $details, $layout_data, $jumlah_pembayaran, $tanggal_pembayaran;
+function getElementValue($elementName)
+{
+    global $pembayaran,
+        $details,
+        $layout_data,
+        $jumlah_pembayaran,
+        $tanggal_pembayaran;
     switch ($elementName) {
         case 'no_formulir':
             return htmlspecialchars($pembayaran['no_formulir']);
@@ -258,57 +298,48 @@ table.rincian-table {
 </head>
 <body>
 <div class="receipt-container">
-<?php
-foreach ($layout_settings as $element => $pos) {
+<?php foreach ($layout_settings as $element => $pos) {
     $font_size = $layout_data[$element]['font_size'];
     $font_family = $layout_data[$element]['font_family'];
     $x = htmlspecialchars($pos['x']);
     $y = htmlspecialchars($pos['y']);
     $style_inline = "font-size: {$font_size}pt; font-family: '{$font_family}';";
 
-    switch ($element) {
-        case 'header':
-?>
+    switch ($element) { case 'header': ?>
     <div class="receipt-element receipt-header"
-        style="left: 50%; top: <?= htmlspecialchars($pos['y']); ?>mm; width: 220mm; transform: translateX(-50%); <?= $style_inline; ?>">
-        <h2 style="<?= $style_inline; ?> margin: 0;">KUITANSI PEMBAYARAN</h2>
-        <p style="<?= $style_inline; ?> margin:5px 0 0 0;"><?= $unit; ?> DHARMA KARYA</p>
+        style="left: 50%; top: <?= htmlspecialchars(
+            $pos['y']
+        ) ?>mm; width: 220mm; transform: translateX(-50%); <?= $style_inline ?>">
+        <h2 style="<?= $style_inline ?> margin: 0;">KUITANSI PEMBAYARAN</h2>
+        <p style="<?= $style_inline ?> margin:5px 0 0 0;"><?= $unit ?> DHARMA KARYA</p>
     </div>
-<?php
-            break;
-case 'no_formulir':
-case 'nama':
-case 'unit':
-case 'tahun_pelajaran':
-case 'metode_pembayaran':
-case 'tanggal_pembayaran':
-case 'keterangan':
-?>
+<?php break;case 'no_formulir':
+        case 'nama':
+        case 'unit':
+        case 'tahun_pelajaran':
+        case 'metode_pembayaran':
+        case 'tanggal_pembayaran':
+        case 'keterangan': ?>
 <div class="receipt-element"
-     style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
-    <p style="<?= $style_inline; ?>">
+     style="left: <?= $x ?>mm; top: <?= $y ?>mm; <?= $style_inline ?>">
+    <p style="<?= $style_inline ?>">
         <strong>
-            <?php
-                // Kalau elemen no_formulir, ganti label jadi No Register
-                if ($element === 'no_formulir') {
-                    echo 'No Register';
-                } else {
-                    echo ucfirst(str_replace('_', ' ', $element));
-                }
-            ?>:
+            <?php // Kalau elemen no_formulir, ganti label jadi No Register
+
+            if ($element === 'no_formulir') {
+                echo 'No Register';
+            } else {
+                echo ucfirst(str_replace('_', ' ', $element));
+            } ?>:
         </strong>
-        <?= getElementValue($element); ?>
+        <?= getElementValue($element) ?>
     </p>
 </div>
-<?php
-    break;
-
-        case 'details':
-?>
+<?php break;case 'details': ?>
     <div class="receipt-element"
-         style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; width:200mm; <?= $style_inline; ?>">
-        <h3 style="<?= $style_inline; ?> margin: 5px 0; padding: 0; text-align:center; width:100%;">Rincian Pembayaran</h3>
-        <?php if (!empty($details)) : ?>
+         style="left: <?= $x ?>mm; top: <?= $y ?>mm; width:200mm; <?= $style_inline ?>">
+        <h3 style="<?= $style_inline ?> margin: 5px 0; padding: 0; text-align:center; width:100%;">Rincian Pembayaran</h3>
+        <?php if (!empty($details)): ?>
         <table class="rincian-table">
             <thead>
             <tr>
@@ -323,69 +354,80 @@ case 'keterangan':
             </tr>
             </thead>
             <tbody>
-            <?php 
+            <?php
             $no = 1;
-            foreach ($details as $detail) : 
-                $detail_jumlah = number_format($detail['detail_jumlah'], 0, ',', '.');
-                $cashback = isset($detail['cashback']) && $detail['cashback'] > 0 
-                    ? 'Rp ' . number_format($detail['cashback'], 0, ',', '.') 
-                    : '-';
-            ?>
+            foreach ($details as $detail):
+
+                $detail_jumlah = number_format(
+                    $detail['detail_jumlah'],
+                    0,
+                    ',',
+                    '.'
+                );
+                $cashback =
+                    isset($detail['cashback']) && $detail['cashback'] > 0
+                        ? 'Rp ' .
+                            number_format($detail['cashback'], 0, ',', '.')
+                        : '-';
+                ?>
                 <tr>
-                    <td><?= $no++; ?></td>
-                    <td><?= htmlspecialchars($detail['jenis_pembayaran_nama']); ?></td>
-                    <td>Rp <?= $detail_jumlah; ?></td>
+                    <td><?= $no++ ?></td>
+                    <td><?= htmlspecialchars(
+                        $detail['jenis_pembayaran_nama']
+                    ) ?></td>
+                    <td>Rp <?= $detail_jumlah ?></td>
                     <?php if ($ada_cashback): ?>
-                        <td><?= $cashback; ?></td>
+                        <td><?= $cashback ?></td>
                     <?php endif; ?>
-                    <td><?= htmlspecialchars($detail['bulan']); ?></td>
-                    <td><?= htmlspecialchars($detail['status_pembayaran']); ?></td>
+                    <td><?= htmlspecialchars($detail['bulan']) ?></td>
+                    <td><?= htmlspecialchars(
+                        $detail['status_pembayaran']
+                    ) ?></td>
                 </tr>
-            <?php endforeach; ?>
+            <?php
+            endforeach;
+            ?>
             </tbody>
         </table>
-        <?php else : ?>
-            <p style="<?= $style_inline; ?>">Tidak ada rincian pembayaran.</p>
+        <?php else: ?>
+            <p style="<?= $style_inline ?>">Tidak ada rincian pembayaran.</p>
         <?php endif; ?>
     </div>
-<?php
-            break;
-        case 'footer':
-?>
+<?php break;case 'footer': ?>
     <div class="receipt-element"
-         style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
-        <p style="<?= $style_inline; ?> margin: 0;">Terima kasih atas pembayaran Anda.</p>
-        <p style="<?= $style_inline; ?> margin: 0;">Hormat Kami,</p><br>
+         style="left: <?= $x ?>mm; top: <?= $y ?>mm; <?= $style_inline ?>">
+        <p style="<?= $style_inline ?> margin: 0;">Terima kasih atas pembayaran Anda.</p>
+        <p style="<?= $style_inline ?> margin: 0;">Hormat Kami,</p><br>
         
-        <?php if(isset($_SESSION['nama'])): ?>
-            <p style="<?= $style_inline; ?> margin-top: 40px; margin-bottom: 0; font-weight:bold;">
-                <?= htmlspecialchars($_SESSION['nama']); ?>
+        <?php if (isset($_SESSION['nama'])): ?>
+            <p style="<?= $style_inline ?> margin-top: 40px; margin-bottom: 0; font-weight:bold;">
+                <?= htmlspecialchars($_SESSION['nama']) ?>
             </p>
         <?php endif; ?>
     </div>
-<?php
-            break;
-        case 'jumlah':
-?>
+<?php break;case 'jumlah': ?>
     <div class="receipt-element"
-         style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; <?= $style_inline; ?>">
-        <p style="<?= $style_inline; ?>"><strong>Jumlah Total:</strong> <?= getElementValue('jumlah'); ?></p>
+         style="left: <?= $x ?>mm; top: <?= $y ?>mm; <?= $style_inline ?>">
+        <p style="<?= $style_inline ?>"><strong>Jumlah Total:</strong> <?= getElementValue(
+    'jumlah'
+) ?></p>
     </div>
-<?php
-            break;
-        case 'terbilang':
-            $total = $pembayaran['jumlah'];
+<?php break;case 'terbilang':
+
+            $total = $total_masuk;
             $angka = ucwords(trim(terbilang($total))) . ' Rupiah';
-?>
+            ?>
     <div class="receipt-element"
-         style="left: <?= $x; ?>mm; top: <?= $y; ?>mm; font-size: <?= $layout_data['terbilang']['font_size']; ?>pt; font-family: '<?= htmlspecialchars($layout_data['terbilang']['font_family']); ?>';">
-        Terbilang : <em><?= htmlspecialchars($angka); ?></em>
+         style="left: <?= $x ?>mm; top: <?= $y ?>mm; font-size: <?= $layout_data[
+    'terbilang'
+]['font_size'] ?>pt; font-family: '<?= htmlspecialchars(
+    $layout_data['terbilang']['font_family']
+) ?>';">
+        Terbilang : <em><?= htmlspecialchars($angka) ?></em>
     </div>
-<?php
-            break;
+<?php break;
     }
-}
-?>
+} ?>
 </div>
 <div class="print-button">
     <button onclick="window.print()" class="btn btn-primary">Cetak Kuitansi</button>

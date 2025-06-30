@@ -358,6 +358,510 @@ $csrf_token = $_SESSION['csrf_token'];
                         // Tampilkan pagination dengan rentang yang lebih baik
                         // Maksimal link pagination yang ditampilkan
                         // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+
+                        // Adjust start_link jika end_link mendekati total_pages
+                        // Salin parameter pencarian
+                        // Tampilkan pagination dengan rentang yang lebih baik
+                        // Maksimal link pagination yang ditampilkan
+                        // Adjust start_link jika end_link mendekati total_pages
                         else: ?>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -396,12 +900,24 @@ $csrf_token = $_SESSION['csrf_token'];
                                             <td><?= htmlspecialchars(
                                                 $pembayaran['tahun_pelajaran']
                                             ) ?></td>
+                                           <?php
+                                           $total_masuk = 0;
+                                           foreach (
+                                               $pembayaran['details']
+                                               as $detail
+                                           ) {
+                                               $total_masuk +=
+                                                   ($detail['jumlah'] ?? 0) -
+                                                   ($detail['cashback'] ?? 0);
+                                           }
+                                           ?>
                                             <td><?= number_format(
-                                                $pembayaran['jumlah'],
+                                                $total_masuk,
                                                 0,
                                                 ',',
                                                 '.'
                                             ) ?></td>
+
                                             <td><?= htmlspecialchars(
                                                 $pembayaran['metode_pembayaran']
                                             ) ?></td>
