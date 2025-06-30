@@ -206,6 +206,32 @@ include 'sidebar_pendaftaran.php';
   </header>
   <div class="container mt-4">
 
+<!-- Modal -->
+<div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="modalDetailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDetailLabel">Detail Pendaftaran Harian</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Status PPDB</th>
+              <th>Status Pembayaran</th>
+            </tr>
+          </thead>
+          <tbody id="detailTableBody">
+            <tr><td colspan="3" class="text-center">Memuat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
     <h5>Rekap Total (Semua Data)</h5>
     <div class="row g-2 mb-4">
       <div class="col">
@@ -241,6 +267,9 @@ include 'sidebar_pendaftaran.php';
       </div>
       <?php endif; ?>
     </div>
+<div class="text-end mb-3">
+  <button class="btn btn-outline-primary btn-sm" onclick="showDetail()">Lihat Detail Harian</button>
+</div>
 
     <h5>Rekap Harian</h5>
     <form id="formCariTanggal" class="d-flex align-items-center mb-2" style="gap:12px;">
@@ -295,6 +324,34 @@ document.getElementById('tanggalCari').addEventListener('change',function(){
 window.addEventListener('DOMContentLoaded',function(){
   loadRekapHarian(document.getElementById('tanggalCari').value);
 });
+
+function showDetail() {
+  const tgl = document.getElementById('tanggalCari').value;
+  const tbody = document.getElementById('detailTableBody');
+  tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Memuat data...</td></tr>`;
+  
+  fetch('rekap_harian_detail.php?tanggal=' + encodeURIComponent(tgl))
+    .then(r => r.json())
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        tbody.innerHTML = data.map(row => `
+          <tr>
+            <td>${row.nama}</td>
+            <td>${row.status_ppdb ?? '-'}</td>
+            <td>${row.status_pembayaran}</td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Tidak ada data</td></tr>`;
+      }
+      const modal = new bootstrap.Modal(document.getElementById('modalDetail'));
+      modal.show();
+    })
+    .catch(_ => {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat data</td></tr>`;
+    });
+}
+
 </script>
 </body>
 </html>
