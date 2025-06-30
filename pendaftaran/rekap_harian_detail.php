@@ -4,69 +4,72 @@ include '../database_connection.php';
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
     http_response_code(403);
-    exit(json_encode(['error' => 'Akses ditolak']));
+    echo json_encode(['error' => 'Unauthorized']);
+    exit();
 }
 
 $unit = $_SESSION['unit'];
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 
-// Ambil data siswa yang membayar di tanggal tersebut
 $stmt = $conn->prepare("
-    SELECT DISTINCT s.id, s.nama, cp.status AS status_ppdb
-    FROM pembayaran p
-    JOIN siswa s ON p.siswa_id = s.id
+    SELECT s.nama_lengkap, cp.status AS status_ppdb, s.id
+    FROM siswa s
     LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-    WHERE s.unit = ? AND DATE(p.tanggal_pembayaran) = ?
+    WHERE s.unit = ? AND s.tanggal_pendaftaran = ?
 ");
 $stmt->bind_param('ss', $unit, $tanggal);
 $stmt->execute();
 $result = $stmt->get_result();
 
 $data = [];
-
 while ($row = $result->fetch_assoc()) {
-    $siswa_id = (int) $row['id'];
+    $id = $row['id'];
+    $is_ppdb = strtolower(trim($row['status_ppdb'] ?? '')) === 'ppdb bersama';
 
-    // Ambil total uang pangkal & spp juli yang lunas
-    $cek = "
-        SELECT 
-            SUM(CASE 
-                WHEN pd.jenis_pembayaran_id = 1 AND pd.status_pembayaran = 'Lunas' THEN pd.jumlah 
-                ELSE 0 
-            END) AS total_uang_pangkal,
-            SUM(CASE 
-                WHEN pd.jenis_pembayaran_id = 2 AND pd.bulan = 'Juli' AND pd.status_pembayaran = 'Lunas' THEN pd.jumlah 
-                ELSE 0 
-            END) AS total_spp_juli,
-            COUNT(CASE 
-                WHEN pd.status_pembayaran = 'Lunas' THEN 1 ELSE NULL 
-            END) AS jumlah_bayar_lunas,
-            COUNT(*) AS jumlah_semua
-        FROM pembayaran_detail pd
-        JOIN pembayaran p ON pd.pembayaran_id = p.id
-        WHERE p.siswa_id = $siswa_id
-    ";
-    $res = $conn->query($cek)->fetch_assoc();
-
-    $uang_pangkal = (int) $res['total_uang_pangkal'];
-    $spp_juli = (int) $res['total_spp_juli'];
-    $jumlah_bayar_lunas = (int) $res['jumlah_bayar_lunas'];
-    $jumlah_semua = (int) $res['jumlah_semua'];
-
-    // Status pembayarannya
-    if ($uang_pangkal > 0 && $spp_juli > 0) {
-        $status = 'Lunas';
-    } elseif ($jumlah_bayar_lunas > 0) {
-        $status = 'Angsuran';
+    if ($is_ppdb) {
+        $status = 'PPDB Bersama';
     } else {
-        $status = 'Belum Bayar';
+        // Cek status pembayaran
+        $cek = "
+            SELECT
+            CASE
+                WHEN 
+                    (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                        WHERE p1.siswa_id = $id 
+                          AND pd1.jenis_pembayaran_id = 1
+                          AND pd1.status_pembayaran = 'Lunas') > 0
+                AND 
+                    (SELECT COUNT(*) FROM pembayaran_detail pd2 
+                        JOIN pembayaran p2 ON pd2.pembayaran_id = p2.id
+                        WHERE p2.siswa_id = $id 
+                          AND pd2.jenis_pembayaran_id = 2
+                          AND pd2.bulan = 'Juli'
+                          AND pd2.status_pembayaran = 'Lunas') > 0
+                THEN 'Lunas'
+                WHEN (
+                    (SELECT COUNT(*) FROM pembayaran_detail pd1 
+                        JOIN pembayaran p1 ON pd1.pembayaran_id = p1.id
+                        WHERE p1.siswa_id = $id AND pd1.jenis_pembayaran_id IN (1,2)
+                    ) > 0
+                )
+                THEN 'Angsuran'
+                ELSE 'Belum Bayar'
+            END AS status_pembayaran
+        ";
+        $stat =
+            $conn->query($cek)->fetch_assoc()['status_pembayaran'] ??
+            'Belum Bayar';
+        $status = $stat;
     }
 
     $data[] = [
-        'nama' => $row['nama'],
-        'status_ppdb' => $row['status_ppdb'] ?? '-',
-        'status_pembayaran' => $status,
+        'nama' => $row['nama_lengkap'],
+        'status' => $status,
     ];
 }
+$stmt->close();
+$conn->close();
 
-echo json_encode($data);
+header('Content-Type: application/json');
+echo json_encode(['siswa' => $data]);
