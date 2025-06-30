@@ -165,6 +165,11 @@ if ($status_pembayaran !== 'Belum Bayar') {
     }
     $stmtBayar->close();
 }
+// Sinkronkan status_pembayaran dengan status transaksi terakhir jika ada
+if (count($pembayaran_terakhir)) {
+    $status_pembayaran =
+        $pembayaran_terakhir[0]['status_pembayaran'] ?? $status_pembayaran;
+}
 
 function getStatusBadge($status)
 {
