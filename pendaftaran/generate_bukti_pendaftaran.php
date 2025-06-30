@@ -167,8 +167,14 @@ if ($status_pembayaran !== 'Belum Bayar') {
 }
 // Sinkronkan status_pembayaran dengan status transaksi terakhir jika ada
 if (count($pembayaran_terakhir)) {
-    $status_pembayaran =
-        $pembayaran_terakhir[0]['status_pembayaran'] ?? $status_pembayaran;
+    $stat = strtolower($pembayaran_terakhir[0]['status_pembayaran'] ?? '');
+    if (strpos($stat, 'lunas') !== false) {
+        $status_pembayaran = 'Lunas';
+    } elseif (strpos($stat, 'angsuran') !== false) {
+        $status_pembayaran = 'Angsuran';
+    } else {
+        $status_pembayaran = 'Belum Bayar';
+    }
 }
 
 function getStatusBadge($status)
