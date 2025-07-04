@@ -85,10 +85,12 @@ function tanggal_id($tgl)
 // --- Status progres UANG PANGKAL: Berdasarkan total pembayaran (jumlah-cashback) vs tagihan --- //
 $uang_pangkal_id = 1;
 
-// Ambil tagihan uang pangkal
+// Ambil tagihan uang pangkal terbaru
 $tagihan_uang_pangkal = 0;
 $stmt_tagihan_up = $conn->prepare("
-    SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id = ? AND jenis_pembayaran_id = ?
+    SELECT nominal FROM siswa_tagihan_awal 
+    WHERE siswa_id = ? AND jenis_pembayaran_id = ?
+    ORDER BY id DESC LIMIT 1
 ");
 $stmt_tagihan_up->bind_param('ii', $id, $uang_pangkal_id);
 $stmt_tagihan_up->execute();
