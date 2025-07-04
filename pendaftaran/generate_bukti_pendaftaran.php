@@ -608,10 +608,12 @@ if (
         <?php foreach ($pembayaran_terakhir as $b): ?>
         <tr>
           <td><?= safe($b['jenis']) ?></td>
-<td style="text-align:right;">
-  Rp <?= number_format($b['jumlah'] + ($b['cashback'] ?? 0), 0, ',', '.') ?>
-</td>
-
+        <td style="text-align:right;">Rp <?= number_format(
+            $b['jumlah'] - ($b['cashback'] ?? 0),
+            0,
+            ',',
+            '.'
+        ) ?></td>
 
           <td style="text-align:right;"><?= ($b['cashback'] ?? 0) > 0
               ? 'Rp ' . number_format($b['cashback'], 0, ',', '.')
