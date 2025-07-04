@@ -45,7 +45,7 @@ if ($username_petugas) {
 }
 $keterangan_pembayaran = [];
 $stmtKetPembayaran = $conn->prepare("
-    SELECT jp.nama AS jenis, SUM(pd.jumlah + IFNULL(pd.cashback,0)) AS nominal
+    SELECT jp.id AS jenis_id, jp.nama AS jenis, SUM(pd.jumlah - IFNULL(pd.cashback,0)) AS nominal
     FROM pembayaran_detail pd
     JOIN pembayaran p ON pd.pembayaran_id = p.id
     JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
@@ -56,24 +56,26 @@ $stmtKetPembayaran->bind_param('i', $id);
 $stmtKetPembayaran->execute();
 $resKetPembayaran = $stmtKetPembayaran->get_result();
 while ($rowKet = $resKetPembayaran->fetch_assoc()) {
+    if (strtolower($rowKet['jenis']) === 'uang pangkal') {
+        // Ambil total cashback khusus Uang Pangkal
+        $total_cashback_up = 0;
+        $stmtCB = $conn->prepare("
+            SELECT SUM(pd.cashback) as cashback
+            FROM pembayaran_detail pd
+            JOIN pembayaran p ON pd.pembayaran_id = p.id
+            WHERE p.siswa_id = ? AND pd.jenis_pembayaran_id = 1
+        ");
+        $stmtCB->bind_param('i', $id);
+        $stmtCB->execute();
+        $rsCB = $stmtCB->get_result()->fetch_assoc();
+        $total_cashback_up = (int) ($rsCB['cashback'] ?? 0);
+        $stmtCB->close();
+
+        $rowKet['nominal'] += $total_cashback_up;
+    }
     $keterangan_pembayaran[] = $rowKet;
 }
 $stmtKetPembayaran->close();
-
-// Ambil status & notes dari calon_pendaftar
-$status_pendaftaran = '-';
-$keterangan_pendaftaran = '-';
-if (!empty($row['calon_pendaftar_id'])) {
-    $stmtStatus = $conn->prepare(
-        'SELECT status, notes FROM calon_pendaftar WHERE id = ?'
-    );
-    $stmtStatus->bind_param('i', $row['calon_pendaftar_id']);
-    $stmtStatus->execute();
-    $rsStatus = $stmtStatus->get_result()->fetch_assoc();
-    $status_pendaftaran = $rsStatus['status'] ?? '-';
-    $keterangan_pendaftaran = $rsStatus['notes'] ?? '-';
-    $stmtStatus->close();
-}
 
 function tanggal_id($tgl)
 {
