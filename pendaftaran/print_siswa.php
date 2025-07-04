@@ -343,14 +343,28 @@ if (
       </th>
     </tr>
 <?php if (count($keterangan_pembayaran)):
-    foreach ($keterangan_pembayaran as $tg): ?>
+    foreach ($keterangan_pembayaran as $tg):
+        // Khusus Uang Pangkal, jumlah = (jumlah + cashback)
+        if (strtolower($tg['jenis']) === 'uang pangkal') {
+            // Ambil total cashback untuk uang pangkal
+            $cashback_up = 0;
+            foreach ($pembayaran_terakhir as $b) {
+                if (strtolower($b['jenis']) === 'uang pangkal') {
+                    $cashback_up += $b['cashback'];
+                }
+            }
+            $nominal_up = $tg['nominal'] + $cashback_up;
+        } else {
+            $nominal_up = $tg['nominal'];
+        } ?>
 <tr>
   <td><?= safe($tg['jenis']) ?></td>
   <td style="text-align:right;font-weight:600">
-    Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
+    Rp <?= number_format($nominal_up, 0, ',', '.') ?>
   </td>
 </tr>
-<?php endforeach;
+<?php
+    endforeach;
 else:
      ?>
 <tr>
@@ -358,7 +372,6 @@ else:
 </tr>
 <?php
 endif; ?>
-  </table>
 
   <?php if (
       $status_pembayaran !== 'Belum Bayar' &&
