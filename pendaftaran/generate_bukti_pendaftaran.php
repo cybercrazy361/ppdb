@@ -43,6 +43,22 @@ if ($username_petugas) {
             : $username_petugas;
     $stmt_petugas->close();
 }
+$keterangan_pembayaran = [];
+$stmtKetPembayaran = $conn->prepare("
+    SELECT jp.nama AS jenis, SUM(pd.jumlah + IFNULL(pd.cashback,0)) AS nominal
+    FROM pembayaran_detail pd
+    JOIN pembayaran p ON pd.pembayaran_id = p.id
+    JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
+    WHERE p.siswa_id = ?
+    GROUP BY jp.id
+");
+$stmtKetPembayaran->bind_param('i', $id);
+$stmtKetPembayaran->execute();
+$resKetPembayaran = $stmtKetPembayaran->get_result();
+while ($rowKet = $resKetPembayaran->fetch_assoc()) {
+    $keterangan_pembayaran[] = $rowKet;
+}
+$stmtKetPembayaran->close();
 
 // Ambil status & notes dari calon_pendaftar
 $status_pendaftaran = '-';
@@ -165,6 +181,7 @@ if ($status_pembayaran !== 'Belum Bayar') {
     }
     $stmtBayar->close();
 }
+
 // Sinkronkan status_pembayaran dengan status transaksi terakhir jika ada
 if (count($pembayaran_terakhir)) {
     $stat = strtolower($pembayaran_terakhir[0]['status_pembayaran'] ?? '');
@@ -544,25 +561,27 @@ if (
     </table>
 
 <?php if (strtoupper($status_pendaftaran) !== 'PPDB BERSAMA'): ?>
-    <table class="tagihan-table">
+<table class="tagihan-table" style="margin-top:9px;">
+  <tr>
+    <th colspan="2" style="background:#e3eaf7;font-size:13.5px;text-align:center">
+      <i class="fas fa-coins"></i> Keterangan Pembayaran
+    </th>
+  </tr>
+  <?php if (count($keterangan_pembayaran)): ?>
+    <?php foreach ($keterangan_pembayaran as $pay): ?>
       <tr>
-        <th colspan="2" style="text-align:center; font-weight:bold; font-size:14px; background:#e3eaf7;">
-          Keterangan Pembayaran
-        </th>
+        <td><?= safe($pay['jenis']) ?></td>
+        <td style="text-align:right;font-weight:600">
+          Rp <?= number_format($pay['nominal'], 0, ',', '.') ?>
+        </td>
       </tr>
-      <?php if (count($tagihan)): ?>
-        <?php foreach ($tagihan as $tg): ?>
-          <tr>
-            <td><?= safe($tg['jenis']) ?></td>
-            <td style="text-align:right; font-weight:600;">
-              Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <tr><td colspan="2" style="text-align:center; color:#bb2222;">Belum ada tagihan yang diverifikasi.</td></tr>
-      <?php endif; ?>
-    </table>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <tr>
+      <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada pembayaran yang diverifikasi.</td>
+    </tr>
+  <?php endif; ?>
+</table>
 
     <?php if (
         $status_pembayaran !== 'Belum Bayar' &&
@@ -589,12 +608,10 @@ if (
         <?php foreach ($pembayaran_terakhir as $b): ?>
         <tr>
           <td><?= safe($b['jenis']) ?></td>
-        <td style="text-align:right;">Rp <?= number_format(
-            $b['jumlah'] - ($b['cashback'] ?? 0),
-            0,
-            ',',
-            '.'
-        ) ?></td>
+<td style="text-align:right;">
+  Rp <?= number_format($b['jumlah'] + ($b['cashback'] ?? 0), 0, ',', '.') ?>
+</td>
+
 
           <td style="text-align:right;"><?= ($b['cashback'] ?? 0) > 0
               ? 'Rp ' . number_format($b['cashback'], 0, ',', '.')
