@@ -85,12 +85,10 @@ function tanggal_id($tgl)
 // --- Status progres UANG PANGKAL: Berdasarkan total pembayaran (jumlah-cashback) vs tagihan --- //
 $uang_pangkal_id = 1;
 
-// Ambil tagihan uang pangkal terbaru
+// Ambil tagihan uang pangkal
 $tagihan_uang_pangkal = 0;
 $stmt_tagihan_up = $conn->prepare("
-    SELECT nominal FROM siswa_tagihan_awal 
-    WHERE siswa_id = ? AND jenis_pembayaran_id = ?
-    ORDER BY id DESC LIMIT 1
+    SELECT nominal FROM siswa_tagihan_awal WHERE siswa_id = ? AND jenis_pembayaran_id = ?
 ");
 $stmt_tagihan_up->bind_param('ii', $id, $uang_pangkal_id);
 $stmt_tagihan_up->execute();
@@ -165,6 +163,23 @@ if ($status_pembayaran !== 'Belum Bayar') {
     }
     $stmtBayar->close();
 }
+// Ambil pembayaran terakhir untuk keterangan pembayaran
+$keterangan_pembayaran = [];
+$stmtKetPembayaran = $conn->prepare("
+    SELECT jp.nama AS jenis, SUM(pd.jumlah - IFNULL(pd.cashback,0)) AS nominal
+    FROM pembayaran_detail pd
+    JOIN pembayaran p ON pd.pembayaran_id = p.id
+    JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
+    WHERE p.siswa_id = ?
+    GROUP BY jp.id
+");
+$stmtKetPembayaran->bind_param('i', $id);
+$stmtKetPembayaran->execute();
+$resKetPembayaran = $stmtKetPembayaran->get_result();
+while ($rowKet = $resKetPembayaran->fetch_assoc()) {
+    $keterangan_pembayaran[] = $rowKet;
+}
+$stmtKetPembayaran->close();
 
 if (count($pembayaran_terakhir)) {
     $stat = strtolower($pembayaran_terakhir[0]['status_pembayaran'] ?? '');
@@ -327,22 +342,22 @@ if (
         <i class="fas fa-coins"></i> Keterangan Pembayaran
       </th>
     </tr>
-    <?php if (count($tagihan)):
-        foreach ($tagihan as $tg): ?>
-    <tr>
-      <td><?= safe($tg['jenis']) ?></td>
-      <td style="text-align:right;font-weight:600">
-        Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
-      </td>
-    </tr>
-    <?php endforeach;
-    else:
-         ?>
-    <tr>
-      <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada tagihan yang diverifikasi.</td>
-    </tr>
-    <?php
-    endif; ?>
+<?php if (count($keterangan_pembayaran)):
+    foreach ($keterangan_pembayaran as $tg): ?>
+<tr>
+  <td><?= safe($tg['jenis']) ?></td>
+  <td style="text-align:right;font-weight:600">
+    Rp <?= number_format($tg['nominal'], 0, ',', '.') ?>
+  </td>
+</tr>
+<?php endforeach;
+else:
+     ?>
+<tr>
+  <td colspan="2" style="text-align:center;color:#bb2222;">Belum ada pembayaran yang diverifikasi.</td>
+</tr>
+<?php
+endif; ?>
   </table>
 
   <?php if (
