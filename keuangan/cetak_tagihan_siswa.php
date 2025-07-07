@@ -1,7 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-// cetak_tagihan_siswa.php
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
     header('Location: ../login_keuangan.php');
@@ -11,7 +8,7 @@ include '../database_connection.php';
 
 $unit = $_SESSION['unit'];
 
-// --- Ambil daftar tahun pelajaran (urut desc) ---
+// --- Ambil daftar tahun pelajaran ---
 $tahunList = [];
 $result = $conn->query('SELECT tahun FROM tahun_pelajaran ORDER BY tahun DESC');
 while ($row = $result->fetch_assoc()) {
@@ -116,7 +113,7 @@ $nominal_pembayaran = [];
 $res = $conn->query(
     "SELECT jp.nama, pn.nominal_max, pn.bulan 
      FROM jenis_pembayaran jp 
-     LEFT JOIN pengaturan_nominal pn ON pn.jenis_pembayaran_id = jp.id AND pn.unit = '$unit' AND pn.tahun_pelajaran = '$tahun_pelajaran'
+     LEFT JOIN pengaturan_nominal pn ON pn.jenis_pembayaran_id = jp.id AND pn.unit = '$unit'
      WHERE jp.unit = '$unit'
     "
 );
