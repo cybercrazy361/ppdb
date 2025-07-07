@@ -34,7 +34,6 @@ $resYears = $conn->query(
 while ($r = $resYears->fetch_assoc()) {
     $years[] = $r['tahun_pelajaran'];
 }
-$is_print_all = isset($_GET['print']) && $_GET['print'] === 'all';
 
 // Pagination setup
 $limit = 10; // Jumlah data per halaman
@@ -68,26 +67,15 @@ if ($search_nama !== '') {
     $param_values_ids[] = '%' . $search_nama . '%';
 }
 
-$query_ids .= ' ORDER BY s.nama ASC';
-if (!$is_print_all) {
-    $query_ids .= ' LIMIT ? OFFSET ?';
-    $param_types_ids .= 'ii';
-    $param_values_ids[] = $limit;
-    $param_values_ids[] = $start;
-}
+$query_ids .= ' ORDER BY s.nama ASC LIMIT ? OFFSET ?';
+
+$param_types_ids .= 'ii';
+$param_values_ids[] = $limit;
+$param_values_ids[] = $start;
 
 $stmt_ids = $conn->prepare($query_ids);
 if ($stmt_ids) {
-    if (!$is_print_all) {
-        $stmt_ids->bind_param($param_types_ids, ...$param_values_ids);
-    } else {
-        $bind_values = array_slice(
-            $param_values_ids,
-            0,
-            strlen($param_types_ids)
-        );
-        $stmt_ids->bind_param($param_types_ids, ...$bind_values);
-    }
+    $stmt_ids->bind_param($param_types_ids, ...$param_values_ids);
     $stmt_ids->execute();
     $result_ids = $stmt_ids->get_result();
     $student_ids = [];
@@ -314,19 +302,14 @@ $conn->close();
         <h1 class="h3 mb-0 text-gray-800">
             Daftar Siswa Keuangan - <?= htmlspecialchars($petugas_unit) ?>
         </h1>
-
-        <a href="daftar_siswa_keuangan.php?print=all
-<?= $search_no_formulir
-    ? '&search_no_formulir=' . urlencode($search_no_formulir)
-    : '' ?>
-<?= $search_nama ? '&search_nama=' . urlencode($search_nama) : '' ?>
-<?= isset($_GET['tahun_pelajaran'])
-    ? '&tahun_pelajaran=' . urlencode($_GET['tahun_pelajaran'])
-    : '' ?>"
-   class="btn btn-success no-print">
-   <i class="fas fa-print"></i> Cetak Semua
-</a>
-
+<button type="button" class="btn btn-success no-print"
+    onclick="window.open('cetak_siswa_keuangan.php?<?= http_build_query([
+        'tahun_pelajaran' => $_GET['tahun_pelajaran'] ?? '',
+        'search_no_formulir' => $search_no_formulir,
+        'search_nama' => $search_nama,
+    ]) ?>', '_blank')">
+    <i class="fas fa-print"></i> Cetak Semua
+</button>
 
         
     </div>
@@ -381,7 +364,40 @@ $conn->close();
                 <div class="card-body">
                     <?php if (empty($siswa_data)): ?>
                         <p class="text-center">Tidak ada data siswa ditemukan.</p>
-                    <?php else: ?>
+                    <?php
+                        // Kumpulkan semua jenis pembayaran per siswa
+
+                        // Jika tidak ada pembayaran, tampilkan "-"
+                        // Format jumlah sebagai mata uang jika bukan '-', misalnya: 2000000 menjadi Rp. 2.000.000
+                        // Format tanggal jika bukan '-', misalnya: 2024-12-15 menjadi 15/12/2024
+                        // Membuat query string untuk pagination
+                        // Maksimal jumlah link halaman yang ditampilkan
+
+                        // Jika tidak cukup halaman di akhir, geser ke kiri
+                        // Kumpulkan semua jenis pembayaran per siswa
+                        // Jika tidak ada pembayaran, tampilkan "-"
+                        // Format jumlah sebagai mata uang jika bukan '-', misalnya: 2000000 menjadi Rp. 2.000.000
+                        // Format tanggal jika bukan '-', misalnya: 2024-12-15 menjadi 15/12/2024
+                        // Membuat query string untuk pagination
+                        // Maksimal jumlah link halaman yang ditampilkan
+                        // Jika tidak cukup halaman di akhir, geser ke kiri
+                        // Kumpulkan semua jenis pembayaran per siswa
+
+                        // Jika tidak ada pembayaran, tampilkan "-"
+                        // Format jumlah sebagai mata uang jika bukan '-', misalnya: 2000000 menjadi Rp. 2.000.000
+                        // Format tanggal jika bukan '-', misalnya: 2024-12-15 menjadi 15/12/2024
+                        // Membuat query string untuk pagination
+                        // Maksimal jumlah link halaman yang ditampilkan
+
+                        // Jika tidak cukup halaman di akhir, geser ke kiri
+                        // Kumpulkan semua jenis pembayaran per siswa
+                        // Jika tidak ada pembayaran, tampilkan "-"
+                        // Format jumlah sebagai mata uang jika bukan '-', misalnya: 2000000 menjadi Rp. 2.000.000
+                        // Format tanggal jika bukan '-', misalnya: 2024-12-15 menjadi 15/12/2024
+                        // Membuat query string untuk pagination
+                        // Maksimal jumlah link halaman yang ditampilkan
+                        // Jika tidak cukup halaman di akhir, geser ke kiri
+                        else: ?>
                         <div class="printable-area">
     <div class="text-center mb-4 print-header">
       <h2>Daftar Pembayaran Siswa</h2>
@@ -422,6 +438,7 @@ $conn->close();
                                                 ];
                                             $keterangan =
                                                 $pembayaran['keterangan'];
+
                                             foreach (
                                                 $pembayaran['details']
                                                 as $detail
@@ -439,6 +456,7 @@ $conn->close();
                                                     ];
                                                 $angsuran_ke =
                                                     $detail['angsuran_ke'];
+
                                                 if (
                                                     strtolower(
                                                         $jenis_pembayaran
@@ -480,6 +498,7 @@ $conn->close();
                                                 }
                                             }
                                         }
+
                                         if (empty($jenis_pembayaran_list)) {
                                             $jenis_pembayaran_list[] = [
                                                 'jenis_pembayaran' => '-',
@@ -543,6 +562,7 @@ $conn->close();
     <br>
   <?php endforeach; ?>
 </td>
+
 
                                             <td>
                                                 <?php foreach (
@@ -614,7 +634,7 @@ $conn->close();
                         </div>
 
                         <!-- Pagination -->
-                        <?php if (!$is_print_all && $total_pages > 1): ?>
+                        <?php if ($total_pages > 1): ?>
                             <nav>
                                 <ul class="pagination justify-content-center">
                                     <?php
@@ -629,11 +649,13 @@ $conn->close();
                                             'search_nama'
                                         ] = $search_nama;
                                     }
+
                                     function buildPageUrl($page, $params)
                                     {
                                         $params['page'] = $page;
                                         return '?' . http_build_query($params);
                                     }
+
                                     $max_links = 5;
                                     $start_page = max(
                                         1,
@@ -643,6 +665,7 @@ $conn->close();
                                         $total_pages,
                                         $start_page + $max_links - 1
                                     );
+
                                     if (
                                         $end_page - $start_page <
                                         $max_links - 1
