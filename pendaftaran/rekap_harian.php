@@ -9,10 +9,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 
 $unit = $_SESSION['unit'] ?? '';
 $uang_pangkal_id = 1;
-$spp_id = 2;
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 
-// Hanya ambil siswa yang pembayaran pertamanya pada tanggal itu
+// Siswa yang pembayaran pertamanya pada tanggal ini
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.calon_pendaftar_id
     FROM siswa s
@@ -29,7 +28,7 @@ $stmt->bind_param('sss', $unit, $tanggal, $tanggal);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$lunas = $angsuran = $belum = $total = $ppdb = 0;
+$lunas = $angsuran = $ppdb = 0;
 
 while ($row = $result->fetch_assoc()) {
     $id = $row['id'];
@@ -77,19 +76,34 @@ while ($row = $result->fetch_assoc()) {
             $lunas++;
         } elseif ($stat === 'Angsuran') {
             $angsuran++;
-        } else {
-            $belum++;
         }
     }
-
-    $total++;
 }
+$total = $lunas + $angsuran + $ppdb;
 
-$stmt->close();
+// Hitung siswa baru yang belum pernah bayar sama sekali sampai tanggal itu
+$stmt_belum = $conn->prepare("
+    SELECT COUNT(*) AS belum_bayar
+    FROM siswa s
+    LEFT JOIN (
+        SELECT siswa_id, MIN(DATE(tanggal_pembayaran)) AS tanggal_pertama
+        FROM pembayaran
+        GROUP BY siswa_id
+    ) x ON x.siswa_id = s.id
+    LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+    WHERE s.unit = ?
+      AND (x.tanggal_pertama IS NULL OR x.tanggal_pertama > ?)
+      AND (cp.status IS NULL OR LOWER(cp.status) != 'ppdb bersama')
+");
+$stmt_belum->bind_param('ss', $unit, $tanggal);
+$stmt_belum->execute();
+$belum = $stmt_belum->get_result()->fetch_assoc()['belum_bayar'] ?? 0;
+$stmt_belum->close();
+
 $conn->close();
 
 echo json_encode([
-    'total' => $total,
+    'total' => $total + $belum, // total hari ini termasuk yang belum bayar
     'lunas' => $lunas,
     'angsuran' => $angsuran,
     'belum' => $belum,
