@@ -381,8 +381,8 @@ $conn->close();
     </form>
 <div class="card shadow mb-4 printable-area">
   <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover">
+<div class="table-responsive" style="overflow-x: auto;">
+  <table class="table table-bordered table-hover" style="min-width: 1200px; width: max-content;">
         <thead class="table-primary">
           <tr>
             <th colspan="<?= 4 +
