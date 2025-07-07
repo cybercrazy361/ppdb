@@ -215,7 +215,7 @@ foreach ($filtered_siswa as &$sis) {
 unset($sis);
 
 // --- 8. Bikin baris total sebagai string
-$total_row_html = '<tr class="total-row">';
+$total_row_html = '<tr class="table-secondary fw-bold">';
 $total_row_html .= '<td colspan="4" class="text-center">Total</td>';
 foreach ($kolom_list as $k) {
     $total_row_html .=
@@ -288,22 +288,18 @@ $conn->close();
     line-height: 1.2 !important;
     border: 1px solid #888 !important;
     vertical-align: middle !important;
-    background: #fff !important;
   }
-  .total-row td, .total-row th {
-    background: #f6f7fa !important;    /* soft abu, tidak menutup border */
+  .table-secondary.fw-bold td, 
+  .table-secondary.fw-bold th {
+    font-size: 9.2px !important;
     font-weight: bold !important;
-    color: #111 !important;
+    letter-spacing: 0.3px;
+    background: #f6f7fa !important;    /* soft abu total */
+    color: #222 !important;
     border-top: 2px solid #444 !important;
     border-bottom: 2px solid #444 !important;
-    font-size: 9.2px !important;
-    padding-top: 2px !important;
-    padding-bottom: 2px !important;
-    letter-spacing: 0.2px;
-  }
-  .total-row td.bg-warning, .total-row th.bg-warning {
-    background: #ffc107 !important;
-    color: #222 !important;
+    padding-top: 2.5px !important;
+    padding-bottom: 2.5px !important;
   }
   .table-info {
     background: rgb(212, 242, 255) !important;
