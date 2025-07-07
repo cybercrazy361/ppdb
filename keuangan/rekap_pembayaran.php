@@ -246,12 +246,12 @@ $conn->close();
 <style>
 @media print {
   html, body {
-    font-size: 11px !important;
+    font-size: 9px !important;
     background: #fff !important;
     color: #000 !important;
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
     width: 100% !important;
     height: 100% !important;
   }
@@ -262,7 +262,7 @@ $conn->close();
   .printable-area, .printable-area * {
     visibility: visible !important;
     box-shadow: none !important;
-    font-size: 11px !important;
+    font-size: 9px !important;
   }
   .printable-area, .main-content, .container-fluid, .card, .card-body, .table-responsive {
     position: static !important;
@@ -278,28 +278,37 @@ $conn->close();
   .table {
     width: 100% !important;
     max-width: 100% !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
     margin: 0 !important;
     border-collapse: collapse !important;
   }
   .table th, .table td {
-    padding: 2px 4px !important;
-    font-size: 10px !important;
+    padding: 1.5px 4px !important;
+    font-size: 9px !important;
     line-height: 1.2 !important;
     border: 1px solid #888 !important;
-  }
-  .table thead th, .table tfoot td, .table tbody td {
     vertical-align: middle !important;
-    text-align: center !important;
+  }
+  .table-secondary.fw-bold td, 
+  .table-secondary.fw-bold th {
+    font-size: 9.2px !important;
+    font-weight: bold !important;
+    letter-spacing: 0.3px;
+    background: #f6f7fa !important;    /* soft abu total */
+    color: #222 !important;
+    border-top: 2px solid #444 !important;
+    border-bottom: 2px solid #444 !important;
+    padding-top: 2.5px !important;
+    padding-bottom: 2.5px !important;
   }
   .table-info {
-    background: rgb(112, 194, 238) !important;
+    background: rgb(212, 242, 255) !important;
   }
   .no-print, .no-print * {
     display: none !important;
   }
   .h3, h1, h2 {
-    font-size: 15px !important;
+    font-size: 13px !important;
     margin: 0 0 4px 0 !important;
   }
   nav, .sidebar, .footer, .navbar, .sidebar *, .footer * {
@@ -308,7 +317,6 @@ $conn->close();
   tfoot { display: none !important; }
 }
 </style>
-
 </head>
 <body>
 <?php include '../includes/sidebar.php'; ?>
