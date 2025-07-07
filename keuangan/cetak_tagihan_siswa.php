@@ -189,7 +189,7 @@ unset($siswa);
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rekap Tagihan Siswa</title>
+    <title>Rekap Sisa Tagihan Siswa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -220,8 +220,12 @@ $tahun_pelajaran
     </form>
 
     <div class="text-center my-4">
-        <h3>Rekap Tagihan Siswa <?= htmlspecialchars($unit) ?></h3>
+        <h3>Rekap Sisa Tagihan Siswa <?= htmlspecialchars($unit) ?></h3>
         <p>Tahun Pelajaran <?= htmlspecialchars($tahun_pelajaran) ?></p>
+    </div>
+
+    <div class="alert alert-info">
+        <b>Keterangan:</b> Nilai pada kolom di bawah adalah <u>sisa tagihan</u> (jumlah yang belum dibayar per jenis/bulan).
     </div>
 
     <?php if (empty($siswa_tagihan)): ?>
@@ -237,7 +241,7 @@ $tahun_pelajaran
                     <th>Status</th>
                     <?php foreach ($kolom_list as $k): ?>
                         <th><?= $k ?><br>
-                        <small>(Rp <?= number_format(
+                        <small>(Sisa: Rp <?= number_format(
                             $nominal_pembayaran[$k] ?? 0,
                             0,
                             ',',
@@ -300,7 +304,7 @@ $tahun_pelajaran
                 <tr class="table-success fw-bold">
                     <td colspan="<?= 4 +
                         count($kolom_list) ?>" class="text-end">
-                        Grand Total Tagihan:
+                        Grand Total Sisa Tagihan:
                     </td>
                     <td>
                         <b>Rp <?= number_format(
