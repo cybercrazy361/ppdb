@@ -15,7 +15,6 @@ $tahun_pelajaran = isset($_GET['tahun_pelajaran'])
     ? trim($_GET['tahun_pelajaran'])
     : '';
 
-// Query tanpa LIMIT/OFFSET
 $query_ids = "SELECT DISTINCT s.id 
              FROM siswa s 
              INNER JOIN pembayaran p ON s.id = p.siswa_id 
@@ -123,7 +122,6 @@ if (!empty($student_ids)) {
     }
     $stmt->close();
 }
-
 $conn->close();
 ?>
 
@@ -132,69 +130,84 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Daftar Pembayaran Siswa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @page {
             size: A4 landscape;
-            margin: 14mm 14mm 14mm 14mm;
+            margin: 12mm 12mm 12mm 12mm;
         }
         body {
-            background: #fff !important;
+            background: #fff;
             font-family: 'Nunito', Arial, Helvetica, sans-serif;
-            font-size: 12px;
+            font-size: 13px;
             color: #222;
             width: 297mm;
             height: 210mm;
+            margin: 0;
         }
         .print-title {
             text-align: center;
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: bold;
-            letter-spacing: 2px;
-            margin-bottom: 0.5rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.3rem;
         }
         .print-subtitle {
             text-align: center;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            margin-bottom: 1.2rem;
         }
-        .table-bordered {
-            border: 1.5px solid #1d5cab;
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
         }
-        .table thead th {
-            background: #2574e2 !important;
-            color: #fff !important;
-            vertical-align: middle;
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0 auto;
+            background: #fff;
+        }
+        thead th {
+            background: linear-gradient(90deg, #2066cc 0%, #357ae8 100%);
+            color: #fff;
             text-align: center;
-            font-weight: bold;
-            border-color: #1d5cab !important;
             font-size: 1rem;
+            font-weight: 700;
+            border: 1.7px solid #2166c8;
+            padding: 9px 5px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
         }
-        .table tbody td {
-            vertical-align: top;
-            border-color: #1d5cab !important;
-            padding: 4px 7px;
+        tbody td {
+            border: 1.3px solid #2166c8;
+            padding: 7px 6px;
+            text-align: center;
+            vertical-align: middle;
+            background: #f8fbff;
+            font-size: 0.97rem;
         }
-        .no-print {
-            display: none !important;
+        tbody tr:nth-child(even) td {
+            background: #e5f0fa;
+        }
+        tbody td.text-start {
+            text-align: left !important;
+        }
+        tbody td.text-end {
+            text-align: right !important;
         }
         @media print {
             html, body {
                 width: 297mm;
                 height: 210mm;
-                background: #fff !important;
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
             }
-            .no-print { display: none !important; }
-            .printable-area, .printable-area * { visibility: visible !important; }
-            .container { max-width: 100% !important; }
         }
     </style>
 </head>
 <body>
-<div class="container printable-area">
-    <div class="print-title">Daftar Pembayaran Siswa</div>
+<div>
+    <div class="print-title">DAFTAR PEMBAYARAN SISWA</div>
     <div class="print-subtitle">
         Unit: <strong><?= htmlspecialchars($petugas_unit) ?></strong>
         <?php if (
@@ -203,92 +216,100 @@ $conn->close();
      $tahun_pelajaran
  ) ?></strong><?php endif; ?>
     </div>
-    <table class="table table-bordered table-hover">
-        <thead>
-        <tr>
-            <th style="width:35px">No</th>
-            <th style="width:110px">No Formulir</th>
-            <th style="width:170px">Nama Siswa</th>
-            <th style="width:90px">Jenis Pembayaran</th>
-            <th style="width:100px">Nominal</th>
-            <th style="width:80px">Cashback</th>
-            <th style="width:90px">Tanggal</th>
-            <th style="width:90px">Keterangan</th>
-            <th style="width:80px">Metode</th>
-            <th style="width:70px">Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        $no = 1;
-        foreach ($siswa_data as $siswa) {
-            $jenis_pembayaran_list = [];
-            foreach ($siswa['pembayaran'] as $pembayaran) {
-                $tanggal_pembayaran = $pembayaran['tanggal_pembayaran'];
-                $keterangan = $pembayaran['keterangan'];
-                foreach ($pembayaran['details'] as $detail) {
-                    $jenis_pembayaran = $detail['jenis_pembayaran'];
-                    $metode_pembayaran = $pembayaran['metode_pembayaran'];
-                    $status_pembayaran = $detail['status_pembayaran'];
-                    $angsuran_ke = $detail['angsuran_ke'];
-                    $status =
-                        strtolower($jenis_pembayaran) === 'spp'
-                            ? ($status_pembayaran === 'Lunas'
-                                ? 'Lunas'
-                                : 'Angsuran ke-' . $angsuran_ke)
-                            : ucfirst($status_pembayaran);
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th style="width:34px">NO</th>
+                <th style="width:120px">NO FORMULIR</th>
+                <th style="width:220px">NAMA SISWA</th>
+                <th style="width:135px">JENIS PEMBAYARAN</th>
+                <th style="width:120px">NOMINAL PEMBAYARAN</th>
+                <th style="width:90px">CASHBACK</th>
+                <th style="width:105px">TANGGAL PEMBAYARAN</th>
+                <th style="width:115px">KETERANGAN</th>
+                <th style="width:90px">METODE</th>
+                <th style="width:80px">STATUS</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            $no = 1;
+            foreach ($siswa_data as $siswa) {
+                $jenis_pembayaran_list = [];
+                foreach ($siswa['pembayaran'] as $pembayaran) {
+                    $tanggal_pembayaran = $pembayaran['tanggal_pembayaran'];
+                    $keterangan = $pembayaran['keterangan'];
+                    foreach ($pembayaran['details'] as $detail) {
+                        $jenis_pembayaran = $detail['jenis_pembayaran'];
+                        $metode_pembayaran = $pembayaran['metode_pembayaran'];
+                        $status_pembayaran = $detail['status_pembayaran'];
+                        $angsuran_ke = $detail['angsuran_ke'];
+                        $status =
+                            strtolower($jenis_pembayaran) === 'spp'
+                                ? ($status_pembayaran === 'Lunas'
+                                    ? 'Lunas'
+                                    : 'Angsuran ke-' . $angsuran_ke)
+                                : ucfirst($status_pembayaran);
 
-                    $jenis_pembayaran_list[] = [
-                        'jenis_pembayaran' => $jenis_pembayaran,
-                        'jumlah' => $detail['jumlah'],
-                        'cashback' => $detail['cashback'],
-                        'tanggal_pembayaran' => $tanggal_pembayaran,
-                        'keterangan' => $keterangan,
-                        'metode_pembayaran' => $metode_pembayaran,
-                        'status_pembayaran' => $status,
-                    ];
+                        $jenis_pembayaran_list[] = [
+                            'jenis_pembayaran' => $jenis_pembayaran,
+                            'jumlah' => $detail['jumlah'],
+                            'cashback' => $detail['cashback'],
+                            'tanggal_pembayaran' => $tanggal_pembayaran,
+                            'keterangan' => $keterangan,
+                            'metode_pembayaran' => $metode_pembayaran,
+                            'status_pembayaran' => $status,
+                        ];
+                    }
+                }
+                foreach ($jenis_pembayaran_list as $jp) {
+                    echo '<tr>';
+                    echo '<td>' . $no++ . '</td>';
+                    echo '<td class="text-start">' .
+                        htmlspecialchars($siswa['no_formulir']) .
+                        '</td>';
+                    echo '<td class="text-start">' .
+                        htmlspecialchars($siswa['nama']) .
+                        '</td>';
+                    echo '<td>' .
+                        htmlspecialchars($jp['jenis_pembayaran']) .
+                        '</td>';
+                    echo '<td class="text-end">' .
+                        ($jp['jumlah'] !== '-' && $jp['jumlah'] !== null
+                            ? 'Rp. ' . number_format($jp['jumlah'], 0, ',', '.')
+                            : '-') .
+                        '</td>';
+                    echo '<td>' .
+                        (strtolower($jp['jenis_pembayaran']) === 'uang pangkal'
+                            ? 'Rp. ' .
+                                number_format($jp['cashback'], 0, ',', '.')
+                            : '-') .
+                        '</td>';
+                    echo '<td>' .
+                        ($jp['tanggal_pembayaran'] !== '-' &&
+                        !empty($jp['tanggal_pembayaran'])
+                            ? date(
+                                'd/m/Y',
+                                strtotime($jp['tanggal_pembayaran'])
+                            )
+                            : '-') .
+                        '</td>';
+                    echo '<td>' . htmlspecialchars($jp['keterangan']) . '</td>';
+                    echo '<td>' .
+                        htmlspecialchars($jp['metode_pembayaran']) .
+                        '</td>';
+                    echo '<td>' .
+                        htmlspecialchars($jp['status_pembayaran']) .
+                        '</td>';
+                    echo '</tr>';
                 }
             }
-            foreach ($jenis_pembayaran_list as $jp) {
-                echo '<tr>';
-                echo '<td class="text-center">' . $no++ . '</td>';
-                echo '<td>' . htmlspecialchars($siswa['no_formulir']) . '</td>';
-                echo '<td>' . htmlspecialchars($siswa['nama']) . '</td>';
-                echo '<td class="text-center">' .
-                    htmlspecialchars($jp['jenis_pembayaran']) .
-                    '</td>';
-                echo '<td class="text-end">' .
-                    ($jp['jumlah'] !== '-' && $jp['jumlah'] !== null
-                        ? 'Rp. ' . number_format($jp['jumlah'], 0, ',', '.')
-                        : '-') .
-                    '</td>';
-                echo '<td class="text-end">' .
-                    (strtolower($jp['jenis_pembayaran']) === 'uang pangkal'
-                        ? 'Rp. ' . number_format($jp['cashback'], 0, ',', '.')
-                        : '-') .
-                    '</td>';
-                echo '<td class="text-center">' .
-                    ($jp['tanggal_pembayaran'] !== '-' &&
-                    !empty($jp['tanggal_pembayaran'])
-                        ? date('d/m/Y', strtotime($jp['tanggal_pembayaran']))
-                        : '-') .
-                    '</td>';
-                echo '<td>' . htmlspecialchars($jp['keterangan']) . '</td>';
-                echo '<td class="text-center">' .
-                    htmlspecialchars($jp['metode_pembayaran']) .
-                    '</td>';
-                echo '<td class="text-center">' .
-                    htmlspecialchars($jp['status_pembayaran']) .
-                    '</td>';
-                echo '</tr>';
-            }
-        }
-        ?>
-        </tbody>
-    </table>
+            ?>
+            </tbody>
+        </table>
+    </div>
 </div>
-<script>
-    window.print();
-</script>
+<script>window.print();</script>
 </body>
 </html>
