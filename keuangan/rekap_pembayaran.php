@@ -240,6 +240,60 @@ $conn->close();
     .table-info {
       background:rgb(112, 194, 238) !important;
     }
+
+    @media print {
+  html, body {
+    font-size: 11px !important;
+    background: #fff !important;
+    color: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+  }
+  .printable-area, .printable-area * {
+    visibility: visible !important;
+    box-shadow: none !important;
+    font-size: 11px !important;
+  }
+  .printable-area {
+    position: absolute !important;
+    top: 0; left: 0;
+    width: 100% !important;
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .table {
+    font-size: 10px !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  .table th, .table td {
+    padding: 2px 4px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+  }
+  .table-bordered th, .table-bordered td {
+    border: 1px solid #888 !important;
+  }
+  .h3, h1, h2 {
+    font-size: 15px !important;
+    margin: 0 0 4px 0 !important;
+  }
+  .no-print, .no-print * {
+    display: none !important;
+  }
+  .card, .card-body, .main-content, .container-fluid {
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  nav, .sidebar, .footer, .navbar, .sidebar *, .footer * {
+    display: none !important;
+  }
+}
+
     </style>
 </head>
 <body>
