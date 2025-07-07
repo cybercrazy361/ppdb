@@ -226,22 +226,12 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/sidebar.css">
     <link rel="stylesheet" href="../assets/css/dashboard_keuangan_styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-    @media print {
-      body * { visibility:hidden; }
-      .printable-area, .printable-area * { visibility:visible; box-shadow:none!important; }
-      .printable-area { position:absolute; top:0; left:0; width:100%; background:#fff!important;}
-      .no-print { display:none; }
-      .table-responsive { overflow:visible!important; }
-    }
-    .table thead th, .table tfoot td, .table tbody td {
-      vertical-align:middle; text-align:center;
-    }
-    .table-info {
-      background:rgb(112, 194, 238) !important;
-    }
-
-    @media print {
+<style>
+@media print {
+  @page {
+    size: landscape;
+    margin: 8mm;
+  }
   html, body {
     font-size: 11px !important;
     background: #fff !important;
@@ -267,11 +257,14 @@ $conn->close();
     font-size: 10px !important;
     margin: 0 !important;
     width: 100% !important;
+    page-break-inside: auto !important;
   }
   .table th, .table td {
     padding: 2px 4px !important;
     font-size: 10px !important;
     line-height: 1.2 !important;
+    vertical-align: middle !important;
+    text-align: center !important;
   }
   .table-bordered th, .table-bordered td {
     border: 1px solid #888 !important;
@@ -292,9 +285,22 @@ $conn->close();
   nav, .sidebar, .footer, .navbar, .sidebar *, .footer * {
     display: none !important;
   }
+  .table-responsive {
+    overflow: visible !important;
+  }
+  /* Agar tfoot (total) hanya di halaman terakhir */
+  tfoot {
+    display: table-footer-group !important;
+  }
 }
+.table thead th, .table tfoot td, .table tbody td {
+  vertical-align:middle; text-align:center;
+}
+.table-info {
+  background:rgb(112, 194, 238) !important;
+}
+</style>
 
-    </style>
 </head>
 <body>
 <?php include '../includes/sidebar.php'; ?>
