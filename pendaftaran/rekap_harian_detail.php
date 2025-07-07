@@ -12,12 +12,18 @@ $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.nama, cp.status AS status_ppdb
-    FROM pembayaran p
-    JOIN siswa s ON p.siswa_id = s.id
+    FROM siswa s
+    JOIN pembayaran p ON p.siswa_id = s.id
     LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-    WHERE s.unit = ? AND DATE(p.tanggal_pembayaran) = ?
+    WHERE s.unit = ?
+      AND DATE(p.tanggal_pembayaran) = ?
+      AND (
+        SELECT MIN(DATE(p2.tanggal_pembayaran))
+        FROM pembayaran p2
+        WHERE p2.siswa_id = s.id
+      ) = ?
 ");
-$stmt->bind_param('ss', $unit, $tanggal);
+$stmt->bind_param('sss', $unit, $tanggal, $tanggal);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -63,7 +69,7 @@ while ($row = $result->fetch_assoc()) {
         $status_pembayaran = 'Angsuran';
     }
 
-    // Sinkronkan status dengan transaksi terakhir (opsional, biar konsisten dengan field status_pembayaran jika pernah diubah manual)
+    // Sinkronkan status dengan transaksi terakhir
     $stmt3 = $conn->prepare("
         SELECT pd.status_pembayaran 
         FROM pembayaran_detail pd
