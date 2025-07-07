@@ -354,77 +354,68 @@ $conn->close();
         </select>
       </div>
     </form>
-    <div class="card shadow mb-4 printable-area">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover">
-            <thead class="table-primary">
-              <tr>
-                <th colspan="<?= 4 +
-                    count($kolom_list) +
-                    1 ?>" class="text-center fs-5 fw-bold">
-                  Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?> | 
-                  Metode: <?= $filter_metode == 'all'
-                      ? 'Semua'
-                      : ucfirst($filter_metode) ?>
-                </th>
-              </tr>
-              <tr>
-                <th>No</th>
-                <th>No Formulir</th>
-                <th class="nama-siswa">Nama Siswa</th>
-                <th>Metode Pembayaran</th>
-                <?php foreach ($kolom_list as $k): ?>
-                  <th<?= $k == 'Cashback'
-                      ? ' class="bg-warning text-dark"'
-                      : '' ?>><?= $k ?></th>
-                <?php endforeach; ?>
-                <th>Total Bayar</th>
-              </tr>
-            </thead>
-            <tbody>
-            <?php
-            $no = 1;
-            foreach ($filtered_siswa as $sis): ?>
-            <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
-                ? ' class="table-info"'
-                : '' ?>>
-              <td><?= $no++ ?></td>
-              <td><?= $sis['no_formulir'] ?></td>
-              <td class="nama-siswa"><?= $sis['nama'] ?></td>
-              <td><?= htmlspecialchars(
-                  ucfirst($sis['metode_pembayaran'])
-              ) ?></td>
-              <?php foreach ($kolom_list as $k): ?>
-                <td<?= $k == 'Cashback'
-                    ? ' class="bg-warning text-dark"'
-                    : '' ?>>
-                  <?= $sis['pembayaran'][$k] > 0
-                      ? 'Rp ' .
-                          number_format($sis['pembayaran'][$k], 0, ',', '.')
-                      : '-' ?>
-                </td>
-              <?php endforeach; ?>
-              <td><b><?= $sis['total_bayar'] > 0
-                  ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
-                  : '-' ?></b></td>
-            </tr>
-            <?php endforeach;
-            ?>
-            <?= $total_row_html
-// BARIS TOTAL DITAMBAHKAN DI SINI
+<div class="card shadow mb-4 printable-area">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-primary">
+          <tr>
+            <th colspan="<?= 4 +
+                count($kolom_list) +
+                1 ?>" class="text-center fs-5 fw-bold">
+              Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?> | 
+              Metode: <?= $filter_metode == 'all'
+                  ? 'Semua'
+                  : ucfirst($filter_metode) ?>
+            </th>
+          </tr>
+          <tr>
+            <th>No</th>
+            <th>No Formulir</th>
+            <th class="nama-siswa">Nama Siswa</th>
+            <th>Metode Pembayaran</th>
+            <?php foreach ($kolom_list as $k): ?>
+              <th<?= $k == 'Cashback'
+                  ? ' class="bg-warning text-dark"'
+                  : '' ?>><?= $k ?></th>
+            <?php endforeach; ?>
+            <th>Total Bayar</th>
+          </tr>
+        </thead>
+        <tbody>
+        <?php
+        $no = 1;
+        foreach ($filtered_siswa as $sis): ?>
+        <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
+            ? ' class="table-info"'
+            : '' ?>>
+          <td><?= $no++ ?></td>
+          <td><?= $sis['no_formulir'] ?></td>
+          <td class="nama-siswa"><?= $sis['nama'] ?></td>
+          <td><?= htmlspecialchars(ucfirst($sis['metode_pembayaran'])) ?></td>
+          <?php foreach ($kolom_list as $k): ?>
+            <td<?= $k == 'Cashback' ? ' class="bg-warning text-dark"' : '' ?>>
+              <?= $sis['pembayaran'][$k] > 0
+                  ? 'Rp ' . number_format($sis['pembayaran'][$k], 0, ',', '.')
+                  : '-' ?>
+            </td>
+          <?php endforeach; ?>
+          <td><b><?= $sis['total_bayar'] > 0
+              ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
+              : '-' ?></b></td>
+        </tr>
+        <?php endforeach;
+        ?>
+        <?= $total_row_html
+// BARIS TOTAL DITAMBAHKAN DI SINI, CUKUP SEKALI
 ?>
-            </tbody>
-            <tfoot>
-              <!-- Hanya untuk tampilan web, tidak tampil di print -->
-              <?= $total_row_html ?>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+        </tbody>
+        <!-- <tfoot></tfoot>  tfoot boleh dihapus atau kosongkan -->
+      </table>
     </div>
   </div>
 </div>
+
 <footer class="footer bg-white text-center py-3">&copy; <?= date(
     'Y'
 ) ?> Sistem Keuangan PPDB</footer>
