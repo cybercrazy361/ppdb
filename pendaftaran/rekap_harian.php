@@ -12,7 +12,7 @@ $uang_pangkal_id = 1;
 $spp_id = 2;
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 
-// Ambil daftar siswa yang melakukan pembayaran PERTAMA kali pada tanggal tersebut
+// Hanya ambil siswa yang pembayaran pertamanya pada tanggal itu
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.calon_pendaftar_id
     FROM siswa s
@@ -20,9 +20,9 @@ $stmt = $conn->prepare("
     WHERE s.unit = ?
       AND DATE(p.tanggal_pembayaran) = ?
       AND (
-          SELECT MIN(DATE(p2.tanggal_pembayaran))
-          FROM pembayaran p2
-          WHERE p2.siswa_id = s.id
+        SELECT MIN(DATE(p2.tanggal_pembayaran))
+        FROM pembayaran p2
+        WHERE p2.siswa_id = s.id
       ) = ?
 ");
 $stmt->bind_param('sss', $unit, $tanggal, $tanggal);
