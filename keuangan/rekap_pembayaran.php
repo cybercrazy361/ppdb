@@ -22,15 +22,12 @@ if (
     isset($_GET['tahun_pelajaran']) &&
     in_array($_GET['tahun_pelajaran'], $tahunList)
 ) {
-    // Jika user sudah memilih, pakai pilihan mereka
     $tahun_pelajaran = $_GET['tahun_pelajaran'];
 } else {
-    // Kalau belum memilih, default ke 2025/2026 (jika tersedia di $tahunList)
     $default = '2025/2026';
     if (in_array($default, $tahunList)) {
         $tahun_pelajaran = $default;
     } else {
-        // fallback: ambil yang paling atas di daftar
         $tahun_pelajaran = $tahunList[0];
     }
 }
@@ -81,11 +78,12 @@ while ($r = $res->fetch_assoc()) {
     $jenis_pembayaran[] = $r;
 }
 
-// --- 2. Ambil semua siswa di unit ini + metode pembayaran ---
+// --- 2. Ambil semua siswa di unit ini + status ppdb + metode pembayaran ---
 $siswa = [];
 $res = $conn->query("
-  SELECT s.id, s.no_formulir, s.nama
+  SELECT s.id, s.no_formulir, s.nama, COALESCE(LOWER(TRIM(cp.status)), '') as status_ppdb
   FROM siswa s
+  LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
   WHERE s.unit='$unit'
   ORDER BY s.nama
 ");
@@ -93,6 +91,7 @@ while ($r = $res->fetch_assoc()) {
     $siswa[$r['id']] = [
         'no_formulir' => $r['no_formulir'],
         'nama' => $r['nama'],
+        'status_ppdb' => $r['status_ppdb'],
         'metode_pembayaran' => '-', // default
         'pembayaran' => [],
     ];
@@ -131,7 +130,6 @@ foreach ($siswa as &$sis) {
 unset($sis);
 
 // --- 4. Query rekap pembayaran (jumlah + cashback) ---
-// Uang Pangkal jangan dikurangi cashback
 $sql = "
 SELECT 
     s.id AS siswa_id,
@@ -181,8 +179,15 @@ $grand_total = 0;
 foreach ($siswa as &$sis) {
     $sis['total_bayar'] = 0;
     foreach ($kolom_list as $k) {
-        // Jangan masukkan Cashback ke total_bayar dan grand_total
-        if ($k !== 'Cashback') {
+        // Untuk kolom total bayar: Uang Pangkal dikurangi Cashback, kolom Cashback tidak dijumlahkan
+        if ($k === 'Uang Pangkal') {
+            $sis['total_bayar'] +=
+                $sis['pembayaran']['Uang Pangkal'] -
+                $sis['pembayaran']['Cashback'];
+            $grand_total +=
+                $sis['pembayaran']['Uang Pangkal'] -
+                $sis['pembayaran']['Cashback'];
+        } elseif ($k !== 'Cashback') {
             $sis['total_bayar'] += $sis['pembayaran'][$k];
             $grand_total += $sis['pembayaran'][$k];
         }
@@ -274,7 +279,9 @@ $conn->close();
             <?php
             $no = 1;
             foreach ($siswa as $sis): ?>
-            <tr>
+            <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
+                ? ' class="table-info"'
+                : '' ?>>
               <td><?= $no++ ?></td>
               <td><?= $sis['no_formulir'] ?></td>
               <td style="text-align:left;"><?= $sis['nama'] ?></td>
