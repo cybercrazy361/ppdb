@@ -10,6 +10,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'pendaftaran') {
 $unit = $_SESSION['unit'];
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 
+$data = [];
+
+// 1. Siswa yang pembayaran pertamanya pada tanggal ini
 $stmt = $conn->prepare("
     SELECT DISTINCT s.id, s.nama, cp.status AS status_ppdb
     FROM siswa s
@@ -26,8 +29,6 @@ $stmt = $conn->prepare("
 $stmt->bind_param('sss', $unit, $tanggal, $tanggal);
 $stmt->execute();
 $result = $stmt->get_result();
-
-$data = [];
 
 while ($row = $result->fetch_assoc()) {
     $siswa_id = (int) $row['id'];
@@ -97,6 +98,34 @@ while ($row = $result->fetch_assoc()) {
         'status_pembayaran' => $status_pembayaran,
     ];
 }
+$stmt->close();
+
+// 2. Tambah siswa yang belum pernah bayar sama sekali (hingga tanggal itu), status_pembayaran = "Belum Bayar"
+$stmt_belum = $conn->prepare("
+    SELECT s.id, s.nama, cp.status AS status_ppdb
+    FROM siswa s
+    LEFT JOIN (
+        SELECT siswa_id, MIN(DATE(tanggal_pembayaran)) AS tanggal_pertama
+        FROM pembayaran
+        GROUP BY siswa_id
+    ) x ON x.siswa_id = s.id
+    LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+    WHERE s.unit = ?
+      AND (x.tanggal_pertama IS NULL OR x.tanggal_pertama > ?)
+      AND (cp.status IS NULL OR LOWER(cp.status) != 'ppdb bersama')
+");
+$stmt_belum->bind_param('ss', $unit, $tanggal);
+$stmt_belum->execute();
+$res_belum = $stmt_belum->get_result();
+
+while ($row = $res_belum->fetch_assoc()) {
+    $data[] = [
+        'nama' => $row['nama'],
+        'status_ppdb' => $row['status_ppdb'] ?? '-',
+        'status_pembayaran' => 'Belum Bayar',
+    ];
+}
+$stmt_belum->close();
 
 header('Content-Type: application/json');
 echo json_encode($data);
