@@ -32,9 +32,13 @@ if (
     }
 }
 
-list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
+// --- Ambil filter metode pembayaran
+$filter_metode = isset($_GET['metode'])
+    ? strtolower(trim($_GET['metode']))
+    : 'all';
 
 // --- Daftar bulan SPP urut ---
+list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
 $bulan_spp = [
     'Juli',
     'Agustus',
@@ -111,7 +115,9 @@ $res = $conn->query("
 ");
 while ($r = $res->fetch_assoc()) {
     if (isset($siswa[$r['siswa_id']]) && $r['metode_pembayaran']) {
-        $siswa[$r['siswa_id']]['metode_pembayaran'] = $r['metode_pembayaran'];
+        $siswa[$r['siswa_id']]['metode_pembayaran'] = strtolower(
+            trim($r['metode_pembayaran'])
+        );
     }
 }
 
@@ -174,9 +180,21 @@ foreach ($bulan_spp_dinamis as $bln) {
     $kolom_list[] = "SPP $bln";
 }
 
+// --- 6. Filter siswa by metode pembayaran jika dipilih
+$filtered_siswa = [];
+foreach ($siswa as $id => $sis) {
+    if (
+        $filter_metode == 'all' ||
+        $sis['metode_pembayaran'] == $filter_metode
+    ) {
+        $filtered_siswa[$id] = $sis;
+    }
+}
+
+// --- 7. Hitung total kolom & total bayar (hanya yang difilter)
 $total_kolom = array_fill_keys($kolom_list, 0);
 $grand_total = 0;
-foreach ($siswa as &$sis) {
+foreach ($filtered_siswa as &$sis) {
     $sis['total_bayar'] = 0;
     foreach ($kolom_list as $k) {
         // Untuk kolom total bayar: Uang Pangkal dikurangi Cashback, kolom Cashback tidak dijumlahkan
@@ -242,15 +260,31 @@ $conn->close();
       ) ?></h1>
       <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
     </div>
-    <form method="get" class="mb-3">
-      <label><b>Tahun Pelajaran:</b></label>
-      <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
-        <?php foreach ($tahunList as $tp): ?>
-          <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
+    <form method="get" class="row row-cols-lg-auto g-2 align-items-center mb-3">
+      <div class="col-auto">
+        <label><b>Tahun Pelajaran:</b></label>
+        <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+          <?php foreach ($tahunList as $tp): ?>
+            <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
     ? 'selected'
     : '' ?>><?= $tp ?></option>
-        <?php endforeach; ?>
-      </select>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="col-auto">
+        <label><b>Metode:</b></label>
+        <select name="metode" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+          <option value="all"<?= $filter_metode == 'all'
+              ? ' selected'
+              : '' ?>>Semua</option>
+          <option value="cash"<?= $filter_metode == 'cash'
+              ? ' selected'
+              : '' ?>>Cash</option>
+          <option value="transfer"<?= $filter_metode == 'transfer'
+              ? ' selected'
+              : '' ?>>Transfer</option>
+        </select>
+      </div>
     </form>
     <div class="card shadow mb-4 printable-area">
       <div class="card-body">
@@ -261,7 +295,10 @@ $conn->close();
                 <th colspan="<?= 4 +
                     count($kolom_list) +
                     1 ?>" class="text-center fs-5 fw-bold">
-                  Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?>
+                  Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?> | 
+                  Metode: <?= $filter_metode == 'all'
+                      ? 'Semua'
+                      : ucfirst($filter_metode) ?>
                 </th>
               </tr>
               <tr>
@@ -270,7 +307,9 @@ $conn->close();
                 <th>Nama Siswa</th>
                 <th>Metode Pembayaran</th>
                 <?php foreach ($kolom_list as $k): ?>
-                  <th><?= $k ?></th>
+                  <th<?= $k == 'Cashback'
+                      ? ' class="bg-warning text-dark"'
+                      : '' ?>><?= $k ?></th>
                 <?php endforeach; ?>
                 <th>Total Bayar</th>
               </tr>
@@ -278,16 +317,20 @@ $conn->close();
             <tbody>
             <?php
             $no = 1;
-            foreach ($siswa as $sis): ?>
+            foreach ($filtered_siswa as $sis): ?>
             <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
                 ? ' class="table-info"'
                 : '' ?>>
               <td><?= $no++ ?></td>
               <td><?= $sis['no_formulir'] ?></td>
               <td style="text-align:left;"><?= $sis['nama'] ?></td>
-              <td><?= htmlspecialchars($sis['metode_pembayaran']) ?></td>
+              <td><?= htmlspecialchars(
+                  ucfirst($sis['metode_pembayaran'])
+              ) ?></td>
               <?php foreach ($kolom_list as $k): ?>
-                <td>
+                <td<?= $k == 'Cashback'
+                    ? ' class="bg-warning text-dark"'
+                    : '' ?>>
                   <?= $sis['pembayaran'][$k] > 0
                       ? 'Rp ' .
                           number_format($sis['pembayaran'][$k], 0, ',', '.')
@@ -305,7 +348,9 @@ $conn->close();
               <tr class="table-secondary fw-bold">
                 <td colspan="4" class="text-center">Total</td>
                 <?php foreach ($kolom_list as $k): ?>
-                  <td>
+                  <td<?= $k == 'Cashback'
+                      ? ' class="bg-warning text-dark"'
+                      : '' ?>>
                     <?= $total_kolom[$k] > 0
                         ? 'Rp ' . number_format($total_kolom[$k], 0, ',', '.')
                         : '-' ?>
@@ -329,6 +374,10 @@ $conn->close();
 ) ?> Sistem Keuangan PPDB</footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/sidebar.js"></script>
-<script>function printTable(){window.print()}</script>
+<script>
+function printTable(){
+  window.print();
+}
+</script>
 </body>
 </html>
