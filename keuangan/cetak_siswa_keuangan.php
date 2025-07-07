@@ -232,81 +232,99 @@ $conn->close();
                 <th style="width:80px">STATUS</th>
             </tr>
             </thead>
-            <tbody>
-            <?php
-            $no = 1;
-            foreach ($siswa_data as $siswa) {
-                $jenis_pembayaran_list = [];
-                foreach ($siswa['pembayaran'] as $pembayaran) {
-                    $tanggal_pembayaran = $pembayaran['tanggal_pembayaran'];
-                    $keterangan = $pembayaran['keterangan'];
-                    foreach ($pembayaran['details'] as $detail) {
-                        $jenis_pembayaran = $detail['jenis_pembayaran'];
-                        $metode_pembayaran = $pembayaran['metode_pembayaran'];
-                        $status_pembayaran = $detail['status_pembayaran'];
-                        $angsuran_ke = $detail['angsuran_ke'];
-                        $status =
-                            strtolower($jenis_pembayaran) === 'spp'
-                                ? ($status_pembayaran === 'Lunas'
-                                    ? 'Lunas'
-                                    : 'Angsuran ke-' . $angsuran_ke)
-                                : ucfirst($status_pembayaran);
+<tbody>
+<?php
+$no = 1;
+foreach ($siswa_data as $siswa) {
+    // Hitung total baris transaksi pembayaran utk siswa ini
+    $jenis_pembayaran_list = [];
+    foreach ($siswa['pembayaran'] as $pembayaran) {
+        $tanggal_pembayaran = $pembayaran['tanggal_pembayaran'];
+        $keterangan = $pembayaran['keterangan'];
+        foreach ($pembayaran['details'] as $detail) {
+            $jenis_pembayaran = $detail['jenis_pembayaran'];
+            $metode_pembayaran = $pembayaran['metode_pembayaran'];
+            $status_pembayaran = $detail['status_pembayaran'];
+            $angsuran_ke = $detail['angsuran_ke'];
+            $status =
+                strtolower($jenis_pembayaran) === 'spp'
+                    ? ($status_pembayaran === 'Lunas'
+                        ? 'Lunas'
+                        : 'Angsuran ke-' . $angsuran_ke)
+                    : ucfirst($status_pembayaran);
 
-                        $jenis_pembayaran_list[] = [
-                            'jenis_pembayaran' => $jenis_pembayaran,
-                            'jumlah' => $detail['jumlah'],
-                            'cashback' => $detail['cashback'],
-                            'tanggal_pembayaran' => $tanggal_pembayaran,
-                            'keterangan' => $keterangan,
-                            'metode_pembayaran' => $metode_pembayaran,
-                            'status_pembayaran' => $status,
-                        ];
-                    }
-                }
-                foreach ($jenis_pembayaran_list as $jp) {
-                    echo '<tr>';
-                    echo '<td>' . $no++ . '</td>';
-                    echo '<td class="text-start">' .
-                        htmlspecialchars($siswa['no_formulir']) .
-                        '</td>';
-                    echo '<td class="text-start">' .
-                        htmlspecialchars($siswa['nama']) .
-                        '</td>';
-                    echo '<td>' .
-                        htmlspecialchars($jp['jenis_pembayaran']) .
-                        '</td>';
-                    echo '<td class="text-end">' .
-                        ($jp['jumlah'] !== '-' && $jp['jumlah'] !== null
-                            ? 'Rp. ' . number_format($jp['jumlah'], 0, ',', '.')
-                            : '-') .
-                        '</td>';
-                    echo '<td>' .
-                        (strtolower($jp['jenis_pembayaran']) === 'uang pangkal'
-                            ? 'Rp. ' .
-                                number_format($jp['cashback'], 0, ',', '.')
-                            : '-') .
-                        '</td>';
-                    echo '<td>' .
-                        ($jp['tanggal_pembayaran'] !== '-' &&
-                        !empty($jp['tanggal_pembayaran'])
-                            ? date(
-                                'd/m/Y',
-                                strtotime($jp['tanggal_pembayaran'])
-                            )
-                            : '-') .
-                        '</td>';
-                    echo '<td>' . htmlspecialchars($jp['keterangan']) . '</td>';
-                    echo '<td>' .
-                        htmlspecialchars($jp['metode_pembayaran']) .
-                        '</td>';
-                    echo '<td>' .
-                        htmlspecialchars($jp['status_pembayaran']) .
-                        '</td>';
-                    echo '</tr>';
-                }
+            $jenis_pembayaran_list[] = [
+                'jenis_pembayaran' => $jenis_pembayaran,
+                'jumlah' => $detail['jumlah'],
+                'cashback' => $detail['cashback'],
+                'tanggal_pembayaran' => $tanggal_pembayaran,
+                'keterangan' => $keterangan,
+                'metode_pembayaran' => $metode_pembayaran,
+                'status_pembayaran' => $status,
+            ];
+        }
+    }
+
+    $rowspan = count($jenis_pembayaran_list);
+    if ($rowspan == 0) {
+        $rowspan = 1;
+    }
+    // Jika tidak ada pembayaran sama sekali, tetap buat 1 baris kosong
+    if ($rowspan == 1 && empty($jenis_pembayaran_list)) {
+        echo '<tr>';
+        echo '<td>' . $no++ . '</td>';
+        echo '<td class="text-start">' .
+            htmlspecialchars($siswa['no_formulir']) .
+            '</td>';
+        echo '<td class="text-start">' .
+            htmlspecialchars($siswa['nama']) .
+            '</td>';
+        echo '<td colspan="7" style="text-align:center">-</td>';
+        echo '</tr>';
+    } else {
+        foreach ($jenis_pembayaran_list as $i => $jp) {
+            echo '<tr>';
+            if ($i == 0) {
+                // Kolom NO, NO FORMULIR, NAMA SISWA hanya di baris pertama, pakai rowspan
+                echo '<td rowspan="' . $rowspan . '">' . $no++ . '</td>';
+                echo '<td class="text-start" rowspan="' .
+                    $rowspan .
+                    '">' .
+                    htmlspecialchars($siswa['no_formulir']) .
+                    '</td>';
+                echo '<td class="text-start" rowspan="' .
+                    $rowspan .
+                    '">' .
+                    htmlspecialchars($siswa['nama']) .
+                    '</td>';
             }
-            ?>
-            </tbody>
+            // Kolom berikutnya isi tiap transaksi
+            echo '<td>' . htmlspecialchars($jp['jenis_pembayaran']) . '</td>';
+            echo '<td class="text-end">' .
+                ($jp['jumlah'] !== '-' && $jp['jumlah'] !== null
+                    ? 'Rp. ' . number_format($jp['jumlah'], 0, ',', '.')
+                    : '-') .
+                '</td>';
+            echo '<td>' .
+                (strtolower($jp['jenis_pembayaran']) === 'uang pangkal'
+                    ? 'Rp. ' . number_format($jp['cashback'], 0, ',', '.')
+                    : '-') .
+                '</td>';
+            echo '<td>' .
+                ($jp['tanggal_pembayaran'] !== '-' &&
+                !empty($jp['tanggal_pembayaran'])
+                    ? date('d/m/Y', strtotime($jp['tanggal_pembayaran']))
+                    : '-') .
+                '</td>';
+            echo '<td>' . htmlspecialchars($jp['keterangan']) . '</td>';
+            echo '<td>' . htmlspecialchars($jp['metode_pembayaran']) . '</td>';
+            echo '<td>' . htmlspecialchars($jp['status_pembayaran']) . '</td>';
+            echo '</tr>';
+        }
+    }
+}
+?>
+</tbody>
         </table>
     </div>
 </div>
