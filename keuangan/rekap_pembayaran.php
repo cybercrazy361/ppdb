@@ -2,6 +2,7 @@
 session_start();
 include '../database_connection.php';
 
+// Pastikan pengguna sudah login
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
     header('Location: login_keuangan.php');
     exit();
@@ -9,30 +10,34 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 
 $unit = $_SESSION['unit'];
 
-// Ambil daftar tahun pelajaran
+// --- Ambil daftar tahun pelajaran ---
 $tahunList = [];
 $result = $conn->query('SELECT tahun FROM tahun_pelajaran ORDER BY tahun DESC');
 while ($row = $result->fetch_assoc()) {
     $tahunList[] = $row['tahun'];
 }
 
+// --- Pilih tahun pelajaran (default tahun berjalan) ---
 if (
     isset($_GET['tahun_pelajaran']) &&
     in_array($_GET['tahun_pelajaran'], $tahunList)
 ) {
+    // Jika user sudah memilih, pakai pilihan mereka
     $tahun_pelajaran = $_GET['tahun_pelajaran'];
 } else {
+    // Kalau belum memilih, default ke 2025/2026 (jika tersedia di $tahunList)
     $default = '2025/2026';
     if (in_array($default, $tahunList)) {
         $tahun_pelajaran = $default;
     } else {
+        // fallback: ambil yang paling atas di daftar
         $tahun_pelajaran = $tahunList[0];
     }
 }
 
 list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
 
-// Daftar bulan SPP urut (Juli s/d Juni)
+// --- Daftar bulan SPP urut ---
 $bulan_spp = [
     'Juli',
     'Agustus',
@@ -48,7 +53,7 @@ $bulan_spp = [
     'Juni',
 ];
 
-// Hitung index bulan SPP terakhir yg harus tampil
+// --- Hitung index bulan SPP terakhir yang harus tampil ---
 $bulan_now = date('n');
 $tahun_now = date('Y');
 $idx_terakhir = 11;
@@ -67,92 +72,80 @@ if ($tahun_now == $awal_tahun) {
 }
 $bulan_spp_dinamis = array_slice($bulan_spp, 0, $idx_terakhir + 1);
 
-// Ambil semua jenis pembayaran (non-SPP) untuk unit ini
+// --- 1. Ambil semua jenis pembayaran (non-SPP) untuk unit ini ---
 $jenis_pembayaran = [];
 $res = $conn->query(
-    "SELECT id, nama FROM jenis_pembayaran WHERE unit='$unit' AND nama!='SPP' ORDER BY id"
+    "SELECT id,nama FROM jenis_pembayaran WHERE unit='$unit' AND nama!='SPP' ORDER BY id"
 );
 while ($r = $res->fetch_assoc()) {
     $jenis_pembayaran[] = $r;
 }
 
-// Ambil semua siswa di unit ini
+// --- 2. Ambil semua siswa di unit ini ---
+// --- 2. Ambil semua siswa di unit ini ---
 $siswa = [];
 $res = $conn->query("
-    SELECT s.id, s.no_formulir, s.nama, cp.status as status_ppdb
-    FROM siswa s
-    LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-    WHERE s.unit='$unit'
-    ORDER BY s.nama
+  SELECT s.id, s.no_formulir, s.nama, cp.status as status_ppdb
+  FROM siswa s
+  LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+  WHERE s.unit='$unit'
+  ORDER BY s.nama
 ");
 while ($r = $res->fetch_assoc()) {
     $siswa[$r['id']] = [
         'no_formulir' => $r['no_formulir'],
         'nama' => $r['nama'],
         'status_ppdb' => strtolower(trim($r['status_ppdb'] ?? '')),
-        'tagihan' => [],
+        'pembayaran' => [],
     ];
 }
 
-// Inisialisasi tagihan tiap kolom ke 0 (termasuk Cashback)
+// --- 3. Inisialisasi pembayaran tiap kolom ke 0 (termasuk Cashback) ---
 foreach ($siswa as &$sis) {
     foreach ($jenis_pembayaran as $jp) {
-        $sis['tagihan'][$jp['nama']] = 0;
+        $sis['pembayaran'][$jp['nama']] = 0;
         if ($jp['nama'] === 'Uang Pangkal') {
-            $sis['tagihan']['Cashback'] = 0;
+            $sis['pembayaran']['Cashback'] = 0;
         }
     }
     foreach ($bulan_spp_dinamis as $bln) {
-        $sis['tagihan']["SPP $bln"] = 0;
+        $sis['pembayaran']["SPP $bln"] = 0;
     }
 }
 unset($sis);
 
-// Ambil nominal tagihan tiap jenis & SPP per bulan
-$nominal_pembayaran = [];
-$res = $conn->query(
-    "SELECT jp.nama, pn.nominal_max, pn.bulan 
-     FROM jenis_pembayaran jp 
-     LEFT JOIN pengaturan_nominal pn ON pn.jenis_pembayaran_id = jp.id AND pn.unit = '$unit'
-     WHERE jp.unit = '$unit'
-    "
-);
-while ($r = $res->fetch_assoc()) {
-    if ($r['nama'] == 'SPP' && $r['bulan']) {
-        $nominal_pembayaran['SPP ' . $r['bulan']] = (int) $r['nominal_max'];
-    } else {
-        $nominal_pembayaran[$r['nama']] = (int) $r['nominal_max'];
-    }
-}
-
-// Query total sudah dibayar & cashback per siswa per jenis per bulan di tahun ajaran ini
-$sudah_bayar = [];
-$cashback = [];
-$res = $conn->query("
-    SELECT s.id AS siswa_id, jp.nama AS jenis, pd.bulan, SUM(pd.jumlah) AS total_bayar, SUM(pd.cashback) AS total_cashback
-    FROM siswa s
-    JOIN pembayaran p ON s.id = p.siswa_id
-    JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
-    JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
-    WHERE s.unit = '$unit'
-      AND p.tahun_pelajaran = '$tahun_pelajaran'
-    GROUP BY s.id, jp.nama, pd.bulan
-");
+// --- 4. Query rekap pembayaran (jumlah + cashback) ---
+$sql = "
+SELECT 
+    s.id AS siswa_id,
+    jp.nama AS jenis,
+    pd.bulan,
+    SUM(pd.jumlah)   AS total_jumlah,
+    SUM(pd.cashback) AS total_cashback
+FROM siswa s
+JOIN pembayaran p ON s.id=p.siswa_id
+JOIN pembayaran_detail pd ON p.id=pd.pembayaran_id
+JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id=jp.id
+WHERE s.unit='$unit'
+  AND p.tahun_pelajaran='$tahun_pelajaran'
+GROUP BY s.id,jp.nama,pd.bulan
+";
+$res = $conn->query($sql);
 while ($r = $res->fetch_assoc()) {
     $sid = $r['siswa_id'];
     $jenis = $r['jenis'];
     $bulan = $r['bulan'];
     if ($jenis === 'SPP' && $bulan && in_array($bulan, $bulan_spp_dinamis)) {
-        $sudah_bayar[$sid]["SPP $bulan"] = (int) $r['total_bayar'];
+        $siswa[$sid]['pembayaran']["SPP $bulan"] += $r['total_jumlah'];
     } elseif ($jenis !== 'SPP') {
-        $sudah_bayar[$sid][$jenis] = (int) $r['total_bayar'];
+        $siswa[$sid]['pembayaran'][$jenis] += $r['total_jumlah'];
         if ($jenis === 'Uang Pangkal') {
-            $cashback[$sid] = (int) $r['total_cashback'];
+            $siswa[$sid]['pembayaran']['Cashback'] += $r['total_cashback'];
         }
     }
 }
 
-// Susun daftar kolom
+// --- 5. Susun daftar kolom dan total per kolom ---
 $kolom_list = [];
 foreach ($jenis_pembayaran as $jp) {
     $kolom_list[] = $jp['nama'];
@@ -164,40 +157,17 @@ foreach ($bulan_spp_dinamis as $bln) {
     $kolom_list[] = "SPP $bln";
 }
 
-// Hanya tampilkan siswa yang masih punya tagihan
-$siswa_tagihan = [];
-foreach ($siswa as $id => $sis) {
-    $ada_tagihan = false;
-    $tagihan_siswa = [];
-    $total_tagihan = 0;
-    foreach ($kolom_list as $kol) {
-        $nominal = $nominal_pembayaran[$kol] ?? 0;
-        $bayar = $sudah_bayar[$id][$kol] ?? 0;
-        $cb = $cashback[$id] ?? 0;
-
-        // LOGIKA SISA SESUAI REKAP:
-        if ($kol === 'Uang Pangkal') {
-            $sisa = max(0, $nominal - $bayar - $cb); // dikurangi cashback
-        } elseif ($kol === 'Cashback') {
-            $sisa = 0;
-        } else {
-            $sisa = max(0, $nominal - $bayar);
-        }
-        $tagihan_siswa[$kol] = $sisa;
-        if ($sisa > 0 && $kol !== 'Cashback') {
-            $ada_tagihan = true;
-        }
-        if ($kol !== 'Cashback') {
-            $total_tagihan += $sisa;
-        }
+$total_kolom = array_fill_keys($kolom_list, 0);
+$grand_total = 0;
+foreach ($siswa as &$sis) {
+    $sis['total_bayar'] = 0;
+    foreach ($kolom_list as $k) {
+        $sis['total_bayar'] += $sis['pembayaran'][$k];
+        $total_kolom[$k] += $sis['pembayaran'][$k];
     }
-    if ($ada_tagihan) {
-        $sis['tagihan'] = $tagihan_siswa;
-        $sis['total_tagihan'] = $total_tagihan;
-        $siswa_tagihan[] = $sis;
-    }
+    $grand_total += $sis['total_bayar'];
 }
-unset($siswa);
+unset($sis);
 
 $conn->close();
 ?>
@@ -205,141 +175,143 @@ $conn->close();
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rekap Sisa Tagihan Siswa</title>
+    <title>Rekap Pembayaran Siswa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../assets/css/dashboard_keuangan_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-    @media print { .no-print{display:none;} body{margin:20px;} }
-    table { font-size:12pt; }
-    th, td { text-align:center; vertical-align:middle; }
-    .table-info { background:rgb(112,194,238)!important; }
+    @media print {
+      body * { visibility:hidden; }
+      .printable-area, .printable-area * { visibility:visible; box-shadow:none!important; }
+      .printable-area { position:absolute; top:0; left:0; width:100%; background:#fff!important;}
+      .no-print { display:none; }
+      .table-responsive { overflow:visible!important; }
+    }
+    .table thead th, .table tfoot td, .table tbody td {
+      vertical-align:middle; text-align:center;
+    }
+    .table-info {
+  background:rgb(112, 194, 238) !important;
+}
+
     </style>
-</head>
-<body>
-<div class="container">
-
-    <!-- Dropdown Tahun Pelajaran -->
-    <form method="get" class="row g-2 align-items-end no-print my-3">
-        <div class="col-auto">
-            <label for="tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
-            <select name="tahun_pelajaran" id="tahun_pelajaran" class="form-select" onchange="this.form.submit()">
-                <?php foreach ($tahunList as $tp): ?>
-                    <option value="<?= htmlspecialchars($tp) ?>" <?= $tp ===
-$tahun_pelajaran
+            </head>
+            <body>
+            <?php include '../includes/sidebar.php'; ?>
+            <div class="main-content p-4">
+              <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
+                <button id="sidebarToggle" class="btn btn-link rounded-circle"><i class="fas fa-bars"></i></button>
+                <ul class="navbar-nav ms-auto">
+                  <li class="nav-item"><a class="nav-link" href="#"><span class="me-2"><?= htmlspecialchars(
+                      $_SESSION['nama']
+                  ) ?></span><i class="fas fa-user-circle fa-lg"></i></a></li>
+                </ul>
+              </nav>
+              <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h1 class="h3 text-gray-800">Rekap Pembayaran Siswa - <?= htmlspecialchars(
+                      $unit
+                  ) ?></h1>
+                  <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
+                </div>
+                <form method="get" class="mb-3">
+                  <label><b>Tahun Pelajaran:</b></label>
+                  <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+                    <?php foreach ($tahunList as $tp): ?>
+                      <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
     ? 'selected'
-    : '' ?>>
-                        <?= htmlspecialchars($tp) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-    </form>
-
-    <div class="text-center my-4">
-        <h3>Rekap Sisa Tagihan Siswa <?= htmlspecialchars($unit) ?></h3>
-        <p>Tahun Pelajaran <?= htmlspecialchars($tahun_pelajaran) ?></p>
-    </div>
-
-    <div class="alert alert-info">
-        <b>Keterangan:</b> Nilai pada kolom di bawah adalah <u>sisa tagihan</u> (jumlah yang belum dibayar per jenis/bulan, **khusus Uang Pangkal sudah dikurangi Cashback**).
-    </div>
-
-    <?php if (empty($siswa_tagihan)): ?>
-        <div class="alert alert-success text-center">Tidak ada tagihan.</div>
-    <?php else: ?>
-        <div class="table-responsive printable-area">
-        <table class="table table-bordered table-hover">
-            <thead class="table-primary">
-                <tr>
-                    <th>No</th>
-                    <th>No Formulir</th>
-                    <th>Nama</th>
-                    <th>Status</th>
-                    <?php foreach ($kolom_list as $k): ?>
-                        <th><?= $k ?><br>
-                        <small>(Sisa: Rp <?= number_format(
-                            $nominal_pembayaran[$k] ?? 0,
-                            0,
-                            ',',
-                            '.'
-                        ) ?>)</small>
-                        </th>
+    : '' ?>><?= $tp ?></option>
                     <?php endforeach; ?>
-                    <th>Total Sisa</th>
-                </tr>
+                  </select>
+                </form>
+                <div class="card shadow mb-4 printable-area">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+              <tr>
+                <th colspan="<?= 4 +
+                    count($kolom_list) +
+                    1 ?>" class="text-center fs-5 fw-bold">
+                  Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?>
+                </th>
+              </tr>
+              <tr>
+                <th>No</th>
+                <th>No Formulir</th>
+                <th>Nama Siswa</th>
+                <th>Status</th>
+                <?php foreach (
+                    $kolom_list
+                    as $k
+                ): ?><th><?= $k ?></th><?php endforeach; ?>
+                <th>Total Bayar</th>
+              </tr>
             </thead>
             <tbody>
             <?php
             $no = 1;
-            $grand_total = 0;
-            foreach ($siswa_tagihan as $sis):
-                $grand_total += $sis['total_tagihan']; ?>
+            foreach ($siswa as $sis): ?>
             <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
                 ? ' class="table-info"'
                 : '' ?>>
-                <td><?= $no++ ?></td>
-                <td><?= htmlspecialchars($sis['no_formulir']) ?></td>
-                <td style="text-align:left;"><?= htmlspecialchars(
-                    $sis['nama']
-                ) ?></td>
+              <td><?= $no++ ?></td>
+              <td><?= $sis['no_formulir'] ?></td>
+              <td style="text-align:left;"><?= $sis['nama'] ?></td>
+              <td>
+                <?php if ($sis['status_ppdb'] === 'ppdb bersama'): ?>
+                  <span class="badge bg-info text-dark">PPDB Bersama</span>
+                <?php elseif ($sis['status_ppdb']): ?>
+                  <?= htmlspecialchars($sis['status_ppdb']) ?>
+                <?php else: ?>
+                  -
+                <?php endif; ?>
+              </td>
+              <?php foreach ($kolom_list as $k): ?>
                 <td>
-                    <?php if ($sis['status_ppdb'] === 'ppdb bersama'): ?>
-                        <span class="badge bg-info text-dark">PPDB Bersama</span>
-                    <?php elseif ($sis['status_ppdb']): ?>
-                        <?= htmlspecialchars($sis['status_ppdb']) ?>
-                    <?php else: ?>
-                        -
-                    <?php endif; ?>
+                  <?= $sis['pembayaran'][$k] > 0
+                      ? 'Rp ' .
+                          number_format($sis['pembayaran'][$k], 0, ',', '.')
+                      : '-' ?>
                 </td>
-                <?php foreach ($kolom_list as $k): ?>
-                    <td>
-                        <?= $sis['tagihan'][$k] > 0
-                            ? '<b>Rp ' .
-                                number_format(
-                                    $sis['tagihan'][$k],
-                                    0,
-                                    ',',
-                                    '.'
-                                ) .
-                                '</b>'
-                            : '-' ?>
-                    </td>
-                <?php endforeach; ?>
-                <td>
-                    <b><?= $sis['total_tagihan'] > 0
-                        ? 'Rp ' .
-                            number_format($sis['total_tagihan'], 0, ',', '.')
-                        : '-' ?></b>
-                </td>
+              <?php endforeach; ?>
+              <td><b><?= $sis['total_bayar'] > 0
+                  ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
+                  : '-' ?></b></td>
             </tr>
-            <?php
-            endforeach;
+            <?php endforeach;
             ?>
             </tbody>
             <tfoot>
-                <tr class="table-success fw-bold">
-                    <td colspan="<?= 4 +
-                        count($kolom_list) ?>" class="text-end">
-                        Grand Total Sisa:
-                    </td>
-                    <td>
-                        <b>Rp <?= number_format(
-                            $grand_total,
-                            0,
-                            ',',
-                            '.'
-                        ) ?></b>
-                    </td>
-                </tr>
+              <tr class="table-secondary fw-bold">
+                <td colspan="4" class="text-center">Total</td>
+                <?php foreach ($kolom_list as $k): ?>
+                  <td>
+                    <?= $total_kolom[$k] > 0
+                        ? 'Rp ' . number_format($total_kolom[$k], 0, ',', '.')
+                        : '-' ?>
+                  </td>
+                <?php endforeach; ?>
+                <td>
+                  <?= $grand_total > 0
+                      ? 'Rp ' . number_format($grand_total, 0, ',', '.')
+                      : '-' ?>
+                </td>
+              </tr>
             </tfoot>
-        </table>
+          </table>
         </div>
-    <?php endif; ?>
-
-    <div class="text-center mt-4 no-print">
-        <button class="btn btn-primary" onclick="window.print()">Cetak</button>
-        <a href="daftar_siswa_keuangan.php" class="btn btn-secondary">Kembali</a>
+      </div>
     </div>
+  </div>
 </div>
+<footer class="footer bg-white text-center py-3">&copy; <?= date(
+    'Y'
+) ?> Sistem Keuangan PPDB</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script>function printTable(){window.print()}</script>
 </body>
 </html>
