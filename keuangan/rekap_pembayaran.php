@@ -255,6 +255,9 @@ $conn->close();
     width: 100% !important;
     height: 100% !important;
   }
+  td.nama-siswa, th.nama-siswa {
+    text-align: left !important;
+  }
   body * { visibility: hidden; }
   .printable-area, .printable-area * {
     visibility: visible !important;
@@ -369,7 +372,7 @@ $conn->close();
               <tr>
                 <th>No</th>
                 <th>No Formulir</th>
-                <th>Nama Siswa</th>
+                <th class="nama-siswa">Nama Siswa</th>
                 <th>Metode Pembayaran</th>
                 <?php foreach ($kolom_list as $k): ?>
                   <th<?= $k == 'Cashback'
@@ -388,7 +391,7 @@ $conn->close();
                 : '' ?>>
               <td><?= $no++ ?></td>
               <td><?= $sis['no_formulir'] ?></td>
-              <td style="text-align:left;"><?= $sis['nama'] ?></td>
+              <td class="nama-siswa"><?= $sis['nama'] ?></td>
               <td><?= htmlspecialchars(
                   ucfirst($sis['metode_pembayaran'])
               ) ?></td>
