@@ -22,19 +22,26 @@ if (empty($_SESSION['csrf_token'])) {
 $csrf_token = $_SESSION['csrf_token'];
 
 // Ambil parameter pencarian
-$search_no_formulir = isset($_GET['search_no_formulir']) ? trim($_GET['search_no_formulir']) : '';
+$search_no_formulir = isset($_GET['search_no_formulir'])
+    ? trim($_GET['search_no_formulir'])
+    : '';
 $search_nama = isset($_GET['search_nama']) ? trim($_GET['search_nama']) : '';
 
 $years = [];
-$resYears = $conn->query("SELECT DISTINCT tahun_pelajaran FROM pembayaran ORDER BY tahun_pelajaran DESC");
+$resYears = $conn->query(
+    'SELECT DISTINCT tahun_pelajaran FROM pembayaran ORDER BY tahun_pelajaran DESC'
+);
 while ($r = $resYears->fetch_assoc()) {
     $years[] = $r['tahun_pelajaran'];
 }
+$is_print_all = isset($_GET['print']) && $_GET['print'] === 'all';
 
 // Pagination setup
 $limit = 10; // Jumlah data per halaman
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) {
+    $page = 1;
+}
 $start = ($page - 1) * $limit;
 
 // Step 1: Retrieve distinct student IDs based on search criteria and unit
@@ -50,26 +57,37 @@ $param_values_ids = [$petugas_unit];
 
 // Tambahkan kondisi pencarian
 if ($search_no_formulir !== '') {
-    $query_ids .= " AND s.no_formulir LIKE ?";
+    $query_ids .= ' AND s.no_formulir LIKE ?';
     $param_types_ids .= 's';
     $param_values_ids[] = '%' . $search_no_formulir . '%';
 }
 
 if ($search_nama !== '') {
-    $query_ids .= " AND s.nama LIKE ?";
+    $query_ids .= ' AND s.nama LIKE ?';
     $param_types_ids .= 's';
     $param_values_ids[] = '%' . $search_nama . '%';
 }
 
-$query_ids .= " ORDER BY s.nama ASC LIMIT ? OFFSET ?";
-
-$param_types_ids .= 'ii';
-$param_values_ids[] = $limit;
-$param_values_ids[] = $start;
+$query_ids .= ' ORDER BY s.nama ASC';
+if (!$is_print_all) {
+    $query_ids .= ' LIMIT ? OFFSET ?';
+    $param_types_ids .= 'ii';
+    $param_values_ids[] = $limit;
+    $param_values_ids[] = $start;
+}
 
 $stmt_ids = $conn->prepare($query_ids);
 if ($stmt_ids) {
-    $stmt_ids->bind_param($param_types_ids, ...$param_values_ids);
+    if (!$is_print_all) {
+        $stmt_ids->bind_param($param_types_ids, ...$param_values_ids);
+    } else {
+        $bind_values = array_slice(
+            $param_values_ids,
+            0,
+            strlen($param_types_ids)
+        );
+        $stmt_ids->bind_param($param_types_ids, ...$bind_values);
+    }
     $stmt_ids->execute();
     $result_ids = $stmt_ids->get_result();
     $student_ids = [];
@@ -78,7 +96,7 @@ if ($stmt_ids) {
     }
     $stmt_ids->close();
 } else {
-    die("Error preparing statement for IDs: " . $conn->error);
+    die('Error preparing statement for IDs: ' . $conn->error);
 }
 
 if (empty($student_ids)) {
@@ -99,13 +117,13 @@ if (empty($student_ids)) {
 
     // Tambahkan kondisi pencarian
     if ($search_no_formulir !== '') {
-        $count_query .= " AND s.no_formulir LIKE ?";
+        $count_query .= ' AND s.no_formulir LIKE ?';
         $param_types_count .= 's';
         $param_values_count[] = '%' . $search_no_formulir . '%';
     }
 
     if ($search_nama !== '') {
-        $count_query .= " AND s.nama LIKE ?";
+        $count_query .= ' AND s.nama LIKE ?';
         $param_types_count .= 's';
         $param_values_count[] = '%' . $search_nama . '%';
     }
@@ -119,7 +137,7 @@ if (empty($student_ids)) {
         $total_pages = ceil($total / $limit);
         $stmt_count->close();
     } else {
-        die("Error preparing count statement: " . $conn->error);
+        die('Error preparing count statement: ' . $conn->error);
     }
 
     // Now, fetch payment details for the retrieved student IDs
@@ -151,7 +169,6 @@ INNER JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
 WHERE s.id IN ($placeholders)
 ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
 
-
     $stmt = $conn->prepare($select_query);
     if ($stmt) {
         // Build the types string dynamically
@@ -169,61 +186,60 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
                     'no_formulir' => $row['no_formulir'],
                     'nama' => $row['nama'],
                     'unit' => $row['unit'],
-                    'pembayaran' => []
+                    'pembayaran' => [],
                 ];
             }
 
             if ($row['pembayaran_id']) {
                 $pembayaran_id = $row['pembayaran_id'];
-                if (!isset($siswa_data[$siswa_id]['pembayaran'][$pembayaran_id])) {
+                if (
+                    !isset($siswa_data[$siswa_id]['pembayaran'][$pembayaran_id])
+                ) {
                     $siswa_data[$siswa_id]['pembayaran'][$pembayaran_id] = [
                         'jumlah' => $row['pembayaran_jumlah'],
                         'metode_pembayaran' => $row['pembayaran_metode'],
                         'tahun_pelajaran' => $row['tahun_pelajaran'],
                         'tanggal_pembayaran' => $row['tanggal_pembayaran'],
                         'keterangan' => $row['pembayaran_keterangan'],
-                        'details' => []
+                        'details' => [],
                     ];
                 }
 
                 if ($row['pembayaran_detail_id']) {
-                    $siswa_data[$siswa_id]['pembayaran'][$pembayaran_id]['details'][] = [
+                    $siswa_data[$siswa_id]['pembayaran'][$pembayaran_id][
+                        'details'
+                    ][] = [
                         'jenis_pembayaran' => $row['jenis_pembayaran'],
                         'jumlah' => $row['detail_jumlah'],
                         'bulan' => $row['bulan'],
                         'status_pembayaran' => $row['detail_status'],
-                        'angsuran_ke'        => $row['angsuran_ke'],
-                        'cashback'           => $row['detail_cashback']
-                        
+                        'angsuran_ke' => $row['angsuran_ke'],
+                        'cashback' => $row['detail_cashback'],
                     ];
                 }
             }
         }
         $stmt->close();
     } else {
-        die("Error preparing select statement: " . $conn->error);
+        die('Error preparing select statement: ' . $conn->error);
     }
 }
 
-
 // 1) Tentukan $tahun_cetak setelah data siswa & pembayaran terisi
-    if (isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran'] !== '') {
-        $tahun_cetak = htmlspecialchars($_GET['tahun_pelajaran']);
-    }
-    elseif (!empty($siswa_data)) {
-        // Ambil siswa pertama
-        $firstSiswa  = reset($siswa_data);
-        // Ambil pembayaran pertama dari siswa pertama
-        $firstPemb   = reset($firstSiswa['pembayaran']);
-        $tahun_cetak = $firstPemb['tahun_pelajaran'];
-    }
-    else {
-        $tahun_cetak = '-';
-    }
+if (isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran'] !== '') {
+    $tahun_cetak = htmlspecialchars($_GET['tahun_pelajaran']);
+} elseif (!empty($siswa_data)) {
+    // Ambil siswa pertama
+    $firstSiswa = reset($siswa_data);
+    // Ambil pembayaran pertama dari siswa pertama
+    $firstPemb = reset($firstSiswa['pembayaran']);
+    $tahun_cetak = $firstPemb['tahun_pelajaran'];
+} else {
+    $tahun_cetak = '-';
+}
 
-    // 2) Tutup koneksi setelah $tahun_cetak sudah benar
-    $conn->close();
-
+// 2) Tutup koneksi setelah $tahun_cetak sudah benar
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -283,7 +299,9 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link" href="#">
-                        <span class="me-2 d-none d-lg-inline text-gray-600 small"><?= htmlspecialchars($_SESSION['nama']); ?></span>
+                        <span class="me-2 d-none d-lg-inline text-gray-600 small"><?= htmlspecialchars(
+                            $_SESSION['nama']
+                        ) ?></span>
                         <i class="fas fa-user-circle fa-lg"></i>
                     </a>
                 </li>
@@ -294,11 +312,21 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
     <!-- Judul + Tombol Cetak -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            Daftar Siswa Keuangan - <?= htmlspecialchars($petugas_unit); ?>
+            Daftar Siswa Keuangan - <?= htmlspecialchars($petugas_unit) ?>
         </h1>
-        <button type="button" class="btn btn-success no-print" onclick="printTable()">
-            <i class="fas fa-print"></i> Cetak
-        </button>
+        <a href="daftar_siswa_keuangan.php?print=all
+<?= $search_no_formulir
+    ? '&search_no_formulir=' . urlencode($search_no_formulir)
+    : '' ?>
+<?= $search_nama ? '&search_nama=' . urlencode($search_nama) : '' ?>
+<?= isset($_GET['tahun_pelajaran'])
+    ? '&tahun_pelajaran=' . urlencode($_GET['tahun_pelajaran'])
+    : '' ?>"
+   target="_blank"
+   class="btn btn-success no-print">
+   <i class="fas fa-print"></i> Cetak Semua
+</a>
+
         
     </div>
 
@@ -311,22 +339,24 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
     <select class="form-select" id="tahun_pelajaran" name="tahun_pelajaran">
       <option value="">— Semua —</option>
       <?php foreach ($years as $y): ?>
-        <option value="<?= $y; ?>"
-          <?= (isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran']==$y) ? 'selected' : ''; ?>>
-          <?= $y; ?>
+        <option value="<?= $y ?>"
+          <?= isset($_GET['tahun_pelajaran']) && $_GET['tahun_pelajaran'] == $y
+              ? 'selected'
+              : '' ?>>
+          <?= $y ?>
         </option>
       <?php endforeach; ?>
     </select>
                     <label for="search_no_formulir" class="form-label">Cari No Formulir</label>
                     <input type="text" class="form-control" id="search_no_formulir" name="search_no_formulir"
                            placeholder="Masukkan No Formulir"
-                           value="<?= htmlspecialchars($search_no_formulir); ?>">
+                           value="<?= htmlspecialchars($search_no_formulir) ?>">
                 </div>
                 <div class="col-md-3">
                     <label for="search_nama" class="form-label">Cari Nama Siswa</label>
                     <input type="text" class="form-control" id="search_nama" name="search_nama"
                            placeholder="Masukkan Nama Siswa"
-                           value="<?= htmlspecialchars($search_nama); ?>">
+                           value="<?= htmlspecialchars($search_nama) ?>">
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2">
@@ -348,13 +378,13 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
             <!-- Siswa Table -->
             <div class="card shadow mb-4 printable-area">
                 <div class="card-body">
-                    <?php if (empty($siswa_data)) : ?>
+                    <?php if (empty($siswa_data)): ?>
                         <p class="text-center">Tidak ada data siswa ditemukan.</p>
-                    <?php else : ?>
+                    <?php else: ?>
                         <div class="printable-area">
     <div class="text-center mb-4 print-header">
       <h2>Daftar Pembayaran Siswa</h2>
-      <h4>Tahun Pelajaran <?= $tahun_cetak; ?></h4>
+      <h4>Tahun Pelajaran <?= $tahun_cetak ?></h4>
     </div>
                         <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                             <table class="table table-bordered table-hover" id="siswaTable">
@@ -373,50 +403,82 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     $no = $start + 1;
-                                    foreach ($siswa_data as $siswa_id => $siswa) : 
-                                        // Kumpulkan semua jenis pembayaran per siswa
+                                    foreach (
+                                        $siswa_data
+                                        as $siswa_id => $siswa
+                                    ):
+
                                         $jenis_pembayaran_list = [];
-                                        foreach ($siswa['pembayaran'] as $pembayaran_id => $pembayaran) {
-                                            $tanggal_pembayaran = $pembayaran['tanggal_pembayaran'];
-                                            $keterangan = $pembayaran['keterangan'];
-                                            
-                                            foreach ($pembayaran['details'] as $detail) {
-                                                $jenis_pembayaran = $detail['jenis_pembayaran'];
+                                        foreach (
+                                            $siswa['pembayaran']
+                                            as $pembayaran_id => $pembayaran
+                                        ) {
+                                            $tanggal_pembayaran =
+                                                $pembayaran[
+                                                    'tanggal_pembayaran'
+                                                ];
+                                            $keterangan =
+                                                $pembayaran['keterangan'];
+                                            foreach (
+                                                $pembayaran['details']
+                                                as $detail
+                                            ) {
+                                                $jenis_pembayaran =
+                                                    $detail['jenis_pembayaran'];
                                                 $bulan = $detail['bulan'];
-                                                $metode_pembayaran = $pembayaran['metode_pembayaran'];
-                                                $status_pembayaran = $detail['status_pembayaran'];
-                                                $angsuran_ke = $detail['angsuran_ke'];
-                                                
-                                                if (strtolower($jenis_pembayaran) === 'spp') {
-                                                    $status = ($status_pembayaran === 'Lunas') ? 'Lunas' : 'Angsuran ke-' . $angsuran_ke;
+                                                $metode_pembayaran =
+                                                    $pembayaran[
+                                                        'metode_pembayaran'
+                                                    ];
+                                                $status_pembayaran =
+                                                    $detail[
+                                                        'status_pembayaran'
+                                                    ];
+                                                $angsuran_ke =
+                                                    $detail['angsuran_ke'];
+                                                if (
+                                                    strtolower(
+                                                        $jenis_pembayaran
+                                                    ) === 'spp'
+                                                ) {
+                                                    $status =
+                                                        $status_pembayaran ===
+                                                        'Lunas'
+                                                            ? 'Lunas'
+                                                            : 'Angsuran ke-' .
+                                                                $angsuran_ke;
                                                     $jenis_pembayaran_list[] = [
                                                         'jenis_pembayaran' => $jenis_pembayaran,
-                                                        'jumlah' => $detail['jumlah'],
+                                                        'jumlah' =>
+                                                            $detail['jumlah'],
                                                         'bulan' => $bulan,
                                                         'metode_pembayaran' => $metode_pembayaran,
                                                         'status_pembayaran' => $status,
                                                         'tanggal_pembayaran' => $tanggal_pembayaran,
-                                                        'keterangan'         => $keterangan,
-                                                        'cashback'           => $detail['cashback']
+                                                        'keterangan' => $keterangan,
+                                                        'cashback' =>
+                                                            $detail['cashback'],
                                                     ];
                                                 } else {
                                                     $jenis_pembayaran_list[] = [
                                                         'jenis_pembayaran' => $jenis_pembayaran,
-                                                        'jumlah' => $detail['jumlah'],
+                                                        'jumlah' =>
+                                                            $detail['jumlah'],
                                                         'bulan' => '-',
                                                         'metode_pembayaran' => $metode_pembayaran,
-                                                        'status_pembayaran' => ucfirst($status_pembayaran),
+                                                        'status_pembayaran' => ucfirst(
+                                                            $status_pembayaran
+                                                        ),
                                                         'tanggal_pembayaran' => $tanggal_pembayaran,
-                                                        'keterangan'         => $keterangan,
-                                                        'cashback'           => $detail['cashback']
+                                                        'keterangan' => $keterangan,
+                                                        'cashback' =>
+                                                            $detail['cashback'],
                                                     ];
                                                 }
                                             }
                                         }
-
-                                        // Jika tidak ada pembayaran, tampilkan "-"
                                         if (empty($jenis_pembayaran_list)) {
                                             $jenis_pembayaran_list[] = [
                                                 'jenis_pembayaran' => '-',
@@ -425,169 +487,257 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
                                                 'metode_pembayaran' => '-',
                                                 'status_pembayaran' => '-',
                                                 'tanggal_pembayaran' => '-',
-                                                'keterangan' => '-'
+                                                'keterangan' => '-',
                                             ];
                                         }
-                                    ?>
+                                        ?>
                                         <tr>
-                                            <td><?= $no++; ?></td>
-                                            <td><?= htmlspecialchars($siswa['no_formulir']); ?></td>
-                                            <td><?= htmlspecialchars($siswa['nama']); ?></td>
+                                            <td><?= $no++ ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $siswa['no_formulir']
+                                            ) ?></td>
+                                            <td><?= htmlspecialchars(
+                                                $siswa['nama']
+                                            ) ?></td>
                                             <td>
-                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-                                                    <?= htmlspecialchars($jp['jenis_pembayaran']); ?><br>
+                                                <?php foreach (
+                                                    $jenis_pembayaran_list
+                                                    as $jp
+                                                ): ?>
+                                                    <?= htmlspecialchars(
+                                                        $jp['jenis_pembayaran']
+                                                    ) ?><br>
                                                 <?php endforeach; ?>
                                             </td>
                                             <td>
-                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-                                                    <?php 
-                                                        // Format jumlah sebagai mata uang jika bukan '-', misalnya: 2000000 menjadi Rp. 2.000.000
-                                                        if ($jp['jumlah'] !== '-' && !empty($jp['jumlah'])) {
-                                                            $jumlah_formatted = 'Rp. ' . number_format($jp['jumlah'], 0, ',', '.');
-                                                        } else {
-                                                            $jumlah_formatted = '-';
-                                                        }
-                                                    ?>
-                                                    <?= htmlspecialchars($jumlah_formatted); ?><br>
+                                                <?php foreach (
+                                                    $jenis_pembayaran_list
+                                                    as $jp
+                                                ): ?>
+                                                    <?php if (
+                                                        $jp['jumlah'] !== '-' &&
+                                                        !empty($jp['jumlah'])
+                                                    ) {
+                                                        $jumlah_formatted =
+                                                            'Rp. ' .
+                                                            number_format(
+                                                                $jp['jumlah'],
+                                                                0,
+                                                                ',',
+                                                                '.'
+                                                            );
+                                                    } else {
+                                                        $jumlah_formatted = '-';
+                                                    } ?>
+                                                    <?= htmlspecialchars(
+                                                        $jumlah_formatted
+                                                    ) ?><br>
                                                 <?php endforeach; ?>
                                             </td>
 <td>
-  <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-    <?= strtolower($jp['jenis_pembayaran'])==='uang pangkal'
-         ? 'Rp. '.number_format($jp['cashback'],0,',','.')
-         : '-'; ?>
+  <?php foreach ($jenis_pembayaran_list as $jp): ?>
+    <?= strtolower($jp['jenis_pembayaran']) === 'uang pangkal'
+        ? 'Rp. ' . number_format($jp['cashback'], 0, ',', '.')
+        : '-' ?>
     <br>
   <?php endforeach; ?>
 </td>
 
-
                                             <td>
-                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-                                                    <?php 
-                                                        // Format tanggal jika bukan '-', misalnya: 2024-12-15 menjadi 15/12/2024
-                                                        if ($jp['tanggal_pembayaran'] !== '-' && !empty($jp['tanggal_pembayaran'])) {
-                                                            $tanggal = date('d/m/Y', strtotime($jp['tanggal_pembayaran']));
-                                                        } else {
-                                                            $tanggal = '-';
-                                                        }
-                                                    ?>
-                                                    <?= htmlspecialchars($tanggal); ?><br>
+                                                <?php foreach (
+                                                    $jenis_pembayaran_list
+                                                    as $jp
+                                                ): ?>
+                                                    <?php if (
+                                                        $jp[
+                                                            'tanggal_pembayaran'
+                                                        ] !== '-' &&
+                                                        !empty(
+                                                            $jp[
+                                                                'tanggal_pembayaran'
+                                                            ]
+                                                        )
+                                                    ) {
+                                                        $tanggal = date(
+                                                            'd/m/Y',
+                                                            strtotime(
+                                                                $jp[
+                                                                    'tanggal_pembayaran'
+                                                                ]
+                                                            )
+                                                        );
+                                                    } else {
+                                                        $tanggal = '-';
+                                                    } ?>
+                                                    <?= htmlspecialchars(
+                                                        $tanggal
+                                                    ) ?><br>
                                                 <?php endforeach; ?>
                                             </td>
                                             <td>
-                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-                                                    <?= htmlspecialchars($jp['bulan']); ?><br>
+                                                <?php foreach (
+                                                    $jenis_pembayaran_list
+                                                    as $jp
+                                                ): ?>
+                                                    <?= htmlspecialchars(
+                                                        $jp['bulan']
+                                                    ) ?><br>
                                                 <?php endforeach; ?>
                                             </td>
                                             <td>
-                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-                                                    <?= htmlspecialchars($jp['metode_pembayaran']); ?><br>
+                                                <?php foreach (
+                                                    $jenis_pembayaran_list
+                                                    as $jp
+                                                ): ?>
+                                                    <?= htmlspecialchars(
+                                                        $jp['metode_pembayaran']
+                                                    ) ?><br>
                                                 <?php endforeach; ?>
                                             </td>
                                             <td>
-                                                <?php foreach ($jenis_pembayaran_list as $jp) : ?>
-                                                    <?= htmlspecialchars($jp['status_pembayaran']); ?><br>
+                                                <?php foreach (
+                                                    $jenis_pembayaran_list
+                                                    as $jp
+                                                ): ?>
+                                                    <?= htmlspecialchars(
+                                                        $jp['status_pembayaran']
+                                                    ) ?><br>
                                                 <?php endforeach; ?>
                                             </td>
                                         </tr>
-                                    <?php endforeach; ?>
+                                    <?php
+                                    endforeach;
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- Pagination -->
-                        <?php if ($total_pages > 1) : ?>
+                        <?php if (!$is_print_all && $total_pages > 1): ?>
                             <nav>
                                 <ul class="pagination justify-content-center">
                                     <?php
-                                    // Membuat query string untuk pagination
                                     $query_params = [];
                                     if ($search_no_formulir !== '') {
-                                        $query_params['search_no_formulir'] = $search_no_formulir;
+                                        $query_params[
+                                            'search_no_formulir'
+                                        ] = $search_no_formulir;
                                     }
                                     if ($search_nama !== '') {
-                                        $query_params['search_nama'] = $search_nama;
+                                        $query_params[
+                                            'search_nama'
+                                        ] = $search_nama;
                                     }
-
-                                    function buildPageUrl($page, $params) {
+                                    function buildPageUrl($page, $params)
+                                    {
                                         $params['page'] = $page;
                                         return '?' . http_build_query($params);
                                     }
-
-                                    $max_links = 5; // Maksimal jumlah link halaman yang ditampilkan
-                                    $start_page = max(1, $page - floor($max_links / 2));
-                                    $end_page = min($total_pages, $start_page + $max_links - 1);
-
-                                    // Jika tidak cukup halaman di akhir, geser ke kiri
-                                    if (($end_page - $start_page) < ($max_links - 1)) {
-                                        $start_page = max(1, $end_page - $max_links + 1);
+                                    $max_links = 5;
+                                    $start_page = max(
+                                        1,
+                                        $page - floor($max_links / 2)
+                                    );
+                                    $end_page = min(
+                                        $total_pages,
+                                        $start_page + $max_links - 1
+                                    );
+                                    if (
+                                        $end_page - $start_page <
+                                        $max_links - 1
+                                    ) {
+                                        $start_page = max(
+                                            1,
+                                            $end_page - $max_links + 1
+                                        );
                                     }
                                     ?>
 
                                     <!-- Tombol "First" -->
-                                    <?php if ($page > 1) : ?>
+                                    <?php if ($page > 1): ?>
                                         <li class="page-item">
-                                            <a class="page-link" href="<?= buildPageUrl(1, $query_params); ?>" aria-label="First">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                1,
+                                                $query_params
+                                            ) ?>" aria-label="First">
                                                 <span aria-hidden="true">First</span>
                                             </a>
                                         </li>
-                                    <?php else : ?>
+                                    <?php else: ?>
                                         <li class="page-item disabled">
                                             <span class="page-link">First</span>
                                         </li>
                                     <?php endif; ?>
 
                                     <!-- Tombol "Previous" -->
-                                    <?php if ($page > 1) : ?>
+                                    <?php if ($page > 1): ?>
                                         <li class="page-item">
-                                            <a class="page-link" href="<?= buildPageUrl($page - 1, $query_params); ?>" aria-label="Previous">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                $page - 1,
+                                                $query_params
+                                            ) ?>" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
-                                    <?php else : ?>
+                                    <?php else: ?>
                                         <li class="page-item disabled">
                                             <span class="page-link">&laquo;</span>
                                         </li>
                                     <?php endif; ?>
 
                                     <!-- Ellipsis di Awal -->
-                                    <?php if ($start_page > 1) : ?>
+                                    <?php if ($start_page > 1): ?>
                                         <li class="page-item disabled"><span class="page-link">...</span></li>
                                     <?php endif; ?>
 
                                     <!-- Link Halaman -->
-                                    <?php for ($i = $start_page; $i <= $end_page; $i++) : ?>
-                                        <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
-                                            <a class="page-link" href="<?= buildPageUrl($i, $query_params); ?>"><?= $i; ?></a>
+                                    <?php for (
+                                        $i = $start_page;
+                                        $i <= $end_page;
+                                        $i++
+                                    ): ?>
+                                        <li class="page-item <?= $i == $page
+                                            ? 'active'
+                                            : '' ?>">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                $i,
+                                                $query_params
+                                            ) ?>"><?= $i ?></a>
                                         </li>
                                     <?php endfor; ?>
 
                                     <!-- Ellipsis di Akhir -->
-                                    <?php if ($end_page < $total_pages) : ?>
+                                    <?php if ($end_page < $total_pages): ?>
                                         <li class="page-item disabled"><span class="page-link">...</span></li>
                                     <?php endif; ?>
 
                                     <!-- Tombol "Next" -->
-                                    <?php if ($page < $total_pages) : ?>
+                                    <?php if ($page < $total_pages): ?>
                                         <li class="page-item">
-                                            <a class="page-link" href="<?= buildPageUrl($page + 1, $query_params); ?>" aria-label="Next">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                $page + 1,
+                                                $query_params
+                                            ) ?>" aria-label="Next">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>
-                                    <?php else : ?>
+                                    <?php else: ?>
                                         <li class="page-item disabled">
                                             <span class="page-link">&raquo;</span>
                                         </li>
                                     <?php endif; ?>
 
                                     <!-- Tombol "Last" -->
-                                    <?php if ($page < $total_pages) : ?>
+                                    <?php if ($page < $total_pages): ?>
                                         <li class="page-item">
-                                            <a class="page-link" href="<?= buildPageUrl($total_pages, $query_params); ?>" aria-label="Last">
+                                            <a class="page-link" href="<?= buildPageUrl(
+                                                $total_pages,
+                                                $query_params
+                                            ) ?>" aria-label="Last">
                                                 <span aria-hidden="true">Last</span>
                                             </a>
                                         </li>
-                                    <?php else : ?>
+                                    <?php else: ?>
                                         <li class="page-item disabled">
                                             <span class="page-link">Last</span>
                                         </li>
@@ -602,7 +752,7 @@ ORDER BY s.nama ASC, p.tanggal_pembayaran DESC";
     </div>
 
     <footer class="footer bg-white text-center py-3">
-        &copy; <?= date('Y'); ?> Sistem Keuangan PPDB
+        &copy; <?= date('Y') ?> Sistem Keuangan PPDB
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
