@@ -243,75 +243,69 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/sidebar.css">
     <link rel="stylesheet" href="../assets/css/dashboard_keuangan_styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-    @media print {
-      body * { visibility: hidden; }
-      .printable-area, .printable-area * { visibility: visible; box-shadow: none !important; }
-      .printable-area { position: absolute; top: 0; left: 0; width: 100%; background: #fff !important;}
-      .no-print { display: none; }
-      .table-responsive { overflow: visible !important; }
-      tfoot { display: none !important; }
-    }
-    .table thead th, .table tfoot td, .table tbody td {
-      vertical-align: middle; text-align: center;
-    }
-    .table-info {
-      background: rgb(112, 194, 238) !important;
-    }
-    @media print {
-      html, body {
-        font-size: 11px !important;
-        background: #fff !important;
-        color: #000 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        line-height: 1.2 !important;
-      }
-      .printable-area, .printable-area * {
-        visibility: visible !important;
-        box-shadow: none !important;
-        font-size: 11px !important;
-      }
-      .printable-area {
-        position: absolute !important;
-        top: 0; left: 0;
-        width: 100% !important;
-        background: #fff !important;
-        padding: 0 !important;
-        margin: 0 !important;
-      }
-      .table {
-        font-size: 10px !important;
-        margin: 0 !important;
-        width: 100% !important;
-      }
-      .table th, .table td {
-        padding: 2px 4px !important;
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-      }
-      .table-bordered th, .table-bordered td {
-        border: 1px solid #888 !important;
-      }
-      .h3, h1, h2 {
-        font-size: 15px !important;
-        margin: 0 0 4px 0 !important;
-      }
-      .no-print, .no-print * {
-        display: none !important;
-      }
-      .card, .card-body, .main-content, .container-fluid {
-        box-shadow: none !important;
-        background: #fff !important;
-        padding: 0 !important;
-        margin: 0 !important;
-      }
-      nav, .sidebar, .footer, .navbar, .sidebar *, .footer * {
-        display: none !important;
-      }
-      tfoot { display: none !important; }
-    }
-    </style>
+<style>
+@media print {
+  html, body {
+    font-size: 11px !important;
+    background: #fff !important;
+    color: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  body * { visibility: hidden; }
+  .printable-area, .printable-area * {
+    visibility: visible !important;
+    box-shadow: none !important;
+    font-size: 11px !important;
+  }
+  .printable-area, .main-content, .container-fluid, .card, .card-body, .table-responsive {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    border: none !important;
+  }
+  .table {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 10px !important;
+    margin: 0 !important;
+    border-collapse: collapse !important;
+  }
+  .table th, .table td {
+    padding: 2px 4px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    border: 1px solid #888 !important;
+  }
+  .table thead th, .table tfoot td, .table tbody td {
+    vertical-align: middle !important;
+    text-align: center !important;
+  }
+  .table-info {
+    background: rgb(112, 194, 238) !important;
+  }
+  .no-print, .no-print * {
+    display: none !important;
+  }
+  .h3, h1, h2 {
+    font-size: 15px !important;
+    margin: 0 0 4px 0 !important;
+  }
+  nav, .sidebar, .footer, .navbar, .sidebar *, .footer * {
+    display: none !important;
+  }
+  tfoot { display: none !important; }
+}
+</style>
+
 </head>
 <body>
 <?php include '../includes/sidebar.php'; ?>
