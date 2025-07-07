@@ -228,7 +228,11 @@ foreach ($kolom_list as $k) {
 }
 $total_row_html .= '<td>';
 $total_row_html .=
-    $grand_total > 0 ? 'Rp ' . number_format($grand_total, 0, ',', '.') : '-';
+    $grand_total > 0
+        ? '<span style="white-space:nowrap;">Rp ' .
+            number_format($grand_total, 0, ',', '.') .
+            '</span>'
+        : '-';
 $total_row_html .= '</td></tr>';
 
 $conn->close();
@@ -255,6 +259,19 @@ $conn->close();
     width: 100% !important;
     height: 100% !important;
   }
+  th, td { 
+    padding-left: 2px !important; 
+    padding-right: 2px !important; 
+    font-size: 9px !important;
+    white-space: nowrap !important;
+  }
+  th[style*="width:90px"], td[style*="width:90px"] {
+    max-width: 90px !important;
+    width: 90px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   td.nama-siswa, th.nama-siswa {
     text-align: left !important;
   }
@@ -381,7 +398,7 @@ $conn->close();
             <th>No</th>
             <th>No Formulir</th>
             <th class="nama-siswa">Nama Siswa</th>
-            <th>Metode Pembayaran</th>
+            <th style="width:90px; white-space:nowrap;">Metode Pembayaran</th>
             <?php foreach ($kolom_list as $k): ?>
               <th<?= $k == 'Cashback'
                   ? ' class="bg-warning text-dark"'
@@ -400,17 +417,23 @@ $conn->close();
           <td><?= $no++ ?></td>
           <td><?= $sis['no_formulir'] ?></td>
           <td class="nama-siswa"><?= $sis['nama'] ?></td>
-          <td><?= htmlspecialchars(ucfirst($sis['metode_pembayaran'])) ?></td>
+          <td style="width:90px; white-space:nowrap;"><?= htmlspecialchars(
+              ucfirst($sis['metode_pembayaran'])
+          ) ?></td>
           <?php foreach ($kolom_list as $k): ?>
-            <td<?= $k == 'Cashback' ? ' class="bg-warning text-dark"' : '' ?>>
-              <?= $sis['pembayaran'][$k] > 0
-                  ? 'Rp ' . number_format($sis['pembayaran'][$k], 0, ',', '.')
-                  : '-' ?>
-            </td>
+<td<?= $k == 'Cashback'
+    ? ' class="bg-warning text-dark"'
+    : '' ?> style="white-space:nowrap;">
+  <?= $sis['pembayaran'][$k] > 0
+      ? 'Rp ' . number_format($sis['pembayaran'][$k], 0, ',', '.')
+      : '-' ?>
+</td>
+
           <?php endforeach; ?>
-          <td><b><?= $sis['total_bayar'] > 0
+          <td style="white-space:nowrap;"><b><?= $sis['total_bayar'] > 0
               ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
               : '-' ?></b></td>
+
         </tr>
         <?php endforeach;
         ?>
