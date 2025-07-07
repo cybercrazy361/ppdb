@@ -248,19 +248,21 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/dashboard_keuangan_styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* ====== FONT KECIL SEMUA (LAYAR / SCREEN) ====== */
-body, .main-content, .container-fluid, .card, .card-body, .table-responsive,
-.table, .table th, .table td, input, select, label, h1, h2, h3, .navbar, .footer {
-    font-size: 11px !important;
-    line-height: 1.18 !important;
+/* PAKSA SEMUA FONT KECIL (LAYAR/PRINT) */
+html, body, .main-content, .container-fluid, .card, .card-body, .table-responsive,
+.table, .table th, .table td, input, select, label, h1, h2, h3, .navbar, .footer,
+*, *::before, *::after {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    box-sizing: border-box;
 }
 .table th, .table td {
     padding: 2px 4px !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
 }
 h1, h2, h3 {
-    font-size: 13px !important;
-    margin-bottom: 7px !important;
+    font-size: 10px !important;
+    margin-bottom: 6px !important;
 }
 th[style*="width:90px"], td[style*="width:90px"] {
     max-width: 90px !important;
@@ -273,22 +275,17 @@ td.nama-siswa, th.nama-siswa {
     white-space: normal;
 }
 
-/* ====== PRINT AREA ====== */
 @media print {
-  html, body {
-    font-size: 8.5px !important;
+  html, body, *, *::before, *::after {
+    font-size: 8px !important;
+    line-height: 1.08 !important;
     background: #fff !important;
     color: #000 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1.12 !important;
-    width: 100% !important;
-    height: 100% !important;
   }
   th, td { 
     padding-left: 1.5px !important; 
     padding-right: 1.5px !important; 
-    font-size: 8.5px !important;
+    font-size: 8px !important;
     white-space: nowrap !important;
   }
   th[style*="width:90px"], td[style*="width:90px"] {
@@ -302,7 +299,7 @@ td.nama-siswa, th.nama-siswa {
   .printable-area, .printable-area * {
     visibility: visible !important;
     box-shadow: none !important;
-    font-size: 8.5px !important;
+    font-size: 8px !important;
   }
   .printable-area, .main-content, .container-fluid, .card, .card-body, .table-responsive {
     position: static !important;
@@ -318,20 +315,20 @@ td.nama-siswa, th.nama-siswa {
   .table {
     width: 100% !important;
     max-width: 100% !important;
-    font-size: 8.5px !important;
+    font-size: 8px !important;
     margin: 0 !important;
     border-collapse: collapse !important;
   }
   .table th, .table td {
     padding: 1.2px 2.5px !important;
-    font-size: 8.5px !important;
-    line-height: 1.10 !important;
+    font-size: 8px !important;
+    line-height: 1.04 !important;
     border: 1px solid #888 !important;
     vertical-align: middle !important;
   }
   .table-secondary.fw-bold td, 
   .table-secondary.fw-bold th {
-    font-size: 9px !important;
+    font-size: 8.2px !important;
     font-weight: bold !important;
     letter-spacing: 0.2px;
     background: #f6f7fa !important;
@@ -345,7 +342,7 @@ td.nama-siswa, th.nama-siswa {
     background: rgb(212, 242, 255) !important;
   }
   .no-print, .no-print * { display: none !important; }
-  .h3, h1, h2 { font-size: 11px !important; margin: 0 0 3px 0 !important; }
+  .h3, h1, h2 { font-size: 9px !important; margin: 0 0 3px 0 !important; }
   nav, .sidebar, .footer, .navbar, .sidebar *, .footer * { display: none !important; }
   tfoot { display: none !important; }
 }
