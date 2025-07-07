@@ -126,10 +126,11 @@ while ($r = $res->fetch_assoc()) {
     }
 }
 
-// --- Query total sudah dibayar per siswa per jenis per bulan di tahun ajaran ini ---
+// --- Query total sudah dibayar & cashback per siswa per jenis/bulan di tahun ajaran ini ---
 $sudah_bayar = [];
+$cashback = [];
 $res = $conn->query("
-    SELECT s.id AS siswa_id, jp.nama AS jenis, pd.bulan, SUM(pd.jumlah) AS total_bayar
+    SELECT s.id AS siswa_id, jp.nama AS jenis, pd.bulan, SUM(pd.jumlah) AS total_bayar, SUM(pd.cashback) AS total_cashback
     FROM siswa s
     JOIN pembayaran p ON s.id = p.siswa_id
     JOIN pembayaran_detail pd ON p.id = pd.pembayaran_id
@@ -145,7 +146,10 @@ while ($r = $res->fetch_assoc()) {
     $bulan = $r['bulan'];
     if ($jenis === 'SPP' && $bulan && in_array($bulan, $bulan_spp_dinamis)) {
         $sudah_bayar[$sid]["SPP $bulan"] = (int) $r['total_bayar'];
-    } elseif ($jenis !== 'SPP') {
+    } elseif ($jenis === 'Uang Pangkal') {
+        $sudah_bayar[$sid]['Uang Pangkal'] = (int) $r['total_bayar'];
+        $cashback[$sid] = (int) $r['total_cashback'];
+    } else {
         $sudah_bayar[$sid][$jenis] = (int) $r['total_bayar'];
     }
 }
@@ -168,15 +172,27 @@ foreach ($siswa as $id => $sis) {
     $ada_tagihan = false;
     $tagihan_siswa = [];
     $total_tagihan = 0;
+
     foreach ($kolom_list as $kol) {
         $nominal = $nominal_pembayaran[$kol] ?? 0;
         $bayar = $sudah_bayar[$id][$kol] ?? 0;
-        $sisa = max(0, $nominal - $bayar);
+        // Hitung cashback
+        $cb = $cashback[$id] ?? 0;
+        // Hitung sisa sesuai logika
+        if ($kol === 'Uang Pangkal') {
+            $sisa = max(0, $nominal - $bayar - $cb);
+        } elseif ($kol === 'Cashback') {
+            $sisa = 0; // Bukan hutang
+        } else {
+            $sisa = max(0, $nominal - $bayar);
+        }
         $tagihan_siswa[$kol] = $sisa;
-        if ($sisa > 0) {
+        if ($sisa > 0 && $kol !== 'Cashback') {
             $ada_tagihan = true;
         }
-        $total_tagihan += $sisa;
+        if ($kol !== 'Cashback') {
+            $total_tagihan += $sisa;
+        }
     }
     if ($ada_tagihan) {
         $sis['tagihan'] = $tagihan_siswa;
@@ -226,7 +242,7 @@ $tahun_pelajaran
     </div>
 
     <div class="alert alert-info">
-        <b>Keterangan:</b> Nilai pada kolom di bawah adalah <u>sisa tagihan</u> (jumlah yang belum dibayar per jenis/bulan).
+        <b>Keterangan:</b> Nilai pada kolom di bawah adalah <u>sisa tagihan</u> (jumlah yang belum dibayar per jenis/bulan, sudah dikurangi cashback jika ada).
     </div>
 
     <?php if (empty($siswa_tagihan)): ?>
