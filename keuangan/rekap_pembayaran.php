@@ -230,7 +230,7 @@ $conn->close();
 @media print {
   @page {
     size: landscape;
-    margin: 8mm;
+    margin: 0mm;
   }
   html, body {
     font-size: 11px !important;
@@ -239,6 +239,8 @@ $conn->close();
     margin: 0 !important;
     padding: 0 !important;
     line-height: 1.2 !important;
+    width: 100% !important;
+    height: 100% !important;
   }
   .printable-area, .printable-area * {
     visibility: visible !important;
@@ -266,6 +268,11 @@ $conn->close();
     vertical-align: middle !important;
     text-align: center !important;
   }
+  .table .nama-col, .nama-col {
+    text-align: left !important;
+    font-size: 10px !important;
+    padding-left: 8px !important;
+  }
   .table-bordered th, .table-bordered td {
     border: 1px solid #888 !important;
   }
@@ -288,17 +295,18 @@ $conn->close();
   .table-responsive {
     overflow: visible !important;
   }
-  /* Agar tfoot (total) hanya di halaman terakhir */
-  tfoot {
-    display: table-footer-group !important;
-  }
+  /* Total hanya di halaman terakhir (setelah tabel), bukan di tfoot tabel utama */
+  .total-print-only { display: block !important; page-break-before: always; }
+  tfoot { display: none !important; }
 }
+.total-print-only { display: none; }
 .table thead th, .table tfoot td, .table tbody td {
   vertical-align:middle; text-align:center;
 }
 .table-info {
   background:rgb(112, 194, 238) !important;
 }
+.nama-col { text-align: left; }
 </style>
 
 </head>
@@ -346,86 +354,81 @@ $conn->close();
         </select>
       </div>
     </form>
-    <div class="card shadow mb-4 printable-area">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover">
-            <thead class="table-primary">
-              <tr>
-                <th colspan="<?= 4 +
-                    count($kolom_list) +
-                    1 ?>" class="text-center fs-5 fw-bold">
-                  Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?> | 
-                  Metode: <?= $filter_metode == 'all'
-                      ? 'Semua'
-                      : ucfirst($filter_metode) ?>
-                </th>
-              </tr>
-              <tr>
-                <th>No</th>
-                <th>No Formulir</th>
-                <th>Nama Siswa</th>
-                <th>Metode Pembayaran</th>
-                <?php foreach ($kolom_list as $k): ?>
-                  <th<?= $k == 'Cashback'
-                      ? ' class="bg-warning text-dark"'
-                      : '' ?>><?= $k ?></th>
-                <?php endforeach; ?>
-                <th>Total Bayar</th>
-              </tr>
-            </thead>
-            <tbody>
-            <?php
-            $no = 1;
-            foreach ($filtered_siswa as $sis): ?>
-            <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
-                ? ' class="table-info"'
-                : '' ?>>
-              <td><?= $no++ ?></td>
-              <td><?= $sis['no_formulir'] ?></td>
-              <td style="text-align:left;"><?= $sis['nama'] ?></td>
-              <td><?= htmlspecialchars(
-                  ucfirst($sis['metode_pembayaran'])
-              ) ?></td>
-              <?php foreach ($kolom_list as $k): ?>
-                <td<?= $k == 'Cashback'
-                    ? ' class="bg-warning text-dark"'
-                    : '' ?>>
-                  <?= $sis['pembayaran'][$k] > 0
-                      ? 'Rp ' .
-                          number_format($sis['pembayaran'][$k], 0, ',', '.')
-                      : '-' ?>
-                </td>
-              <?php endforeach; ?>
-              <td><b><?= $sis['total_bayar'] > 0
-                  ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
-                  : '-' ?></b></td>
-            </tr>
-            <?php endforeach;
-            ?>
-            </tbody>
-            <tfoot>
-              <tr class="table-secondary fw-bold">
-                <td colspan="4" class="text-center">Total</td>
-                <?php foreach ($kolom_list as $k): ?>
-                  <td<?= $k == 'Cashback'
-                      ? ' class="bg-warning text-dark"'
-                      : '' ?>>
-                    <?= $total_kolom[$k] > 0
-                        ? 'Rp ' . number_format($total_kolom[$k], 0, ',', '.')
-                        : '-' ?>
-                  </td>
-                <?php endforeach; ?>
-                <td>
-                  <?= $grand_total > 0
-                      ? 'Rp ' . number_format($grand_total, 0, ',', '.')
-                      : '-' ?>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+<div class="card shadow mb-4 printable-area">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-primary">
+          <tr>
+            <th colspan="<?= 4 +
+                count($kolom_list) +
+                1 ?>" class="text-center fs-5 fw-bold">
+              Tahun Pelajaran: <?= htmlspecialchars($tahun_pelajaran) ?> | 
+              Metode: <?= $filter_metode == 'all'
+                  ? 'Semua'
+                  : ucfirst($filter_metode) ?>
+            </th>
+          </tr>
+          <tr>
+            <th>No</th>
+            <th>No Formulir</th>
+            <th class="nama-col">Nama Siswa</th>
+            <th>Metode Pembayaran</th>
+            <?php foreach ($kolom_list as $k): ?>
+              <th<?= $k == 'Cashback'
+                  ? ' class="bg-warning text-dark"'
+                  : '' ?>><?= $k ?></th>
+            <?php endforeach; ?>
+            <th>Total Bayar</th>
+          </tr>
+        </thead>
+        <tbody>
+        <?php
+        $no = 1;
+        foreach ($filtered_siswa as $sis): ?>
+        <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
+            ? ' class="table-info"'
+            : '' ?>>
+          <td><?= $no++ ?></td>
+          <td><?= $sis['no_formulir'] ?></td>
+          <td class="nama-col"><?= $sis['nama'] ?></td>
+          <td><?= htmlspecialchars(ucfirst($sis['metode_pembayaran'])) ?></td>
+          <?php foreach ($kolom_list as $k): ?>
+            <td<?= $k == 'Cashback' ? ' class="bg-warning text-dark"' : '' ?>>
+              <?= $sis['pembayaran'][$k] > 0
+                  ? 'Rp ' . number_format($sis['pembayaran'][$k], 0, ',', '.')
+                  : '-' ?>
+            </td>
+          <?php endforeach; ?>
+          <td><b><?= $sis['total_bayar'] > 0
+              ? 'Rp ' . number_format($sis['total_bayar'], 0, ',', '.')
+              : '-' ?></b></td>
+        </tr>
+        <?php endforeach;
+        ?>
+        </tbody>
+      </table>
+      <!-- TOTAL HANYA DI HALAMAN AKHIR CETAK -->
+      <div class="total-print-only" style="display:none">
+        <table class="table table-bordered" style="margin-top:2px; width:100%">
+          <tr class="table-secondary fw-bold">
+            <td colspan="4" class="text-center">Total</td>
+            <?php foreach ($kolom_list as $k): ?>
+              <td<?= $k == 'Cashback' ? ' class="bg-warning text-dark"' : '' ?>>
+                <?= $total_kolom[$k] > 0
+                    ? 'Rp ' . number_format($total_kolom[$k], 0, ',', '.')
+                    : '-' ?>
+              </td>
+            <?php endforeach; ?>
+            <td>
+              <?= $grand_total > 0
+                  ? 'Rp ' . number_format($grand_total, 0, ',', '.')
+                  : '-' ?>
+            </td>
+          </tr>
+        </table>
       </div>
+      <!-- END TOTAL -->
     </div>
   </div>
 </div>
