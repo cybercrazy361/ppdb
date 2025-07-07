@@ -82,7 +82,6 @@ while ($r = $res->fetch_assoc()) {
 }
 
 // --- 2. Ambil semua siswa di unit ini ---
-// --- 2. Ambil semua siswa di unit ini ---
 $siswa = [];
 $res = $conn->query("
   SELECT s.id, s.no_formulir, s.nama, cp.status as status_ppdb
@@ -138,9 +137,13 @@ while ($r = $res->fetch_assoc()) {
     if ($jenis === 'SPP' && $bulan && in_array($bulan, $bulan_spp_dinamis)) {
         $siswa[$sid]['pembayaran']["SPP $bulan"] += $r['total_jumlah'];
     } elseif ($jenis !== 'SPP') {
-        $siswa[$sid]['pembayaran'][$jenis] += $r['total_jumlah'];
         if ($jenis === 'Uang Pangkal') {
+            // Uang Pangkal dikurangi cashback
+            $sisa_uang_pangkal = $r['total_jumlah'] - $r['total_cashback'];
+            $siswa[$sid]['pembayaran'][$jenis] += $sisa_uang_pangkal;
             $siswa[$sid]['pembayaran']['Cashback'] += $r['total_cashback'];
+        } else {
+            $siswa[$sid]['pembayaran'][$jenis] += $r['total_jumlah'];
         }
     }
 }
@@ -162,10 +165,13 @@ $grand_total = 0;
 foreach ($siswa as &$sis) {
     $sis['total_bayar'] = 0;
     foreach ($kolom_list as $k) {
-        $sis['total_bayar'] += $sis['pembayaran'][$k];
+        // Jangan masukkan Cashback ke total_bayar dan grand_total
+        if ($k !== 'Cashback') {
+            $sis['total_bayar'] += $sis['pembayaran'][$k];
+            $grand_total += $sis['pembayaran'][$k];
+        }
         $total_kolom[$k] += $sis['pembayaran'][$k];
     }
-    $grand_total += $sis['total_bayar'];
 }
 unset($sis);
 
@@ -193,43 +199,42 @@ $conn->close();
       vertical-align:middle; text-align:center;
     }
     .table-info {
-  background:rgb(112, 194, 238) !important;
-}
-
+      background:rgb(112, 194, 238) !important;
+    }
     </style>
-            </head>
-            <body>
-            <?php include '../includes/sidebar.php'; ?>
-            <div class="main-content p-4">
-              <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
-                <button id="sidebarToggle" class="btn btn-link rounded-circle"><i class="fas fa-bars"></i></button>
-                <ul class="navbar-nav ms-auto">
-                  <li class="nav-item"><a class="nav-link" href="#"><span class="me-2"><?= htmlspecialchars(
-                      $_SESSION['nama']
-                  ) ?></span><i class="fas fa-user-circle fa-lg"></i></a></li>
-                </ul>
-              </nav>
-              <div class="container-fluid">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                  <h1 class="h3 text-gray-800">Rekap Pembayaran Siswa - <?= htmlspecialchars(
-                      $unit
-                  ) ?></h1>
-                  <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
-                </div>
-                <form method="get" class="mb-3">
-                  <label><b>Tahun Pelajaran:</b></label>
-                  <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
-                    <?php foreach ($tahunList as $tp): ?>
-                      <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
+</head>
+<body>
+<?php include '../includes/sidebar.php'; ?>
+<div class="main-content p-4">
+  <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
+    <button id="sidebarToggle" class="btn btn-link rounded-circle"><i class="fas fa-bars"></i></button>
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item"><a class="nav-link" href="#"><span class="me-2"><?= htmlspecialchars(
+          $_SESSION['nama']
+      ) ?></span><i class="fas fa-user-circle fa-lg"></i></a></li>
+    </ul>
+  </nav>
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 text-gray-800">Rekap Pembayaran Siswa - <?= htmlspecialchars(
+          $unit
+      ) ?></h1>
+      <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
+    </div>
+    <form method="get" class="mb-3">
+      <label><b>Tahun Pelajaran:</b></label>
+      <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+        <?php foreach ($tahunList as $tp): ?>
+          <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
     ? 'selected'
     : '' ?>><?= $tp ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </form>
-                <div class="card shadow mb-4 printable-area">
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-hover">
+        <?php endforeach; ?>
+      </select>
+    </form>
+    <div class="card shadow mb-4 printable-area">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
             <thead class="table-primary">
               <tr>
                 <th colspan="<?= 4 +
@@ -243,10 +248,9 @@ $conn->close();
                 <th>No Formulir</th>
                 <th>Nama Siswa</th>
                 <th>Status</th>
-                <?php foreach (
-                    $kolom_list
-                    as $k
-                ): ?><th><?= $k ?></th><?php endforeach; ?>
+                <?php foreach ($kolom_list as $k): ?>
+                  <th><?= $k ?></th>
+                <?php endforeach; ?>
                 <th>Total Bayar</th>
               </tr>
             </thead>
