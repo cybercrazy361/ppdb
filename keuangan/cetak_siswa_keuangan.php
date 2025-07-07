@@ -15,6 +15,7 @@ $tahun_pelajaran = isset($_GET['tahun_pelajaran'])
     ? trim($_GET['tahun_pelajaran'])
     : '';
 
+// Query tanpa LIMIT/OFFSET
 $query_ids = "SELECT DISTINCT s.id 
              FROM siswa s 
              INNER JOIN pembayaran p ON s.id = p.siswa_id 
@@ -133,12 +134,12 @@ $conn->close();
     <style>
         @page {
             size: A4 landscape;
-            margin: 12mm 12mm 12mm 12mm;
+            margin: 6mm 6mm 6mm 6mm;
         }
         body {
             background: #fff;
             font-family: 'Nunito', Arial, Helvetica, sans-serif;
-            font-size: 13px;
+            font-size: 11px;
             color: #222;
             width: 297mm;
             height: 210mm;
@@ -146,15 +147,15 @@ $conn->close();
         }
         .print-title {
             text-align: center;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: bold;
             letter-spacing: 1.5px;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
         }
         .print-subtitle {
             text-align: center;
-            font-size: 1.05rem;
-            margin-bottom: 1.2rem;
+            font-size: 1.02rem;
+            margin-bottom: 1.1rem;
         }
         .table-wrap {
             width: 100%;
@@ -162,9 +163,7 @@ $conn->close();
         }
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 0 auto;
+            border-collapse: collapse;
             background: #fff;
         }
         thead th {
@@ -173,28 +172,24 @@ $conn->close();
             text-align: center;
             font-size: 1rem;
             font-weight: 700;
-            border: 1.7px solid #2166c8;
-            padding: 9px 5px;
+            border: 1.2px solid #2166c8;
+            padding: 6px 3px;
             vertical-align: middle;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         tbody td {
-            border: 1.3px solid #2166c8;
-            padding: 7px 6px;
+            border: 1.2px solid #2166c8;
+            padding: 4px 4px;
             text-align: center;
             vertical-align: middle;
             background: #f8fbff;
-            font-size: 0.97rem;
+            font-size: 0.96rem;
         }
         tbody tr:nth-child(even) td {
             background: #e5f0fa;
         }
-        tbody td.text-start {
-            text-align: left !important;
-        }
-        tbody td.text-end {
-            text-align: right !important;
-        }
+        tbody td.text-start { text-align: left !important; }
+        tbody td.text-end { text-align: right !important; }
         @media print {
             html, body {
                 width: 297mm;
@@ -220,23 +215,23 @@ $conn->close();
         <table>
             <thead>
             <tr>
-                <th style="width:34px">NO</th>
-                <th style="width:120px">NO FORMULIR</th>
-                <th style="width:220px">NAMA SISWA</th>
-                <th style="width:135px">JENIS PEMBAYARAN</th>
-                <th style="width:120px">NOMINAL PEMBAYARAN</th>
-                <th style="width:90px">CASHBACK</th>
-                <th style="width:105px">TANGGAL PEMBAYARAN</th>
-                <th style="width:115px">KETERANGAN</th>
-                <th style="width:90px">METODE</th>
-                <th style="width:80px">STATUS</th>
+                <th style="width:27px">NO</th>
+                <th style="width:110px">NO FORMULIR</th>
+                <th style="width:185px">NAMA SISWA</th>
+                <th style="width:110px">JENIS PEMBAYARAN</th>
+                <th style="width:100px">NOMINAL</th>
+                <th style="width:74px">CASHBACK</th>
+                <th style="width:98px">TANGGAL</th>
+                <th style="width:92px">KETERANGAN</th>
+                <th style="width:75px">METODE</th>
+                <th style="width:63px">STATUS</th>
             </tr>
             </thead>
-<tbody>
+            <tbody>
 <?php
 $no = 1;
 foreach ($siswa_data as $siswa) {
-    // Hitung total baris transaksi pembayaran utk siswa ini
+    // Buat list semua detail pembayaran untuk 1 siswa
     $jenis_pembayaran_list = [];
     foreach ($siswa['pembayaran'] as $pembayaran) {
         $tanggal_pembayaran = $pembayaran['tanggal_pembayaran'];
@@ -269,8 +264,9 @@ foreach ($siswa_data as $siswa) {
     if ($rowspan == 0) {
         $rowspan = 1;
     }
-    // Jika tidak ada pembayaran sama sekali, tetap buat 1 baris kosong
+
     if ($rowspan == 1 && empty($jenis_pembayaran_list)) {
+        // Tanpa pembayaran sama sekali
         echo '<tr>';
         echo '<td>' . $no++ . '</td>';
         echo '<td class="text-start">' .
@@ -298,7 +294,7 @@ foreach ($siswa_data as $siswa) {
                     htmlspecialchars($siswa['nama']) .
                     '</td>';
             }
-            // Kolom berikutnya isi tiap transaksi
+            // Kolom per detail pembayaran
             echo '<td>' . htmlspecialchars($jp['jenis_pembayaran']) . '</td>';
             echo '<td class="text-end">' .
                 ($jp['jumlah'] !== '-' && $jp['jumlah'] !== null
@@ -324,7 +320,7 @@ foreach ($siswa_data as $siswa) {
     }
 }
 ?>
-</tbody>
+            </tbody>
         </table>
     </div>
 </div>
