@@ -164,9 +164,10 @@ foreach ($bulan_spp_dinamis as $bln) {
     $kolom_list[] = "SPP $bln";
 }
 
-// Hanya tampilkan siswa yang masih punya tagihan
+// Hanya tampilkan siswa yang masih punya tagihan ATAU siswa PPDB Bersama (wajib muncul walau lunas)
 $siswa_tagihan = [];
 foreach ($siswa as $id => $sis) {
+    $is_ppdb_bersama = $sis['status_ppdb'] === 'ppdb bersama';
     $ada_tagihan = false;
     $tagihan_siswa = [];
     $total_tagihan = 0;
@@ -191,7 +192,8 @@ foreach ($siswa as $id => $sis) {
             $total_tagihan += $sisa;
         }
     }
-    if ($ada_tagihan) {
+    // Tampilkan jika: masih ada tagihan, atau status ppdb bersama (wajib tampil meski lunas)
+    if ($ada_tagihan || $is_ppdb_bersama) {
         $sis['tagihan'] = $tagihan_siswa;
         $sis['total_tagihan'] = $total_tagihan;
         $siswa_tagihan[] = $sis;
@@ -209,7 +211,13 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-    @media print { .no-print{display:none;} body{margin:20px;} }
+    @media print {
+        .no-print{display:none;}
+        body{margin:20px;}
+        .table-responsive{overflow:visible!important;}
+        .container{width:100%!important;max-width:100%!important;}
+        html,body{background:#fff;}
+    }
     table { font-size:12pt; }
     th, td { text-align:center; vertical-align:middle; }
     .table-info { background:rgb(112,194,238)!important; }
@@ -246,7 +254,10 @@ $tahun_pelajaran
 
     <?php if (empty($siswa_tagihan)): ?>
         <div class="alert alert-success text-center">Tidak ada tagihan.</div>
-    <?php else: ?>
+    <?php
+        // Jika PPDB Bersama: semua kolom strip, total strip, tidak masuk Grand Total
+        // Jika PPDB Bersama: semua kolom strip, total strip, tidak masuk Grand Total
+        else: ?>
         <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="table-primary">
@@ -273,45 +284,62 @@ $tahun_pelajaran
             $no = 1;
             $grand_total = 0;
             foreach ($siswa_tagihan as $sis):
-                $grand_total += $sis['total_tagihan']; ?>
-            <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
-                ? ' class="table-info"'
-                : '' ?>>
-                <td><?= $no++ ?></td>
-                <td><?= htmlspecialchars($sis['no_formulir']) ?></td>
-                <td style="text-align:left;"><?= htmlspecialchars(
-                    $sis['nama']
-                ) ?></td>
-                <td>
-                    <?php if ($sis['status_ppdb'] === 'ppdb bersama'): ?>
-                        <span class="badge bg-info text-dark">PPDB Bersama</span>
-                    <?php elseif ($sis['status_ppdb']): ?>
-                        <?= htmlspecialchars($sis['status_ppdb']) ?>
-                    <?php else: ?>
-                        -
-                    <?php endif; ?>
-                </td>
-                <?php foreach ($kolom_list as $k): ?>
+
+                $is_ppdb_bersama = $sis['status_ppdb'] === 'ppdb bersama';
+                if ($is_ppdb_bersama) { ?>
+                <tr class="table-info">
+                    <td><?= $no++ ?></td>
+                    <td><?= htmlspecialchars($sis['no_formulir']) ?></td>
+                    <td style="text-align:left;"><?= htmlspecialchars(
+                        $sis['nama']
+                    ) ?></td>
+                    <td><span class="badge bg-info text-dark">PPDB Bersama</span></td>
+                    <?php foreach (
+                        $kolom_list
+                        as $k
+                    ): ?><td>-</td><?php endforeach; ?>
+                    <td>-</td>
+                </tr>
+                <?php continue;}
+                $grand_total += $sis['total_tagihan'];
+                ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td><?= htmlspecialchars($sis['no_formulir']) ?></td>
+                    <td style="text-align:left;"><?= htmlspecialchars(
+                        $sis['nama']
+                    ) ?></td>
                     <td>
-                        <?= $sis['tagihan'][$k] > 0
-                            ? '<b>Rp ' .
+                        <?= $sis['status_ppdb']
+                            ? htmlspecialchars($sis['status_ppdb'])
+                            : '-' ?>
+                    </td>
+                    <?php foreach ($kolom_list as $k): ?>
+                        <td>
+                            <?= $sis['tagihan'][$k] > 0
+                                ? '<b>Rp ' .
+                                    number_format(
+                                        $sis['tagihan'][$k],
+                                        0,
+                                        ',',
+                                        '.'
+                                    ) .
+                                    '</b>'
+                                : '-' ?>
+                        </td>
+                    <?php endforeach; ?>
+                    <td>
+                        <b><?= $sis['total_tagihan'] > 0
+                            ? 'Rp ' .
                                 number_format(
-                                    $sis['tagihan'][$k],
+                                    $sis['total_tagihan'],
                                     0,
                                     ',',
                                     '.'
-                                ) .
-                                '</b>'
-                            : '-' ?>
+                                )
+                            : '-' ?></b>
                     </td>
-                <?php endforeach; ?>
-                <td>
-                    <b><?= $sis['total_tagihan'] > 0
-                        ? 'Rp ' .
-                            number_format($sis['total_tagihan'], 0, ',', '.')
-                        : '-' ?></b>
-                </td>
-            </tr>
+                </tr>
             <?php
             endforeach;
             ?>
