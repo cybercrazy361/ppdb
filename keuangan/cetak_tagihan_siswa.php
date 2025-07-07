@@ -9,14 +9,13 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
 
 $unit = $_SESSION['unit'];
 
-// --- Ambil daftar tahun pelajaran ---
+// Ambil daftar tahun pelajaran
 $tahunList = [];
 $result = $conn->query('SELECT tahun FROM tahun_pelajaran ORDER BY tahun DESC');
 while ($row = $result->fetch_assoc()) {
     $tahunList[] = $row['tahun'];
 }
 
-// --- Pilih tahun pelajaran (default tahun berjalan) ---
 if (
     isset($_GET['tahun_pelajaran']) &&
     in_array($_GET['tahun_pelajaran'], $tahunList)
@@ -33,7 +32,7 @@ if (
 
 list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
 
-// --- Daftar bulan SPP urut (Juli s/d Juni) ---
+// Daftar bulan SPP urut (Juli s/d Juni)
 $bulan_spp = [
     'Juli',
     'Agustus',
@@ -49,7 +48,7 @@ $bulan_spp = [
     'Juni',
 ];
 
-// --- Hitung index bulan SPP terakhir yang harus tampil ---
+// Hitung index bulan SPP terakhir yg harus tampil
 $bulan_now = date('n');
 $tahun_now = date('Y');
 $idx_terakhir = 11;
@@ -68,7 +67,7 @@ if ($tahun_now == $awal_tahun) {
 }
 $bulan_spp_dinamis = array_slice($bulan_spp, 0, $idx_terakhir + 1);
 
-// --- Ambil semua jenis pembayaran (non-SPP) untuk unit ini ---
+// Ambil semua jenis pembayaran (non-SPP) untuk unit ini
 $jenis_pembayaran = [];
 $res = $conn->query(
     "SELECT id, nama FROM jenis_pembayaran WHERE unit='$unit' AND nama!='SPP' ORDER BY id"
@@ -77,14 +76,14 @@ while ($r = $res->fetch_assoc()) {
     $jenis_pembayaran[] = $r;
 }
 
-// --- Ambil semua siswa di unit ini ---
+// Ambil semua siswa di unit ini
 $siswa = [];
 $res = $conn->query("
-  SELECT s.id, s.no_formulir, s.nama, cp.status as status_ppdb
-  FROM siswa s
-  LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
-  WHERE s.unit='$unit'
-  ORDER BY s.nama
+    SELECT s.id, s.no_formulir, s.nama, cp.status as status_ppdb
+    FROM siswa s
+    LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
+    WHERE s.unit='$unit'
+    ORDER BY s.nama
 ");
 while ($r = $res->fetch_assoc()) {
     $siswa[$r['id']] = [
@@ -95,7 +94,7 @@ while ($r = $res->fetch_assoc()) {
     ];
 }
 
-// --- Inisialisasi tagihan tiap kolom ke 0 (termasuk Cashback) ---
+// Inisialisasi tagihan tiap kolom ke 0
 foreach ($siswa as &$sis) {
     foreach ($jenis_pembayaran as $jp) {
         $sis['tagihan'][$jp['nama']] = 0;
@@ -109,7 +108,7 @@ foreach ($siswa as &$sis) {
 }
 unset($sis);
 
-// --- Ambil nominal tagihan tiap jenis & SPP per bulan ---
+// Ambil nominal tagihan tiap jenis & SPP per bulan
 $nominal_pembayaran = [];
 $res = $conn->query(
     "SELECT jp.nama, pn.nominal_max, pn.bulan 
@@ -126,7 +125,7 @@ while ($r = $res->fetch_assoc()) {
     }
 }
 
-// --- Query total sudah dibayar & cashback per siswa per jenis/bulan di tahun ajaran ini ---
+// Query total sudah dibayar & cashback per siswa per jenis per bulan di tahun ajaran ini
 $sudah_bayar = [];
 $cashback = [];
 $res = $conn->query("
@@ -137,7 +136,6 @@ $res = $conn->query("
     JOIN jenis_pembayaran jp ON pd.jenis_pembayaran_id = jp.id
     WHERE s.unit = '$unit'
       AND p.tahun_pelajaran = '$tahun_pelajaran'
-      AND pd.status_pembayaran != 'Lunas'
     GROUP BY s.id, jp.nama, pd.bulan
 ");
 while ($r = $res->fetch_assoc()) {
@@ -146,15 +144,15 @@ while ($r = $res->fetch_assoc()) {
     $bulan = $r['bulan'];
     if ($jenis === 'SPP' && $bulan && in_array($bulan, $bulan_spp_dinamis)) {
         $sudah_bayar[$sid]["SPP $bulan"] = (int) $r['total_bayar'];
-    } elseif ($jenis === 'Uang Pangkal') {
-        $sudah_bayar[$sid]['Uang Pangkal'] = (int) $r['total_bayar'];
-        $cashback[$sid] = (int) $r['total_cashback'];
-    } else {
+    } elseif ($jenis !== 'SPP') {
         $sudah_bayar[$sid][$jenis] = (int) $r['total_bayar'];
+        if ($jenis === 'Uang Pangkal') {
+            $cashback[$sid] = (int) $r['total_cashback'];
+        }
     }
 }
 
-// --- Susun daftar kolom ---
+// Susun daftar kolom
 $kolom_list = [];
 foreach ($jenis_pembayaran as $jp) {
     $kolom_list[] = $jp['nama'];
@@ -166,23 +164,22 @@ foreach ($bulan_spp_dinamis as $bln) {
     $kolom_list[] = "SPP $bln";
 }
 
-// --- Tampilkan hanya siswa yang punya tagihan (masih ada sisa bayar di minimal satu kolom) ---
+// Hanya tampilkan siswa yang masih punya tagihan
 $siswa_tagihan = [];
 foreach ($siswa as $id => $sis) {
     $ada_tagihan = false;
     $tagihan_siswa = [];
     $total_tagihan = 0;
-
     foreach ($kolom_list as $kol) {
         $nominal = $nominal_pembayaran[$kol] ?? 0;
         $bayar = $sudah_bayar[$id][$kol] ?? 0;
-        // Hitung cashback
         $cb = $cashback[$id] ?? 0;
-        // Hitung sisa sesuai logika
+
+        // LOGIKA SISA SESUAI REKAP
         if ($kol === 'Uang Pangkal') {
             $sisa = max(0, $nominal - $bayar - $cb);
         } elseif ($kol === 'Cashback') {
-            $sisa = 0; // Bukan hutang
+            $sisa = 0;
         } else {
             $sisa = max(0, $nominal - $bayar);
         }
@@ -201,6 +198,8 @@ foreach ($siswa as $id => $sis) {
     }
 }
 unset($siswa);
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -242,7 +241,7 @@ $tahun_pelajaran
     </div>
 
     <div class="alert alert-info">
-        <b>Keterangan:</b> Nilai pada kolom di bawah adalah <u>sisa tagihan</u> (jumlah yang belum dibayar per jenis/bulan, sudah dikurangi cashback jika ada).
+        <b>Keterangan:</b> Nilai pada kolom di bawah adalah <u>sisa tagihan</u> (jumlah yang belum dibayar per jenis/bulan).
     </div>
 
     <?php if (empty($siswa_tagihan)): ?>
