@@ -81,12 +81,11 @@ while ($r = $res->fetch_assoc()) {
     $jenis_pembayaran[] = $r;
 }
 
-// --- 2. Ambil semua siswa di unit ini ---
+// --- 2. Ambil semua siswa di unit ini + metode pembayaran ---
 $siswa = [];
 $res = $conn->query("
-  SELECT s.id, s.no_formulir, s.nama, cp.status as status_ppdb
+  SELECT s.id, s.no_formulir, s.nama
   FROM siswa s
-  LEFT JOIN calon_pendaftar cp ON s.calon_pendaftar_id = cp.id
   WHERE s.unit='$unit'
   ORDER BY s.nama
 ");
@@ -94,9 +93,27 @@ while ($r = $res->fetch_assoc()) {
     $siswa[$r['id']] = [
         'no_formulir' => $r['no_formulir'],
         'nama' => $r['nama'],
-        'status_ppdb' => strtolower(trim($r['status_ppdb'] ?? '')),
+        'metode_pembayaran' => '-', // default
         'pembayaran' => [],
     ];
+}
+
+// --- 2b. Ambil metode pembayaran terakhir untuk tiap siswa tahun berjalan ---
+$res = $conn->query("
+    SELECT s.id AS siswa_id, p.metode_pembayaran
+    FROM siswa s
+    LEFT JOIN pembayaran p ON s.id=p.siswa_id AND p.tahun_pelajaran='$tahun_pelajaran'
+    WHERE s.unit='$unit'
+    AND p.id = (
+        SELECT MAX(p2.id)
+        FROM pembayaran p2
+        WHERE p2.siswa_id = s.id AND p2.tahun_pelajaran='$tahun_pelajaran'
+    )
+");
+while ($r = $res->fetch_assoc()) {
+    if (isset($siswa[$r['siswa_id']]) && $r['metode_pembayaran']) {
+        $siswa[$r['siswa_id']]['metode_pembayaran'] = $r['metode_pembayaran'];
+    }
 }
 
 // --- 3. Inisialisasi pembayaran tiap kolom ke 0 (termasuk Cashback) ---
@@ -114,6 +131,7 @@ foreach ($siswa as &$sis) {
 unset($sis);
 
 // --- 4. Query rekap pembayaran (jumlah + cashback) ---
+// Uang Pangkal jangan dikurangi cashback
 $sql = "
 SELECT 
     s.id AS siswa_id,
@@ -138,9 +156,7 @@ while ($r = $res->fetch_assoc()) {
         $siswa[$sid]['pembayaran']["SPP $bulan"] += $r['total_jumlah'];
     } elseif ($jenis !== 'SPP') {
         if ($jenis === 'Uang Pangkal') {
-            // Uang Pangkal dikurangi cashback
-            $sisa_uang_pangkal = $r['total_jumlah'] - $r['total_cashback'];
-            $siswa[$sid]['pembayaran'][$jenis] += $sisa_uang_pangkal;
+            $siswa[$sid]['pembayaran'][$jenis] += $r['total_jumlah'];
             $siswa[$sid]['pembayaran']['Cashback'] += $r['total_cashback'];
         } else {
             $siswa[$sid]['pembayaran'][$jenis] += $r['total_jumlah'];
@@ -247,7 +263,7 @@ $conn->close();
                 <th>No</th>
                 <th>No Formulir</th>
                 <th>Nama Siswa</th>
-                <th>Status</th>
+                <th>Metode Pembayaran</th>
                 <?php foreach ($kolom_list as $k): ?>
                   <th><?= $k ?></th>
                 <?php endforeach; ?>
@@ -258,21 +274,11 @@ $conn->close();
             <?php
             $no = 1;
             foreach ($siswa as $sis): ?>
-            <tr<?= $sis['status_ppdb'] === 'ppdb bersama'
-                ? ' class="table-info"'
-                : '' ?>>
+            <tr>
               <td><?= $no++ ?></td>
               <td><?= $sis['no_formulir'] ?></td>
               <td style="text-align:left;"><?= $sis['nama'] ?></td>
-              <td>
-                <?php if ($sis['status_ppdb'] === 'ppdb bersama'): ?>
-                  <span class="badge bg-info text-dark">PPDB Bersama</span>
-                <?php elseif ($sis['status_ppdb']): ?>
-                  <?= htmlspecialchars($sis['status_ppdb']) ?>
-                <?php else: ?>
-                  -
-                <?php endif; ?>
-              </td>
+              <td><?= htmlspecialchars($sis['metode_pembayaran']) ?></td>
               <?php foreach ($kolom_list as $k): ?>
                 <td>
                   <?= $sis['pembayaran'][$k] > 0
