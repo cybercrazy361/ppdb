@@ -33,7 +33,7 @@ if (
 
 list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
 
-// --- Daftar bulan SPP urut ---
+// --- Daftar bulan SPP urut (Juli s/d Juni) ---
 $bulan_spp = [
     'Juli',
     'Agustus',
@@ -95,7 +95,7 @@ while ($r = $res->fetch_assoc()) {
     ];
 }
 
-// --- Inisialisasi tagihan tiap kolom ke 0 ---
+// --- Inisialisasi tagihan tiap kolom ke 0 (termasuk Cashback) ---
 foreach ($siswa as &$sis) {
     foreach ($jenis_pembayaran as $jp) {
         $sis['tagihan'][$jp['nama']] = 0;
@@ -109,7 +109,7 @@ foreach ($siswa as &$sis) {
 }
 unset($sis);
 
-// --- Query ambil nominal tagihan tiap jenis & SPP bulan berjalan ---
+// --- Ambil nominal tagihan tiap jenis & SPP per bulan ---
 $nominal_pembayaran = [];
 $res = $conn->query(
     "SELECT jp.nama, pn.nominal_max, pn.bulan 
@@ -126,7 +126,7 @@ while ($r = $res->fetch_assoc()) {
     }
 }
 
-// --- Query total sudah dibayar (hanya yg BELUM LUNAS) per siswa per jenis di tahun ajaran ini ---
+// --- Query total sudah dibayar per siswa per jenis per bulan di tahun ajaran ini ---
 $sudah_bayar = [];
 $res = $conn->query("
     SELECT s.id AS siswa_id, jp.nama AS jenis, pd.bulan, SUM(pd.jumlah) AS total_bayar
