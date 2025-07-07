@@ -22,22 +22,19 @@ if (
     isset($_GET['tahun_pelajaran']) &&
     in_array($_GET['tahun_pelajaran'], $tahunList)
 ) {
-    // Jika user sudah memilih, pakai pilihan mereka
     $tahun_pelajaran = $_GET['tahun_pelajaran'];
 } else {
-    // Kalau belum memilih, default ke 2025/2026 (jika tersedia di $tahunList)
     $default = '2025/2026';
     if (in_array($default, $tahunList)) {
         $tahun_pelajaran = $default;
     } else {
-        // fallback: ambil yang paling atas di daftar
         $tahun_pelajaran = $tahunList[0];
     }
 }
 
 list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
 
-// --- Daftar bulan SPP urut ---
+// --- Daftar bulan SPP urut (Juli s/d Juni) ---
 $bulan_spp = [
     'Juli',
     'Agustus',
@@ -53,7 +50,7 @@ $bulan_spp = [
     'Juni',
 ];
 
-// --- Hitung index bulan SPP terakhir yang harus tampil ---
+// --- Hitung index bulan SPP terakhir yg harus tampil ---
 $bulan_now = date('n');
 $tahun_now = date('Y');
 $idx_terakhir = 11;
@@ -72,17 +69,16 @@ if ($tahun_now == $awal_tahun) {
 }
 $bulan_spp_dinamis = array_slice($bulan_spp, 0, $idx_terakhir + 1);
 
-// --- 1. Ambil semua jenis pembayaran (non-SPP) untuk unit ini ---
+// --- Ambil semua jenis pembayaran (non-SPP) untuk unit ini ---
 $jenis_pembayaran = [];
 $res = $conn->query(
-    "SELECT id,nama FROM jenis_pembayaran WHERE unit='$unit' AND nama!='SPP' ORDER BY id"
+    "SELECT id, nama FROM jenis_pembayaran WHERE unit='$unit' AND nama!='SPP' ORDER BY id"
 );
 while ($r = $res->fetch_assoc()) {
     $jenis_pembayaran[] = $r;
 }
 
-// --- 2. Ambil semua siswa di unit ini ---
-// --- 2. Ambil semua siswa di unit ini ---
+// --- Ambil semua siswa di unit ini ---
 $siswa = [];
 $res = $conn->query("
   SELECT s.id, s.no_formulir, s.nama, cp.status as status_ppdb
@@ -100,7 +96,7 @@ while ($r = $res->fetch_assoc()) {
     ];
 }
 
-// --- 3. Inisialisasi pembayaran tiap kolom ke 0 (termasuk Cashback) ---
+// --- Inisialisasi pembayaran tiap kolom ke 0 (termasuk Cashback) ---
 foreach ($siswa as &$sis) {
     foreach ($jenis_pembayaran as $jp) {
         $sis['pembayaran'][$jp['nama']] = 0;
@@ -114,7 +110,7 @@ foreach ($siswa as &$sis) {
 }
 unset($sis);
 
-// --- 4. Query rekap pembayaran (jumlah + cashback) ---
+// --- Query rekap pembayaran (jumlah + cashback) ---
 $sql = "
 SELECT 
     s.id AS siswa_id,
@@ -145,7 +141,7 @@ while ($r = $res->fetch_assoc()) {
     }
 }
 
-// --- 5. Susun daftar kolom dan total per kolom ---
+// --- Susun daftar kolom dan total per kolom ---
 $kolom_list = [];
 foreach ($jenis_pembayaran as $jp) {
     $kolom_list[] = $jp['nama'];
@@ -160,12 +156,32 @@ foreach ($bulan_spp_dinamis as $bln) {
 $total_kolom = array_fill_keys($kolom_list, 0);
 $grand_total = 0;
 foreach ($siswa as &$sis) {
-    $sis['total_bayar'] = 0;
+    // --- Khusus Uang Pangkal + Cashback
+    $total_bayar = 0;
     foreach ($kolom_list as $k) {
-        $sis['total_bayar'] += $sis['pembayaran'][$k];
-        $total_kolom[$k] += $sis['pembayaran'][$k];
+        if ($k === 'Uang Pangkal') {
+            $uang_pangkal = $sis['pembayaran']['Uang Pangkal'] ?? 0;
+            $cashback = $sis['pembayaran']['Cashback'] ?? 0;
+            $total_bayar += $uang_pangkal + $cashback;
+        } elseif ($k === 'Cashback') {
+            // Jangan dijumlahkan ke total_bayar (sudah ikut Uang Pangkal)
+        } else {
+            $total_bayar += $sis['pembayaran'][$k];
+        }
     }
-    $grand_total += $sis['total_bayar'];
+    $sis['total_bayar'] = $total_bayar;
+    foreach ($kolom_list as $k) {
+        if ($k === 'Uang Pangkal') {
+            $uang_pangkal = $sis['pembayaran']['Uang Pangkal'] ?? 0;
+            $cashback = $sis['pembayaran']['Cashback'] ?? 0;
+            $total_kolom[$k] += $uang_pangkal + $cashback;
+        } elseif ($k === 'Cashback') {
+            $total_kolom[$k] += $sis['pembayaran']['Cashback'];
+        } else {
+            $total_kolom[$k] += $sis['pembayaran'][$k];
+        }
+    }
+    $grand_total += $total_bayar;
 }
 unset($sis);
 
@@ -193,43 +209,42 @@ $conn->close();
       vertical-align:middle; text-align:center;
     }
     .table-info {
-  background:rgb(112, 194, 238) !important;
-}
-
+      background:rgb(112, 194, 238) !important;
+    }
     </style>
-            </head>
-            <body>
-            <?php include '../includes/sidebar.php'; ?>
-            <div class="main-content p-4">
-              <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
-                <button id="sidebarToggle" class="btn btn-link rounded-circle"><i class="fas fa-bars"></i></button>
-                <ul class="navbar-nav ms-auto">
-                  <li class="nav-item"><a class="nav-link" href="#"><span class="me-2"><?= htmlspecialchars(
-                      $_SESSION['nama']
-                  ) ?></span><i class="fas fa-user-circle fa-lg"></i></a></li>
-                </ul>
-              </nav>
-              <div class="container-fluid">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                  <h1 class="h3 text-gray-800">Rekap Pembayaran Siswa - <?= htmlspecialchars(
-                      $unit
-                  ) ?></h1>
-                  <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
-                </div>
-                <form method="get" class="mb-3">
-                  <label><b>Tahun Pelajaran:</b></label>
-                  <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
-                    <?php foreach ($tahunList as $tp): ?>
-                      <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
+</head>
+<body>
+<?php include '../includes/sidebar.php'; ?>
+<div class="main-content p-4">
+  <nav class="navbar navbar-expand navbar-light bg-white mb-4 shadow-sm">
+    <button id="sidebarToggle" class="btn btn-link rounded-circle"><i class="fas fa-bars"></i></button>
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item"><a class="nav-link" href="#"><span class="me-2"><?= htmlspecialchars(
+          $_SESSION['nama']
+      ) ?></span><i class="fas fa-user-circle fa-lg"></i></a></li>
+    </ul>
+  </nav>
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 text-gray-800">Rekap Pembayaran Siswa - <?= htmlspecialchars(
+          $unit
+      ) ?></h1>
+      <button class="btn btn-success no-print" onclick="printTable()"><i class="fas fa-print"></i> Cetak</button>
+    </div>
+    <form method="get" class="mb-3">
+      <label><b>Tahun Pelajaran:</b></label>
+      <select name="tahun_pelajaran" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+        <?php foreach ($tahunList as $tp): ?>
+          <option value="<?= $tp ?>" <?= $tp == $tahun_pelajaran
     ? 'selected'
     : '' ?>><?= $tp ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </form>
-                <div class="card shadow mb-4 printable-area">
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-hover">
+        <?php endforeach; ?>
+      </select>
+    </form>
+    <div class="card shadow mb-4 printable-area">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
             <thead class="table-primary">
               <tr>
                 <th colspan="<?= 4 +
@@ -243,10 +258,9 @@ $conn->close();
                 <th>No Formulir</th>
                 <th>Nama Siswa</th>
                 <th>Status</th>
-                <?php foreach (
-                    $kolom_list
-                    as $k
-                ): ?><th><?= $k ?></th><?php endforeach; ?>
+                <?php foreach ($kolom_list as $k): ?>
+                  <th><?= $k ?></th>
+                <?php endforeach; ?>
                 <th>Total Bayar</th>
               </tr>
             </thead>
@@ -271,10 +285,24 @@ $conn->close();
               </td>
               <?php foreach ($kolom_list as $k): ?>
                 <td>
-                  <?= $sis['pembayaran'][$k] > 0
-                      ? 'Rp ' .
-                          number_format($sis['pembayaran'][$k], 0, ',', '.')
-                      : '-' ?>
+                  <?php if ($k === 'Uang Pangkal') {
+                      $uang_pangkal = $sis['pembayaran']['Uang Pangkal'] ?? 0;
+                      $cashback = $sis['pembayaran']['Cashback'] ?? 0;
+                      $total_up = $uang_pangkal + $cashback;
+                      echo $total_up > 0
+                          ? 'Rp ' . number_format($total_up, 0, ',', '.')
+                          : '-';
+                  } elseif ($k === 'Cashback') {
+                      echo $sis['pembayaran'][$k] > 0
+                          ? 'Rp ' .
+                              number_format($sis['pembayaran'][$k], 0, ',', '.')
+                          : '-';
+                  } else {
+                      echo $sis['pembayaran'][$k] > 0
+                          ? 'Rp ' .
+                              number_format($sis['pembayaran'][$k], 0, ',', '.')
+                          : '-';
+                  } ?>
                 </td>
               <?php endforeach; ?>
               <td><b><?= $sis['total_bayar'] > 0
@@ -289,9 +317,22 @@ $conn->close();
                 <td colspan="4" class="text-center">Total</td>
                 <?php foreach ($kolom_list as $k): ?>
                   <td>
-                    <?= $total_kolom[$k] > 0
-                        ? 'Rp ' . number_format($total_kolom[$k], 0, ',', '.')
-                        : '-' ?>
+                    <?php if ($k === 'Uang Pangkal') {
+                        echo $total_kolom[$k] > 0
+                            ? 'Rp ' .
+                                number_format($total_kolom[$k], 0, ',', '.')
+                            : '-';
+                    } elseif ($k === 'Cashback') {
+                        echo $total_kolom[$k] > 0
+                            ? 'Rp ' .
+                                number_format($total_kolom[$k], 0, ',', '.')
+                            : '-';
+                    } else {
+                        echo $total_kolom[$k] > 0
+                            ? 'Rp ' .
+                                number_format($total_kolom[$k], 0, ',', '.')
+                            : '-';
+                    } ?>
                   </td>
                 <?php endforeach; ?>
                 <td>
