@@ -214,6 +214,23 @@ foreach ($filtered_siswa as &$sis) {
 }
 unset($sis);
 
+// --- 8. Bikin baris total sebagai string
+$total_row_html = '<tr class="table-secondary fw-bold">';
+$total_row_html .= '<td colspan="4" class="text-center">Total</td>';
+foreach ($kolom_list as $k) {
+    $total_row_html .=
+        '<td' . ($k == 'Cashback' ? ' class="bg-warning text-dark"' : '') . '>';
+    $total_row_html .=
+        $total_kolom[$k] > 0
+            ? 'Rp ' . number_format($total_kolom[$k], 0, ',', '.')
+            : '-';
+    $total_row_html .= '</td>';
+}
+$total_row_html .= '<td>';
+$total_row_html .=
+    $grand_total > 0 ? 'Rp ' . number_format($grand_total, 0, ',', '.') : '-';
+$total_row_html .= '</td></tr>';
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -233,9 +250,7 @@ $conn->close();
       .printable-area { position: absolute; top: 0; left: 0; width: 100%; background: #fff !important;}
       .no-print { display: none; }
       .table-responsive { overflow: visible !important; }
-      tfoot { 
-        display: table-footer-group !important;
-      }
+      tfoot { display: none !important; }
     }
     .table thead th, .table tfoot td, .table tbody td {
       vertical-align: middle; text-align: center;
@@ -243,7 +258,6 @@ $conn->close();
     .table-info {
       background: rgb(112, 194, 238) !important;
     }
-
     @media print {
       html, body {
         font-size: 11px !important;
@@ -295,9 +309,7 @@ $conn->close();
       nav, .sidebar, .footer, .navbar, .sidebar *, .footer * {
         display: none !important;
       }
-      tfoot { 
-        display: table-footer-group !important;
-      }
+      tfoot { display: none !important; }
     }
     </style>
 </head>
@@ -402,25 +414,13 @@ $conn->close();
             </tr>
             <?php endforeach;
             ?>
+            <?= $total_row_html
+// BARIS TOTAL DITAMBAHKAN DI SINI
+?>
             </tbody>
             <tfoot>
-              <tr class="table-secondary fw-bold">
-                <td colspan="4" class="text-center">Total</td>
-                <?php foreach ($kolom_list as $k): ?>
-                  <td<?= $k == 'Cashback'
-                      ? ' class="bg-warning text-dark"'
-                      : '' ?>>
-                    <?= $total_kolom[$k] > 0
-                        ? 'Rp ' . number_format($total_kolom[$k], 0, ',', '.')
-                        : '-' ?>
-                  </td>
-                <?php endforeach; ?>
-                <td>
-                  <?= $grand_total > 0
-                      ? 'Rp ' . number_format($grand_total, 0, ',', '.')
-                      : '-' ?>
-                </td>
-              </tr>
+              <!-- Hanya untuk tampilan web, tidak tampil di print -->
+              <?= $total_row_html ?>
             </tfoot>
           </table>
         </div>
