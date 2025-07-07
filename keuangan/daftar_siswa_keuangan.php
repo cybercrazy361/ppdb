@@ -314,6 +314,7 @@ $conn->close();
         <h1 class="h3 mb-0 text-gray-800">
             Daftar Siswa Keuangan - <?= htmlspecialchars($petugas_unit) ?>
         </h1>
+
         <a href="daftar_siswa_keuangan.php?print=all
 <?= $search_no_formulir
     ? '&search_no_formulir=' . urlencode($search_no_formulir)
@@ -322,10 +323,10 @@ $conn->close();
 <?= isset($_GET['tahun_pelajaran'])
     ? '&tahun_pelajaran=' . urlencode($_GET['tahun_pelajaran'])
     : '' ?>"
-   target="_blank"
    class="btn btn-success no-print">
    <i class="fas fa-print"></i> Cetak Semua
 </a>
+
 
         
     </div>
