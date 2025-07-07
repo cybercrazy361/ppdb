@@ -1,10 +1,11 @@
 <?php
 session_start();
+include '../database_connection.php';
+
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'keuangan') {
-    header('Location: ../login_keuangan.php');
+    header('Location: login_keuangan.php');
     exit();
 }
-include '../database_connection.php';
 
 $unit = $_SESSION['unit'];
 
@@ -32,7 +33,7 @@ if (
 
 list($awal_tahun, $akhir_tahun) = explode('/', $tahun_pelajaran);
 
-// --- Daftar bulan SPP urut (Juli s/d Juni) ---
+// --- Daftar bulan SPP urut ---
 $bulan_spp = [
     'Juli',
     'Agustus',
@@ -232,7 +233,7 @@ $tahun_pelajaran
         <div class="alert alert-success text-center">Tidak ada tagihan.</div>
     <?php else: ?>
         <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-hover">
             <thead class="table-primary">
                 <tr>
                     <th>No</th>
@@ -249,7 +250,7 @@ $tahun_pelajaran
                         ) ?>)</small>
                         </th>
                     <?php endforeach; ?>
-                    <th>Total Tagihan</th>
+                    <th>Total Sisa</th>
                 </tr>
             </thead>
             <tbody>
@@ -304,7 +305,7 @@ $tahun_pelajaran
                 <tr class="table-success fw-bold">
                     <td colspan="<?= 4 +
                         count($kolom_list) ?>" class="text-end">
-                        Grand Total Sisa Tagihan:
+                        Grand Total Sisa:
                     </td>
                     <td>
                         <b>Rp <?= number_format(
