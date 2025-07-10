@@ -216,6 +216,13 @@ th.alamat-col, td.alamat-col {
         <a href="cetak_daftar_siswa.php" target="_blank" class="btn btn-primary">
           <i class="fas fa-print"></i> Cetak Daftar Lengkap
         </a>
+        <a href="cetak_daftar_siswa_excel.php<?= $search
+            ? '?q=' . urlencode($search)
+            : '' ?>" target="_blank" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Cetak Excel
+        </a>
+
+
       </div>
       <div class="table-responsive">
         <div class="table-responsive">
